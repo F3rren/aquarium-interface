@@ -10,7 +10,7 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: const Color.fromARGB(255, 126, 173, 255),
     );
   }
-  
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

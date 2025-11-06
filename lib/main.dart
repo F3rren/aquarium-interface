@@ -1,3 +1,4 @@
+import 'package:acquariumfe/routes/app_routes.dart';
 import 'package:acquariumfe/view/navbar.dart';
 import 'package:acquariumfe/view/acquariums_view.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Aquarium HomePage',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -19,6 +21,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const HomePage(),
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }
