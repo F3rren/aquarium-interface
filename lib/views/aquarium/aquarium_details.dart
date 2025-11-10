@@ -1,8 +1,8 @@
-﻿import 'package:acquariumfe/views/dashboard/dashboard_page.dart';
-import 'package:acquariumfe/views/parameters/parameters_page.dart';
-import 'package:acquariumfe/views/parameters/charts_page.dart';
-import 'package:acquariumfe/views/profile/profile_page.dart';
+﻿import 'package:acquariumfe/views/dashboard/health_dashboard.dart';
+import 'package:acquariumfe/views/parameters/parameters_view.dart';
+import 'package:acquariumfe/views/charts/charts_view.dart';
 import 'package:acquariumfe/views/notifications/notifications_page.dart';
+import 'package:acquariumfe/views/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class AquariumDetails extends StatefulWidget {
@@ -19,9 +19,9 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
 
   // Lista delle pagine da mostrare
   final List<Widget> _pages = const [
-    DashboardPage(),
-    ParametersPage(),
-    ChartsPage(),
+    HealthDashboard(),
+    ParametersView(),
+    ChartsView(),
     ProfilePage(),
   ];
 
@@ -106,7 +106,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
               children: [
                 _buildNavItem(Icons.dashboard, 'Dashboard', 0),
                 _buildNavItem(Icons.science, 'Parametri', 1),
-                _buildNavItem(Icons.show_chart, 'Grafici', 2),
+                _buildNavItem(Icons.analytics, 'Grafici', 2),
                 _buildNavItem(Icons.person, 'Profilo', 3),
               ],
             ),

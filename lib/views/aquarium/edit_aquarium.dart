@@ -136,7 +136,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF60a5fa).withOpacity(0.2),
+                  color: const Color(0xFF60a5fa).withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const Icon(Icons.edit, color: Color(0xFF60a5fa), size: 32),
@@ -167,7 +167,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
       decoration: BoxDecoration(
         color: const Color(0xFF3a3a3a),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha:0.1)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -181,7 +181,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF60a5fa).withOpacity(0.2),
+                    color: const Color(0xFF60a5fa).withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -237,7 +237,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF60a5fa).withOpacity(0.2),
+                      color: const Color(0xFF60a5fa).withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(Icons.edit_note, color: Color(0xFF60a5fa), size: 32),
@@ -274,7 +274,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
               decoration: BoxDecoration(
                 color: const Color(0xFF3a3a3a),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                border: Border.all(color: Colors.white.withValues(alpha:0.1)),
               ),
               child: Row(
                 children: [
@@ -313,7 +313,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.white70,
-                        side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                        side: BorderSide(color: Colors.white.withValues(alpha:0.3)),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
                       child: const Text('Annulla', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
@@ -367,7 +367,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
   InputDecoration _buildInputDecoration(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
+      hintStyle: TextStyle(color: Colors.white.withValues(alpha:0.4)),
       prefixIcon: Icon(icon, color: const Color(0xFF60a5fa), size: 20),
       filled: true,
       fillColor: const Color(0xFF3a3a3a),
@@ -377,7 +377,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+        borderSide: BorderSide(color: Colors.white.withValues(alpha:0.1)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
@@ -398,7 +398,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF60a5fa).withOpacity(0.2) : Colors.transparent,
+          color: isSelected ? const Color(0xFF60a5fa).withValues(alpha:0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(

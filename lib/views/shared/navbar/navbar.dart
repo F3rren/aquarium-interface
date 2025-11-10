@@ -62,7 +62,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
           color: const Color(0xFF3a3a3a),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Colors.white.withOpacity(0.1)),
+            side: BorderSide(color: Colors.white.withValues(alpha:0.1)),
           ),
           onOpened: () => _iconController.forward(),
           onCanceled: () => _iconController.reverse(),
@@ -90,7 +90,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF34d399).withOpacity(0.2),
+                        color: const Color(0xFF34d399).withValues(alpha:0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(Icons.add_circle, color: Color(0xFF34d399), size: 20),
@@ -110,7 +110,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF60a5fa).withOpacity(0.2),
+                        color: const Color(0xFF60a5fa).withValues(alpha:0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(Icons.edit, color: Color(0xFF60a5fa), size: 20),
@@ -130,7 +130,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFef4444).withOpacity(0.2),
+                        color: const Color(0xFFef4444).withValues(alpha:0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(Icons.delete, color: Color(0xFFef4444), size: 20),

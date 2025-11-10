@@ -60,8 +60,7 @@ class NotificationService {
 
   /// Gestisce il tap sulla notifica
   void _onNotificationTapped(NotificationResponse response) {
-    // TODO: Navigazione alla pagina appropriata basata sul payload
-    print('Notification tapped: ${response.payload}');
+    
   }
 
   /// Richiedi permessi notifiche

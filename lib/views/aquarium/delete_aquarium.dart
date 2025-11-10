@@ -65,7 +65,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFef4444).withOpacity(0.2),
+                  color: const Color(0xFFef4444).withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const Icon(Icons.warning_rounded, color: Color(0xFFef4444), size: 48),
@@ -108,7 +108,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                         onPressed: () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.white70,
-                          side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                          side: BorderSide(color: Colors.white.withValues(alpha:0.3)),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text('Annulla', style: TextStyle(fontWeight: FontWeight.w600)),
@@ -222,7 +222,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFef4444).withOpacity(0.2),
+                          color: const Color(0xFFef4444).withValues(alpha:0.2),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Icon(Icons.delete, color: Color(0xFFef4444), size: 32),
@@ -256,7 +256,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
       decoration: BoxDecoration(
         color: const Color(0xFF3a3a3a),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFef4444).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFFef4444).withValues(alpha:0.3)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -270,7 +270,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFef4444).withOpacity(0.2),
+                    color: const Color(0xFFef4444).withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(

@@ -85,9 +85,9 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: const Color(0xFF5a5a5a), width: 1.5),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 20, offset: const Offset(0, 8)),
+              BoxShadow(color: Colors.black.withValues(alpha:0.5), blurRadius: 20, offset: const Offset(0, 8)),
               BoxShadow(
-                color: isGood ? const Color(0xFF60a5fa).withOpacity(0.15) : const Color(0xFFef4444).withOpacity(0.15),
+                color: isGood ? const Color(0xFF60a5fa).withValues(alpha:0.15) : const Color(0xFFef4444).withValues(alpha:0.15),
                 blurRadius: 30,
               ),
             ],
@@ -101,12 +101,12 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
+                      color: Colors.white.withValues(alpha:0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(name, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
                   ),
-                  Icon(Icons.arrow_forward_ios, color: Colors.white.withOpacity(0.5), size: 16),
+                  Icon(Icons.arrow_forward_ios, color: Colors.white.withValues(alpha:0.5), size: 16),
                 ],
               ),
               const SizedBox(height: 20),
@@ -120,7 +120,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                   letterSpacing: -1.5,
                   shadows: [
                     Shadow(
-                      color: isGood ? const Color(0xFF60a5fa).withOpacity(0.3) : const Color(0xFFef4444).withOpacity(0.3),
+                      color: isGood ? const Color(0xFF60a5fa).withValues(alpha:0.3) : const Color(0xFFef4444).withValues(alpha:0.3),
                       blurRadius: 10,
                     ),
                   ],
@@ -137,14 +137,14 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF60a5fa).withOpacity(0.15),
-                        const Color(0xFF2dd4bf).withOpacity(0.08),
+                        const Color(0xFF60a5fa).withValues(alpha:0.15),
+                        const Color(0xFF2dd4bf).withValues(alpha:0.08),
                       ],
                     ),
                   ),
                   child: Stack(
                     children: [
-                      Center(child: Icon(Icons.water_drop, size: 60, color: const Color(0xFF60a5fa).withOpacity(0.4))),
+                      Center(child: Icon(Icons.water_drop, size: 60, color: const Color(0xFF60a5fa).withValues(alpha:0.4))),
                       Positioned(
                         bottom: 12,
                         left: 12,
@@ -152,9 +152,9 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
+                            color: Colors.black.withValues(alpha:0.6),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.white.withOpacity(0.1)),
+                            border: Border.all(color: Colors.white.withValues(alpha:0.1)),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -173,17 +173,17 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Icon(Icons.access_time, size: 12, color: Colors.white.withOpacity(0.5)),
+                  Icon(Icons.access_time, size: 12, color: Colors.white.withValues(alpha:0.5)),
                   const SizedBox(width: 6),
-                  Text("Updated 5 minutes ago", style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 11)),
+                  Text("Updated 5 minutes ago", style: TextStyle(color: Colors.white.withValues(alpha:0.5), fontSize: 11)),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: isGood ? const Color(0xFF34d399).withOpacity(0.2) : const Color(0xFFef4444).withOpacity(0.2),
+                      color: isGood ? const Color(0xFF34d399).withValues(alpha:0.2) : const Color(0xFFef4444).withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: isGood ? const Color(0xFF34d399).withOpacity(0.4) : const Color(0xFFef4444).withOpacity(0.4),
+                        color: isGood ? const Color(0xFF34d399).withValues(alpha:0.4) : const Color(0xFFef4444).withValues(alpha:0.4),
                       ),
                     ),
                     child: Row(

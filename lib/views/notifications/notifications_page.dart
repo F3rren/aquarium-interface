@@ -3,6 +3,7 @@ import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/mock_data_service.dart';
 import 'package:acquariumfe/services/notification_service.dart';
+import 'package:acquariumfe/services/notification_preferences_service.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -15,6 +16,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   late TabController _tabController;
   final AlertManager _alertManager = AlertManager();
   final MockDataService _mockService = MockDataService();
+  final NotificationPreferencesService _prefsService = NotificationPreferencesService();
   NotificationSettings _settings = NotificationSettings();
   
   late Animation<double> _fadeAnimation;
@@ -35,6 +37,29 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     );
     
     _animationController.forward();
+    _loadSettings();
+  }
+
+  /// Carica le impostazioni salvate all'avvio
+  Future<void> _loadSettings() async {
+    final settings = await _prefsService.loadSettings();
+    setState(() {
+      _settings = settings;
+    });
+    _alertManager.updateSettings(_settings);
+  }
+
+  /// Salva le impostazioni correnti
+  Future<void> _saveSettings() async {
+    final success = await _prefsService.saveSettings(_settings);
+    if (success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('✅ Impostazioni salvate con successo'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   @override
@@ -231,20 +256,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           child: ElevatedButton(
             onPressed: () async {
               await _alertManager.scheduleMaintenanceReminders();
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Row(
-                      children: [
-                        Icon(Icons.check_circle, color: Colors.white),
-                        SizedBox(width: 12),
-                        Text('Impostazioni salvate!'),
-                      ],
-                    ),
-                    backgroundColor: Color(0xFF34d399),
-                  ),
-                );
-              }
+              await _saveSettings(); // Salva persistenza
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF60a5fa),
@@ -290,6 +302,22 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         _buildThresholdCard('Magnesio', ' mg/L', _settings.magnesium, Icons.bubble_chart, const Color(0xFFec4899)),
         const SizedBox(height: 12),
         _buildThresholdCard('KH', ' dKH', _settings.kh, Icons.show_chart, const Color(0xFF34d399)),
+        
+        const SizedBox(height: 32),
+        // Pulsante Ripristina Predefiniti
+        SizedBox(
+          height: 50,
+          child: OutlinedButton.icon(
+            onPressed: () => _showResetDialog(),
+            icon: const Icon(Icons.restart_alt),
+            label: const Text('Ripristina Valori Predefiniti', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFFfbbf24),
+              side: const BorderSide(color: Color(0xFFfbbf24), width: 2),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -354,7 +382,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF60a5fa).withOpacity(0.2),
+              color: const Color(0xFF60a5fa).withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: const Color(0xFF60a5fa), size: 32),
@@ -395,14 +423,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
       decoration: BoxDecoration(
         color: const Color(0xFF3a3a3a),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha:0.1)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: color, size: 24),
@@ -421,7 +449,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: color,
+            activeThumbColor: color,
           ),
         ],
       ),
@@ -441,7 +469,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
       decoration: BoxDecoration(
         color: const Color(0xFF3a3a3a),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha:0.1)),
       ),
       child: Column(
         children: [
@@ -450,7 +478,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: color, size: 24),
@@ -462,7 +490,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               Switch(
                 value: schedule.enabled,
                 onChanged: onToggle,
-                activeColor: color,
+                activeThumbColor: color,
               ),
             ],
           ),
@@ -493,51 +521,78 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   }
 
   Widget _buildThresholdCard(String name, String unit, ParameterThresholds thresholds, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 24),
-              const SizedBox(width: 12),
-              Text(name, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
-              const Spacer(),
-              Text('${thresholds.min} - ${thresholds.max}$unit', style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w600)),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Min', style: TextStyle(color: Colors.white60, fontSize: 11)),
-                    const SizedBox(height: 4),
-                    Text('${thresholds.min}$unit', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
-                  ],
+    return GestureDetector(
+      onTap: () => _showEditThresholdDialog(name, unit, thresholds, color),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: const Color(0xFF3a3a3a),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withValues(alpha:0.1)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: color, size: 24),
+                const SizedBox(width: 12),
+                Text(name, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+                const Spacer(),
+                const Icon(Icons.edit, color: Colors.white60, size: 18),
+                const SizedBox(width: 4),
+                Text('${thresholds.min} - ${thresholds.max}$unit', style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w600)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Min', style: TextStyle(color: Colors.white60, fontSize: 11)),
+                      const SizedBox(height: 4),
+                      Text('${thresholds.min}$unit', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const Text('Max', style: TextStyle(color: Colors.white60, fontSize: 11)),
-                    const SizedBox(height: 4),
-                    Text('${thresholds.max}$unit', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Text('Max', style: TextStyle(color: Colors.white60, fontSize: 11)),
+                      const SizedBox(height: 4),
+                      Text('${thresholds.max}$unit', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Switch(
+                  value: thresholds.enabled,
+                  onChanged: (value) {
+                    setState(() {
+                      _updateThresholdEnabled(name, value);
+                    });
+                  },
+                  activeThumbColor: color,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  thresholds.enabled ? 'Notifiche Attive' : 'Notifiche Disattivate',
+                  style: TextStyle(
+                    color: thresholds.enabled ? color : Colors.white38,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -571,7 +626,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
       directionIndicator = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: const Color(0xFF60a5fa).withOpacity(0.2),
+          color: const Color(0xFF60a5fa).withValues(alpha:0.2),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: const Color(0xFF60a5fa), width: 1),
         ),
@@ -588,7 +643,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
       directionIndicator = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: const Color(0xFFef4444).withOpacity(0.2),
+          color: const Color(0xFFef4444).withValues(alpha:0.2),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: const Color(0xFFef4444), width: 1),
         ),
@@ -609,14 +664,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
       decoration: BoxDecoration(
         color: const Color(0xFF3a3a3a),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: severityColor.withOpacity(0.3)),
+        border: Border.all(color: severityColor.withValues(alpha:0.3)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: severityColor.withOpacity(0.2),
+              color: severityColor.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(severityIcon, color: severityColor, size: 20),
@@ -1073,6 +1128,347 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
+      ),
+    );
+  }
+
+  // Dialog per modificare le soglie
+  void _showEditThresholdDialog(String name, String unit, ParameterThresholds currentThresholds, Color color) {
+    final minController = TextEditingController(text: currentThresholds.min.toString());
+    final maxController = TextEditingController(text: currentThresholds.max.toString());
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF3a3a3a),
+        title: Row(
+          children: [
+            Icon(Icons.tune, color: color, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'Modifica Soglie - $name',
+                style: const TextStyle(color: Colors.white, fontSize: 17),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: minController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: 'Valore Minimo',
+                labelStyle: const TextStyle(color: Colors.white60),
+                suffixText: unit,
+                suffixStyle: TextStyle(color: color),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white.withValues(alpha:0.2)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: color),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: maxController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: 'Valore Massimo',
+                labelStyle: const TextStyle(color: Colors.white60),
+                suffixText: unit,
+                suffixStyle: TextStyle(color: color),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white.withValues(alpha:0.2)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: color),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha:0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: color.withValues(alpha:0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: color, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Riceverai notifiche quando il valore esce da questo range',
+                      style: TextStyle(color: color, fontSize: 11),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annulla', style: TextStyle(color: Colors.white60)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final newMin = double.tryParse(minController.text);
+              final newMax = double.tryParse(maxController.text);
+
+              if (newMin == null || newMax == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('⚠️ Inserisci valori numerici validi')),
+                );
+                return;
+              }
+
+              if (newMin >= newMax) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('⚠️ Il minimo deve essere inferiore al massimo')),
+                );
+                return;
+              }
+
+              setState(() {
+                _updateThresholds(name, newMin, newMax);
+              });
+
+              Navigator.pop(context);
+              
+              // Salva persistenza
+              await _saveSettings();
+              
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('✅ Soglie $name aggiornate: $newMin-$newMax$unit')),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: color,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Salva'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Aggiorna le soglie nel modello settings
+  void _updateThresholds(String parameterName, double min, double max) {
+    switch (parameterName) {
+      case 'Temperatura':
+        _settings = _settings.copyWith(
+          temperature: ParameterThresholds(min: min, max: max, enabled: _settings.temperature.enabled),
+        );
+        break;
+      case 'pH':
+        _settings = _settings.copyWith(
+          ph: ParameterThresholds(min: min, max: max, enabled: _settings.ph.enabled),
+        );
+        break;
+      case 'Salinità':
+        _settings = _settings.copyWith(
+          salinity: ParameterThresholds(min: min, max: max, enabled: _settings.salinity.enabled),
+        );
+        break;
+      case 'ORP':
+        _settings = _settings.copyWith(
+          orp: ParameterThresholds(min: min, max: max, enabled: _settings.orp.enabled),
+        );
+        break;
+      case 'Calcio':
+        _settings = _settings.copyWith(
+          calcium: ParameterThresholds(min: min, max: max, enabled: _settings.calcium.enabled),
+        );
+        break;
+      case 'Magnesio':
+        _settings = _settings.copyWith(
+          magnesium: ParameterThresholds(min: min, max: max, enabled: _settings.magnesium.enabled),
+        );
+        break;
+      case 'KH':
+        _settings = _settings.copyWith(
+          kh: ParameterThresholds(min: min, max: max, enabled: _settings.kh.enabled),
+        );
+        break;
+      case 'Nitrati':
+        _settings = _settings.copyWith(
+          nitrate: ParameterThresholds(min: min, max: max, enabled: _settings.nitrate.enabled),
+        );
+        break;
+      case 'Fosfati':
+        _settings = _settings.copyWith(
+          phosphate: ParameterThresholds(min: min, max: max, enabled: _settings.phosphate.enabled),
+        );
+        break;
+    }
+    _alertManager.updateSettings(_settings);
+  }
+
+  // Abilita/disabilita notifiche per un parametro
+  void _updateThresholdEnabled(String parameterName, bool enabled) {
+    switch (parameterName) {
+      case 'Temperatura':
+        _settings = _settings.copyWith(
+          temperature: ParameterThresholds(
+            min: _settings.temperature.min,
+            max: _settings.temperature.max,
+            enabled: enabled,
+          ),
+        );
+        break;
+      case 'pH':
+        _settings = _settings.copyWith(
+          ph: ParameterThresholds(
+            min: _settings.ph.min,
+            max: _settings.ph.max,
+            enabled: enabled,
+          ),
+        );
+        break;
+      case 'Salinità':
+        _settings = _settings.copyWith(
+          salinity: ParameterThresholds(
+            min: _settings.salinity.min,
+            max: _settings.salinity.max,
+            enabled: enabled,
+          ),
+        );
+        break;
+      case 'ORP':
+        _settings = _settings.copyWith(
+          orp: ParameterThresholds(
+            min: _settings.orp.min,
+            max: _settings.orp.max,
+            enabled: enabled,
+          ),
+        );
+        break;
+      case 'Calcio':
+        _settings = _settings.copyWith(
+          calcium: ParameterThresholds(
+            min: _settings.calcium.min,
+            max: _settings.calcium.max,
+            enabled: enabled,
+          ),
+        );
+        break;
+      case 'Magnesio':
+        _settings = _settings.copyWith(
+          magnesium: ParameterThresholds(
+            min: _settings.magnesium.min,
+            max: _settings.magnesium.max,
+            enabled: enabled,
+          ),
+        );
+        break;
+      case 'KH':
+        _settings = _settings.copyWith(
+          kh: ParameterThresholds(
+            min: _settings.kh.min,
+            max: _settings.kh.max,
+            enabled: enabled,
+          ),
+        );
+        break;
+      case 'Nitrati':
+        _settings = _settings.copyWith(
+          nitrate: ParameterThresholds(
+            min: _settings.nitrate.min,
+            max: _settings.nitrate.max,
+            enabled: enabled,
+          ),
+        );
+        break;
+      case 'Fosfati':
+        _settings = _settings.copyWith(
+          phosphate: ParameterThresholds(
+            min: _settings.phosphate.min,
+            max: _settings.phosphate.max,
+            enabled: enabled,
+          ),
+        );
+        break;
+    }
+    _alertManager.updateSettings(_settings);
+    _saveSettings(); // Salva automaticamente quando si modifica lo switch
+  }
+
+  /// Mostra dialog di conferma per ripristino valori predefiniti
+  void _showResetDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF3a3a3a),
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber, color: Color(0xFFfbbf24), size: 28),
+            SizedBox(width: 12),
+            Text('Ripristinare Valori Predefiniti?', style: TextStyle(color: Colors.white, fontSize: 18)),
+          ],
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Questa azione resetterà tutte le soglie personalizzate ai valori di default:',
+              style: TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+            SizedBox(height: 16),
+            Text('• Temperatura: 24-26°C', style: TextStyle(color: Colors.white60, fontSize: 12)),
+            Text('• pH: 8.0-8.4', style: TextStyle(color: Colors.white60, fontSize: 12)),
+            Text('• Salinità: 1.023-1.025', style: TextStyle(color: Colors.white60, fontSize: 12)),
+            Text('• E tutti gli altri parametri...', style: TextStyle(color: Colors.white60, fontSize: 12)),
+            SizedBox(height: 16),
+            Text(
+              'Le modifiche verranno salvate immediatamente.',
+              style: TextStyle(color: Color(0xFFfbbf24), fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annulla', style: TextStyle(color: Colors.white60)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              setState(() {
+                _settings = NotificationSettings(); // Reset a default
+              });
+              _alertManager.updateSettings(_settings);
+              await _prefsService.resetToDefaults();
+              
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('🔄 Impostazioni ripristinate ai valori predefiniti'),
+                  backgroundColor: Color(0xFF34d399),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFfbbf24),
+              foregroundColor: Colors.black,
+            ),
+            child: const Text('Ripristina'),
+          ),
+        ],
       ),
     );
   }
