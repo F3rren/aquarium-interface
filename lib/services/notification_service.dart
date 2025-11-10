@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:acquariumfe/constants/notification_texts.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -11,19 +12,6 @@ class NotificationService {
 
   final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
-
-  // Emoji per ogni tipo di parametro
-  static const Map<String, String> _parameterEmojis = {
-    'Temperatura': '🌡️',
-    'pH': '💧',
-    'Salinità': '🌊',
-    'ORP': '⚡',
-    'Calcio': '🦴',
-    'Magnesio': '🧪',
-    'KH': '📊',
-    'Nitrati': '🔬',
-    'Fosfati': '⚗️',
-  };
 
   /// Inizializza il servizio notifiche
   Future<void> initialize() async {
@@ -116,32 +104,17 @@ class NotificationService {
     required String unit,
   }) async {
     // Determina se il valore è troppo basso o troppo alto
-    String alertType;
-    String directionEmoji;
-    String recommendation;
+    final bool isHigh = currentValue > maxValue;
     
-    if (currentValue < minValue) {
-      alertType = 'TROPPO BASSO';
-      directionEmoji = '⬇️';
-      recommendation = 'Aumentare a ${((minValue + maxValue) / 2).toStringAsFixed(1)}$unit';
-    } else if (currentValue > maxValue) {
-      alertType = 'TROPPO ALTO';
-      directionEmoji = '⬆️';
-      recommendation = 'Ridurre a ${((minValue + maxValue) / 2).toStringAsFixed(1)}$unit';
-    } else {
-      // Valore nel range (non dovrebbe succedere)
-      alertType = 'NEL RANGE';
-      directionEmoji = '✅';
-      recommendation = 'Tutto ok';
-    }
-    
-    // Emoji specifico per il parametro
-    final parameterEmoji = _parameterEmojis[parameterName] ?? '📊';
+    // Usa i testi centralizzati
+    final alertTitle = NotificationTexts.getTitle(parameterName);
+    final alertMessage = NotificationTexts.getMessage(parameterName, isHigh);
+    final suggestion = NotificationTexts.getSuggestion(parameterName, isHigh);
     
     await showNotification(
       id: parameterName.hashCode,
-      title: '$parameterEmoji $parameterName $directionEmoji $alertType',
-      body: 'Attuale: $currentValue$unit | Range: $minValue-$maxValue$unit\n💡 $recommendation',
+      title: alertTitle,
+      body: '$alertMessage\n$suggestion',
       payload: 'parameter_$parameterName',
       priority: NotificationPriority.max,
     );
@@ -259,7 +232,7 @@ class NotificationService {
   Future<void> showTestNotification() async {
     await showNotification(
       id: 999,
-      title: '🧪 Test Notifica',
+      title: 'Test Notifica',
       body: 'Questa è una notifica di test dal sistema AcquariumFE',
       payload: 'test',
     );

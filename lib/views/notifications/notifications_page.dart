@@ -3,6 +3,7 @@ import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/notification_service.dart';
 import 'package:acquariumfe/services/notification_preferences_service.dart';
+import 'package:acquariumfe/constants/notification_texts.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -53,7 +54,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('✅ Impostazioni salvate con successo'),
+          content: Text('Impostazioni salvate con successo'),
           duration: Duration(seconds: 2),
         ),
       );
@@ -771,7 +772,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('✅ Notifica inviata! Controlla la barra notifiche'),
+                          content: Text('Notifica inviata! Controlla la barra notifiche'),
                           duration: Duration(seconds: 3),
                         ),
                       );
@@ -853,7 +854,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                       );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('🌡️ Alert: Temperatura TROPPO ALTA!')),
+                          SnackBar(content: Text(NotificationTexts.getTitle('Temperatura'))),
                         );
                         setState(() {});
                       }
@@ -872,7 +873,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                       );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('💧 Alert: pH TROPPO ALTO!')),
+                          SnackBar(content: Text(NotificationTexts.getTitle('pH'))),
                         );
                         setState(() {});
                       }
@@ -891,7 +892,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                       );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('🔬 Alert: Nitrati TROPPO ALTI!')),
+                          SnackBar(content: Text(NotificationTexts.getTitle('Nitrati'))),
                         );
                         setState(() {});
                       }
@@ -929,7 +930,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                       );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('🌡️ Alert: Temperatura TROPPO BASSA!')),
+                          SnackBar(content: Text(NotificationTexts.getTitle('Temperatura'))),
                         );
                         setState(() {});
                       }
@@ -948,7 +949,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                       );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('💧 Alert: pH TROPPO BASSO!')),
+                          SnackBar(content: Text(NotificationTexts.getTitle('pH'))),
                         );
                         setState(() {});
                       }
@@ -967,7 +968,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                       );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('🦴 Alert: Calcio TROPPO BASSO!')),
+                          SnackBar(content: Text(NotificationTexts.getTitle('Calcio'))),
                         );
                         setState(() {});
                       }
@@ -1162,14 +1163,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
               if (newMin == null || newMax == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('⚠️ Inserisci valori numerici validi')),
+                  const SnackBar(content: Text('Inserisci valori numerici validi')),
                 );
                 return;
               }
 
               if (newMin >= newMax) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('⚠️ Il minimo deve essere inferiore al massimo')),
+                  const SnackBar(content: Text('Il minimo deve essere inferiore al massimo')),
                 );
                 return;
               }
@@ -1184,7 +1185,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               await _saveSettings();
               
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('✅ Soglie $name aggiornate: $newMin-$newMax$unit')),
+                SnackBar(content: Text('Soglie $name aggiornate: $newMin-$newMax$unit')),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -1363,7 +1364,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             SizedBox(height: 16),
             Text('• Temperatura: 24-26°C', style: TextStyle(color: Colors.white60, fontSize: 12)),
             Text('• pH: 8.0-8.4', style: TextStyle(color: Colors.white60, fontSize: 12)),
-            Text('• Salinità: 1.023-1.025', style: TextStyle(color: Colors.white60, fontSize: 12)),
+            Text('• Salinità: 1020-1028', style: TextStyle(color: Colors.white60, fontSize: 12)),
             Text('• E tutti gli altri parametri...', style: TextStyle(color: Colors.white60, fontSize: 12)),
             SizedBox(height: 16),
             Text(
@@ -1388,7 +1389,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('🔄 Impostazioni ripristinate ai valori predefiniti'),
+                  content: Text('Impostazioni ripristinate ai valori predefiniti'),
                   backgroundColor: Color(0xFF34d399),
                 ),
               );

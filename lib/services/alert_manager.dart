@@ -1,5 +1,6 @@
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/services/notification_service.dart';
+import 'package:acquariumfe/constants/notification_texts.dart';
 
 class AlertManager {
   static final AlertManager _instance = AlertManager._internal();
@@ -33,6 +34,9 @@ class AlertManager {
     if (!_settings.enabledAlerts || !thresholds.enabled) return;
 
     if (thresholds.isOutOfRange(value)) {
+      // Determina se è alto o basso
+      final bool isHigh = value > thresholds.max;
+      
       // Invia notifica con indicazione se troppo basso o alto
       await _notificationService.showParameterAlert(
         parameterName: name,
@@ -42,20 +46,16 @@ class AlertManager {
         unit: unit,
       );
 
-      // Determina messaggio specifico per lo storico
-      String alertMessage;
-      if (value < thresholds.min) {
-        alertMessage = 'Valore TROPPO BASSO: $value$unit (minimo: ${thresholds.min}$unit)';
-      } else {
-        alertMessage = 'Valore TROPPO ALTO: $value$unit (massimo: ${thresholds.max}$unit)';
-      }
+      // Usa i testi centralizzati
+      final alertMessage = NotificationTexts.getMessage(name, isHigh);
+      final alertTitle = NotificationTexts.getTitle(name);
 
       // Registra nell'alert history
       _addToHistory(AlertLog(
         timestamp: DateTime.now(),
         type: AlertType.parameter,
-        title: 'Alert: $name',
-        message: alertMessage,
+        title: alertTitle,
+        message: '$alertMessage: $value$unit (range: ${thresholds.min}-${thresholds.max}$unit)',
         severity: _calculateSeverity(value, thresholds),
       ));
     }
@@ -171,8 +171,8 @@ class AlertManager {
       final nextDate = DateTime.now().add(Duration(days: reminders.waterChange.frequencyDays));
       await _notificationService.scheduleMaintenanceNotification(
         id: 1000,
-        title: '💧 Promemoria: Cambio Acqua',
-        body: 'È tempo di cambiare l\'acqua dell\'acquario',
+        title: NotificationTexts.waterChangeTitle,
+        body: NotificationTexts.waterChangeBody,
         scheduledDate: DateTime(
           nextDate.year,
           nextDate.month,
@@ -189,8 +189,8 @@ class AlertManager {
       final nextDate = DateTime.now().add(Duration(days: reminders.filterCleaning.frequencyDays));
       await _notificationService.scheduleMaintenanceNotification(
         id: 1001,
-        title: '🔧 Promemoria: Pulizia Filtro',
-        body: 'Controlla e pulisci il filtro dell\'acquario',
+        title: NotificationTexts.filterCleaningTitle,
+        body: NotificationTexts.filterCleaningBody,
         scheduledDate: DateTime(
           nextDate.year,
           nextDate.month,
@@ -207,8 +207,8 @@ class AlertManager {
       final nextDate = DateTime.now().add(Duration(days: reminders.parameterTesting.frequencyDays));
       await _notificationService.scheduleMaintenanceNotification(
         id: 1002,
-        title: '🧪 Promemoria: Test Parametri',
-        body: 'Esegui i test dei parametri dell\'acqua',
+        title: NotificationTexts.parameterTestingTitle,
+        body: NotificationTexts.parameterTestingBody,
         scheduledDate: DateTime(
           nextDate.year,
           nextDate.month,
@@ -225,8 +225,8 @@ class AlertManager {
       final nextDate = DateTime.now().add(Duration(days: reminders.lightMaintenance.frequencyDays));
       await _notificationService.scheduleMaintenanceNotification(
         id: 1003,
-        title: '💡 Promemoria: Manutenzione Luci',
-        body: 'Controlla e pulisci le luci dell\'acquario',
+        title: NotificationTexts.lightMaintenanceTitle,
+        body: NotificationTexts.lightMaintenanceBody,
         scheduledDate: DateTime(
           nextDate.year,
           nextDate.month,
