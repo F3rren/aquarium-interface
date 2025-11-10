@@ -49,6 +49,12 @@ dependencies:
   
   # Persistent storage for user preferences
   shared_preferences: ^2.3.3
+  
+  # HTTP client for API calls
+  http: ^1.2.2
+  
+  # JSON serialization
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:

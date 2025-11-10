@@ -1,13 +1,16 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:acquariumfe/services/target_parameters_service.dart';
 
 class PhMeter extends StatelessWidget {
   final double currentPh;
   final double? targetPh;
+  final VoidCallback? onTargetChanged;
 
   const PhMeter({
     super.key,
     this.currentPh = 8.2,
     this.targetPh,
+    this.onTargetChanged,
   });
 
   Color _getPhColor() {
@@ -27,51 +30,59 @@ class PhMeter extends StatelessWidget {
     final color = _getPhColor();
     final status = _getStatus();
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: () => _showEditTargetDialog(context),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: const Color(0xFF3a3a3a),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(Icons.water_drop, color: color, size: 28),
                 ),
-                child: Icon(Icons.water_drop, color: color, size: 28),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('pH', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 2),
-                    Text(status, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w500)),
-                  ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Text('pH', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                          const SizedBox(width: 6),
+                          Icon(Icons.edit_outlined, size: 14, color: Colors.white.withValues(alpha: 0.4)),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(status, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w500)),
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: color.withValues(alpha: 0.4)),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: color.withValues(alpha: 0.4)),
+                  ),
+                  child: Text(
+                    currentPh.toStringAsFixed(2),
+                    style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
-                child: Text(
-                  currentPh.toStringAsFixed(2),
-                  style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
+              ],
+            ),
           if (targetPh != null) ...[
             const SizedBox(height: 16),
             Container(
@@ -102,7 +113,85 @@ class PhMeter extends StatelessWidget {
           _buildProgressBar(color),
         ],
       ),
+    ),
     );
+  }
+
+  void _showEditTargetDialog(BuildContext context) async {
+    final controller = TextEditingController(
+      text: targetPh?.toStringAsFixed(2) ?? TargetParametersService.defaultPh.toStringAsFixed(2),
+    );
+
+    final result = await showDialog<double>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF2d2d2d),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.water_drop, color: Color(0xFF60a5fa)),
+            SizedBox(width: 12),
+            Text('Target pH', style: TextStyle(color: Colors.white)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Imposta il valore pH desiderato:',
+              style: TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              autofocus: true,
+              style: const TextStyle(color: Colors.white, fontSize: 18),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color(0xFF3a3a3a),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                hintText: '8.2',
+                hintStyle: const TextStyle(color: Colors.white30),
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Range tipico: 8.0-8.4',
+              style: TextStyle(color: Colors.white38, fontSize: 12),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annulla', style: TextStyle(color: Colors.white60)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final value = double.tryParse(controller.text);
+              if (value != null) {
+                Navigator.pop(context, value);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF60a5fa),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text('Salva', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null) {
+      await TargetParametersService().saveTarget('ph', result);
+      onTargetChanged?.call();
+    }
   }
 
   Widget _buildProgressBar(Color color) {

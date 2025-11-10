@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:acquariumfe/services/parameter_history_service.dart';
+import 'package:acquariumfe/services/chart_data_service.dart';
 import 'package:acquariumfe/models/parameter_data_point.dart';
 
 class ChartsView extends StatefulWidget {
@@ -11,9 +12,46 @@ class ChartsView extends StatefulWidget {
 }
 
 class _ChartsViewState extends State<ChartsView> {
-  final ParameterHistoryService _historyService = ParameterHistoryService();
+  final ChartDataService _chartService = ChartDataService();
+  Timer? _refreshTimer;
   int _selectedHours = 24;
   String _selectedParameter = 'Temperatura';
+  List<ParameterDataPoint> _chartData = [];
+  Map<String, double> _stats = {};
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadChartData();
+    // Auto-refresh ogni 30 secondi
+    _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      _loadChartData();
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadChartData() async {
+    setState(() => _isLoading = true);
+    
+    final data = await _chartService.loadHistoricalData(
+      parameter: _selectedParameter,
+      hours: _selectedHours,
+    );
+    
+    final stats = _chartService.calculateStats(data);
+    
+    setState(() {
+      _chartData = data;
+      _stats = stats;
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +105,16 @@ class _ChartsViewState extends State<ChartsView> {
   }
 
   Widget _buildHistoryChart() {
-    final history = _historyService.getAllParametersHistory(hours: _selectedHours);
-    final selectedData = history[_selectedParameter] ?? [];
-    final stats = _historyService.calculateStats(selectedData);
+    if (_isLoading) {
+      return Container(
+        padding: const EdgeInsets.all(60),
+        decoration: BoxDecoration(
+          color: const Color(0xFF3a3a3a),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -96,7 +141,7 @@ class _ChartsViewState extends State<ChartsView> {
                       style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '${stats.trend.emoji} ${stats.trend.label} • ${stats.dataPoints} punti',
+                      '${_chartData.length} punti dati',
                       style: TextStyle(color: _getParameterColor(_selectedParameter).withValues(alpha: 0.8), fontSize: 12),
                     ),
                   ],
@@ -108,12 +153,15 @@ class _ChartsViewState extends State<ChartsView> {
           const SizedBox(height: 16),
 
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildStatChip('Min', stats.min.toString(), Colors.blue),
-              _buildStatChip('Avg', stats.average.toString(), Colors.green),
-              _buildStatChip('Max', stats.max.toString(), Colors.red),
-              _buildStatChip('Now', stats.current.toString(), _getParameterColor(_selectedParameter)),
+              Flexible(child: _buildStatChip('Min', _stats['min']?.toStringAsFixed(1) ?? '-', Colors.blue)),
+              const SizedBox(width: 4),
+              Flexible(child: _buildStatChip('Avg', _stats['avg']?.toStringAsFixed(1) ?? '-', Colors.green)),
+              const SizedBox(width: 4),
+              Flexible(child: _buildStatChip('Max', _stats['max']?.toStringAsFixed(1) ?? '-', Colors.red)),
+              const SizedBox(width: 4),
+              Flexible(child: _buildStatChip('Now', _stats['current']?.toStringAsFixed(1) ?? '-', _getParameterColor(_selectedParameter))),
             ],
           ),
 
@@ -121,9 +169,9 @@ class _ChartsViewState extends State<ChartsView> {
 
           SizedBox(
             height: 200,
-            child: selectedData.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : LineChart(_buildLineChartData(selectedData)),
+            child: _chartData.isEmpty
+                ? const Center(child: Text('Nessun dato disponibile', style: TextStyle(color: Colors.white60)))
+                : LineChart(_buildLineChartData(_chartData)),
           ),
 
           const SizedBox(height: 16),
@@ -162,18 +210,18 @@ class _ChartsViewState extends State<ChartsView> {
   Widget _buildStatChip(String label, String value, Color color) {
     return Column(
       children: [
-        Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 11)),
+        Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10)),
         const SizedBox(height: 4),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(color: color.withValues(alpha: 0.4)),
           ),
           child: Text(
             value,
-            style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.bold),
+            style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold),
           ),
         ),
       ],
@@ -183,10 +231,10 @@ class _ChartsViewState extends State<ChartsView> {
   Widget _buildPeriodButton(String label, int hours) {
     final isSelected = _selectedHours == hours;
     return GestureDetector(
-      onTap: () => setState(() {
-        _selectedHours = hours;
-        _historyService.clearCache();
-      }),
+      onTap: () {
+        setState(() => _selectedHours = hours);
+        _loadChartData();
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
@@ -213,7 +261,10 @@ class _ChartsViewState extends State<ChartsView> {
   Widget _buildParameterChip(String name, IconData icon, Color color) {
     final isSelected = _selectedParameter == name;
     return GestureDetector(
-      onTap: () => setState(() => _selectedParameter = name),
+      onTap: () {
+        setState(() => _selectedParameter = name);
+        _loadChartData();
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
@@ -241,6 +292,17 @@ class _ChartsViewState extends State<ChartsView> {
   }
 
   LineChartData _buildLineChartData(List<ParameterDataPoint> data) {
+    // Se non ci sono dati, crea un grafico vuoto
+    if (data.isEmpty) {
+      return LineChartData(
+        lineBarsData: [],
+        minY: 0,
+        maxY: 10,
+        minX: 0,
+        maxX: 1,
+      );
+    }
+
     final spots = data.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.value);
     }).toList();
@@ -261,8 +323,9 @@ class _ChartsViewState extends State<ChartsView> {
             showTitles: true,
             reservedSize: 30,
             getTitlesWidget: (value, meta) {
-              if (value.toInt() >= data.length) return const SizedBox();
-              if (value.toInt() % (data.length ~/ 6) != 0) return const SizedBox();
+              if (data.isEmpty || value.toInt() >= data.length) return const SizedBox();
+              final interval = data.length > 6 ? (data.length ~/ 6) : 1;
+              if (value.toInt() % interval != 0) return const SizedBox();
               final point = data[value.toInt()];
               return Padding(
                 padding: const EdgeInsets.only(top: 8),

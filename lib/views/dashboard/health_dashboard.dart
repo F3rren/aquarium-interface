@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
-import 'package:acquariumfe/services/mock_data_service.dart';
+import 'package:acquariumfe/services/parameter_service.dart';
+import 'package:acquariumfe/models/aquarium_parameters.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 
 class HealthDashboard extends StatefulWidget {
@@ -12,15 +14,50 @@ class HealthDashboard extends StatefulWidget {
 
 class _HealthDashboardState extends State<HealthDashboard> {
   final AlertManager _alertManager = AlertManager();
-  final MockDataService _mockService = MockDataService();
+  final ParameterService _parameterService = ParameterService();
+  Timer? _refreshTimer;
+  AquariumParameters? _currentParams;
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadParameters();
+    // Avvia auto-refresh se non già attivo
+    if (!_parameterService.isAutoRefreshEnabled) {
+      _parameterService.startAutoRefresh(interval: const Duration(seconds: 10));
+    }
+    // Auto-refresh UI ogni 3 secondi
+    _refreshTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      _loadParameters();
+    });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadParameters() async {
+    final params = await _parameterService.getCurrentParameters(useMock: false);
+    setState(() {
+      _currentParams = params;
+    });
+  }
   
   @override
   Widget build(BuildContext context) {
-    final mockParams = _mockService.getCurrentParameters();
-    final currentTemperature = mockParams['temperature']!;
-    final currentPh = mockParams['ph']!;
-    final currentSalinity = mockParams['salinity']!;
-    final currentOrp = mockParams['orp']!;
+    // Usa dati di fallback se non ancora caricati
+    final currentTemperature = _currentParams?.temperature ?? 25.0;
+    final currentPh = _currentParams?.ph ?? 8.2;
+    final currentSalinity = _currentParams?.salinity ?? 1.024;
+    final currentOrp = _currentParams?.orp ?? 350.0;
+    final calcium = _currentParams?.calcium ?? 420.0;
+    final magnesium = _currentParams?.magnesium ?? 1280.0;
+    final kh = _currentParams?.kh ?? 9.0;
+    final nitrate = _currentParams?.nitrate ?? 5.0;
+    final phosphate = _currentParams?.phosphate ?? 0.03;
+    
     final alerts = _alertManager.getAlertHistory();
     final recentAlerts = alerts.take(3).toList();
     
@@ -33,11 +70,11 @@ class _HealthDashboardState extends State<HealthDashboard> {
     if (!settings.ph.isOutOfRange(currentPh)) parametersInRange++;
     if (!settings.salinity.isOutOfRange(currentSalinity)) parametersInRange++;
     if (!settings.orp.isOutOfRange(currentOrp)) parametersInRange++;
-    if (!settings.calcium.isOutOfRange(mockParams['calcium']!)) parametersInRange++;
-    if (!settings.magnesium.isOutOfRange(mockParams['magnesium']!)) parametersInRange++;
-    if (!settings.kh.isOutOfRange(mockParams['kh']!)) parametersInRange++;
-    if (!settings.nitrate.isOutOfRange(mockParams['nitrate']!)) parametersInRange++;
-    if (!settings.phosphate.isOutOfRange(mockParams['phosphate']!)) parametersInRange++;
+    if (!settings.calcium.isOutOfRange(calcium)) parametersInRange++;
+    if (!settings.magnesium.isOutOfRange(magnesium)) parametersInRange++;
+    if (!settings.kh.isOutOfRange(kh)) parametersInRange++;
+    if (!settings.nitrate.isOutOfRange(nitrate)) parametersInRange++;
+    if (!settings.phosphate.isOutOfRange(phosphate)) parametersInRange++;
     
     final healthScore = ((parametersInRange / totalParameters) * 100).round();
     final statusMessage = healthScore >= 80 ? "TUTTO OK" : healthScore >= 60 ? "ATTENZIONE" : "CRITICO";
@@ -101,8 +138,8 @@ class _HealthDashboardState extends State<HealthDashboard> {
               Expanded(child: _buildParamCard('Salinità', currentSalinity.toString(), Icons.water_outlined, 
                 const Color(0xFF2dd4bf), settings.salinity.isOutOfRange(currentSalinity))),
               const SizedBox(width: 12),
-              Expanded(child: _buildParamCard('ORP', '${mockParams['orp']!.toInt()} mV', Icons.bolt, 
-                const Color(0xFFfbbf24), settings.orp.isOutOfRange(mockParams['orp']!))),
+              Expanded(child: _buildParamCard('ORP', '${currentOrp.toInt()} mV', Icons.bolt, 
+                const Color(0xFFfbbf24), settings.orp.isOutOfRange(currentOrp))),
             ],
           ),
           

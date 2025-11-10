@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:acquariumfe/services/manual_parameters_service.dart';
 
 class ManualParametersWidget extends StatefulWidget {
   const ManualParametersWidget({super.key});
@@ -8,11 +9,64 @@ class ManualParametersWidget extends StatefulWidget {
 }
 
 class _ManualParametersWidgetState extends State<ManualParametersWidget> {
+  final ManualParametersService _manualService = ManualParametersService();
+  
   double calcium = 420.0;
   double magnesium = 1300.0;
   double kh = 8.0;
   double nitrates = 2.0;
   double phosphates = 0.02;
+  DateTime? lastUpdate;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadParameters();
+  }
+
+  Future<void> _loadParameters() async {
+    final params = await _manualService.loadManualParameters();
+    final update = await _manualService.getLastUpdate();
+    
+    setState(() {
+      calcium = params['calcium'] ?? 420.0;
+      magnesium = params['magnesium'] ?? 1300.0;
+      kh = params['kh'] ?? 8.0;
+      nitrates = params['nitrate'] ?? 2.0;
+      phosphates = params['phosphate'] ?? 0.02;
+      lastUpdate = update;
+    });
+  }
+
+  Future<void> _saveParameter(String name, double value) async {
+    String key = '';
+    
+    // Estrai il nome base (rimuovi le parti tra parentesi)
+    final baseName = name.split('(').first.trim();
+    
+    switch (baseName) {
+      case 'Calcio':
+        key = 'calcium';
+        break;
+      case 'Magnesio':
+        key = 'magnesium';
+        break;
+      case 'KH':
+        key = 'kh';
+        break;
+      case 'Nitrati':
+        key = 'nitrate';
+        break;
+      case 'Fosfati':
+        key = 'phosphate';
+        break;
+    }
+    
+    if (key.isNotEmpty) {
+      await _manualService.updateParameter(key, value);
+      await _loadParameters(); // Ricarica per aggiornare lastUpdate
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +144,11 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
             ),
           ),
           GestureDetector(
-            onTap: () => _showEditDialog(name, value, unit, onChanged),
+            onTap: () => _showEditDialog(name, value, unit, (newValue) async {
+              // Salva in SharedPreferences
+              await _saveParameter(name, newValue);
+              onChanged(newValue);
+            }),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(

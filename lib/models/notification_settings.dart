@@ -33,7 +33,7 @@ class NotificationSettings {
     MaintenanceReminders? maintenanceReminders,
   })  : temperature = temperature ?? ParameterThresholds(min: 24.0, max: 26.0),
         ph = ph ?? ParameterThresholds(min: 8.0, max: 8.4),
-        salinity = salinity ?? ParameterThresholds(min: 1.023, max: 1.025),
+        salinity = salinity ?? ParameterThresholds(min: 1020.0, max: 1028.0),
         orp = orp ?? ParameterThresholds(min: 300.0, max: 400.0),
         calcium = calcium ?? ParameterThresholds(min: 400.0, max: 450.0),
         magnesium = magnesium ?? ParameterThresholds(min: 1250.0, max: 1350.0),

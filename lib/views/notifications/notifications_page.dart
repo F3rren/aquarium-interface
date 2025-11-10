@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
-import 'package:acquariumfe/services/mock_data_service.dart';
 import 'package:acquariumfe/services/notification_service.dart';
 import 'package:acquariumfe/services/notification_preferences_service.dart';
 
@@ -15,7 +14,6 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> with TickerProviderStateMixin {
   late TabController _tabController;
   final AlertManager _alertManager = AlertManager();
-  final MockDataService _mockService = MockDataService();
   final NotificationPreferencesService _prefsService = NotificationPreferencesService();
   NotificationSettings _settings = NotificationSettings();
   
@@ -847,8 +845,12 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                     Icons.thermostat,
                     const Color(0xFFef4444),
                     () async {
-                      _mockService.simulateOutOfRangeParameter('temperature');
-                      await _mockService.checkSingleParameter('temperature');
+                      await _alertManager.checkParameter(
+                        name: 'Temperatura',
+                        value: 30.0, // Valore fuori range
+                        unit: '°C',
+                        thresholds: _settings.temperature,
+                      );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('🌡️ Alert: Temperatura TROPPO ALTA!')),
@@ -862,8 +864,12 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                     Icons.water_drop,
                     const Color(0xFFef4444),
                     () async {
-                      _mockService.simulateOutOfRangeParameter('ph');
-                      await _mockService.checkSingleParameter('ph');
+                      await _alertManager.checkParameter(
+                        name: 'pH',
+                        value: 9.0, // Valore fuori range
+                        unit: '',
+                        thresholds: _settings.ph,
+                      );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('💧 Alert: pH TROPPO ALTO!')),
@@ -877,8 +883,12 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                     Icons.science,
                     const Color(0xFFef4444),
                     () async {
-                      _mockService.simulateOutOfRangeParameter('nitrate');
-                      await _mockService.checkSingleParameter('nitrate');
+                      await _alertManager.checkParameter(
+                        name: 'Nitrati',
+                        value: 15.0, // Valore fuori range
+                        unit: ' ppm',
+                        thresholds: _settings.nitrate,
+                      );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('🔬 Alert: Nitrati TROPPO ALTI!')),
@@ -911,8 +921,12 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                     Icons.thermostat,
                     const Color(0xFF60a5fa),
                     () async {
-                      _mockService.simulateLowParameter('temperature');
-                      await _mockService.checkSingleParameter('temperature');
+                      await _alertManager.checkParameter(
+                        name: 'Temperatura',
+                        value: 20.0, // Valore fuori range (basso)
+                        unit: '°C',
+                        thresholds: _settings.temperature,
+                      );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('🌡️ Alert: Temperatura TROPPO BASSA!')),
@@ -926,8 +940,12 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                     Icons.water_drop,
                     const Color(0xFF60a5fa),
                     () async {
-                      _mockService.simulateLowParameter('ph');
-                      await _mockService.checkSingleParameter('ph');
+                      await _alertManager.checkParameter(
+                        name: 'pH',
+                        value: 7.0, // Valore fuori range (basso)
+                        unit: '',
+                        thresholds: _settings.ph,
+                      );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('💧 Alert: pH TROPPO BASSO!')),
@@ -941,8 +959,12 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                     Icons.science,
                     const Color(0xFF60a5fa),
                     () async {
-                      _mockService.simulateLowParameter('calcium');
-                      await _mockService.checkSingleParameter('calcium');
+                      await _alertManager.checkParameter(
+                        name: 'Calcio',
+                        value: 350.0, // Valore fuori range (basso)
+                        unit: ' mg/L',
+                        thresholds: _settings.calcium,
+                      );
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('🦴 Alert: Calcio TROPPO BASSO!')),
@@ -994,7 +1016,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () async {
-                    await _mockService.testMaintenanceNotification();
+                    await _alertManager.scheduleMaintenanceReminders();
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -1021,97 +1043,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         
         const SizedBox(height: 16),
         
-        // Sezione Monitoraggio Automatico
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF3a3a3a),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    _mockService.isMonitoring ? Icons.play_circle : Icons.pause_circle,
-                    color: _mockService.isMonitoring ? const Color(0xFF34d399) : Colors.white60,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Monitoraggio Automatico',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                _mockService.isMonitoring 
-                    ? 'Il monitoraggio è attivo. I parametri vengono controllati ogni 30 secondi.'
-                    : 'Avvia il monitoraggio automatico per simulare il controllo continuo dei parametri.',
-                style: const TextStyle(color: Colors.white60, fontSize: 13),
-              ),
-              const SizedBox(height: 16),
-              
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      if (_mockService.isMonitoring) {
-                        _mockService.stopAutoMonitoring();
-                      } else {
-                        _mockService.startAutoMonitoring();
-                      }
-                    });
-                  },
-                  icon: Icon(_mockService.isMonitoring ? Icons.stop : Icons.play_arrow),
-                  label: Text(_mockService.isMonitoring ? 'Ferma Monitoraggio' : 'Avvia Monitoraggio'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _mockService.isMonitoring 
-                        ? const Color(0xFFef4444) 
-                        : const Color(0xFF60a5fa),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        
-        const SizedBox(height: 16),
-        
-        // Reset parametri
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: () {
-              _mockService.resetToOptimalValues();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Parametri resettati ai valori ottimali')),
-              );
-            },
-            icon: const Icon(Icons.refresh),
-            label: const Text('Reset Parametri Ottimali'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.white60,
-              side: const BorderSide(color: Colors.white24),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
