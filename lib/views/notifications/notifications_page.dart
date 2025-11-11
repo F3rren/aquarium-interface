@@ -61,19 +61,21 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF2d2d2d),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Notifiche', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-        backgroundColor: const Color(0xFF3a3a3a),
-        foregroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: const Color(0xFF60a5fa),
-          labelColor: const Color(0xFF60a5fa),
-          unselectedLabelColor: Colors.white60,
+          indicatorColor: theme.colorScheme.primary,
+          labelColor: theme.colorScheme.primary,
+          unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
           tabs: const [
             Tab(text: 'Impostazioni'),
             Tab(text: 'Soglie'),
@@ -97,6 +99,8 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
   // TAB 1: IMPOSTAZIONI GENERALI
   Widget _buildSettingsTab() {
+    final theme = Theme.of(context);
+    
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -253,7 +257,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               await _saveSettings(); // Salva persistenza
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF60a5fa),
+              backgroundColor: theme.colorScheme.primary,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -337,6 +341,8 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   }
 
   Widget _buildEmptyState() {
+    final theme = Theme.of(context);
+    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -344,20 +350,20 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: const Color(0xFF3a3a3a),
+              color: theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Icon(Icons.notifications_off, color: Colors.white24, size: 64),
+            child: Icon(Icons.notifications_off, color: theme.colorScheme.onSurface.withValues(alpha: 0.3), size: 64),
           ),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             'Nessun Alert',
-            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Gli alert appariranno qui',
-            style: TextStyle(color: Colors.white60, fontSize: 14),
+            style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
           ),
         ],
       ),
@@ -365,10 +371,12 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   }
 
   Widget _buildHeader({required IconData icon, required String title, required String subtitle}) {
+    final theme = Theme.of(context);
+    
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFF4a4a4a), Color(0xFF3a3a3a)]),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -376,19 +384,19 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF60a5fa).withValues(alpha:0.2),
+              color: theme.colorScheme.primary.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: const Color(0xFF60a5fa), size: 32),
+            child: Icon(icon, color: theme.colorScheme.primary, size: 32),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(title, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text(subtitle, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                Text(subtitle, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
               ],
             ),
           ),
@@ -398,9 +406,11 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   }
 
   Widget _buildSectionTitle(String title) {
+    final theme = Theme.of(context);
+    
     return Text(
       title,
-      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold),
     );
   }
 
@@ -412,12 +422,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
+    final theme = Theme.of(context);
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha:0.1)),
+        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha:0.1)),
       ),
       child: Row(
         children: [
@@ -434,9 +446,9 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600)),
+                Text(title, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
-                Text(subtitle, style: const TextStyle(color: Colors.white60, fontSize: 12)),
+                Text(subtitle, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
               ],
             ),
           ),
@@ -458,12 +470,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     required ValueChanged<bool> onToggle,
     required ValueChanged<int> onFrequencyChanged,
   }) {
+    final theme = Theme.of(context);
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha:0.1)),
+        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha:0.1)),
       ),
       child: Column(
         children: [
@@ -479,7 +493,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600)),
+                child: Text(title, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15, fontWeight: FontWeight.w600)),
               ),
               Switch(
                 value: schedule.enabled,
@@ -492,7 +506,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             const SizedBox(height: 16),
             Row(
               children: [
-                const Text('Ogni', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                Text('Ogni', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Slider(
@@ -515,14 +529,16 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   }
 
   Widget _buildThresholdCard(String name, String unit, ParameterThresholds thresholds, IconData icon, Color color) {
+    final theme = Theme.of(context);
+    
     return GestureDetector(
       onTap: () => _showEditThresholdDialog(name, unit, thresholds, color),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFF3a3a3a),
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha:0.1)),
+          border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha:0.1)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -531,9 +547,9 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               children: [
                 Icon(icon, color: color, size: 24),
                 const SizedBox(width: 12),
-                Text(name, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+                Text(name, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600)),
                 const Spacer(),
-                const Icon(Icons.edit, color: Colors.white60, size: 18),
+                Icon(Icons.edit, color: theme.colorScheme.onSurfaceVariant, size: 18),
                 const SizedBox(width: 4),
                 Text('${thresholds.min} - ${thresholds.max}$unit', style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w600)),
               ],
@@ -545,9 +561,9 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Min', style: TextStyle(color: Colors.white60, fontSize: 11)),
+                      Text('Min', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
                       const SizedBox(height: 4),
-                      Text('${thresholds.min}$unit', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                      Text('${thresholds.min}$unit', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
@@ -555,9 +571,9 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const Text('Max', style: TextStyle(color: Colors.white60, fontSize: 11)),
+                      Text('Max', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
                       const SizedBox(height: 4),
-                      Text('${thresholds.max}$unit', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                      Text('${thresholds.max}$unit', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
@@ -579,7 +595,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 Text(
                   thresholds.enabled ? 'Notifiche Attive' : 'Notifiche Disattivate',
                   style: TextStyle(
-                    color: thresholds.enabled ? color : Colors.white38,
+                    color: thresholds.enabled ? color : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     fontSize: 12,
                   ),
                 ),
@@ -592,6 +608,8 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   }
 
   Widget _buildAlertCard(AlertLog alert) {
+    final theme = Theme.of(context);
+    
     Color severityColor;
     IconData severityIcon;
 
@@ -656,7 +674,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: severityColor.withValues(alpha:0.3)),
       ),
@@ -680,7 +698,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                     Expanded(
                       child: Text(
                         alert.title,
-                        style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                        style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600),
                       ),
                     ),
                     if (directionIndicator != null) ...[
@@ -690,11 +708,11 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(alert.message, style: const TextStyle(color: Colors.white60, fontSize: 12)),
+                Text(alert.message, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
                 const SizedBox(height: 6),
                 Text(
                   _formatTimestamp(alert.timestamp),
-                  style: const TextStyle(color: Colors.white38, fontSize: 10),
+                  style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.3), fontSize: 10),
                 ),
               ],
             ),
@@ -718,13 +736,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
   // Dialog per modificare le soglie
   void _showEditThresholdDialog(String name, String unit, ParameterThresholds currentThresholds, Color color) {
+    final theme = Theme.of(context);
     final minController = TextEditingController(text: currentThresholds.min.toString());
     final maxController = TextEditingController(text: currentThresholds.max.toString());
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF3a3a3a),
+        backgroundColor: theme.colorScheme.surface,
         title: Row(
           children: [
             Icon(Icons.tune, color: color, size: 24),
@@ -732,7 +751,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             Expanded(
               child: Text(
                 'Modifica Soglie - $name',
-                style: const TextStyle(color: Colors.white, fontSize: 17),
+                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 17),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -744,14 +763,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             TextField(
               controller: minController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: theme.colorScheme.onSurface),
               decoration: InputDecoration(
                 labelText: 'Valore Minimo',
-                labelStyle: const TextStyle(color: Colors.white60),
+                labelStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                 suffixText: unit,
                 suffixStyle: TextStyle(color: color),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white.withValues(alpha:0.2)),
+                  borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha:0.2)),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -764,14 +783,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             TextField(
               controller: maxController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: theme.colorScheme.onSurface),
               decoration: InputDecoration(
                 labelText: 'Valore Massimo',
-                labelStyle: const TextStyle(color: Colors.white60),
+                labelStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                 suffixText: unit,
                 suffixStyle: TextStyle(color: color),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white.withValues(alpha:0.2)),
+                  borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha:0.2)),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -987,37 +1006,38 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
   /// Mostra dialog di conferma per ripristino valori predefiniti
   void _showResetDialog() {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF3a3a3a),
-        title: const Row(
+        backgroundColor: theme.colorScheme.surface,
+        title: Row(
           children: [
-            Icon(Icons.warning_amber, color: Color(0xFFfbbf24), size: 28),
-            SizedBox(width: 12),
+            const Icon(Icons.warning_amber, color: Color(0xFFfbbf24), size: 28),
+            const SizedBox(width: 12),
             //Text('Ripristinare Valori Predefiniti?', style: TextStyle(color: Colors.white, fontSize: 18)),
             Text(
                 'Ripristinare Predefiniti?',
-                style: TextStyle(color: Colors.white, fontSize: 17),
+                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 17),
                 overflow: TextOverflow.ellipsis,
               ),
           ],
         ),
-        content: const Column(
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Questa azione resetterà tutte le soglie personalizzate ai valori di default:',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
             ),
-            SizedBox(height: 16),
-            Text('• Temperatura: 24-26°C', style: TextStyle(color: Colors.white60, fontSize: 12)),
-            Text('• pH: 8.0-8.4', style: TextStyle(color: Colors.white60, fontSize: 12)),
-            Text('• Salinità: 1020-1028', style: TextStyle(color: Colors.white60, fontSize: 12)),
-            Text('• E tutti gli altri parametri...', style: TextStyle(color: Colors.white60, fontSize: 12)),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            Text('• Temperatura: 24-26°C', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+            Text('• pH: 8.0-8.4', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+            Text('• Salinità: 1020-1028', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+            Text('• E tutti gli altri parametri...', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+            const SizedBox(height: 16),
+            const Text(
               'Le modifiche verranno salvate immediatamente.',
               style: TextStyle(color: Color(0xFFfbbf24), fontSize: 12, fontWeight: FontWeight.bold),
             ),
@@ -1026,7 +1046,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla', style: TextStyle(color: Colors.white60)),
+            child: Text('Annulla', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
           ),
           ElevatedButton(
             onPressed: () async {

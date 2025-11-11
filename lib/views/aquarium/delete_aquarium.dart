@@ -52,10 +52,11 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
   }
 
   void _deleteAquarium(Map<String, dynamic> aquarium) {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: const Color(0xFF3a3a3a),
+        backgroundColor: theme.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -65,16 +66,16 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFef4444).withValues(alpha:0.2),
+                  color: theme.colorScheme.error.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(Icons.warning_rounded, color: Color(0xFFef4444), size: 48),
+                child: Icon(Icons.warning_rounded, color: theme.colorScheme.error, size: 48),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'Elimina Acquario',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: theme.colorScheme.onSurface,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
@@ -83,17 +84,17 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
               Text(
                 'Sei sicuro di voler eliminare "${aquarium['name']}"?',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white70,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 15,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Questa azione non può essere annullata.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Color(0xFFef4444),
+                  color: theme.colorScheme.error,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -107,8 +108,8 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                       child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white70,
-                          side: BorderSide(color: Colors.white.withValues(alpha:0.3)),
+                          foregroundColor: theme.colorScheme.onSurfaceVariant,
+                          side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha:0.3)),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text('Annulla', style: TextStyle(fontWeight: FontWeight.w600)),
@@ -128,20 +129,20 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                             SnackBar(
                               content: Row(
                                 children: [
-                                  const Icon(Icons.check_circle, color: Colors.white),
+                                  Icon(Icons.check_circle, color: theme.colorScheme.onSurface),
                                   const SizedBox(width: 12),
                                   Text('${aquarium['name']} eliminato'),
                                 ],
                               ),
-                              backgroundColor: const Color(0xFFef4444),
+                              backgroundColor: theme.colorScheme.error,
                               behavior: SnackBarBehavior.floating,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFef4444),
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.error,
+                          foregroundColor: theme.colorScheme.onError,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           elevation: 0,
                         ),
@@ -167,12 +168,14 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF2d2d2d),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Elimina Acquario', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-        backgroundColor: const Color(0xFF3a3a3a),
-        foregroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
         centerTitle: true,
       ),
@@ -188,20 +191,20 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF3a3a3a),
+                      color: theme.colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(Icons.check_circle, color: Color(0xFF34d399), size: 64),
+                    child: Icon(Icons.check_circle, color: theme.colorScheme.tertiary, size: 64),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Nessun Acquario',
-                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Non ci sono acquari da eliminare',
-                    style: TextStyle(color: Colors.white60, fontSize: 14),
+                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
                   ),
                 ],
               ),
@@ -212,9 +215,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF4a4a4a), Color(0xFF3a3a3a)],
-                    ),
+                    color: theme.colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -222,19 +223,19 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFef4444).withValues(alpha:0.2),
+                          color: theme.colorScheme.error.withValues(alpha:0.2),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: const Icon(Icons.delete, color: Color(0xFFef4444), size: 32),
+                        child: Icon(Icons.delete, color: theme.colorScheme.error, size: 32),
                       ),
                       const SizedBox(width: 16),
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Gestione Acquari', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                            SizedBox(height: 4),
-                            Text('Seleziona per eliminare', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                            Text('Gestione Acquari', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 4),
+                            Text('Seleziona per eliminare', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
                           ],
                         ),
                       ),
@@ -251,12 +252,14 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
   }
 
   Widget _buildAquariumCard(Map<String, dynamic> aquarium) {
+    final theme = Theme.of(context);
+    
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFef4444).withValues(alpha:0.3)),
+        border: Border.all(color: theme.colorScheme.error.withValues(alpha:0.3)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -270,12 +273,12 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFef4444).withValues(alpha:0.2),
+                    color: theme.colorScheme.error.withValues(alpha:0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     aquarium['type'] == 'Marino' ? Icons.water_drop : Icons.water,
-                    color: const Color(0xFFef4444),
+                    color: theme.colorScheme.error,
                     size: 24,
                   ),
                 ),
@@ -286,17 +289,17 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                     children: [
                       Text(
                         aquarium['name'],
-                        style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                        style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '${aquarium['volume']} L  ${aquarium['type']}',
-                        style: const TextStyle(color: Colors.white60, fontSize: 13),
+                        style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
                       ),
                     ],
                   ),
                 ),
-                const Icon(Icons.delete_outline, color: Color(0xFFef4444), size: 24),
+                Icon(Icons.delete_outline, color: theme.colorScheme.error, size: 24),
               ],
             ),
           ),

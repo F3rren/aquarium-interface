@@ -108,11 +108,13 @@ class _ParametersViewState extends State<ParametersView> {
   }
 
   Widget _buildHeader() {
+    final theme = Theme.of(context);
+    
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF4a4a4a), Color(0xFF3a3a3a)],
+        gradient: LinearGradient(
+          colors: [theme.colorScheme.surfaceContainerHighest, theme.colorScheme.surface],
         ),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -121,17 +123,17 @@ class _ParametersViewState extends State<ParametersView> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
+              color: theme.colorScheme.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(Icons.science, color: Color(0xFF60a5fa), size: 32),
+            child: Icon(Icons.science, color: theme.colorScheme.primary, size: 32),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Parametri Acquario', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                Text('Parametri Acquario', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Row(
                   children: [
@@ -145,7 +147,7 @@ class _ParametersViewState extends State<ParametersView> {
           ),
           IconButton(
             onPressed: _loadParameters,
-            icon: const Icon(Icons.refresh, color: Color(0xFF60a5fa)),
+            icon: Icon(Icons.refresh, color: theme.colorScheme.primary),
             tooltip: 'Aggiorna ora',
           ),
         ],

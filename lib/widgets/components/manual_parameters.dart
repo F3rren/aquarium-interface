@@ -70,12 +70,13 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,9 +92,9 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
                 child: const Icon(Icons.science, color: Color(0xFF60a5fa), size: 24),
               ),
               const SizedBox(width: 12),
-              const Text(
+              Text(
                 'Parametri Chimici',
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -113,13 +114,14 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
   }
 
   Widget _buildParameter(String name, double value, String unit, double min, double max, IconData icon, Function(double) onChanged) {
+    final theme = Theme.of(context);
     final isInRange = value >= min && value <= max;
     final color = isInRange ? const Color(0xFF34d399) : const Color(0xFFef4444);
     
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF2d2d2d),
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -137,9 +139,9 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                Text(name, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 13, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 2),
-                Text('$min-$max $unit', style: const TextStyle(color: Colors.white60, fontSize: 11)),
+                Text('$min-$max $unit', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
               ],
             ),
           ),
@@ -177,22 +179,23 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
   }
 
   void _showEditDialog(String name, double currentValue, String unit, Function(double) onChanged) {
+    final theme = Theme.of(context);
     final controller = TextEditingController(text: currentValue.toString());
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2d2d2d),
+        backgroundColor: theme.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Modifica $name', style: const TextStyle(color: Colors.white, fontSize: 18)),
+        title: Text('Modifica $name', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18)),
         content: TextField(
           controller: controller,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: theme.colorScheme.onSurface),
           decoration: InputDecoration(
             labelText: 'Valore ($unit)',
-            labelStyle: const TextStyle(color: Colors.white60),
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white24),
+            labelStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
             ),
             focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Color(0xFF60a5fa)),
@@ -202,7 +205,7 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla', style: TextStyle(color: Colors.white60)),
+            child: Text('Annulla', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
           ),
           ElevatedButton(
             onPressed: () {

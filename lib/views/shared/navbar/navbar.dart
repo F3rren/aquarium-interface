@@ -31,6 +31,8 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return AppBar(
       title: const Text(
         'Aquarium App',
@@ -40,29 +42,21 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
           letterSpacing: 1.2,
         ),
       ),
-      backgroundColor: const Color(0xFF2d2d2d),
-      foregroundColor: Colors.white,
+      backgroundColor: theme.appBarTheme.backgroundColor,
+      foregroundColor: theme.appBarTheme.foregroundColor,
       elevation: 0,
       centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(Icons.menu, size: 24),
-        onPressed: () {},
-      ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.notifications_outlined, size: 24),
-          onPressed: () {},
-        ),
         PopupMenuButton<String>(
           icon: RotationTransition(
             turns: Tween<double>(begin: 0.0, end: 0.125).animate(_iconController),
             child: const Icon(Icons.add_circle_outline, size: 24),
           ),
           tooltip: 'Gestisci Acquari',
-          color: const Color(0xFF3a3a3a),
+          color: theme.colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Colors.white.withValues(alpha:0.1)),
+            side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
           ),
           onOpened: () => _iconController.forward(),
           onCanceled: () => _iconController.reverse(),
@@ -96,7 +90,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       child: const Icon(Icons.add_circle, color: Color(0xFF34d399), size: 20),
                     ),
                     const SizedBox(width: 12),
-                    const Text('Aggiungi Vasca', style: TextStyle(color: Colors.white)),
+                    Text('Aggiungi Vasca', style: TextStyle(color: theme.colorScheme.onSurface)),
                   ],
                 ),
               ),
@@ -116,7 +110,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       child: const Icon(Icons.edit, color: Color(0xFF60a5fa), size: 20),
                     ),
                     const SizedBox(width: 12),
-                    const Text('Modifica Vasca', style: TextStyle(color: Colors.white)),
+                    Text('Modifica Vasca', style: TextStyle(color: theme.colorScheme.onSurface)),
                   ],
                 ),
               ),
@@ -136,7 +130,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       child: const Icon(Icons.delete, color: Color(0xFFef4444), size: 20),
                     ),
                     const SizedBox(width: 12),
-                    const Text('Elimina Vasca', style: TextStyle(color: Colors.white)),
+                    Text('Elimina Vasca', style: TextStyle(color: theme.colorScheme.onSurface)),
                   ],
                 ),
               ),

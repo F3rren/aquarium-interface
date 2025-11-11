@@ -27,6 +27,7 @@ class PhMeter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final color = _getPhColor();
     final status = _getStatus();
 
@@ -35,9 +36,9 @@ class PhMeter extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFF3a3a3a),
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+          border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,9 +60,9 @@ class PhMeter extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Text('pH', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                          Text('pH', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
                           const SizedBox(width: 6),
-                          Icon(Icons.edit_outlined, size: 14, color: Colors.white.withValues(alpha: 0.4)),
+                          Icon(Icons.edit_outlined, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
                         ],
                       ),
                       const SizedBox(height: 2),
@@ -84,40 +85,38 @@ class PhMeter extends StatelessWidget {
               ],
             ),
           if (targetPh != null) ...[
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2d2d2d),
-                borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.track_changes, color: theme.colorScheme.onSurfaceVariant, size: 18),
+                        const SizedBox(width: 8),
+                        Text('Target', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
+                      ],
+                    ),
+                    Text(
+                      targetPh!.toStringAsFixed(2),
+                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(Icons.track_changes, color: Colors.white60, size: 18),
-                      SizedBox(width: 8),
-                      Text('Target', style: TextStyle(color: Colors.white60, fontSize: 13)),
-                    ],
-                  ),
-                  Text(
-                    targetPh!.toStringAsFixed(2),
-                    style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
-            ),
+            ],
+            const SizedBox(height: 12),
+            _buildProgressBar(color, theme),
           ],
-          const SizedBox(height: 12),
-          _buildProgressBar(color),
-        ],
+        ),
       ),
-    ),
     );
-  }
-
-  void _showEditTargetDialog(BuildContext context) async {
+  }  void _showEditTargetDialog(BuildContext context) async {
     final controller = TextEditingController(
       text: targetPh?.toStringAsFixed(2) ?? TargetParametersService.defaultPh.toStringAsFixed(2),
     );
@@ -194,15 +193,15 @@ class PhMeter extends StatelessWidget {
     }
   }
 
-  Widget _buildProgressBar(Color color) {
+  Widget _buildProgressBar(Color color, ThemeData theme) {
     final progress = ((currentPh - 7.0) / (9.0 - 7.0)).clamp(0.0, 1.0);
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('7.0', style: TextStyle(color: Colors.white60, fontSize: 11)),
-            const Text('9.0', style: TextStyle(color: Colors.white60, fontSize: 11)),
+            Text('7.0', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
+            Text('9.0', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
           ],
         ),
         const SizedBox(height: 8),
@@ -210,7 +209,7 @@ class PhMeter extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: LinearProgressIndicator(
             value: progress,
-            backgroundColor: const Color(0xFF2d2d2d),
+            backgroundColor: theme.colorScheme.surfaceContainerHighest,
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 8,
           ),

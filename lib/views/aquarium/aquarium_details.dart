@@ -57,21 +57,23 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF2d2d2d),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: const BoxDecoration(color: Color(0xFF3a3a3a)),
+              decoration: BoxDecoration(color: theme.colorScheme.surface),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
-                  const Text('La Mia Vasca', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+                  IconButton(icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface), onPressed: () => Navigator.pop(context)),
+                  Text('La Mia Vasca', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w500)),
                   IconButton(
-                    icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                    icon: Icon(Icons.notifications_outlined, color: theme.colorScheme.onSurface),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -97,7 +99,16 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
         ),
       ),
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(color: const Color(0xFF3a3a3a), boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10, offset: const Offset(0, -2))]),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -118,6 +129,8 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
 
   Widget _buildNavItem(IconData icon, String label, int index) {
     final isSelected = _selectedBottomIndex == index;
+    final theme = Theme.of(context);
+    
     return GestureDetector(
       onTap: () => _onTabTapped(index),
       child: AnimatedContainer(
@@ -125,7 +138,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
         curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF60a5fa).withValues(alpha: 0.2) : Colors.transparent,
+          color: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -136,7 +149,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
               scale: isSelected ? 1.1 : 1.0,
               child: Icon(
                 icon,
-                color: isSelected ? const Color(0xFF60a5fa) : Colors.white60,
+                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
                 size: 24,
               ),
             ),
@@ -144,7 +157,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),
               style: TextStyle(
-                color: isSelected ? const Color(0xFF60a5fa) : Colors.white60,
+                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
