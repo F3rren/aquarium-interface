@@ -1,5 +1,8 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
+import 'package:acquariumfe/widgets/animated_number.dart';
+import 'package:acquariumfe/widgets/tap_effect_card.dart';
+import 'package:acquariumfe/widgets/components/target_progress_bar.dart';
 
 class Thermometer extends StatelessWidget {
   final double currentTemperature;
@@ -31,8 +34,9 @@ class Thermometer extends StatelessWidget {
     final color = _getTemperatureColor();
     final status = _getStatus();
 
-    return GestureDetector(
+    return TapEffectCard(
       onTap: () => _showEditTargetDialog(context),
+      rippleColor: color,
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -77,40 +81,29 @@ class Thermometer extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: color.withValues(alpha: 0.4)),
                   ),
-                  child: Text(
-                    '${currentTemperature.toStringAsFixed(1)}°C',
+                  child: AnimatedNumberWithIndicator(
+                    value: currentTemperature,
+                    decimals: 1,
+                    suffix: '°C',
                     style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
+                    increaseColor: const Color(0xFFef4444),
+                    decreaseColor: const Color(0xFF60a5fa),
                   ),
                 ),
               ],
             ),
             if (targetTemperature != null) ...[
               const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.track_changes, color: theme.colorScheme.onSurfaceVariant, size: 18),
-                        const SizedBox(width: 8),
-                        Text('Target', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
-                      ],
-                    ),
-                    Text(
-                      '${targetTemperature!.toStringAsFixed(1)}°C',
-                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
+              TargetProgressBar(
+                currentValue: currentTemperature,
+                targetValue: targetTemperature!,
+                minValue: 20.0,
+                maxValue: 30.0,
+                unit: '°C',
               ),
+            ] else ...[
+              const SizedBox(height: 12),
             ],
-            const SizedBox(height: 12),
             _buildProgressBar(color, theme),
           ],
         ),

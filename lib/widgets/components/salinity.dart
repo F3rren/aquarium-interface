@@ -1,5 +1,8 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
+import 'package:acquariumfe/widgets/animated_number.dart';
+import 'package:acquariumfe/widgets/tap_effect_card.dart';
+import 'package:acquariumfe/widgets/components/target_progress_bar.dart';
 
 class SalinityMeter extends StatelessWidget {
   final double currentSalinity;
@@ -37,8 +40,9 @@ class SalinityMeter extends StatelessWidget {
     final color = _getSalinityColor();
     final status = _getStatus();
 
-    return GestureDetector(
+    return TapEffectCard(
       onTap: () => _showEditTargetDialog(context),
+      rippleColor: color,
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -83,46 +87,34 @@ class SalinityMeter extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: color.withValues(alpha: 0.4)),
                   ),
-                  child: Text(
-                    currentSalinity.toStringAsFixed(1),
+                  child: AnimatedNumberWithIndicator(
+                    value: currentSalinity,
+                    decimals: 1,
                     style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
             ),
           if (targetSalinity != null) ...[
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.track_changes, color: theme.colorScheme.onSurfaceVariant, size: 18),
-                        const SizedBox(width: 8),
-                        Text('Target', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
-                      ],
-                    ),
-                    Text(
-                      targetSalinity!.toStringAsFixed(3),
-                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            const SizedBox(height: 16),
+            TargetProgressBar(
+              currentValue: currentSalinity,
+              targetValue: targetSalinity!,
+              minValue: 1.020,
+              maxValue: 1.028,
+              unit: '',
+            ),
+          ] else ...[
             const SizedBox(height: 12),
-            _buildProgressBar(color, theme),
           ],
-        ),
+          _buildProgressBar(color, theme),
+        ],
       ),
-    );
-  }  void _showEditTargetDialog(BuildContext context) async {
+    ),
+  );
+}
+
+void _showEditTargetDialog(BuildContext context) async {
     final controller = TextEditingController(
       text: targetSalinity?.toStringAsFixed(1) ?? TargetParametersService.defaultSalinity.toStringAsFixed(1),
     );

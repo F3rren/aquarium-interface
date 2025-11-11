@@ -5,6 +5,7 @@ import 'package:acquariumfe/widgets/components/ph.dart';
 import 'package:acquariumfe/widgets/components/salinity.dart';
 import 'package:acquariumfe/widgets/components/orp.dart';
 import 'package:acquariumfe/widgets/components/manual_parameters.dart';
+import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
 import 'package:acquariumfe/services/parameter_service.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/models/aquarium_parameters.dart';
@@ -22,6 +23,7 @@ class _ParametersViewState extends State<ParametersView> {
   Timer? _refreshTimer;
   AquariumParameters? _currentParams;
   Map<String, double> _targetParams = {};
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -46,11 +48,17 @@ class _ParametersViewState extends State<ParametersView> {
   Future<void> _loadParameters() async {
     try {
       final params = await _parameterService.getCurrentParameters(useMock: false);
-      setState(() {
-        _currentParams = params;
-      });
+      if (mounted) {
+        setState(() {
+          _currentParams = params;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       // Se il backend non risponde, usa il fallback interno
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -61,28 +69,65 @@ class _ParametersViewState extends State<ParametersView> {
     });
   }
 
+  Future<void> _refreshData() async {
+    setState(() => _isLoading = true);
+    await Future.wait([
+      _loadParameters(),
+      _loadTargets(),
+    ]);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 12),
+              Text('Parametri aggiornati!'),
+            ],
+          ),
+          backgroundColor: const Color(0xFF34d399),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 1),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     // Valori di default se i dati non sono ancora caricati
     final temperature = _currentParams?.temperature ?? 25.0;
     final ph = _currentParams?.ph ?? 8.2;
     final salinity = _currentParams?.salinity ?? 1.024;
     final orp = _currentParams?.orp ?? 350.0;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-          _buildHeader(),
-          const SizedBox(height: 24),
-          Thermometer(
-            currentTemperature: temperature,
-            targetTemperature: _targetParams['temperature'],
-            onTargetChanged: _loadTargets,
-          ),
-          const SizedBox(height: 16),
+    return RefreshIndicator(
+      onRefresh: _refreshData,
+      color: theme.colorScheme.primary,
+      backgroundColor: theme.colorScheme.surface,
+      child: _isLoading
+        ? ListView(
+            padding: const EdgeInsets.all(20),
+            children: List.generate(4, (index) => const ParameterCardSkeleton()),
+          )
+        : SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              _buildHeader(),
+              const SizedBox(height: 24),
+              Thermometer(
+                currentTemperature: temperature,
+                targetTemperature: _targetParams['temperature'],
+                onTargetChanged: _loadTargets,
+              ),
+              const SizedBox(height: 16),
           PhMeter(
             currentPh: ph,
             targetPh: _targetParams['ph'],
@@ -100,9 +145,10 @@ class _ParametersViewState extends State<ParametersView> {
             targetOrp: _targetParams['orp'],
             onTargetChanged: _loadTargets,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           const ManualParametersWidget(),
         ],
+        ),
       ),
     );
   }

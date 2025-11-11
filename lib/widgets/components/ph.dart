@@ -1,5 +1,8 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
+import 'package:acquariumfe/widgets/animated_number.dart';
+import 'package:acquariumfe/widgets/tap_effect_card.dart';
+import 'package:acquariumfe/widgets/components/target_progress_bar.dart';
 
 class PhMeter extends StatelessWidget {
   final double currentPh;
@@ -31,8 +34,9 @@ class PhMeter extends StatelessWidget {
     final color = _getPhColor();
     final status = _getStatus();
 
-    return GestureDetector(
+    return TapEffectCard(
       onTap: () => _showEditTargetDialog(context),
+      rippleColor: color,
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -77,42 +81,28 @@ class PhMeter extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: color.withValues(alpha: 0.4)),
                   ),
-                  child: Text(
-                    currentPh.toStringAsFixed(2),
+                  child: AnimatedNumberWithIndicator(
+                    value: currentPh,
+                    decimals: 2,
                     style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
             ),
           if (targetPh != null) ...[
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.track_changes, color: theme.colorScheme.onSurfaceVariant, size: 18),
-                        const SizedBox(width: 8),
-                        Text('Target', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
-                      ],
-                    ),
-                    Text(
-                      targetPh!.toStringAsFixed(2),
-                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            const SizedBox(height: 16),
+            TargetProgressBar(
+              currentValue: currentPh,
+              targetValue: targetPh!,
+              minValue: 7.5,
+              maxValue: 8.5,
+              unit: '',
+            ),
+          ] else ...[
             const SizedBox(height: 12),
-            _buildProgressBar(color, theme),
           ],
+          _buildProgressBar(color, theme),
+        ],
         ),
       ),
     );

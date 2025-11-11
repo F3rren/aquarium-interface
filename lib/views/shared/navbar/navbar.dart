@@ -1,4 +1,7 @@
-import 'package:acquariumfe/routes/routes_name.dart';
+import 'package:acquariumfe/utils/custom_page_route.dart';
+import 'package:acquariumfe/views/aquarium/add_aquarium.dart';
+import 'package:acquariumfe/views/aquarium/edit_aquarium.dart';
+import 'package:acquariumfe/views/aquarium/delete_aquarium.dart';
 import 'package:flutter/material.dart';
 
 class Navbar extends StatefulWidget implements PreferredSizeWidget {
@@ -64,13 +67,31 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
             _iconController.reverse();
             switch (value) {
               case 'add':
-                Navigator.pushNamed(context, RouteNames.addAquarium);
+                Navigator.push(
+                  context,
+                  CustomPageRoute(
+                    page: const AddAquarium(),
+                    transitionType: PageTransitionType.slideFromBottom,
+                  ),
+                );
                 break;
               case 'edit':
-                Navigator.pushNamed(context, RouteNames.editAquarium);
+                Navigator.push(
+                  context,
+                  CustomPageRoute(
+                    page: const EditAquarium(),
+                    transitionType: PageTransitionType.fadeSlide,
+                  ),
+                );
                 break;
               case 'delete':
-                Navigator.pushNamed(context, RouteNames.deleteAquarium);
+                Navigator.push(
+                  context,
+                  CustomPageRoute(
+                    page: const DeleteAquarium(),
+                    transitionType: PageTransitionType.fadeSlide,
+                  ),
+                );
                 break;
             }
           },
