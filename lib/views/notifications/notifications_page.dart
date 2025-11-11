@@ -300,6 +300,10 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         _buildThresholdCard('Magnesio', ' mg/L', _settings.magnesium, Icons.bubble_chart, const Color(0xFFec4899)),
         const SizedBox(height: 12),
         _buildThresholdCard('KH', ' dKH', _settings.kh, Icons.show_chart, const Color(0xFF34d399)),
+        const SizedBox(height: 12),
+        _buildThresholdCard('Nitrati', ' mg/L', _settings.nitrate, Icons.grass, const Color(0xFF10b981)),
+        const SizedBox(height: 12),
+        _buildThresholdCard('Fosfati', ' mg/L', _settings.phosphate, Icons.opacity, const Color(0xFF8b5cf6)),
         
         const SizedBox(height: 32),
         // Pulsante Ripristina Predefiniti

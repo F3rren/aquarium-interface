@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../models/fish.dart';
 import '../../models/coral.dart';
 import '../../services/inhabitants_service.dart';
+import '../../widgets/components/skeleton_loader.dart';
+import '../../widgets/animated_number.dart';
 import 'add_fish_dialog.dart';
 import 'add_coral_dialog.dart';
 
@@ -38,6 +40,27 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
     _fishList = await _service.getFish();
     _coralsList = await _service.getCorals();
     setState(() => _isLoading = false);
+  }
+
+  Future<void> _refreshData() async {
+    await _loadData();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 12),
+              Text('Abitanti aggiornati!'),
+            ],
+          ),
+          backgroundColor: const Color(0xFF34d399),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 1),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
   }
 
   void _showAddFishDialog() {
@@ -185,19 +208,24 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: theme.colorScheme.primary))
-          : Column(
-              children: [
-                _buildStatsCard(),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildFishTab(),
-                      _buildCoralsTab(),
-                    ],
+          : RefreshIndicator(
+              onRefresh: _refreshData,
+              color: theme.colorScheme.primary,
+              backgroundColor: theme.colorScheme.surface,
+              child: Column(
+                children: [
+                  _buildStatsCard(),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildFishTab(),
+                        _buildCoralsTab(),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -318,11 +346,12 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
                     ),
                   ],
                 ),
-                Text(
-                  totalBioLoad.toStringAsFixed(1),
+                AnimatedNumber(
+                  value: totalBioLoad,
+                  decimals: 1,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 24,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -404,6 +433,13 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
   Widget _buildFishTab() {
     final theme = Theme.of(context);
     
+    if (_isLoading) {
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children: List.generate(5, (index) => const ListItemSkeleton()),
+      );
+    }
+    
     if (_fishList.isEmpty) {
       return Center(
         child: SingleChildScrollView(
@@ -446,14 +482,17 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
+                  Hero(
+                    tag: 'fish_${fish.id}',
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(Icons.pets, color: theme.colorScheme.primary, size: 32),
                     ),
-                    child: Icon(Icons.pets, color: theme.colorScheme.primary, size: 32),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -510,6 +549,13 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
   Widget _buildCoralsTab() {
     final theme = Theme.of(context);
     
+    if (_isLoading) {
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children: List.generate(5, (index) => const ListItemSkeleton()),
+      );
+    }
+    
     if (_coralsList.isEmpty) {
       return Center(
         child: SingleChildScrollView(
@@ -564,14 +610,17 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: typeColor.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
+                    Hero(
+                      tag: 'coral_${coral.id}',
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                      decoration: BoxDecoration(
+                        color: typeColor.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(Icons.spa, color: typeColor, size: 32),
                     ),
-                    child: Icon(Icons.spa, color: typeColor, size: 32),
                   ),
                   const SizedBox(width: 16),
                   Expanded(

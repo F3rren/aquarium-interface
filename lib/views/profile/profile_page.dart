@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:acquariumfe/views/dashboard/calculators_page.dart';
 import 'package:acquariumfe/views/profile/inhabitants_page.dart';
 import 'package:acquariumfe/providers/theme_provider.dart';
+import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -32,7 +33,10 @@ class ProfilePage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const CalculatorsPage()),
+                CustomPageRoute(
+                  page: const CalculatorsPage(),
+                  transitionType: PageTransitionType.fadeSlide,
+                ),
               );
             },
           ),
@@ -48,7 +52,10 @@ class ProfilePage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const InhabitantsPage()),
+                CustomPageRoute(
+                  page: const InhabitantsPage(),
+                  transitionType: PageTransitionType.fadeSlide,
+                ),
               );
             },
           ),

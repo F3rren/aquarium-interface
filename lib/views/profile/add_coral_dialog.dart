@@ -139,6 +139,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final heroTag = widget.coral != null ? 'coral_${widget.coral!.id}' : 'coral_new';
     
     return Dialog(
       backgroundColor: theme.colorScheme.surface,
@@ -153,13 +154,19 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
             children: [
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF34d399).withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
+                  Hero(
+                    tag: heroTag,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF34d399).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.spa, color: Color(0xFF34d399), size: 28),
+                      ),
                     ),
-                    child: const Icon(Icons.spa, color: Color(0xFF34d399), size: 28),
                   ),
                   const SizedBox(width: 16),
                   Text(

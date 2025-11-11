@@ -3,6 +3,8 @@ import 'package:acquariumfe/views/parameters/parameters_view.dart';
 import 'package:acquariumfe/views/charts/charts_view.dart';
 import 'package:acquariumfe/views/notifications/notifications_page.dart';
 import 'package:acquariumfe/views/profile/profile_page.dart';
+import 'package:acquariumfe/utils/custom_page_route.dart';
+import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
 import 'package:flutter/material.dart';
 
 class AquariumDetails extends StatefulWidget {
@@ -16,6 +18,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
   int _selectedBottomIndex = 0;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  bool _isLoading = true;
 
   // Lista delle pagine da mostrare
   final List<Widget> _pages = const [
@@ -35,7 +38,16 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    _animationController.forward();
+    
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (mounted) {
+      setState(() => _isLoading = false);
+      _animationController.forward();
+    }
   }
 
   @override
@@ -58,27 +70,100 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
+            // Header senza Hero
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(color: theme.colorScheme.surface),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDark
+                      ? [
+                          theme.colorScheme.surfaceContainerHighest,
+                          theme.colorScheme.surface,
+                          theme.colorScheme.surface.withValues(alpha: 0.8),
+                        ]
+                      : [
+                          const Color(0xFFffffff),
+                          const Color(0xFFf8fafc),
+                          const Color(0xFFe0f2fe),
+                        ],
+                  stops: const [0.0, 0.5, 1.0],
+                ),
+                border: Border(
+                  bottom: BorderSide(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface), onPressed: () => Navigator.pop(context)),
-                  Text('La Mia Vasca', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w500)),
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'La Mia Vasca',
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.check_circle, color: theme.colorScheme.primary, size: 14),
+                              const SizedBox(width: 4),
+                              Text(
+                                'ALL GOOD',
+                                style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   IconButton(
                     icon: Icon(Icons.notifications_outlined, color: theme.colorScheme.onSurface),
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const NotificationsPage(),
+                        CustomPageRoute(
+                          page: const NotificationsPage(),
+                          transitionType: PageTransitionType.slideFromRight,
                         ),
                       );
                     },
@@ -87,13 +172,29 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
               ),
             ),
             Expanded(
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: IndexedStack(
-                  index: _selectedBottomIndex,
-                  children: _pages,
-                ),
-              ),
+              child: _isLoading
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            const SkeletonLoader(width: double.infinity, height: 100),
+                            const SizedBox(height: 16),
+                            const SkeletonLoader(width: double.infinity, height: 100),
+                            const SizedBox(height: 16),
+                            const SkeletonLoader(width: double.infinity, height: 100),
+                          ],
+                        ),
+                      ),
+                    )
+                  : FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: IndexedStack(
+                        index: _selectedBottomIndex,
+                        children: _pages,
+                      ),
+                    ),
             ),
           ],
         ),

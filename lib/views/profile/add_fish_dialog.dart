@@ -125,6 +125,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final heroTag = widget.fish != null ? 'fish_${widget.fish!.id}' : 'fish_new';
     
     return Dialog(
       backgroundColor: theme.colorScheme.surface,
@@ -139,13 +140,19 @@ class _AddFishDialogState extends State<AddFishDialog> {
             children: [
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
+                  Hero(
+                    tag: heroTag,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(Icons.pets, color: theme.colorScheme.primary, size: 28),
+                      ),
                     ),
-                    child: Icon(Icons.pets, color: theme.colorScheme.primary, size: 28),
                   ),
                   const SizedBox(width: 16),
                   Text(
