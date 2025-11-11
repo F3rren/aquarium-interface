@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/parameter_service.dart';
+import 'package:acquariumfe/services/notification_preferences_service.dart';
 import 'package:acquariumfe/models/aquarium_parameters.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 
@@ -15,13 +16,16 @@ class HealthDashboard extends StatefulWidget {
 class _HealthDashboardState extends State<HealthDashboard> {
   final AlertManager _alertManager = AlertManager();
   final ParameterService _parameterService = ParameterService();
+  final NotificationPreferencesService _prefsService = NotificationPreferencesService();
   Timer? _refreshTimer;
   AquariumParameters? _currentParams;
+  NotificationSettings _settings = NotificationSettings();
   
   @override
   void initState() {
     super.initState();
     _loadParameters();
+    _loadSettings();
     // Avvia auto-refresh se non già attivo
     if (!_parameterService.isAutoRefreshEnabled) {
       _parameterService.startAutoRefresh(interval: const Duration(seconds: 10));
@@ -42,6 +46,13 @@ class _HealthDashboardState extends State<HealthDashboard> {
     final params = await _parameterService.getCurrentParameters(useMock: false);
     setState(() {
       _currentParams = params;
+    });
+  }
+  
+  Future<void> _loadSettings() async {
+    final settings = await _prefsService.loadSettings();
+    setState(() {
+      _settings = settings;
     });
   }
   
@@ -306,9 +317,9 @@ class _HealthDashboardState extends State<HealthDashboard> {
 
   Widget _buildMaintenanceReminders() {
     final reminders = [
-      {'title': 'Cambio Acqua', 'days': 3, 'icon': Icons.water_drop},
-      {'title': 'Pulizia Filtro', 'days': 7, 'icon': Icons.filter_alt},
-      {'title': 'Test Parametri', 'days': 1, 'icon': Icons.science},
+      {'title': 'Cambio Acqua', 'days': _settings.maintenanceReminders.waterChange.frequencyDays, 'icon': Icons.water_drop},
+      {'title': 'Pulizia Filtro', 'days': _settings.maintenanceReminders.filterCleaning.frequencyDays, 'icon': Icons.filter_alt},
+      {'title': 'Test Parametri', 'days': _settings.maintenanceReminders.parameterTesting.frequencyDays, 'icon': Icons.science},
     ];
 
     return Container(

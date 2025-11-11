@@ -12,6 +12,9 @@ class AlertManager {
   
   // Storico alert (da salvare poi su storage locale)
   final List<AlertLog> _alertHistory = [];
+  
+  // Traccia se un parametro è attualmente in stato di allarme (per evitare notifiche duplicate)
+  final Map<String, bool> _parameterInAlertState = {};
 
   /// Inizializza AlertManager
   Future<void> initialize(NotificationSettings settings) async {
@@ -34,30 +37,44 @@ class AlertManager {
     if (!_settings.enabledAlerts || !thresholds.enabled) return;
 
     if (thresholds.isOutOfRange(value)) {
-      // Determina se è alto o basso
-      final bool isHigh = value > thresholds.max;
+      // Parametro fuori range
       
-      // Invia notifica con indicazione se troppo basso o alto
-      await _notificationService.showParameterAlert(
-        parameterName: name,
-        currentValue: value,
-        minValue: thresholds.min,
-        maxValue: thresholds.max,
-        unit: unit,
-      );
+      // Controlla se è già in stato di allarme
+      final isAlreadyInAlert = _parameterInAlertState[name] ?? false;
+      
+      if (!isAlreadyInAlert) {
+        // Prima volta che va fuori range → invia notifica
+        final bool isHigh = value > thresholds.max;
+        
+        await _notificationService.showParameterAlert(
+          parameterName: name,
+          currentValue: value,
+          minValue: thresholds.min,
+          maxValue: thresholds.max,
+          unit: unit,
+        );
+        
+        // Marca come "in allarme"
+        _parameterInAlertState[name] = true;
 
-      // Usa i testi centralizzati
-      final alertMessage = NotificationTexts.getMessage(name, isHigh);
-      final alertTitle = NotificationTexts.getTitle(name);
+        // Usa i testi centralizzati
+        final alertMessage = NotificationTexts.getMessage(name, isHigh);
+        final alertTitle = NotificationTexts.getTitle(name);
 
-      // Registra nell'alert history
-      _addToHistory(AlertLog(
-        timestamp: DateTime.now(),
-        type: AlertType.parameter,
-        title: alertTitle,
-        message: '$alertMessage: $value$unit (range: ${thresholds.min}-${thresholds.max}$unit)',
-        severity: _calculateSeverity(value, thresholds),
-      ));
+        // Registra nell'alert history
+        _addToHistory(AlertLog(
+          timestamp: DateTime.now(),
+          type: AlertType.parameter,
+          title: alertTitle,
+          message: '$alertMessage: $value$unit (range: ${thresholds.min}-${thresholds.max}$unit)',
+          severity: _calculateSeverity(value, thresholds),
+        ));
+      }
+      // Se è già in allarme, non fare nulla (non inviare notifica duplicata)
+    } else {
+      // Parametro rientrato nella norma: resetta lo stato di allarme
+      // così se torna fuori range, invierà una nuova notifica
+      _parameterInAlertState[name] = false;
     }
   }
 

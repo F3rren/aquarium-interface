@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
-import 'package:acquariumfe/services/notification_service.dart';
 import 'package:acquariumfe/services/notification_preferences_service.dart';
-import 'package:acquariumfe/constants/notification_texts.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -24,7 +22,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -50,15 +48,8 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
   /// Salva le impostazioni correnti
   Future<void> _saveSettings() async {
-    final success = await _prefsService.saveSettings(_settings);
-    if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Impostazioni salvate con successo'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
+    await _prefsService.saveSettings(_settings);
+    
   }
 
   @override
@@ -87,7 +78,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             Tab(text: 'Impostazioni'),
             Tab(text: 'Soglie'),
             Tab(text: 'Storico'),
-            Tab(text: 'Test'),
           ],
         ),
       ),
@@ -99,7 +89,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             _buildSettingsTab(),
             _buildThresholdsTab(),
             _buildHistoryTab(),
-            _buildTestTab(),
           ],
         ),
       ),
@@ -182,6 +171,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
+            _saveSettings(); // Salva automaticamente quando cambi lo switch
           },
           onFrequencyChanged: (days) {
             setState(() {
@@ -191,6 +181,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
+            _saveSettings(); // Salva automaticamente quando cambi la frequenza
           },
         ),
         const SizedBox(height: 12),
@@ -209,6 +200,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
+            _saveSettings(); // Salva automaticamente quando cambi lo switch
           },
           onFrequencyChanged: (days) {
             setState(() {
@@ -218,6 +210,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
+            _saveSettings(); // Salva automaticamente quando cambi la frequenza
           },
         ),
         const SizedBox(height: 12),
@@ -236,6 +229,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
+            _saveSettings(); // Salva automaticamente quando cambi lo switch
           },
           onFrequencyChanged: (days) {
             setState(() {
@@ -245,6 +239,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
+            _saveSettings(); // Salva automaticamente quando cambi la frequenza
           },
         ),
         
@@ -721,349 +716,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
   }
 
-  // TAB 4: TEST NOTIFICHE
-  Widget _buildTestTab() {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        _buildHeader(
-          icon: Icons.science,
-          title: 'Test Notifiche',
-          subtitle: 'Simula alert e notifiche con dati mock',
-        ),
-        const SizedBox(height: 20),
-        
-        // Sezione Test Notifica Reale
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF3a3a3a),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  Icon(Icons.notifications_active, color: Color(0xFF60a5fa), size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    'Test Notifica Reale',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Invia una notifica vera sul dispositivo (apparirà nella barra notifiche)',
-                style: TextStyle(color: Colors.white60, fontSize: 13),
-              ),
-              const SizedBox(height: 16),
-              
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    await NotificationService().showTestNotification();
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Notifica inviata! Controlla la barra notifiche'),
-                          duration: Duration(seconds: 3),
-                        ),
-                      );
-                    }
-                  },
-                  icon: const Icon(Icons.send),
-                  label: const Text('Invia Notifica Reale'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF60a5fa),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        
-        const SizedBox(height: 16),
-        
-        // Sezione Test Alert Parametri
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF3a3a3a),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  Icon(Icons.warning_amber, color: Color(0xFFef4444), size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    'Test Alert Parametri',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Simula parametri TROPPO ALTI o TROPPO BASSI per testare le notifiche',
-                style: TextStyle(color: Colors.white60, fontSize: 13),
-              ),
-              const SizedBox(height: 16),
-              
-              // Sezione Parametri TROPPO ALTI
-              const Text(
-                '⬆️ PARAMETRI TROPPO ALTI',
-                style: TextStyle(
-                  color: Color(0xFFef4444),
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _buildTestButton(
-                    'Temp Alta',
-                    Icons.thermostat,
-                    const Color(0xFFef4444),
-                    () async {
-                      await _alertManager.checkParameter(
-                        name: 'Temperatura',
-                        value: 30.0, // Valore fuori range
-                        unit: '°C',
-                        thresholds: _settings.temperature,
-                      );
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(NotificationTexts.getTitle('Temperatura'))),
-                        );
-                        setState(() {});
-                      }
-                    },
-                  ),
-                  _buildTestButton(
-                    'pH Alto',
-                    Icons.water_drop,
-                    const Color(0xFFef4444),
-                    () async {
-                      await _alertManager.checkParameter(
-                        name: 'pH',
-                        value: 9.0, // Valore fuori range
-                        unit: '',
-                        thresholds: _settings.ph,
-                      );
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(NotificationTexts.getTitle('pH'))),
-                        );
-                        setState(() {});
-                      }
-                    },
-                  ),
-                  _buildTestButton(
-                    'Nitrati Alti',
-                    Icons.science,
-                    const Color(0xFFef4444),
-                    () async {
-                      await _alertManager.checkParameter(
-                        name: 'Nitrati',
-                        value: 15.0, // Valore fuori range
-                        unit: ' ppm',
-                        thresholds: _settings.nitrate,
-                      );
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(NotificationTexts.getTitle('Nitrati'))),
-                        );
-                        setState(() {});
-                      }
-                    },
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Sezione Parametri TROPPO BASSI
-              const Text(
-                '⬇️ PARAMETRI TROPPO BASSI',
-                style: TextStyle(
-                  color: Color(0xFF60a5fa),
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _buildTestButton(
-                    'Temp Bassa',
-                    Icons.thermostat,
-                    const Color(0xFF60a5fa),
-                    () async {
-                      await _alertManager.checkParameter(
-                        name: 'Temperatura',
-                        value: 20.0, // Valore fuori range (basso)
-                        unit: '°C',
-                        thresholds: _settings.temperature,
-                      );
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(NotificationTexts.getTitle('Temperatura'))),
-                        );
-                        setState(() {});
-                      }
-                    },
-                  ),
-                  _buildTestButton(
-                    'pH Basso',
-                    Icons.water_drop,
-                    const Color(0xFF60a5fa),
-                    () async {
-                      await _alertManager.checkParameter(
-                        name: 'pH',
-                        value: 7.0, // Valore fuori range (basso)
-                        unit: '',
-                        thresholds: _settings.ph,
-                      );
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(NotificationTexts.getTitle('pH'))),
-                        );
-                        setState(() {});
-                      }
-                    },
-                  ),
-                  _buildTestButton(
-                    'Calcio Basso',
-                    Icons.science,
-                    const Color(0xFF60a5fa),
-                    () async {
-                      await _alertManager.checkParameter(
-                        name: 'Calcio',
-                        value: 350.0, // Valore fuori range (basso)
-                        unit: ' mg/L',
-                        thresholds: _settings.calcium,
-                      );
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(NotificationTexts.getTitle('Calcio'))),
-                        );
-                        setState(() {});
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        
-        const SizedBox(height: 16),
-        
-        // Sezione Test Manutenzione
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF3a3a3a),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                children: [
-                  Icon(Icons.build, color: Color(0xFF34d399), size: 20),
-                  SizedBox(width: 8),
-                  Text(
-                    'Test Promemoria Manutenzione',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Testa le notifiche programmate di manutenzione',
-                style: TextStyle(color: Colors.white60, fontSize: 13),
-              ),
-              const SizedBox(height: 16),
-              
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    await _alertManager.scheduleMaintenanceReminders();
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Promemoria manutenzione programmati!'),
-                        ),
-                      );
-                    }
-                  },
-                  icon: const Icon(Icons.schedule),
-                  label: const Text('Programma Promemoria'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF34d399),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        
-        const SizedBox(height: 16),
-        
-      ],
-    );
-  }
-
-  Widget _buildTestButton(String label, IconData icon, Color color, VoidCallback onPressed) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, size: 16),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    );
-  }
-
   // Dialog per modificare le soglie
   void _showEditThresholdDialog(String name, String unit, ParameterThresholds currentThresholds, Color color) {
     final minController = TextEditingController(text: currentThresholds.min.toString());
@@ -1162,16 +814,12 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               final newMax = double.tryParse(maxController.text);
 
               if (newMin == null || newMax == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Inserisci valori numerici validi')),
-                );
+                
                 return;
               }
 
               if (newMin >= newMax) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Il minimo deve essere inferiore al massimo')),
-                );
+                
                 return;
               }
 
@@ -1183,10 +831,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               
               // Salva persistenza
               await _saveSettings();
-              
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Soglie $name aggiornate: $newMin-$newMax$unit')),
-              );
+             
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: color,
@@ -1350,7 +995,12 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           children: [
             Icon(Icons.warning_amber, color: Color(0xFFfbbf24), size: 28),
             SizedBox(width: 12),
-            Text('Ripristinare Valori Predefiniti?', style: TextStyle(color: Colors.white, fontSize: 18)),
+            //Text('Ripristinare Valori Predefiniti?', style: TextStyle(color: Colors.white, fontSize: 18)),
+            Text(
+                'Ripristinare Predefiniti?',
+                style: TextStyle(color: Colors.white, fontSize: 17),
+                overflow: TextOverflow.ellipsis,
+              ),
           ],
         ),
         content: const Column(
@@ -1387,12 +1037,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               await _prefsService.resetToDefaults();
               
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Impostazioni ripristinate ai valori predefiniti'),
-                  backgroundColor: Color(0xFF34d399),
-                ),
-              );
+              
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFfbbf24),
