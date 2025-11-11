@@ -4,7 +4,9 @@ import 'package:acquariumfe/views/shared/navbar/navbar.dart';
 import 'package:acquariumfe/services/notification_service.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
+import 'package:acquariumfe/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +21,12 @@ void main() async {
     enabledDaily: false,
   ));
   
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -27,17 +34,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Aquarium HomePage',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF60a5fa),
-          brightness: Brightness.dark,
-        ),
-        scaffoldBackgroundColor: const Color(0xFF1a1a1a),
-        cardColor: const Color(0xFF2a2a2a),
-      ),
+      theme: themeProvider.lightTheme,
+      darkTheme: themeProvider.darkTheme,
+      themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: const HomePage(),
       onGenerateRoute: AppRouter.generateRoute,
     );
@@ -49,18 +53,28 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF0f0f0f),
-            Color(0xFF1a1a1a),
-            Color(0xFF2d2d2d),
-            Color(0xFF1e1e1e),
-          ],
-          stops: [0.0, 0.3, 0.7, 1.0],
+          colors: isDark
+              ? [
+                  const Color(0xFF0a0e27),
+                  const Color(0xFF1a1f3a),
+                  const Color(0xFF252b4a),
+                  const Color(0xFF1a1f3a),
+                ]
+              : [
+                  const Color(0xFFe0f2fe),
+                  const Color(0xFFf0f9ff),
+                  Colors.white,
+                  const Color(0xFFe0f2fe),
+                ],
+          stops: const [0.0, 0.3, 0.7, 1.0],
         ),
       ),
       child: Scaffold(

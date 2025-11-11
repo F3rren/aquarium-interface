@@ -58,6 +58,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     // Usa dati di fallback se non ancora caricati
     final currentTemperature = _currentParams?.temperature ?? 25.0;
     final currentPh = _currentParams?.ph ?? 8.2;
@@ -100,7 +101,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [statusColor.withValues(alpha:0.3), const Color(0xFF3a3a3a)]),
+              gradient: LinearGradient(colors: [statusColor.withValues(alpha:0.3), theme.colorScheme.surface]),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: statusColor.withValues(alpha:0.5)),
             ),
@@ -110,12 +111,12 @@ class _HealthDashboardState extends State<HealthDashboard> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white24,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Stato Acquario',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
+                    style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 12),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -126,7 +127,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
                 const SizedBox(height: 12),
                 Text(
                   'Aggiornato ora • $parametersInRange/$totalParameters parametri OK',
-                  style: const TextStyle(color: Colors.white70, fontSize: 11),
+                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11),
                 ),
               ],
             ),
@@ -175,12 +176,14 @@ class _HealthDashboardState extends State<HealthDashboard> {
   }
 
   Widget _buildParamCard(String label, String value, IconData icon, Color color, bool isOutOfRange) {
+    final theme = Theme.of(context);
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isOutOfRange ? const Color(0xFFef4444) : Colors.white.withValues(alpha:0.1)),
+        border: Border.all(color: isOutOfRange ? theme.colorScheme.error : theme.colorScheme.onSurface.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,13 +192,13 @@ class _HealthDashboardState extends State<HealthDashboard> {
             children: [
               Icon(icon, color: color, size: 18),
               const SizedBox(width: 8),
-              Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+              Text(label, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
               const Spacer(),
-              if (isOutOfRange) const Icon(Icons.warning_amber, color: Color(0xFFef4444), size: 16),
+              if (isOutOfRange) Icon(Icons.warning_amber, color: theme.colorScheme.error, size: 16),
             ],
           ),
           const SizedBox(height: 8),
-          Text(value, style: TextStyle(color: isOutOfRange ? const Color(0xFFef4444) : Colors.white, 
+          Text(value, style: TextStyle(color: isOutOfRange ? theme.colorScheme.error : theme.colorScheme.onSurface, 
             fontSize: 18, fontWeight: FontWeight.bold)),
         ],
       ),
@@ -203,13 +206,14 @@ class _HealthDashboardState extends State<HealthDashboard> {
   }
 
   Widget _buildHealthScore(int score, int okParams, int totalParams) {
-    final color = score >= 80 ? const Color(0xFF34d399) : score >= 60 ? const Color(0xFFfbbf24) : const Color(0xFFef4444);
+    final theme = Theme.of(context);
+    final color = score >= 80 ? const Color(0xFF34d399) : score >= 60 ? const Color(0xFFfbbf24) : theme.colorScheme.error;
     final label = score >= 80 ? 'Eccellente' : score >= 60 ? 'Buono' : 'Critico';
     
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFF4a4a4a), Color(0xFF3a3a3a)]),
+        gradient: LinearGradient(colors: [theme.colorScheme.surfaceContainerHighest, theme.colorScheme.surface]),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -225,12 +229,12 @@ class _HealthDashboardState extends State<HealthDashboard> {
                   child: CircularProgressIndicator(
                     value: score / 100,
                     strokeWidth: 8,
-                    backgroundColor: Colors.white12,
+                    backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation(color),
                   ),
                 ),
                 Center(
-                  child: Text('$score', style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+                  child: Text('$score', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 32, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -240,12 +244,12 @@ class _HealthDashboardState extends State<HealthDashboard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Health Score', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                Text('Health Score', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(label, style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
                 Text('$okParams/$totalParams parametri nel range ottimale', 
-                  style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
               ],
             ),
           ),
@@ -267,21 +271,22 @@ class _HealthDashboardState extends State<HealthDashboard> {
   }
 
   Widget _buildCriticalAlerts(List alerts) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFef4444).withValues(alpha:0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.warning_amber, color: Color(0xFFef4444), size: 20),
-              SizedBox(width: 8),
-              Text('Alert Recenti', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+              const Icon(Icons.warning_amber, color: Color(0xFFef4444), size: 20),
+              const SizedBox(width: 8),
+              Text('Alert Recenti', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600)),
             ],
           ),
           const SizedBox(height: 16),
@@ -302,8 +307,8 @@ class _HealthDashboardState extends State<HealthDashboard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(alert.title, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
-                      Text(alert.message, style: const TextStyle(color: Colors.white60, fontSize: 11)),
+                      Text(alert.title, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 13, fontWeight: FontWeight.w600)),
+                      Text(alert.message, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
                     ],
                   ),
                 ),
@@ -316,6 +321,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
   }
 
   Widget _buildMaintenanceReminders() {
+    final theme = Theme.of(context);
     final reminders = [
       {'title': 'Cambio Acqua', 'days': _settings.maintenanceReminders.waterChange.frequencyDays, 'icon': Icons.water_drop},
       {'title': 'Pulizia Filtro', 'days': _settings.maintenanceReminders.filterCleaning.frequencyDays, 'icon': Icons.filter_alt},
@@ -325,18 +331,18 @@ class _HealthDashboardState extends State<HealthDashboard> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha:0.1)),
+        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha:0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.calendar_today, color: Color(0xFF60a5fa), size: 20),
-              SizedBox(width: 8),
-              Text('Prossimi Promemoria', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+              const Icon(Icons.calendar_today, color: Color(0xFF60a5fa), size: 20),
+              const SizedBox(width: 8),
+              Text('Prossimi Promemoria', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600)),
             ],
           ),
           const SizedBox(height: 16),
@@ -355,7 +361,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(reminder['title'] as String, 
-                    style: const TextStyle(color: Colors.white, fontSize: 13)),
+                    style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 13)),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -375,12 +381,13 @@ class _HealthDashboardState extends State<HealthDashboard> {
   }
 
   Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
       ),
       child: Column(
         children: [
@@ -388,13 +395,14 @@ class _HealthDashboardState extends State<HealthDashboard> {
           const SizedBox(height: 8),
           Text(value, style: TextStyle(color: color, fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(label, style: const TextStyle(color: Colors.white60, fontSize: 10), textAlign: TextAlign.center),
+          Text(label, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 10), textAlign: TextAlign.center),
         ],
       ),
     );
   }
 
   Widget _buildRecommendations(int healthScore, int parametersInRange) {
+    final theme = Theme.of(context);
     final recommendations = <Map<String, dynamic>>[];
     
     if (healthScore < 80) {
@@ -414,20 +422,20 @@ class _HealthDashboardState extends State<HealthDashboard> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF3a3a3a),
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Raccomandazioni', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
+          Text('Raccomandazioni', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600)),
           const SizedBox(height: 16),
           ...recommendations.map((rec) => Container(
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFF2d2d2d),
+              color: theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -445,9 +453,9 @@ class _HealthDashboardState extends State<HealthDashboard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(rec['title'] as String, style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+                      Text(rec['title'] as String, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 13, fontWeight: FontWeight.w600)),
                       const SizedBox(height: 2),
-                      Text(rec['desc'] as String, style: const TextStyle(color: Colors.white60, fontSize: 11)),
+                      Text(rec['desc'] as String, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
                     ],
                   ),
                 ),

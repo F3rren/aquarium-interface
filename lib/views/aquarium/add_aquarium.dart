@@ -75,12 +75,14 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF2d2d2d),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Nuovo Acquario', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-        backgroundColor: const Color(0xFF3a3a3a),
-        foregroundColor: Colors.white,
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
         centerTitle: true,
       ),
@@ -99,9 +101,7 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
                   Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF4a4a4a), Color(0xFF3a3a3a)],
-                  ),
+                  color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -109,19 +109,19 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: const Icon(Icons.add_circle, color: Color(0xFF60a5fa), size: 32),
+                      child: Icon(Icons.add_circle, color: theme.colorScheme.primary, size: 32),
                     ),
                     const SizedBox(width: 16),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Crea Nuovo Acquario', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                          SizedBox(height: 4),
-                          Text('Compila i dettagli della vasca', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                          Text('Crea Nuovo Acquario', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 4),
+                          Text('Compila i dettagli della vasca', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
                         ],
                       ),
                     ),
@@ -135,7 +135,7 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
               const SizedBox(height: 8),
               TextFormField(
                 controller: _nameController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _buildInputDecoration('es. La Mia Vasca', Icons.text_fields),
                 validator: (value) => value?.isEmpty ?? true ? 'Inserisci un nome' : null,
               ),
@@ -146,9 +146,9 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF3a3a3a),
+                  color: theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withValues(alpha:0.1)),
+                  border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha:0.1)),
                 ),
                 child: Row(
                   children: [
@@ -165,7 +165,7 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
               const SizedBox(height: 8),
               TextFormField(
                 controller: _volumeController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 keyboardType: TextInputType.number,
                 decoration: _buildInputDecoration('es. 200', Icons.straighten),
                 validator: (value) => value?.isEmpty ?? true ? 'Inserisci il volume' : null,
@@ -179,7 +179,7 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
                 child: ElevatedButton(
                   onPressed: _saveAquarium,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF60a5fa),
+                    backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     elevation: 0,
@@ -204,10 +204,12 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
   }
 
   Widget _buildLabel(String text) {
+    final theme = Theme.of(context);
+    
     return Text(
       text,
-      style: const TextStyle(
-        color: Colors.white,
+      style: TextStyle(
+        color: theme.colorScheme.onSurface,
         fontSize: 14,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
@@ -216,23 +218,25 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
   }
 
   InputDecoration _buildInputDecoration(String hint, IconData icon) {
+    final theme = Theme.of(context);
+    
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: Colors.white.withValues(alpha:0.4)),
-      prefixIcon: Icon(icon, color: const Color(0xFF60a5fa), size: 20),
+      hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha:0.4)),
+      prefixIcon: Icon(icon, color: theme.colorScheme.primary, size: 20),
       filled: true,
-      fillColor: const Color(0xFF3a3a3a),
+      fillColor: theme.colorScheme.surfaceContainerHighest,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: Colors.white.withValues(alpha:0.1)),
+        borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha:0.1)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Color(0xFF60a5fa), width: 2),
+        borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
@@ -243,27 +247,28 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
   }
 
   Widget _buildTypeButton(String type, IconData icon) {
+    final theme = Theme.of(context);
     final isSelected = _selectedType == type;
     return GestureDetector(
       onTap: () => setState(() => _selectedType = type),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF60a5fa).withValues(alpha:0.2) : Colors.transparent,
+          color: isSelected ? theme.colorScheme.primary.withValues(alpha:0.2) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           children: [
             Icon(
               icon,
-              color: isSelected ? const Color(0xFF60a5fa) : Colors.white60,
+              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
               size: 28,
             ),
             const SizedBox(height: 8),
             Text(
               type,
               style: TextStyle(
-                color: isSelected ? const Color(0xFF60a5fa) : Colors.white60,
+                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),

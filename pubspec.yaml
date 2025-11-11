@@ -55,6 +55,12 @@ dependencies:
   
   # JSON serialization
   json_annotation: ^4.9.0
+  
+  # UUID generation
+  uuid: ^4.5.1
+  
+  # State management
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:

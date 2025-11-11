@@ -9,3 +9,4 @@ class DashboardPage extends StatelessWidget {
     return const HealthDashboard();
   }
 }
+
