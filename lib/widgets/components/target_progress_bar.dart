@@ -131,12 +131,12 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
           children: [
             Row(
               children: [
-                Icon(Icons.flag, size: 14, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                Icon(Icons.flag, size: 14, color: theme.colorScheme.onSurface.withValues(alpha:0.6)),
                 const SizedBox(width: 4),
                 Text(
                   'Target: ${widget.targetValue.toStringAsFixed(1)}${widget.unit}',
                   style: TextStyle(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -146,7 +146,7 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha:0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -197,13 +197,13 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
                       gradient: LinearGradient(
                         colors: [
                           color,
-                          color.withOpacity(0.7),
+                          color.withValues(alpha:0.7),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
-                          color: color.withOpacity(0.3),
+                          color: color.withValues(alpha:0.3),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -222,14 +222,14 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
             Text(
               '${widget.minValue.toStringAsFixed(0)}${widget.unit}',
               style: TextStyle(
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                color: theme.colorScheme.onSurface.withValues(alpha:0.5),
                 fontSize: 10,
               ),
             ),
             Text(
               '${widget.maxValue.toStringAsFixed(0)}${widget.unit}',
               style: TextStyle(
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 10,
               ),
             ),
@@ -350,7 +350,7 @@ class _CircularProgressPainter extends CustomPainter {
 
     // Background circle
     final bgPaint = Paint()
-      ..color = color.withOpacity(0.2)
+      ..color = color.withValues(alpha:0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6;
 

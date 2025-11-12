@@ -76,7 +76,6 @@ class ProfilePage extends StatelessWidget {
             icon: Icons.info_outline,
             color: const Color(0xFF34d399),
             onTap: () {
-              // TODO: Implementare
             },
           ),
           
@@ -147,7 +146,7 @@ class ProfilePage extends StatelessWidget {
           Switch(
             value: themeProvider.isDarkMode,
             onChanged: (_) => themeProvider.toggleTheme(),
-            activeColor: theme.colorScheme.primary,
+            activeThumbColor: theme.colorScheme.primary,
           ),
         ],
       ),

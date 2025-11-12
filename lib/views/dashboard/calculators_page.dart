@@ -163,8 +163,6 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
   }
 
   void _calculateDensitySalinity() {
-    final temp = double.tryParse(_temperatureController.text) ?? 25.0;
-    
     if (_conversionMode == 'density_to_salinity') {
       final density = double.tryParse(_densityController.text);
       if (density != null && density >= 1.020 && density <= 1.030) {

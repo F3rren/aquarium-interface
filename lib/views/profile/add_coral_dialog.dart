@@ -349,7 +349,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
             border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
           child: DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             dropdownColor: const Color(0xFF3a3a3a),
             decoration: InputDecoration(
               prefixIcon: Icon(icon, color: const Color(0xFF34d399)),

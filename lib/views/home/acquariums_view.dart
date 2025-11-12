@@ -3,7 +3,6 @@ import 'package:acquariumfe/widgets/animated_value.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
 import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
-import 'package:acquariumfe/widgets/tap_effect_card.dart';
 
 class AquariumView extends StatefulWidget {
   const AquariumView({super.key});
