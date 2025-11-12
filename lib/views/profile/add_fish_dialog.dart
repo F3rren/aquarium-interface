@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/fish.dart';
+import '../../models/fish_species.dart';
+import '../../services/fish_database_service.dart';
 
 class AddFishDialog extends StatefulWidget {
   final Fish? fish;
@@ -24,6 +26,11 @@ class _AddFishDialogState extends State<AddFishDialog> {
   late TextEditingController _sizeController;
   late TextEditingController _notesController;
   late TextEditingController _quantityController;
+  
+  final _fishDbService = FishDatabaseService();
+  List<FishSpecies> _availableFish = [];
+  FishSpecies? _selectedFishSpecies;
+  bool _isLoadingDatabase = true;
 
   @override
   void initState() {
@@ -33,6 +40,81 @@ class _AddFishDialogState extends State<AddFishDialog> {
     _sizeController = TextEditingController(text: widget.fish?.size.toString() ?? '');
     _notesController = TextEditingController(text: widget.fish?.notes ?? '');
     _quantityController = TextEditingController(text: widget.fish == null ? '1' : '1');
+    
+    _loadFishDatabase();
+  }
+  
+  Future<void> _loadFishDatabase() async {
+    try {
+      final fish = await _fishDbService.getAllFish();
+      setState(() {
+        _availableFish = fish;
+        _isLoadingDatabase = false;
+      });
+    } catch (e) {
+      setState(() => _isLoadingDatabase = false);
+      print('Errore caricamento database pesci: $e');
+    }
+  }
+  
+  void _onFishSpeciesSelected(FishSpecies? species) {
+    if (species == null) return;
+    
+    setState(() {
+      _selectedFishSpecies = species;
+      _nameController.text = species.commonName;
+      _speciesController.text = species.scientificName;
+      _sizeController.text = species.maxSize.toString();
+      
+      // Aggiungi info utili nelle note
+      final info = StringBuffer();
+      info.writeln('Difficoltà: ${_getDifficultyLabel(species.difficulty)}');
+      info.writeln('Vasca minima: ${species.minTankSize}L');
+      info.writeln('Temperamento: ${_getTemperamentLabel(species.temperament)}');
+      info.writeln('Dieta: ${_getDietLabel(species.diet)}');
+      info.writeln('Reef-safe: ${species.reefSafe ? "Sì" : "No"}');
+      if (species.description != null) {
+        info.writeln('\n${species.description}');
+      }
+      
+      _notesController.text = info.toString();
+    });
+  }
+  
+  String _getDifficultyLabel(String difficulty) {
+    switch (difficulty) {
+      case 'beginner': return 'Principiante';
+      case 'intermediate': return 'Intermedio';
+      case 'expert': return 'Esperto';
+      default: return difficulty;
+    }
+  }
+  
+  String _getTemperamentLabel(String temperament) {
+    switch (temperament) {
+      case 'peaceful': return 'Pacifico';
+      case 'semi-aggressive': return 'Semi-aggressivo';
+      case 'aggressive': return 'Aggressivo';
+      default: return temperament;
+    }
+  }
+  
+  String _getDietLabel(String diet) {
+    switch (diet) {
+      case 'herbivore': return 'Erbivoro';
+      case 'carnivore': return 'Carnivoro';
+      case 'omnivore': return 'Onnivoro';
+      default: return diet;
+    }
+  }
+  
+  Color _getDifficultyColor(String difficulty) {
+    switch (difficulty) {
+      case 'beginner': return const Color(0xFF34d399);
+      case 'intermediate': return const Color(0xFFfbbf24);
+      case 'expert': return const Color(0xFFef4444);
+      default: return const Color(0xFF6b7280);
+    }
   }
 
   @override
@@ -131,13 +213,15 @@ class _AddFishDialogState extends State<AddFishDialog> {
       backgroundColor: theme.colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-      child: SingleChildScrollView(
-        child: Padding(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
+        ),
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+              children: [
               Row(
                 children: [
                   Hero(
@@ -166,6 +250,100 @@ class _AddFishDialogState extends State<AddFishDialog> {
                 ],
               ),
               const SizedBox(height: 24),
+              
+              // Dropdown per selezionare dal database
+              if (widget.fish == null && !_isLoadingDatabase) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<FishSpecies>(
+                      isExpanded: true,
+                      hint: Row(
+                        children: [
+                          Icon(Icons.search, color: theme.colorScheme.primary, size: 20),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Seleziona dalla lista',
+                            style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ),
+                      value: _selectedFishSpecies,
+                      dropdownColor: theme.colorScheme.surface,
+                      icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
+                      items: _availableFish.map((species) {
+                        return DropdownMenuItem<FishSpecies>(
+                          value: species,
+                          child: Row(
+                            children: [
+                              
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      species.commonName,
+                                      style: TextStyle(
+                                        color: theme.colorScheme.onSurface,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      species.scientificName,
+                                      style: TextStyle(
+                                        color: theme.colorScheme.onSurfaceVariant,
+                                        fontSize: 11,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Badge difficoltà
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: _getDifficultyColor(species.difficulty),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  _getDifficultyLabel(species.difficulty)[0],
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: _onFishSpeciesSelected,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Center(
+                  child: Text(
+                    'oppure inserisci manualmente',
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
               
               _buildTextField(
                 controller: _nameController,

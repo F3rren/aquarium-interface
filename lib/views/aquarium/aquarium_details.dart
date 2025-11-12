@@ -130,29 +130,6 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.check_circle, color: theme.colorScheme.primary, size: 14),
-                              const SizedBox(width: 4),
-                              Text(
-                                'ALL GOOD',
-                                style: TextStyle(
-                                  color: theme.colorScheme.primary,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ),

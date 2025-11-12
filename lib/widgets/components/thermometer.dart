@@ -104,7 +104,7 @@ class Thermometer extends StatelessWidget {
             ] else ...[
               const SizedBox(height: 12),
             ],
-            _buildProgressBar(color, theme),
+            //_buildProgressBar(color, theme),
           ],
         ),
       ),
