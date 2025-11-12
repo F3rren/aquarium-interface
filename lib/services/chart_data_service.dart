@@ -32,8 +32,13 @@ class ChartDataService {
         return _generateMockData(parameter, hours);
       }
 
+      // Filtra i dati nel range temporale richiesto (caso MockOn restituisca tutti i dati)
+      final filteredHistory = history.where((param) {
+        return param.timestamp.isAfter(from) && param.timestamp.isBefore(to.add(Duration(minutes: 1)));
+      }).toList();
+
       // Converti in ParameterDataPoint
-      return _convertToDataPoints(history, parameter);
+      return _convertToDataPoints(filteredHistory, parameter);
     } catch (e) {
       // Fallback a dati mock se backend non disponibile
       return _generateMockData(parameter, hours);

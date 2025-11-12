@@ -17,7 +17,7 @@ class ParameterService {
   final ManualParametersService _manualService = ManualParametersService();
   
   // ID della vasca attualmente selezionata
-  String? _currentAquariumId;
+  String? _currentid;
   
   // Cache per i parametri correnti
   AquariumParameters? _cachedParameters;
@@ -40,9 +40,9 @@ class ParameterService {
   }
 
   /// Imposta la vasca corrente per cui recuperare i parametri
-  void setCurrentAquarium(String aquariumId) {
-    if (_currentAquariumId != aquariumId) {
-      _currentAquariumId = aquariumId;
+  void setCurrentAquarium(String id) {
+    if (_currentid != id) {
+      _currentid = id;
       // Invalida la cache quando cambia la vasca
       _cachedParameters = null;
       _lastFetch = null;
@@ -52,19 +52,19 @@ class ParameterService {
   /// Ottieni i parametri correnti per la vasca specificata (o quella corrente)
   /// Se useMock=true, fallback a dati mockati in caso di errore
   Future<AquariumParameters> getCurrentParameters({
-    String? aquariumId,
+    String? id,
     bool useMock = true,
   }) async {
-    final targetAquariumId = aquariumId ?? _currentAquariumId;
+    final targetid = id ?? _currentid;
     
-    if (targetAquariumId == null) {
+    if (targetid == null) {
       throw Exception('Nessuna vasca selezionata. Usa setCurrentAquarium() prima.');
     }
     
     try {
       // Endpoint per vasca specifica: /api/aquariumslist/{id}/parameters
-      final response = await _apiService.get('/aquariumslist/$targetAquariumId/parameters');
-      
+      final response = await _apiService.get('/aquariumslist/$targetid/parameters');
+
       // Gestisci il caso in cui la risposta abbia un wrapper "data"
       final Map<String, dynamic> parametersData;
       if (response is Map<String, dynamic>) {
@@ -129,14 +129,14 @@ class ParameterService {
 
   /// Ottieni storico parametri per la vasca specificata (o quella corrente)
   Future<List<AquariumParameters>> getParameterHistory({
-    String? aquariumId,
+    String? id,
     DateTime? from,
     DateTime? to,
     int? limit,
   }) async {
-    final targetAquariumId = aquariumId ?? _currentAquariumId;
+    final targetid = id ?? _currentid;
     
-    if (targetAquariumId == null) {
+    if (targetid == null) {
       return []; // Ritorna lista vuota invece di errore
     }
     
@@ -150,44 +150,61 @@ class ParameterService {
       final query = queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
       
       // Endpoint per storico vasca specifica: /api/aquariumslist/{id}/parameters/history
-      final endpoint = '/aquariumslist/$targetAquariumId/parameters/history${query.isNotEmpty ? '?$query' : ''}';
+      final endpoint = '/aquariumslist/$targetid/parameters/history${query.isNotEmpty ? '?$query' : ''}';
       
       
       final response = await _apiService.get(endpoint);
+      print('History response: $response');
      
-      // Gestisci diversi formati di risposta
+      // Gestisci il nuovo formato con id e measurements
       List<dynamic> historyJson;
-      if (response is List) {
-        // Risposta diretta come array
-        historyJson = response;
-      } else if (response is Map<String, dynamic>) {
-        // Risposta con wrapper object
+      if (response is Map<String, dynamic>) {
+        // Risposta con wrapper object {"data": {"id": 1, "measurements": [...]}}
         if (response.containsKey('data')) {
           var dataValue = response['data'];
           
-          // Controlla se data è un array di array (errore comune MockOn)
-          if (dataValue is List && dataValue.isNotEmpty && dataValue.first is List) {
-            historyJson = dataValue.first as List<dynamic>;
+          if (dataValue is Map<String, dynamic>) {
+            // dataValue è l'oggetto con id e measurements
+            if (dataValue['id'].toString() == targetid && dataValue['measurements'] != null) {
+              historyJson = dataValue['measurements'] as List<dynamic>;
+            } else {
+              historyJson = [];
+            }
+          } else if (dataValue is List) {
+            // Formato vecchio con array di oggetti
+            final aquariumData = dataValue.firstWhere(
+              (item) => item['id'].toString() == targetid,
+              orElse: () => null,
+            );
+            
+            if (aquariumData != null && aquariumData['measurements'] != null) {
+              historyJson = aquariumData['measurements'] as List<dynamic>;
+            } else {
+              historyJson = [];
+            }
           } else {
-            historyJson = dataValue as List<dynamic>;
-          }
-          } else if (response.containsKey('history')) {
-          var historyValue = response['history'];
-          
-          // Controlla se history è un array di array
-          if (historyValue is List && historyValue.isNotEmpty && historyValue.first is List) {
-            historyJson = historyValue.first as List<dynamic>;
-          } else {
-            historyJson = historyValue as List<dynamic>;
+            historyJson = [];
           }
         } else {
           historyJson = [];
         }
+      } else if (response is List) {
+        // Risposta diretta come array di oggetti con id e measurements
+        final aquariumData = response.firstWhere(
+          (item) => item['id'].toString() == targetid,
+          orElse: () => null,
+        );
+        
+        if (aquariumData != null && aquariumData['measurements'] != null) {
+          historyJson = aquariumData['measurements'] as List<dynamic>;
+        } else {
+          historyJson = [];
+        }
       } else {
-        // Formato sconosciuto
         historyJson = [];
-       
       }
+      
+      print('Extracted ${historyJson.length} measurements from history');
       
       final parameters = historyJson
           .map((json) => AquariumParameters.fromJson(json as Map<String, dynamic>))
