@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:acquariumfe/services/aquarium_service.dart';
+import 'package:flutter/material.dart';
+import 'package:acquariumfe/models/aquarium.dart';
 
 class EditAquarium extends StatefulWidget {
   const EditAquarium({super.key});
@@ -11,15 +13,13 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _volumeController = TextEditingController();
+  final AquariumsService _aquariumsService = AquariumsService();
+  
   String _selectedType = 'Marino';
-  
-  final List<Map<String, dynamic>> _aquariums = [
-    {'id': 1, 'name': 'La Mia Vasca', 'volume': 200, 'type': 'Marino'},
-    {'id': 2, 'name': 'Acquario Tropicale', 'volume': 150, 'type': 'Dolce'},
-  ];
-  
-  Map<String, dynamic>? _selectedAquarium;
+  List<Aquarium> _aquariums = [];
+  Aquarium? _selectedAquarium;
   bool _isEditing = false;
+  bool _isLoading = true;
   
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -50,7 +50,40 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
       ),
     );
     
+    _loadAquariums();
     _animationController.forward();
+  }
+
+  Future<void> _loadAquariums() async {
+    setState(() => _isLoading = true);
+    
+    try {
+      final aquariums = await _aquariumsService.getAquariumsList();
+      setState(() {
+        _aquariums = aquariums;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text('Errore nel caricamento delle vasche: $e'),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -61,40 +94,78 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
     super.dispose();
   }
 
-  void _selectAquarium(Map<String, dynamic> aquarium) {
+  void _selectAquarium(Aquarium aquarium) {
     setState(() {
       _selectedAquarium = aquarium;
       _isEditing = true;
-      _nameController.text = aquarium['name'];
-      _volumeController.text = aquarium['volume'].toString();
-      _selectedType = aquarium['type'];
+      _nameController.text = aquarium.name;
+      _volumeController.text = aquarium.volume.toString();
+      _selectedType = aquarium.type;
     });
     _animationController.reset();
     _animationController.forward();
   }
 
-  void _saveChanges() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle, color: Colors.white),
-              const SizedBox(width: 12),
-              Text('Modifiche salvate per "${_nameController.text}"'),
-            ],
-          ),
-          backgroundColor: const Color(0xFF60a5fa),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
-      setState(() {
-        _isEditing = false;
-        _selectedAquarium = null;
-        _nameController.clear();
-        _volumeController.clear();
-      });
+  Future<void> _saveChanges() async {
+    if (_formKey.currentState!.validate() && _selectedAquarium != null) {
+      try {
+        // Crea l'oggetto Aquarium aggiornato
+        final updatedAquarium = _selectedAquarium!.copyWith(
+          name: _nameController.text,
+          volume: double.parse(_volumeController.text),
+          type: _selectedType,
+        );
+
+        // Chiama il servizio per aggiornare la vasca
+        await _aquariumsService.updateAquarium(
+          _selectedAquarium!.id,
+          updatedAquarium,
+        );
+
+        // Ricarica la lista
+        await _loadAquariums();
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Text('Modifiche salvate per "${_nameController.text}"'),
+                ],
+              ),
+              backgroundColor: const Color(0xFF60a5fa),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          );
+          
+          setState(() {
+            _isEditing = false;
+            _selectedAquarium = null;
+            _nameController.clear();
+            _volumeController.clear();
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text('Errore nel salvare le modifiche: $e')),
+                ],
+              ),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -123,7 +194,35 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
 
   Widget _buildAquariumList() {
     final theme = Theme.of(context);
-    
+
+    if (_isLoading) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(40.0),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_aquariums.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.water_drop_outlined, size: 64, color: theme.colorScheme.onSurfaceVariant),
+              const SizedBox(height: 16),
+              Text(
+                'Nessuna vasca trovata',
+                style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -163,7 +262,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
     );
   }
 
-  Widget _buildAquariumCard(Map<String, dynamic> aquarium) {
+  Widget _buildAquariumCard(Aquarium aquarium) {
     final theme = Theme.of(context);
     
     return Container(
@@ -189,7 +288,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    aquarium['type'] == 'Marino' ? Icons.water_drop : Icons.water,
+                    aquarium.type == 'Marino' ? Icons.water_drop : Icons.water,
                     color: theme.colorScheme.primary,
                     size: 24,
                   ),
@@ -200,12 +299,12 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        aquarium['name'],
+                        aquarium.name,
                         style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${aquarium['volume']} L  ${aquarium['type']}',
+                        '${aquarium.volume} L • ${aquarium.type}',
                         style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
                       ),
                     ],
@@ -253,7 +352,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                       children: [
                         Text('Modifica Dettagli', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
-                        Text('Aggiorna ${_selectedAquarium!['name']}', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
+                        Text('Aggiorna ${_selectedAquarium!.name}', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
                       ],
                     ),
                   ),

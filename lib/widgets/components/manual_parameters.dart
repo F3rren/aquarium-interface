@@ -162,7 +162,7 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '${value.toStringAsFixed(value < 10 ? 2 : 0)}',
+                    value.toStringAsFixed(value < 10 ? 2 : 0),
                     style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(width: 4),

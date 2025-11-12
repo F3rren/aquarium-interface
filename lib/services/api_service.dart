@@ -25,9 +25,7 @@ class ApiService {
       } else {
         return 'http://localhost:4000/api';
       }
-    } else {
-      return 'https://your-production-api.com/api';
-    }
+    } 
   }
   
   // Headers comuni per tutte le richieste
