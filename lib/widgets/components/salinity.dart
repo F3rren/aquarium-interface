@@ -89,7 +89,7 @@ class SalinityMeter extends StatelessWidget {
                   ),
                   child: AnimatedNumberWithIndicator(
                     value: currentSalinity,
-                    decimals: 1,
+                    decimals: 0,
                     style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -100,9 +100,9 @@ class SalinityMeter extends StatelessWidget {
             TargetProgressBar(
               currentValue: currentSalinity,
               targetValue: targetSalinity!,
-              minValue: 1.020,
-              maxValue: 1.028,
-              unit: '',
+              minValue: 1020,
+              maxValue: 1028,
+              unit: ' PPT',
             ),
           ] else ...[
             const SizedBox(height: 12),
@@ -116,7 +116,7 @@ class SalinityMeter extends StatelessWidget {
 
 void _showEditTargetDialog(BuildContext context) async {
     final controller = TextEditingController(
-      text: targetSalinity?.toStringAsFixed(1) ?? TargetParametersService.defaultSalinity.toStringAsFixed(1),
+      text: targetSalinity?.toStringAsFixed(0) ?? TargetParametersService.defaultSalinity.toStringAsFixed(0),
     );
 
     final result = await showDialog<double>(

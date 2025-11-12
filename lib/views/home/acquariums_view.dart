@@ -3,6 +3,9 @@ import 'package:acquariumfe/widgets/animated_value.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
 import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
+import 'package:acquariumfe/services/aquarium_service.dart';
+import 'package:acquariumfe/services/parameter_service.dart';
+import 'package:acquariumfe/models/aquarium.dart';
 
 class AquariumView extends StatefulWidget {
   const AquariumView({super.key});
@@ -12,10 +15,14 @@ class AquariumView extends StatefulWidget {
 }
 
 class _AquariumViewState extends State<AquariumView> with SingleTickerProviderStateMixin {
+  final AquariumsService _aquariumsService = AquariumsService();
+  
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  
   bool _isLoading = true;
+  List<Aquarium> _aquariums = [];
 
   @override
   void initState() {
@@ -46,11 +53,43 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
   }
 
   Future<void> _loadData() async {
-    // Simula caricamento dati
-    await Future.delayed(const Duration(milliseconds: 1200));
-    if (mounted) {
-      setState(() => _isLoading = false);
-      _controller.forward();
+    setState(() => _isLoading = true);
+    
+    try {
+      final aquariums = await _aquariumsService.getAquariumsList();
+      if (mounted) {
+        setState(() {
+          _aquariums = aquariums;
+          _isLoading = false;
+        });
+        
+        // Imposta la prima vasca come corrente se ce ne sono
+        if (aquariums.isNotEmpty) {
+          ParameterService().setCurrentAquarium(aquariums.first.id);
+        }
+        
+        _controller.forward();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text('Errore nel caricamento delle vasche: $e'),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        );
+      }
     }
   }
 
@@ -61,11 +100,8 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
   }
 
   Future<void> _refreshData() async {
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 1));
+    await _loadData();
     if (mounted) {
-      setState(() => _isLoading = false);
-      _controller.forward(from: 0);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Row(
@@ -92,35 +128,88 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
       onRefresh: _refreshData,
       color: theme.colorScheme.primary,
       backgroundColor: theme.colorScheme.surface,
-      child: ListView(
-        padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
-        children: _isLoading 
-          ? List.generate(3, (index) => const AquariumCardSkeleton())
-          : [
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: _buildAquariumCard(context, "La Mia Vasca", 25.5, true),
+      child: _isLoading
+          ? ListView(
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
+              children: List.generate(3, (index) => const AquariumCardSkeleton()),
+            )
+          : _aquariums.isEmpty
+              ? _buildEmptyState(theme)
+              : ListView.builder(
+                  padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
+                  itemCount: _aquariums.length,
+                  itemBuilder: (context, index) {
+                    return FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: _buildAquariumCard(context, _aquariums[index]),
+                      ),
+                    );
+                  },
                 ),
-              ),
-            ],
-      ),
     );
   }
 
-  Widget _buildAquariumCard(BuildContext context, String name, double temp, bool isGood) {
+  Widget _buildEmptyState(ThemeData theme) {
+    return ListView(
+      padding: const EdgeInsets.all(40),
+      children: [
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.water_drop_outlined,
+                size: 80,
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Nessuna vasca trovata',
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Aggiungi la tua prima vasca per iniziare',
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAquariumCard(BuildContext context, Aquarium aquarium) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     
+    // TODO: Questi valori dovranno venire dai parametri in tempo reale dell'acquario
+    const double temp = 25.5;
+    const bool isGood = true;
+    
     return BounceButton(
-      onTap: () => Navigator.push(
-        context,
-        CustomPageRoute(
-          page: const AquariumDetails(),
-          transitionType: PageTransitionType.fadeSlide,
-        ),
-      ),
+      onTap: () {
+        // Imposta questa vasca come vasca corrente per i parametri
+        ParameterService().setCurrentAquarium(aquarium.id);
+        
+        Navigator.push(
+          context,
+          CustomPageRoute(
+            page: const AquariumDetails(),
+            transitionType: PageTransitionType.fadeSlide,
+          ),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -163,7 +252,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: "aquarium_card",
+              tag: "aquarium_card_${aquarium.id}",
               child: Material(
                 color: Colors.transparent,
                 child: Row(
@@ -187,7 +276,11 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                               ),
                             ),
                             child: Icon(
-                              Icons.water,
+                              aquarium.type == 'Marino' 
+                                  ? Icons.water_drop 
+                                  : aquarium.type == 'Reef'
+                                      ? Icons.bubble_chart
+                                      : Icons.water,
                               color: const Color(0xFF60a5fa),
                               size: 20,
                             ),
@@ -198,7 +291,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  name,
+                                  aquarium.name,
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurface,
                                     fontSize: 16,
@@ -211,13 +304,13 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                                 Row(
                                   children: [
                                     Icon(
-                                      Icons.access_time,
+                                      Icons.water_drop,
                                       size: 11,
                                       color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      "5 min fa",
+                                      "${aquarium.volume.toInt()} L • ${aquarium.type}",
                                       style: TextStyle(
                                         color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                                         fontSize: 11,

@@ -16,6 +16,9 @@ class ParameterService {
   final AlertManager _alertManager = AlertManager();
   final ManualParametersService _manualService = ManualParametersService();
   
+  // ID della vasca attualmente selezionata
+  String? _currentAquariumId;
+  
   // Cache per i parametri correnti
   AquariumParameters? _cachedParameters;
   DateTime? _lastFetch;
@@ -36,12 +39,45 @@ class ParameterService {
     _autoCheckAlerts = enabled;
   }
 
-  /// Ottieni i parametri correnti
+  /// Imposta la vasca corrente per cui recuperare i parametri
+  void setCurrentAquarium(String aquariumId) {
+    if (_currentAquariumId != aquariumId) {
+      _currentAquariumId = aquariumId;
+      // Invalida la cache quando cambia la vasca
+      _cachedParameters = null;
+      _lastFetch = null;
+    }
+  }
+
+  /// Ottieni i parametri correnti per la vasca specificata (o quella corrente)
   /// Se useMock=true, fallback a dati mockati in caso di errore
-  Future<AquariumParameters> getCurrentParameters({bool useMock = true}) async {
+  Future<AquariumParameters> getCurrentParameters({
+    String? aquariumId,
+    bool useMock = true,
+  }) async {
+    final targetAquariumId = aquariumId ?? _currentAquariumId;
+    
+    if (targetAquariumId == null) {
+      throw Exception('Nessuna vasca selezionata. Usa setCurrentAquarium() prima.');
+    }
+    
     try {
-      final response = await _apiService.get('/parameters/current');
-      final parameters = AquariumParameters.fromJson(response);
+      // Endpoint per vasca specifica: /api/aquariumslist/{id}/parameters
+      final response = await _apiService.get('/aquariumslist/$targetAquariumId/parameters');
+      
+      // Gestisci il caso in cui la risposta abbia un wrapper "data"
+      final Map<String, dynamic> parametersData;
+      if (response is Map<String, dynamic>) {
+        if (response.containsKey('data')) {
+          parametersData = response['data'] as Map<String, dynamic>;
+        } else {
+          parametersData = response;
+        }
+      } else {
+        throw Exception('Formato risposta non valido: attesa mappa');
+      }
+      
+      final parameters = AquariumParameters.fromJson(parametersData);
       
       // Carica parametri manuali e uniscili
       final manualParams = await _manualService.loadManualParameters();
@@ -91,12 +127,19 @@ class ParameterService {
     return _cachedParameters;
   }
 
-  /// Ottieni storico parametri
+  /// Ottieni storico parametri per la vasca specificata (o quella corrente)
   Future<List<AquariumParameters>> getParameterHistory({
+    String? aquariumId,
     DateTime? from,
     DateTime? to,
     int? limit,
   }) async {
+    final targetAquariumId = aquariumId ?? _currentAquariumId;
+    
+    if (targetAquariumId == null) {
+      return []; // Ritorna lista vuota invece di errore
+    }
+    
     try {
       // Costruisci query parameters
       final queryParams = <String, String>{};
@@ -105,14 +148,55 @@ class ParameterService {
       if (limit != null) queryParams['limit'] = limit.toString();
       
       final query = queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
-      final endpoint = '/parameters/history${query.isNotEmpty ? '?$query' : ''}';
+      
+      // Endpoint per storico vasca specifica: /api/aquariumslist/{id}/parameters/history
+      final endpoint = '/aquariumslist/$targetAquariumId/parameters/history${query.isNotEmpty ? '?$query' : ''}';
+      
       
       final response = await _apiService.get(endpoint);
+     
+      // Gestisci diversi formati di risposta
+      List<dynamic> historyJson;
+      if (response is List) {
+        // Risposta diretta come array
+        historyJson = response;
+      } else if (response is Map<String, dynamic>) {
+        // Risposta con wrapper object
+        if (response.containsKey('data')) {
+          var dataValue = response['data'];
+          
+          // Controlla se data è un array di array (errore comune MockOn)
+          if (dataValue is List && dataValue.isNotEmpty && dataValue.first is List) {
+            historyJson = dataValue.first as List<dynamic>;
+          } else {
+            historyJson = dataValue as List<dynamic>;
+          }
+          } else if (response.containsKey('history')) {
+          var historyValue = response['history'];
+          
+          // Controlla se history è un array di array
+          if (historyValue is List && historyValue.isNotEmpty && historyValue.first is List) {
+            historyJson = historyValue.first as List<dynamic>;
+          } else {
+            historyJson = historyValue as List<dynamic>;
+          }
+        } else {
+          historyJson = [];
+        }
+      } else {
+        // Formato sconosciuto
+        historyJson = [];
+       
+      }
       
-      final List<dynamic> data = response['data'] ?? [];
-      return data.map((json) => AquariumParameters.fromJson(json)).toList();
+      final parameters = historyJson
+          .map((json) => AquariumParameters.fromJson(json as Map<String, dynamic>))
+          .toList();
+      
+      return parameters;
       
     } catch (e) {
+      
       return [];
     }
   }

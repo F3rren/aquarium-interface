@@ -1,32 +1,37 @@
 import '../models/aquarium.dart';
+import '../models/aquarium_parameters.dart';
 import 'api_service.dart';
 
 /// Service per gestire le operazioni CRUD sugli acquari
 class AquariumsService {
   final ApiService _apiService = ApiService();
 
-  /// Recupera la lista di tutti gli acquari
-  /// 
-  /// Effettua una chiamata GET all'endpoint /aquariumslist
-  /// e restituisce una lista di oggetti Aquarium
-  /// 
-  /// Throws [ApiException] in caso di errore nella chiamata API
   Future<List<Aquarium>> getAquariumsList() async {
     try {
       final response = await _apiService.get('/aquariumslist');
       
-      // La risposta può essere un oggetto con una chiave 'aquariums' o 'data'
+      // La risposta può essere un oggetto con una chiave 'aquariums' o 'data', oppure un array diretto
       final List<dynamic> aquariumsJson;
       
-      if (response.containsKey('aquariums')) {
-        aquariumsJson = response['aquariums'] as List<dynamic>;
-      } else if (response.containsKey('data')) {
-        aquariumsJson = response['data'] as List<dynamic>;
+      if (response is List) {
+        // Risposta diretta come array
+        aquariumsJson = response;
+      } else if (response is Map<String, dynamic>) {
+        // Risposta con wrapper object
+        if (response.containsKey('aquariums')) {
+          aquariumsJson = response['aquariums'] as List<dynamic>;
+        } else if (response.containsKey('data')) {
+          aquariumsJson = response['data'] as List<dynamic>;
+        } else {
+          throw ApiException(
+            statusCode: 500,
+            message: 'Formato risposta non valido: chiave "aquariums" o "data" non trovata',
+          );
+        }
       } else {
-        // Se la risposta non ha il formato atteso, assumiamo sia una lista
         throw ApiException(
           statusCode: 500,
-          message: 'Formato risposta non valido: chiave "aquariums" o "data" non trovata',
+          message: 'Formato risposta non valido: attesa lista o mappa',
         );
       }
       
@@ -42,7 +47,14 @@ class AquariumsService {
   Future<Aquarium?> getAquariumById(String id) async {
     try {
       final response = await _apiService.get('/aquariums/$id');
-      return Aquarium.fromJson(response);
+      if (response is Map<String, dynamic>) {
+        return Aquarium.fromJson(response);
+      } else {
+        throw ApiException(
+          statusCode: 500,
+          message: 'Formato risposta non valido: attesa mappa',
+        );
+      }
     } catch (e) {
       rethrow;
     }
@@ -72,6 +84,83 @@ class AquariumsService {
   Future<void> deleteAquarium(String id) async {
     try {
       await _apiService.delete('/aquariums/$id');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Recupera i parametri attuali di una vasca specifica
+  Future<AquariumParameters> getAquariumParameters(String aquariumId) async {
+    try {
+      final response = await _apiService.get('/aquariumslist/$aquariumId/parameters');
+      
+      // Gestisci il caso in cui la risposta abbia un wrapper "data"
+      final Map<String, dynamic> parametersData;
+      if (response is Map<String, dynamic>) {
+        if (response.containsKey('data')) {
+          parametersData = response['data'] as Map<String, dynamic>;
+        } else {
+          parametersData = response;
+        }
+      } else {
+        throw ApiException(
+          statusCode: 500,
+          message: 'Formato risposta non valido: attesa mappa',
+        );
+      }
+      
+      return AquariumParameters.fromJson(parametersData);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Recupera lo storico dei parametri di una vasca specifica
+  Future<List<AquariumParameters>> getAquariumParameterHistory({
+    required String aquariumId,
+    DateTime? from,
+    DateTime? to,
+    int? limit,
+  }) async {
+    try {
+      // Costruisci query parameters
+      final queryParams = <String, String>{};
+      if (from != null) queryParams['from'] = from.toIso8601String();
+      if (to != null) queryParams['to'] = to.toIso8601String();
+      if (limit != null) queryParams['limit'] = limit.toString();
+      
+      final query = queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
+      final endpoint = '/aquariumslist/$aquariumId/parameters/history${query.isNotEmpty ? '?$query' : ''}';
+      
+      final response = await _apiService.get(endpoint);
+      
+      // Gestisci diversi formati di risposta
+      final List<dynamic> historyJson;
+      if (response is List) {
+        // Risposta diretta come array
+        historyJson = response;
+      } else if (response is Map<String, dynamic>) {
+        // Risposta con wrapper object
+        if (response.containsKey('history')) {
+          historyJson = response['history'] as List<dynamic>;
+        } else if (response.containsKey('data')) {
+          historyJson = response['data'] as List<dynamic>;
+        } else {
+          throw ApiException(
+            statusCode: 500,
+            message: 'Formato risposta non valido per lo storico parametri',
+          );
+        }
+      } else {
+        throw ApiException(
+          statusCode: 500,
+          message: 'Formato risposta non valido: attesa lista o mappa',
+        );
+      }
+      
+      return historyJson
+          .map((json) => AquariumParameters.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       rethrow;
     }

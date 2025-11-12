@@ -101,7 +101,7 @@ class _ParametersViewState extends State<ParametersView> {
     // Valori di default se i dati non sono ancora caricati
     final temperature = _currentParams?.temperature ?? 25.0;
     final ph = _currentParams?.ph ?? 8.2;
-    final salinity = _currentParams?.salinity ?? 1.024;
+    final salinity = _currentParams?.salinity ?? 1024.0;
     final orp = _currentParams?.orp ?? 350.0;
 
     return RefreshIndicator(

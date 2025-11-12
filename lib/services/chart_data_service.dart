@@ -27,6 +27,11 @@ class ChartDataService {
         limit: 100, // Max 100 punti per performance
       );
 
+      // Se non ci sono dati, usa mock
+      if (history.isEmpty) {
+        return _generateMockData(parameter, hours);
+      }
+
       // Converti in ParameterDataPoint
       return _convertToDataPoints(history, parameter);
     } catch (e) {
@@ -75,12 +80,12 @@ class ChartDataService {
     final baseValues = {
       'Temperatura': 25.0,
       'pH': 8.2,
-      'Salinità': 1.024,
+      'Salinità': 1024,
       'ORP': 350.0,
     };
 
     final baseValue = baseValues[parameter] ?? 25.0;
-    final variationRange = parameter == 'Temperatura' ? 1.0 : 
+    final variationRange = parameter == 'Temperatura' ? 1 : 
                            parameter == 'pH' ? 0.3 : 
                            parameter == 'Salinità' ? 0.003 : 30.0;
 

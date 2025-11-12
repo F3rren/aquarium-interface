@@ -36,7 +36,7 @@ class ApiService {
   };
 
   /// GET request generico
-  Future<Map<String, dynamic>> get(String endpoint) async {
+  Future<dynamic> get(String endpoint) async {
     try {
       final url = Uri.parse('$baseUrl$endpoint');
       final response = await http.get(url, headers: _headers);
@@ -88,12 +88,13 @@ class ApiService {
   }
 
   /// Gestisce la risposta HTTP
-  Map<String, dynamic> _handleResponse(http.Response response) {
+  dynamic _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.body.isEmpty) {
         return {'success': true};
       }
-      return jsonDecode(response.body) as Map<String, dynamic>;
+      // Decodifica il JSON senza forzare il cast a Map
+      return jsonDecode(response.body);
     } else {
       throw ApiException(
         statusCode: response.statusCode,

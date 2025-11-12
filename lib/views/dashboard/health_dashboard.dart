@@ -62,7 +62,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
     // Usa dati di fallback se non ancora caricati
     final currentTemperature = _currentParams?.temperature ?? 25.0;
     final currentPh = _currentParams?.ph ?? 8.2;
-    final currentSalinity = _currentParams?.salinity ?? 1.024;
+    final currentSalinity = _currentParams?.salinity ?? 1024.0;
     final currentOrp = _currentParams?.orp ?? 350.0;
     final calcium = _currentParams?.calcium ?? 420.0;
     final magnesium = _currentParams?.magnesium ?? 1280.0;
@@ -147,7 +147,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildParamCard('Salinità', currentSalinity.toString(), Icons.water_outlined, 
+              Expanded(child: _buildParamCard('Salinità', '${currentSalinity.toInt()} PPT', Icons.water_outlined, 
                 const Color(0xFF2dd4bf), settings.salinity.isOutOfRange(currentSalinity))),
               const SizedBox(width: 12),
               Expanded(child: _buildParamCard('ORP', '${currentOrp.toInt()} mV', Icons.bolt, 
