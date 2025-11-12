@@ -11,7 +11,7 @@ class ChartsView extends StatefulWidget {
   State<ChartsView> createState() => _ChartsViewState();
 }
 
-class _ChartsViewState extends State<ChartsView> {
+class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateMixin {
   final ChartDataService _chartService = ChartDataService();
   Timer? _refreshTimer;
   int _selectedHours = 24;
@@ -19,10 +19,20 @@ class _ChartsViewState extends State<ChartsView> {
   List<ParameterDataPoint> _chartData = [];
   Map<String, double> _stats = {};
   bool _isLoading = true;
+  
+  // Controller per animazioni
+  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
+    
+    // Inizializza animation controller
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    
     _loadChartData();
     // Auto-refresh ogni 30 secondi
     _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
@@ -33,11 +43,16 @@ class _ChartsViewState extends State<ChartsView> {
   @override
   void dispose() {
     _refreshTimer?.cancel();
+    _animationController.dispose();
     super.dispose();
   }
 
   Future<void> _loadChartData() async {
-    setState(() => _isLoading = true);
+    // Non mostrare loading se è solo un cambio di filtro
+    final wasEmpty = _chartData.isEmpty;
+    if (wasEmpty) {
+      setState(() => _isLoading = true);
+    }
     
     final data = await _chartService.loadHistoricalData(
       parameter: _selectedParameter,
@@ -154,55 +169,176 @@ class _ChartsViewState extends State<ChartsView> {
 
           const SizedBox(height: 16),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(child: _buildStatChip('Min', _stats['min']?.toStringAsFixed(1) ?? '-', Colors.blue)),
-              const SizedBox(width: 4),
-              Flexible(child: _buildStatChip('Avg', _stats['avg']?.toStringAsFixed(1) ?? '-', Colors.green)),
-              const SizedBox(width: 4),
-              Flexible(child: _buildStatChip('Max', _stats['max']?.toStringAsFixed(1) ?? '-', Colors.red)),
-              const SizedBox(width: 4),
-              Flexible(child: _buildStatChip('Now', _stats['current']?.toStringAsFixed(1) ?? '-', _getParameterColor(_selectedParameter))),
-            ],
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            switchInCurve: Curves.easeOut,
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, -0.1),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                ),
+              );
+            },
+            child: Row(
+              key: ValueKey('stats_${_selectedParameter}_${_selectedHours}'),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(child: _buildStatChip('Min', _stats['min']?.toStringAsFixed(1) ?? '-', Colors.blue)),
+                const SizedBox(width: 4),
+                Flexible(child: _buildStatChip('Avg', _stats['avg']?.toStringAsFixed(1) ?? '-', Colors.green)),
+                const SizedBox(width: 4),
+                Flexible(child: _buildStatChip('Max', _stats['max']?.toStringAsFixed(1) ?? '-', Colors.red)),
+                const SizedBox(width: 4),
+                Flexible(child: _buildStatChip('Now', _stats['current']?.toStringAsFixed(1) ?? '-', _getParameterColor(_selectedParameter))),
+              ],
+            ),
           ),
 
           const SizedBox(height: 20),
 
-          SizedBox(
-            height: 200,
-            child: _chartData.isEmpty
-                ? Center(child: Text('Nessun dato disponibile', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)))
-                : LineChart(_buildLineChartData(_chartData, theme)),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
+            switchInCurve: Curves.easeInOut,
+            switchOutCurve: Curves.easeInOut,
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: ScaleTransition(
+                  scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
+                  child: child,
+                ),
+              );
+            },
+            child: SizedBox(
+              key: ValueKey('${_selectedParameter}_${_selectedHours}'),
+              height: 200,
+              child: _chartData.isEmpty
+                  ? Center(child: Text('Nessun dato disponibile', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)))
+                  : LineChart(_buildLineChartData(_chartData, theme)),
+            ),
           ),
 
           const SizedBox(height: 16),
 
-          Row(
-            children: [
-              Expanded(child: _buildPeriodButton('24h', 24)),
-              const SizedBox(width: 8),
-              Expanded(child: _buildPeriodButton('7gg', 168)),
-              const SizedBox(width: 8),
-              Expanded(child: _buildPeriodButton('30gg', 720)),
-            ],
-          ),
+          _buildPeriodTabBar(),
 
           const SizedBox(height: 12),
 
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildParameterChip('Temperatura', Icons.thermostat, const Color(0xFFef4444)),
-                const SizedBox(width: 8),
-                _buildParameterChip('pH', Icons.science_outlined, const Color(0xFF60a5fa)),
-                const SizedBox(width: 8),
-                _buildParameterChip('Salinità', Icons.water_outlined, const Color(0xFF2dd4bf)),
-                const SizedBox(width: 8),
-                _buildParameterChip('ORP', Icons.bolt, const Color(0xFFfbbf24)),
-              ],
+          _buildParameterSegmentedButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildParameterSegmentedButton() {
+    final theme = Theme.of(context);
+    final parameters = [
+      {'name': 'Temperatura', 'icon': Icons.thermostat, 'color': const Color(0xFFef4444)},
+      {'name': 'pH', 'icon': Icons.science_outlined, 'color': const Color(0xFF60a5fa)},
+      {'name': 'Salinità', 'icon': Icons.water_outlined, 'color': const Color(0xFF2dd4bf)},
+      {'name': 'ORP', 'icon': Icons.bolt, 'color': const Color(0xFFfbbf24)},
+    ];
+    
+    final selectedIndex = parameters.indexWhere((p) => p['name'] == _selectedParameter);
+    
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Stack(
+        children: [
+          // Indicator animato
+          AnimatedAlign(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOutCubic,
+            alignment: selectedIndex == 0 
+                ? Alignment.centerLeft
+                : selectedIndex == 1
+                    ? const Alignment(-0.33, 0)
+                    : selectedIndex == 2
+                        ? const Alignment(0.33, 0)
+                        : Alignment.centerRight,
+            child: FractionallySizedBox(
+              widthFactor: 1 / 4,
+              child: Container(
+                margin: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      (parameters[selectedIndex]['color'] as Color).withValues(alpha: 0.8),
+                      (parameters[selectedIndex]['color'] as Color),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (parameters[selectedIndex]['color'] as Color).withValues(alpha: 0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+              ),
             ),
+          ),
+          // Pulsanti
+          Row(
+            children: parameters.map((param) {
+              final name = param['name'] as String;
+              final icon = param['icon'] as IconData;
+              final color = param['color'] as Color;
+              final isSelected = _selectedParameter == name;
+              
+              return Expanded(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      if (_selectedParameter != name) {
+                        setState(() => _selectedParameter = name);
+                        _loadChartData();
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(14),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            child: Icon(
+                              icon,
+                              color: isSelected ? Colors.white : theme.colorScheme.onSurfaceVariant,
+                              size: isSelected ? 22 : 20,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          AnimatedDefaultTextStyle(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : theme.colorScheme.onSurfaceVariant,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                              fontSize: 11,
+                            ),
+                            child: Text(name),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
@@ -230,67 +366,86 @@ class _ChartsViewState extends State<ChartsView> {
     );
   }
 
-  Widget _buildPeriodButton(String label, int hours) {
+  Widget _buildPeriodTabBar() {
     final theme = Theme.of(context);
-    final isSelected = _selectedHours == hours;
-    return GestureDetector(
-      onTap: () {
-        setState(() => _selectedHours = hours);
-        _loadChartData();
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.2),
-          ),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? Colors.white : theme.colorScheme.onSurfaceVariant,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              fontSize: 14,
-            ),
-          ),
-        ),
+    final periods = [
+      {'label': '24 ore', 'hours': 24},
+      {'label': '7 giorni', 'hours': 168},
+      {'label': '30 giorni', 'hours': 720},
+    ];
+    
+    return Container(
+      height: 50,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
       ),
-    );
-  }
-
-  Widget _buildParameterChip(String name, IconData icon, Color color) {
-    final theme = Theme.of(context);
-    final isSelected = _selectedParameter == name;
-    return GestureDetector(
-      onTap: () {
-        setState(() => _selectedParameter = name);
-        _loadChartData();
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? color.withValues(alpha: 0.3) : theme.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? color : theme.colorScheme.onSurface.withValues(alpha: 0.2)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: isSelected ? color : theme.colorScheme.onSurfaceVariant, size: 18),
-            const SizedBox(width: 8),
-            Text(
-              name,
-              style: TextStyle(
-                color: isSelected ? color : theme.colorScheme.onSurfaceVariant,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                fontSize: 13,
+      child: Stack(
+        children: [
+          // Indicator animato
+          AnimatedAlign(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOutCubic,
+            alignment: _selectedHours == 24 
+                ? Alignment.centerLeft
+                : _selectedHours == 168
+                    ? Alignment.center
+                    : Alignment.centerRight,
+            child: FractionallySizedBox(
+              widthFactor: 1 / 3,
+              child: Container(
+                margin: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+          // Pulsanti
+          Row(
+            children: periods.map((period) {
+              final hours = period['hours'] as int;
+              final isSelected = _selectedHours == hours;
+              return Expanded(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      if (_selectedHours != hours) {
+                        setState(() => _selectedHours = hours);
+                        _loadChartData();
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: AnimatedDefaultTextStyle(
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeInOut,
+                        style: TextStyle(
+                          color: isSelected 
+                              ? Colors.white 
+                              : theme.colorScheme.onSurfaceVariant,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                          fontSize: 14,
+                        ),
+                        child: Text(period['label'] as String),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }

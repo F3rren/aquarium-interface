@@ -154,7 +154,6 @@ class ParameterService {
       
       
       final response = await _apiService.get(endpoint);
-      print('History response: $response');
      
       // Gestisci il nuovo formato con id e measurements
       List<dynamic> historyJson;
@@ -203,8 +202,6 @@ class ParameterService {
       } else {
         historyJson = [];
       }
-      
-      print('Extracted ${historyJson.length} measurements from history');
       
       final parameters = historyJson
           .map((json) => AquariumParameters.fromJson(json as Map<String, dynamic>))

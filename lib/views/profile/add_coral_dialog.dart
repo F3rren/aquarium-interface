@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/coral.dart';
+import '../../models/coral_species.dart';
+import '../../services/coral_database_service.dart';
 
 class AddCoralDialog extends StatefulWidget {
   final Coral? coral;
@@ -19,6 +21,11 @@ class AddCoralDialog extends StatefulWidget {
 }
 
 class _AddCoralDialogState extends State<AddCoralDialog> {
+  final _coralDatabaseService = CoralDatabaseService();
+  List<CoralSpecies> _coralDatabase = [];
+  CoralSpecies? _selectedCoralSpecies;
+  bool _isLoadingDatabase = true;
+  
   late TextEditingController _nameController;
   late TextEditingController _speciesController;
   late TextEditingController _sizeController;
@@ -40,6 +47,69 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     if (widget.coral != null) {
       _selectedType = widget.coral!.type;
       _selectedPlacement = widget.coral!.placement;
+    }
+    
+    _loadCoralDatabase();
+  }
+
+  Future<void> _loadCoralDatabase() async {
+    try {
+      print('🔄 Caricamento database coralli...');
+      final corals = await _coralDatabaseService.getAllCorals();
+      print('✅ Database coralli caricato: ${corals.length} specie');
+      setState(() {
+        _coralDatabase = corals;
+        _isLoadingDatabase = false;
+      });
+    } catch (e) {
+      print('❌ Errore caricamento database coralli: $e');
+      setState(() => _isLoadingDatabase = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore caricamento database: $e')),
+        );
+      }
+    }
+  }
+
+  void _onCoralSpeciesSelected(CoralSpecies? species) {
+    if (species == null) return;
+    
+    setState(() {
+      _selectedCoralSpecies = species;
+      _nameController.text = species.commonName;
+      _speciesController.text = species.scientificName;
+      _selectedType = _mapTypeToItalian(species.type);
+      _selectedPlacement = _mapPlacementToItalian(species.placement);
+      _sizeController.text = species.maxSize.toString();
+      _notesController.text = species.description;
+    });
+  }
+
+  String _mapTypeToItalian(String type) {
+    switch (type.toLowerCase()) {
+      case 'sps':
+        return 'SPS';
+      case 'lps':
+        return 'LPS';
+      case 'soft':
+      case 'zoa':
+        return 'Molle';
+      default:
+        return 'LPS';
+    }
+  }
+
+  String _mapPlacementToItalian(String placement) {
+    switch (placement.toLowerCase()) {
+      case 'top':
+        return 'Alto';
+      case 'middle':
+        return 'Medio';
+      case 'bottom':
+        return 'Basso';
+      default:
+        return 'Medio';
     }
   }
 
@@ -144,7 +214,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     return Dialog(
       backgroundColor: theme.colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -180,6 +250,21 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 ],
               ),
               const SizedBox(height: 24),
+              
+              // Dropdown database coralli
+              if (widget.coral == null) ...[
+                _buildCoralDatabaseDropdown(theme),
+                const SizedBox(height: 8),
+                Text(
+                  'Seleziona da database o inserisci manualmente',
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
               
               _buildTextField(
                 controller: _nameController,
@@ -365,6 +450,109 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
             }).toList(),
             onChanged: onChanged,
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCoralDatabaseDropdown(ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.spa, color: const Color(0xFF34d399), size: 16),
+            const SizedBox(width: 8),
+            Text(
+              'Seleziona da Database',
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+          ),
+          child: _isLoadingDatabase
+              ? Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: const Color(0xFF34d399),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Caricamento database...',
+                        style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                      ),
+                    ],
+                  ),
+                )
+              : DropdownButtonFormField<CoralSpecies>(
+                  value: _selectedCoralSpecies,
+                  dropdownColor: theme.colorScheme.surfaceContainerHigh,
+                  menuMaxHeight: 300,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search, color: const Color(0xFF34d399)),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    hintText: 'Cerca nel database...',
+                    hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+                  ),
+                  items: _coralDatabase.map((coral) {
+                    return DropdownMenuItem<CoralSpecies>(
+                      value: coral,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              coral.commonName,
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: coral.difficultyColor.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              coral.difficultyLabel,
+                              style: TextStyle(
+                                color: coral.difficultyColor,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: _onCoralSpeciesSelected,
+                  isExpanded: true,
+                  icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onSurfaceVariant),
+                ),
         ),
       ],
     );

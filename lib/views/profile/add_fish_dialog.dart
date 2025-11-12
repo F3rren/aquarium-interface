@@ -53,7 +53,6 @@ class _AddFishDialogState extends State<AddFishDialog> {
       });
     } catch (e) {
       setState(() => _isLoadingDatabase = false);
-      print('Errore caricamento database pesci: $e');
     }
   }
   
