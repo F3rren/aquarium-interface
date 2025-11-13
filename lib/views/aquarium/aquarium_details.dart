@@ -79,10 +79,12 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
+        bottom: false, // Gestiamo manualmente il padding bottom
         child: Column(
           children: [
             // Header senza Hero
@@ -195,19 +197,22 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
             ),
           ],
         ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(Icons.dashboard, 'Dashboard', 0),
-                _buildNavItem(Icons.science, 'Parametri', 1),
-                _buildNavItem(Icons.analytics, 'Grafici', 2),
-                _buildNavItem(Icons.build_circle, 'Manutenzione', 3),
-                _buildNavItem(Icons.person, 'Profilo', 4),
-              ],
-            ),
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 8,
+            right: 8,
+            top: 10,
+            bottom: bottomPadding > 0 ? bottomPadding : 10,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(Icons.dashboard, 'Dashboard', 0),
+              _buildNavItem(Icons.science, 'Parametri', 1),
+              _buildNavItem(Icons.analytics, 'Grafici', 2),
+              _buildNavItem(Icons.build_circle, 'Manutenzione', 3),
+              _buildNavItem(Icons.person, 'Profilo', 4),
+            ],
           ),
         ),
       ),

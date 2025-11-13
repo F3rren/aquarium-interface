@@ -91,10 +91,8 @@ class ApiService {
   Future<Map<String, dynamic>> getMaintenanceData(String aquariumId) async {
     try {
       final response = await get('/aquariumslist/$aquariumId/maintenance');
-      print(response);
       return response as Map<String, dynamic>;
     } catch (e) {
-      print('Errore caricamento dati manutenzione: $e');
       rethrow;
     }
   }

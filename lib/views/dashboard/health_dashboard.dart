@@ -95,7 +95,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Hero Card - Check Status
           Container(

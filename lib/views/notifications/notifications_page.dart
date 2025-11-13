@@ -62,6 +62,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -88,9 +89,9 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         child: TabBarView(
           controller: _tabController,
           children: [
-            _buildSettingsTab(),
-            _buildThresholdsTab(),
-            _buildHistoryTab(),
+            _buildSettingsTab(bottomPadding),
+            _buildThresholdsTab(bottomPadding),
+            _buildHistoryTab(bottomPadding),
           ],
         ),
       ),
@@ -98,11 +99,11 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   }
 
   // TAB 1: IMPOSTAZIONI GENERALI
-  Widget _buildSettingsTab() {
+  Widget _buildSettingsTab(double bottomPadding) {
     final theme = Theme.of(context);
     
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20 + bottomPadding),
       children: [
         
         // Alert Parametri
@@ -270,9 +271,9 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   }
 
   // TAB 2: SOGLIE PARAMETRI
-  Widget _buildThresholdsTab() {
+  Widget _buildThresholdsTab(double bottomPadding) {
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20 + bottomPadding),
       children: [
         _buildThresholdCard('Temperatura', '°C', _settings.temperature, Icons.thermostat, const Color(0xFFef4444)),
         const SizedBox(height: 12),
@@ -312,13 +313,13 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   }
 
   // TAB 3: STORICO ALERT
-  Widget _buildHistoryTab() {
+  Widget _buildHistoryTab(double bottomPadding) {
     final history = _alertManager.getAlertHistory(limit: 50);
     
     return history.isEmpty
         ? _buildEmptyState()
         : ListView(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20 + bottomPadding),
             children: [
               _buildHeader(
                 icon: Icons.history,

@@ -13,22 +13,15 @@ class MaintenanceStorageService {
   /// Carica task dall'API di Mockoon per un acquario specifico
   Future<List<MaintenanceTask>> loadTasksFromApi(String aquariumId) async {
     try {
-      print('🔄 Caricamento task da API per acquario: $aquariumId');
       final data = await _apiService.getMaintenanceData(aquariumId);
       
-      print('📦 Risposta API ricevuta: ${data.keys}');
-      
       if (data['tasks'] == null) {
-        print('⚠️ Nessun campo "tasks" nella risposta API');
         return [];
       }
 
       final List<dynamic> tasksJson = data['tasks'];
-      print('✅ Caricati ${tasksJson.length} task da API');
       return tasksJson.map((json) => MaintenanceTask.fromJson(json)).toList();
     } catch (e) {
-      print('❌ Errore caricamento task da API: $e');
-      print('⚠️ Fallback: uso storage locale');
       // Fallback a storage locale se API non disponibile
       return await loadTasks();
     }
@@ -37,20 +30,15 @@ class MaintenanceStorageService {
   /// Carica log dall'API di Mockoon per un acquario specifico
   Future<List<MaintenanceLog>> loadLogsFromApi(String aquariumId) async {
     try {
-      print('🔄 Caricamento log da API per acquario: $aquariumId');
       final data = await _apiService.getMaintenanceData(aquariumId);
       
       if (data['logs'] == null) {
-        print('⚠️ Nessun campo "logs" nella risposta API');
         return [];
       }
 
       final List<dynamic> logsJson = data['logs'];
-      print('✅ Caricati ${logsJson.length} log da API');
       return logsJson.map((json) => MaintenanceLog.fromJson(json)).toList();
     } catch (e) {
-      print('❌ Errore caricamento log da API: $e');
-      print('⚠️ Fallback: uso storage locale');
       // Fallback a storage locale se API non disponibile
       return await loadLogs();
     }
@@ -69,7 +57,6 @@ class MaintenanceStorageService {
       final List<dynamic> decoded = jsonDecode(tasksJson);
       return decoded.map((json) => MaintenanceTask.fromJson(json)).toList();
     } catch (e) {
-      print('Errore caricamento task: $e');
       return [];
     }
   }
@@ -87,7 +74,6 @@ class MaintenanceStorageService {
       final tasksJson = jsonEncode(tasks.map((t) => t.toJson()).toList());
       return await prefs.setString(_tasksKey, tasksJson);
     } catch (e) {
-      print('Errore salvataggio task: $e');
       return false;
     }
   }
@@ -105,7 +91,6 @@ class MaintenanceStorageService {
       final List<dynamic> decoded = jsonDecode(logsJson);
       return decoded.map((json) => MaintenanceLog.fromJson(json)).toList();
     } catch (e) {
-      print('Errore caricamento log: $e');
       return [];
     }
   }
@@ -123,7 +108,6 @@ class MaintenanceStorageService {
       final logsJson = jsonEncode(logs.map((l) => l.toJson()).toList());
       return await prefs.setString(_logsKey, logsJson);
     } catch (e) {
-      print('Errore salvataggio log: $e');
       return false;
     }
   }
@@ -134,7 +118,6 @@ class MaintenanceStorageService {
       final prefs = await SharedPreferences.getInstance();
       return await prefs.remove(_tasksKey);
     } catch (e) {
-      print('Errore cancellazione task: $e');
       return false;
     }
   }
@@ -145,7 +128,6 @@ class MaintenanceStorageService {
       final prefs = await SharedPreferences.getInstance();
       return await prefs.remove(_logsKey);
     } catch (e) {
-      print('Errore cancellazione log: $e');
       return false;
     }
   }
@@ -166,7 +148,6 @@ class MaintenanceStorageService {
 
       return true;
     } catch (e) {
-      print('Errore cancellazione dati acquario: $e');
       return false;
     }
   }
@@ -198,7 +179,6 @@ class MaintenanceStorageService {
       
       return true;
     } catch (e) {
-      print('Errore import dati: $e');
       return false;
     }
   }
