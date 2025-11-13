@@ -1,5 +1,6 @@
 import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:acquariumfe/services/maintenance_service.dart';
+import 'package:acquariumfe/widgets/add_task_dialog.dart';
 import 'package:flutter/material.dart';
 
 class MaintenanceView extends StatefulWidget {
@@ -16,6 +17,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
   MaintenanceCategory? _filterCategory;
   late AnimationController _fadeController;
   late AnimationController _slideController;
+  late AnimationController _listController;
   int _selectedIndex = 0; // 0=Task, 1=Calendario, 2=Storico
   DateTime _currentMonth = DateTime.now(); // Mese visualizzato nel calendario
 
@@ -30,25 +32,37 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+    _listController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
     _service.initialize(aquariumId: widget.aquariumId);
     _fadeController.forward();
+    _listController.forward();
   }
 
   @override
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
+    _listController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     
     return Stack(
       children: [
         SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: 20 + bottomPadding + 80, // Spazio per FAB + barra navigazione
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -58,7 +72,6 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                 opacity: _fadeController,
                 child: _buildCurrentView(),
               ),
-              const SizedBox(height: 80), // Spazio per FAB
             ],
           ),
         ),
@@ -66,17 +79,9 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
         if (_selectedIndex == 0)
           Positioned(
             right: 20,
-            bottom: 20,
+            bottom: 20 + bottomPadding,
             child: FloatingActionButton.extended(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: const Text('Aggiungi task custom - Coming soon'),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                );
-              },
+              onPressed: _showAddTaskDialog,
               icon: const Icon(Icons.add),
               label: const Text('Aggiungi Task'),
               backgroundColor: const Color(0xFF8b5cf6),
@@ -84,6 +89,43 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
           ),
       ],
     );
+  }
+
+  Future<void> _showAddTaskDialog() async {
+    if (widget.aquariumId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Errore: ID acquario non disponibile'),
+          backgroundColor: Color(0xFFef4444),
+        ),
+      );
+      return;
+    }
+
+    final newTask = await showDialog<MaintenanceTask>(
+      context: context,
+      builder: (context) => AddTaskDialog(aquariumId: widget.aquariumId!),
+    );
+
+    if (newTask != null) {
+      await _service.addTask(newTask);
+      
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Task "${newTask.title}" creata con successo!'),
+          backgroundColor: const Color(0xFF10b981),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          action: SnackBarAction(
+            label: 'OK',
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildTabSelector(ThemeData theme) {
@@ -110,9 +152,13 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          setState(() {
-            _selectedIndex = index;
-          });
+          if (_selectedIndex != index) {
+            _fadeController.reset();
+            setState(() {
+              _selectedIndex = index;
+            });
+            _fadeController.forward();
+          }
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
@@ -712,7 +758,6 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
           children: taskGroups.entries.map((entry) {
             final taskTitle = entry.key;
             final items = entry.value;
-            final task = items.first['task'];
             
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1009,28 +1054,29 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
     List<MaintenanceTask> upcoming,
   ) {
     final items = <Widget>[];
+    int cardIndex = 0;
     
     if (overdue.isNotEmpty) {
       items.add(_buildSectionHeader('In Ritardo 🔴', overdue.length));
-      items.addAll(overdue.map((task) => _buildTaskCard(task, isOverdue: true)));
+      items.addAll(overdue.map((task) => _buildAnimatedTaskCard(task, cardIndex++, isOverdue: true)));
       items.add(const SizedBox(height: 12));
     }
     
     if (dueToday.isNotEmpty) {
       items.add(_buildSectionHeader('Oggi', dueToday.length));
-      items.addAll(dueToday.map((task) => _buildTaskCard(task, isDueToday: true)));
+      items.addAll(dueToday.map((task) => _buildAnimatedTaskCard(task, cardIndex++, isDueToday: true)));
       items.add(const SizedBox(height: 12));
     }
     
     if (dueThisWeek.isNotEmpty) {
       items.add(_buildSectionHeader('Questa Settimana', dueThisWeek.length));
-      items.addAll(dueThisWeek.map((task) => _buildTaskCard(task)));
+      items.addAll(dueThisWeek.map((task) => _buildAnimatedTaskCard(task, cardIndex++)));
       items.add(const SizedBox(height: 12));
     }
     
     if (upcoming.isNotEmpty) {
       items.add(_buildSectionHeader('Questo mese', upcoming.length));
-      items.addAll(upcoming.map((task) => _buildTaskCard(task)));
+      items.addAll(upcoming.map((task) => _buildAnimatedTaskCard(task, cardIndex++)));
     }
     
     if (items.isEmpty) {
@@ -1068,7 +1114,9 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
     }
 
     return Column(
-      children: tasks.map((task) => _buildTaskCard(task)).toList(),
+      children: tasks.asMap().entries.map((entry) {
+        return _buildAnimatedTaskCard(entry.value, entry.key);
+      }).toList(),
     );
   }
 
@@ -1216,6 +1264,77 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
     );
   }
 
+  void _deleteTask(MaintenanceTask task) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Elimina Task'),
+        content: Text(
+          'Sei sicuro di voler eliminare "${task.title}"?\n\n'
+          'Questa azione non può essere annullata.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annulla'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFef4444),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Elimina'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete != true) return;
+
+    await _service.removeTask(task.id);
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Task "${task.title}" eliminata'),
+        backgroundColor: const Color(0xFFef4444),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  Widget _buildAnimatedTaskCard(
+    MaintenanceTask task,
+    int index, {
+    bool isOverdue = false,
+    bool isDueToday = false,
+  }) {
+    final animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _listController,
+        curve: Interval(
+          (index * 0.1).clamp(0.0, 1.0),
+          ((index * 0.1) + 0.3).clamp(0.0, 1.0),
+          curve: Curves.easeOutCubic,
+        ),
+      ),
+    );
+
+    return FadeTransition(
+      opacity: animation,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.2),
+          end: Offset.zero,
+        ).animate(animation),
+        child: _buildTaskCard(task, isOverdue: isOverdue, isDueToday: isDueToday),
+      ),
+    );
+  }
+
   Widget _buildTaskCard(MaintenanceTask task, {bool isOverdue = false, bool isDueToday = false}) {
     final theme = Theme.of(context);
     final categoryColor = Color(task.category.colorValue);
@@ -1242,12 +1361,39 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  task.title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        task.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    // Badge "Custom" per task personalizzate
+                    if (task.isCustom)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF8b5cf6).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: const Color(0xFF8b5cf6).withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: const Text(
+                          'CUSTOM',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF8b5cf6),
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 if (task.description != null) ...[
                   const SizedBox(height: 4),
@@ -1264,30 +1410,35 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: _getDueColor(task).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            _getDueIcon(task),
-                            size: 12,
-                            color: _getDueColor(task),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            _getDueText(task),
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: _getDueColor(task).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _getDueIcon(task),
+                              size: 12,
                               color: _getDueColor(task),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                _getDueText(task),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: _getDueColor(task),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -1316,6 +1467,14 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Pulsante elimina (solo per task custom)
+              if (task.isCustom)
+                IconButton(
+                  icon: const Icon(Icons.delete_outline, size: 22),
+                  color: const Color(0xFFef4444),
+                  tooltip: 'Elimina',
+                  onPressed: () => _deleteTask(task),
+                ),
               IconButton(
                 icon: const Icon(Icons.schedule, size: 24),
                 color: const Color(0xFF8b5cf6),
@@ -1391,57 +1550,120 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
     );
   }
 
-  void _completeTask(MaintenanceTask task) {
-    showDialog(
+  void _completeTask(MaintenanceTask task) async {
+    final notesController = TextEditingController();
+    
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
-            const SizedBox(width: 12),
-            const Expanded(child: Text('Completa Task')),
+            Icon(Icons.check_circle, color: Color(0xFF34d399)),
+            SizedBox(width: 12),
+            Expanded(child: Text('Completa Task')),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Confermi di aver completato:'),
-            const SizedBox(height: 8),
-            Text(
-              task.title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Prossima esecuzione: ${_formatNextDue(task)}',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade600,
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Confermi di aver completato:'),
+              const SizedBox(height: 8),
+              Text(
+                task.title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                'Prossima esecuzione: ${_formatNextDue(task)}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Divider(),
+              const SizedBox(height: 12),
+              const Text(
+                'Note (opzionale)',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: notesController,
+                decoration: InputDecoration(
+                  hintText: 'es. Cambiati 30 litri, pH stabile',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.notes, size: 20),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
+                ),
+                maxLines: 3,
+                textCapitalization: TextCapitalization.sentences,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context, false),
             child: const Text('Annulla'),
           ),
           FilledButton.icon(
-            onPressed: () {
-              _service.completeTask(task.id);
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${task.title} completato!'),
-                  backgroundColor: const Color(0xFF34d399),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            },
+            onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF34d399),
+            ),
             icon: const Icon(Icons.check),
             label: const Text('Completa'),
           ),
         ],
+      ),
+    );
+
+    if (confirmed != true) {
+      notesController.dispose();
+      return;
+    }
+
+    final notes = notesController.text.trim();
+    notesController.dispose();
+
+    await _service.completeTask(
+      task.id,
+      notes: notes.isEmpty ? null : notes,
+    );
+
+    // Riavvia l'animazione della lista
+    _listController.reset();
+    _listController.forward();
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(child: Text('${task.title} completato!')),
+          ],
+        ),
+        backgroundColor: const Color(0xFF34d399),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

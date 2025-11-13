@@ -52,25 +52,20 @@ class MaintenanceService extends ChangeNotifier {
 
   /// Inizializza con task predefiniti per un acquario specifico
   Future<void> initialize({String? aquariumId}) async {
-    print('🚀 MaintenanceService.initialize() - aquariumId: $aquariumId');
     _currentAquariumId = aquariumId;
     
     // Carica task salvati (TODO: da storage locale)
     await _loadTasks();
-    print('📋 Task caricati: ${_tasks.length}');
     
     // Se non ci sono task per questo acquario, carica quelli predefiniti
     if (aquariumId != null && !_tasks.any((t) => t.aquariumId == aquariumId)) {
-      print('⚠️ Nessun task trovato per acquario $aquariumId, carico predefiniti');
       _tasks.addAll(MaintenanceTask.getDefaultTasks(aquariumId));
       await _saveTasks();
-      print('✅ Aggiunti ${MaintenanceTask.getDefaultTasks(aquariumId).length} task predefiniti');
     }
 
     // Carica logs (TODO: da storage locale)
     await _loadLogs();
-    print('📝 Log caricati: ${_logs.length}');
-
+    
     // Schedula notifiche
     await _scheduleAllNotifications();
     

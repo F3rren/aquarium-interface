@@ -43,12 +43,20 @@ class MaintenanceTask {
 
   /// È in ritardo?
   bool get isOverdue {
-    return daysUntilDue < 0;
+    final now = DateTime.now();
+    final next = nextDue;
+    // In ritardo se nextDue è prima di oggi (midnight)
+    return next.isBefore(DateTime(now.year, now.month, now.day));
   }
 
   /// È dovuto oggi?
   bool get isDueToday {
-    return daysUntilDue == 0;
+    final now = DateTime.now();
+    final next = nextDue;
+    final today = DateTime(now.year, now.month, now.day);
+    final nextDay = DateTime(next.year, next.month, next.day);
+    // Dovuto oggi solo se nextDue è esattamente oggi
+    return nextDay.isAtSameMomentAs(today);
   }
 
   /// È dovuto questa settimana?
@@ -109,15 +117,17 @@ class MaintenanceTask {
 
   factory MaintenanceTask.fromJson(Map<String, dynamic> json) {
     return MaintenanceTask(
-      id: json['id'],
-      aquariumId: json['aquariumId'],
-      title: json['title'],
-      description: json['description'],
+      id: json['id'].toString(),
+      aquariumId: json['aquariumId'].toString(),
+      title: json['title'].toString(),
+      description: json['description']?.toString(),
       category: MaintenanceCategory.values.firstWhere(
         (e) => e.name == json['category'],
         orElse: () => MaintenanceCategory.other,
       ),
-      frequencyDays: json['frequencyDays'],
+      frequencyDays: json['frequencyDays'] is int 
+          ? json['frequencyDays'] 
+          : int.parse(json['frequencyDays'].toString()),
       lastCompleted: json['lastCompleted'] != null
           ? DateTime.parse(json['lastCompleted'])
           : null,

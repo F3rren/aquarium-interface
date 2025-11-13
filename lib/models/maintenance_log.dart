@@ -42,10 +42,10 @@ class MaintenanceLog {
 
   factory MaintenanceLog.fromJson(Map<String, dynamic> json) {
     return MaintenanceLog(
-      id: json['id'],
-      taskId: json['taskId'],
+      id: json['id'].toString(),
+      taskId: json['taskId'].toString(),
       completedAt: DateTime.parse(json['completedAt']),
-      notes: json['notes'],
+      notes: json['notes']?.toString(),
       metadata: json['metadata'] != null 
           ? Map<String, dynamic>.from(json['metadata'])
           : null,
