@@ -244,32 +244,11 @@ enum MaintenanceCategory {
   cleaning,   // Pulizia (vetri, fondo)
   dosing,     // Dosaggio (calcio, oligoelementi)
   feeding,    // Alimentazione
-  observation,// Osservazione pesci/coralli
   other,      // Altro
 }
 
 /// Extension per icone e colori categorie
 extension MaintenanceCategoryExtension on MaintenanceCategory {
-  String get icon {
-    switch (this) {
-      case MaintenanceCategory.water:
-        return '💧';
-      case MaintenanceCategory.equipment:
-        return '⚙️';
-      case MaintenanceCategory.testing:
-        return '🧪';
-      case MaintenanceCategory.cleaning:
-        return '🧽';
-      case MaintenanceCategory.dosing:
-        return '💉';
-      case MaintenanceCategory.feeding:
-        return '🐠';
-      case MaintenanceCategory.observation:
-        return '👁️';
-      case MaintenanceCategory.other:
-        return '📋';
-    }
-  }
 
   String get label {
     switch (this) {
@@ -285,8 +264,6 @@ extension MaintenanceCategoryExtension on MaintenanceCategory {
         return 'Dosaggio';
       case MaintenanceCategory.feeding:
         return 'Alimentazione';
-      case MaintenanceCategory.observation:
-        return 'Osservazione';
       case MaintenanceCategory.other:
         return 'Altro';
     }
@@ -306,8 +283,6 @@ extension MaintenanceCategoryExtension on MaintenanceCategory {
         return 0xFFec4899; // Pink
       case MaintenanceCategory.feeding:
         return 0xFFfbbf24; // Yellow
-      case MaintenanceCategory.observation:
-        return 0xFF06b6d4; // Cyan
       case MaintenanceCategory.other:
         return 0xFF94a3b8; // Gray
     }

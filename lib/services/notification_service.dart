@@ -228,6 +228,65 @@ class NotificationService {
     return await _notifications.pendingNotificationRequests();
   }
 
+  /// Schedula notifica giornaliera per task di manutenzione
+  Future<void> scheduleDailyMaintenanceCheck({
+    required int hour,
+    required int minute,
+  }) async {
+    // Cancella eventuale notifica precedente
+    await cancelNotification(2000);
+
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
+    // Se l'orario è già passato oggi, schedula per domani
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'aquarium_maintenance',
+      'Manutenzione Acquario',
+      channelDescription: 'Promemoria giornaliero per task di manutenzione',
+      importance: Importance.high,
+      priority: Priority.high,
+      icon: '@mipmap/ic_launcher',
+      color: Color(0xFF8b5cf6),
+      enableVibration: true,
+      playSound: true,
+    );
+
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    const NotificationDetails details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await _notifications.zonedSchedule(
+      2000,
+      'Manutenzione Acquario',
+      'Hai task da completare oggi',
+      scheduledDate,
+      details,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time, // Ripete ogni giorno
+      payload: 'maintenance_daily',
+    );
+  }
+
   /// Test notifica immediata (per debug)
   Future<void> showTestNotification() async {
     await showNotification(
@@ -235,6 +294,32 @@ class NotificationService {
       title: 'Test Notifica',
       body: 'Questa è una notifica di test dal sistema AcquariumFE',
       payload: 'test',
+    );
+  }
+
+  /// Test notifica di manutenzione con task simulate
+  Future<void> showTestMaintenanceNotification({int taskCount = 3}) async {
+    final tasks = [
+      'Cambio acqua 20%',
+      'Test pH e KH',
+      'Pulizia filtro',
+      'Controllo coralli',
+      'Dosaggio calcio',
+    ];
+
+    final body = taskCount == 1
+        ? tasks.first
+        : taskCount <= 3
+            ? tasks.take(taskCount).join(', ')
+            : '${tasks.take(3).join(', ')} e altre ${taskCount - 3}';
+
+    await showNotification(
+      id: 2001,
+      title: taskCount == 1
+          ? 'Hai 1 task di manutenzione oggi'
+          : 'Hai $taskCount task di manutenzione oggi',
+      body: body,
+      payload: 'maintenance_tasks_today',
     );
   }
 }

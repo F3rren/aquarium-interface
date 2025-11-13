@@ -181,79 +181,37 @@ class AlertManager {
   Future<void> scheduleMaintenanceReminders() async {
     if (!_settings.enabledMaintenance) return;
 
-    final reminders = _settings.maintenanceReminders;
-
-    // Cambio acqua
-    if (reminders.waterChange.enabled) {
-      final nextDate = DateTime.now().add(Duration(days: reminders.waterChange.frequencyDays));
-      await _notificationService.scheduleMaintenanceNotification(
-        id: 1000,
-        title: NotificationTexts.waterChangeTitle,
-        body: NotificationTexts.waterChangeBody,
-        scheduledDate: DateTime(
-          nextDate.year,
-          nextDate.month,
-          nextDate.day,
-          reminders.waterChange.hour,
-          reminders.waterChange.minute,
-        ),
-        payload: 'maintenance_water_change',
-      );
+    // Cancella tutte le vecchie notifiche di manutenzione (ID 1000-2000)
+    for (int i = 1000; i <= 2000; i++) {
+      await _notificationService.cancelNotification(i);
     }
 
-    // Pulizia filtro
-    if (reminders.filterCleaning.enabled) {
-      final nextDate = DateTime.now().add(Duration(days: reminders.filterCleaning.frequencyDays));
-      await _notificationService.scheduleMaintenanceNotification(
-        id: 1001,
-        title: NotificationTexts.filterCleaningTitle,
-        body: NotificationTexts.filterCleaningBody,
-        scheduledDate: DateTime(
-          nextDate.year,
-          nextDate.month,
-          nextDate.day,
-          reminders.filterCleaning.hour,
-          reminders.filterCleaning.minute,
-        ),
-        payload: 'maintenance_filter',
-      );
-    }
+    // Non scheduliamo più notifiche automatiche giornaliere
+    // Le notifiche verranno mostrate solo quando l'app verifica
+    // attivamente che ci sono task in scadenza (checkAndNotifyDailyTasks)
+  }
 
-    // Test parametri
-    if (reminders.parameterTesting.enabled) {
-      final nextDate = DateTime.now().add(Duration(days: reminders.parameterTesting.frequencyDays));
-      await _notificationService.scheduleMaintenanceNotification(
-        id: 1002,
-        title: NotificationTexts.parameterTestingTitle,
-        body: NotificationTexts.parameterTestingBody,
-        scheduledDate: DateTime(
-          nextDate.year,
-          nextDate.month,
-          nextDate.day,
-          reminders.parameterTesting.hour,
-          reminders.parameterTesting.minute,
-        ),
-        payload: 'maintenance_testing',
-      );
-    }
+  /// Verifica se ci sono task da fare oggi e mostra notifica
+  Future<void> checkAndNotifyDailyTasks(List<dynamic> tasksToday) async {
+    if (!_settings.enabledMaintenance) return;
+    if (tasksToday.isEmpty) return;
 
-    // Manutenzione luci
-    if (reminders.lightMaintenance.enabled) {
-      final nextDate = DateTime.now().add(Duration(days: reminders.lightMaintenance.frequencyDays));
-      await _notificationService.scheduleMaintenanceNotification(
-        id: 1003,
-        title: NotificationTexts.lightMaintenanceTitle,
-        body: NotificationTexts.lightMaintenanceBody,
-        scheduledDate: DateTime(
-          nextDate.year,
-          nextDate.month,
-          nextDate.day,
-          reminders.lightMaintenance.hour,
-          reminders.lightMaintenance.minute,
-        ),
-        payload: 'maintenance_lights',
-      );
-    }
+    final count = tasksToday.length;
+    final taskNames = tasksToday.take(3).map((t) => t.title as String).join(', ');
+    final body = count == 1
+        ? tasksToday.first.title
+        : count <= 3
+            ? taskNames
+            : '$taskNames e altre ${count - 3}';
+
+    await _notificationService.showNotification(
+      id: 2001,
+      title: count == 1 
+          ? 'Hai 1 task di manutenzione oggi'
+          : 'Hai $count task di manutenzione oggi',
+      body: body,
+      payload: 'maintenance_tasks_today',
+    );
   }
 
   /// Aggiunge alert allo storico

@@ -17,6 +17,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
   late AnimationController _fadeController;
   late AnimationController _slideController;
   int _selectedIndex = 0; // 0=Task, 1=Calendario, 2=Storico
+  DateTime _currentMonth = DateTime.now(); // Mese visualizzato nel calendario
 
   @override
   void initState() {
@@ -178,11 +179,11 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
           children: [
             // Summary badges
             _buildSummaryBadges(theme, overdue.length, dueToday.length),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
-            // Filter chips
-            _buildCategoryFilters(),
-            const SizedBox(height: 16),
+            // Category filter
+            _buildCategorySegmentedButton(theme),
+            const SizedBox(height: 20),
 
             // Task list
             _filterCategory != null
@@ -199,7 +200,6 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
       listenable: _service,
       builder: (context, child) {
         final theme = Theme.of(context);
-        final now = DateTime.now();
         
         return Column(
           children: [
@@ -218,11 +218,13 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                   IconButton(
                     icon: const Icon(Icons.chevron_left, color: Colors.white),
                     onPressed: () {
-                      // TODO: mese precedente
+                      setState(() {
+                        _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1);
+                      });
                     },
                   ),
                   Text(
-                    _getMonthYear(now),
+                    _getMonthYear(_currentMonth),
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -232,7 +234,9 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                   IconButton(
                     icon: const Icon(Icons.chevron_right, color: Colors.white),
                     onPressed: () {
-                      // TODO: mese successivo
+                      setState(() {
+                        _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);
+                      });
                     },
                   ),
                 ],
@@ -265,7 +269,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
             ),
 
             // Griglia calendario
-            _buildCalendarGrid(now, theme),
+            _buildCalendarGrid(_currentMonth, theme),
 
             const SizedBox(height: 16),
 
@@ -287,6 +291,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
 
     return GridView.builder(
       padding: const EdgeInsets.all(8),
+      shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
@@ -605,10 +610,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                               color: categoryColor.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Text(
-                              task.category.icon,
-                              style: const TextStyle(fontSize: 24),
-                            ),
+                            
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -720,11 +722,6 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                   padding: const EdgeInsets.only(top: 8, bottom: 12),
                   child: Row(
                     children: [
-                      Text(
-                        task.category.icon,
-                        style: const TextStyle(fontSize: 24),
-                      ),
-                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           taskTitle,
@@ -944,94 +941,62 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
     );
   }
 
-  Widget _buildCategoryFilters() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Row(
-        children: [
-          // Filtro "Tutti"
-          _buildFilterChip(
-            label: 'Tutti',
-            icon: Icons.grid_view_rounded,
-            isSelected: _filterCategory == null,
-            color: const Color(0xFF8b5cf6),
-            onTap: () {
-              setState(() {
-                _filterCategory = null;
-              });
-            },
-          ),
-          const SizedBox(width: 8),
-          // Filtri per categorie
-          ...MaintenanceCategory.values.map((category) {
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: _buildFilterChip(
-                label: category.label,
-                emoji: category.icon,
-                isSelected: _filterCategory == category,
-                color: Color(category.colorValue),
-                onTap: () {
-                  setState(() {
-                    _filterCategory = _filterCategory == category ? null : category;
-                  });
-                },
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterChip({
-    required String label,
-    IconData? icon,
-    String? emoji,
-    required bool isSelected,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    final theme = Theme.of(context);
-    
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? color : theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? color : theme.colorScheme.onSurface.withValues(alpha: 0.2),
-            width: isSelected ? 2 : 1,
-          ),
+  Widget _buildCategorySegmentedButton(ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null)
-              Icon(
-                icon,
-                size: 18,
-                color: isSelected ? Colors.white : color,
-              )
-            else if (emoji != null)
-              Text(
-                emoji,
-                style: const TextStyle(fontSize: 18),
-              ),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<MaintenanceCategory?>(
+          value: _filterCategory,
+          isExpanded: true,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          borderRadius: BorderRadius.circular(12),
+          hint: Text(
+            'Tutte le categorie',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+          items: [
+            DropdownMenuItem<MaintenanceCategory?>(
+              value: null,
+              child: Text(
+                'Tutte le categorie',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
+            ...MaintenanceCategory.values.map((category) {
+              return DropdownMenuItem<MaintenanceCategory?>(
+                value: category,
+                child: Text(
+                  category.label,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            }),
           ],
+          onChanged: (MaintenanceCategory? newValue) {
+            setState(() {
+              _filterCategory = newValue;
+            });
+          },
+          icon: Icon(
+            Icons.arrow_drop_down,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+          ),
         ),
       ),
     );
@@ -1058,13 +1023,13 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
     }
     
     if (dueThisWeek.isNotEmpty) {
-      items.add(_buildSectionHeader('Questa Settimana 📆', dueThisWeek.length));
+      items.add(_buildSectionHeader('Questa Settimana', dueThisWeek.length));
       items.addAll(dueThisWeek.map((task) => _buildTaskCard(task)));
       items.add(const SizedBox(height: 12));
     }
     
     if (upcoming.isNotEmpty) {
-      items.add(_buildSectionHeader('Prossimi 🗓️', upcoming.length));
+      items.add(_buildSectionHeader('Questo mese', upcoming.length));
       items.addAll(upcoming.map((task) => _buildTaskCard(task)));
     }
     
@@ -1088,10 +1053,6 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                _filterCategory!.icon,
-                style: const TextStyle(fontSize: 64),
-              ),
               const SizedBox(height: 16),
               Text(
                 'Nessun task in ${_filterCategory!.label}',
@@ -1111,6 +1072,132 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
     );
   }
 
+  void _rescheduleTask(MaintenanceTask task) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Modifica scadenza'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.today),
+              title: const Text('Posticipa 1 giorno'),
+              onTap: () {
+                Navigator.pop(context);
+                _updateTaskSchedule(task, 1);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.date_range),
+              title: const Text('Posticipa 3 giorni'),
+              onTap: () {
+                Navigator.pop(context);
+                _updateTaskSchedule(task, 3);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.calendar_month),
+              title: const Text('Posticipa 1 settimana'),
+              onTap: () {
+                Navigator.pop(context);
+                _updateTaskSchedule(task, 7);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.event),
+              title: const Text('Data personalizzata'),
+              onTap: () async {
+                Navigator.pop(context);
+                final pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: task.nextDue,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                );
+                if (pickedDate != null) {
+                  _updateTaskScheduleToDate(task, pickedDate);
+                }
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annulla'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _updateTaskSchedule(MaintenanceTask task, int daysToPostpone) {
+    final daysUntilDue = task.daysUntilDue;
+    final newDaysUntil = daysUntilDue + daysToPostpone;
+    final newLastCompleted = DateTime.now().subtract(Duration(days: task.frequencyDays - newDaysUntil));
+    
+    final updatedTask = MaintenanceTask(
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      category: task.category,
+      frequencyDays: task.frequencyDays,
+      lastCompleted: newLastCompleted,
+      enabled: task.enabled,
+      aquariumId: task.aquariumId,
+      reminderHour: task.reminderHour,
+      reminderMinute: task.reminderMinute,
+      isCustom: task.isCustom,
+    );
+
+    _service.updateTask(updatedTask);
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Scadenza spostata al ${_formatDate(updatedTask.nextDue)}',
+        ),
+        backgroundColor: const Color(0xFF8b5cf6),
+      ),
+    );
+  }
+
+  void _updateTaskScheduleToDate(MaintenanceTask task, DateTime targetDate) {
+    final daysUntilTarget = targetDate.difference(DateTime.now()).inDays;
+    final newLastCompleted = DateTime.now().subtract(Duration(days: task.frequencyDays - daysUntilTarget));
+    
+    final updatedTask = MaintenanceTask(
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      category: task.category,
+      frequencyDays: task.frequencyDays,
+      lastCompleted: newLastCompleted,
+      enabled: task.enabled,
+      aquariumId: task.aquariumId,
+      reminderHour: task.reminderHour,
+      reminderMinute: task.reminderMinute,
+      isCustom: task.isCustom,
+    );
+
+    _service.updateTask(updatedTask);
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Scadenza spostata al ${_formatDate(updatedTask.nextDue)}',
+        ),
+        backgroundColor: const Color(0xFF8b5cf6),
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Jul', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+    return '${date.day} ${months[date.month - 1]}';
+  }
+
   Widget _buildSectionHeader(String title, int count) {
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 12),
@@ -1123,24 +1210,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF8b5cf6), Color(0xFFec4899)],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '$count',
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
+          
         ],
       ),
     );
@@ -1167,23 +1237,6 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
       ),
       child: Row(
         children: [
-          // Icon
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: categoryColor.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Text(
-                task.category.icon,
-                style: const TextStyle(fontSize: 24),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          
           // Content
           Expanded(
             child: Column(
@@ -1259,11 +1312,23 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
             ),
           ),
           
-          // Action button
-          IconButton(
-            icon: const Icon(Icons.check_circle_outline, size: 28),
-            color: const Color(0xFF34d399),
-            onPressed: () => _completeTask(task),
+          // Action buttons
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.schedule, size: 24),
+                color: const Color(0xFF8b5cf6),
+                tooltip: 'Modifica scadenza',
+                onPressed: () => _rescheduleTask(task),
+              ),
+              IconButton(
+                icon: const Icon(Icons.check_circle_outline, size: 28),
+                color: const Color(0xFF34d399),
+                tooltip: 'Completa',
+                onPressed: () => _completeTask(task),
+              ),
+            ],
           ),
         ],
       ),
@@ -1332,7 +1397,6 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Text(task.category.icon, style: const TextStyle(fontSize: 28)),
             const SizedBox(width: 12),
             const Expanded(child: Text('Completa Task')),
           ],

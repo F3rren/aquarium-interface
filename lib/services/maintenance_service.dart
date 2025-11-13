@@ -73,6 +73,9 @@ class MaintenanceService extends ChangeNotifier {
 
     // Schedula notifiche
     await _scheduleAllNotifications();
+    
+    // Verifica se ci sono task da fare oggi e notifica
+    await checkTodayTasksAndNotify();
 
     notifyListeners();
   }
@@ -82,6 +85,7 @@ class MaintenanceService extends ChangeNotifier {
     _tasks.add(task.copyWith(isCustom: true));
     await _saveTasks();
     await _scheduleAllNotifications();
+    await checkTodayTasksAndNotify();
     notifyListeners();
   }
 
@@ -91,7 +95,7 @@ class MaintenanceService extends ChangeNotifier {
     if (index != -1) {
       _tasks[index] = updatedTask;
       await _saveTasks();
-      await _scheduleAllNotifications();
+      await checkTodayTasksAndNotify();
       notifyListeners();
     }
   }
@@ -100,7 +104,7 @@ class MaintenanceService extends ChangeNotifier {
   Future<void> removeTask(String taskId) async {
     _tasks.removeWhere((t) => t.id == taskId && t.isCustom);
     await _saveTasks();
-    await _scheduleAllNotifications();
+    await checkTodayTasksAndNotify();
     notifyListeners();
   }
 
@@ -126,7 +130,7 @@ class MaintenanceService extends ChangeNotifier {
 
     await _saveTasks();
     await _saveLogs();
-    await _scheduleAllNotifications();
+    await checkTodayTasksAndNotify();
     
     notifyListeners();
   }
@@ -146,11 +150,46 @@ class MaintenanceService extends ChangeNotifier {
 
   /// Schedula tutte le notifiche usando AlertManager
   Future<void> _scheduleAllNotifications() async {
-    // Usa il sistema esistente di AlertManager per le notifiche
+    // Schedula il check giornaliero unico
     await _alertManager.scheduleMaintenanceReminders();
+  }
+
+  /// Verifica task di oggi e mostra notifica se necessario
+  /// Chiamare questa funzione all'avvio dell'app o quando cambiano le task
+  Future<void> checkTodayTasksAndNotify() async {
+    final today = [...overdueTasks, ...dueTodayTasks];
+    if (today.isNotEmpty) {
+      await _alertManager.checkAndNotifyDailyTasks(today);
+    }
+  }
+
+  /// Test notifica con task simulate (per debugging)
+  Future<void> testMaintenanceNotification() async {
+    final simulatedTasks = [
+      MaintenanceTask(
+        id: 'test_1',
+        title: 'Cambio acqua 20%',
+        category: MaintenanceCategory.water,
+        frequencyDays: 7,
+        aquariumId: _currentAquariumId ?? 'test',
+      ),
+      MaintenanceTask(
+        id: 'test_2',
+        title: 'Test pH e KH',
+        category: MaintenanceCategory.testing,
+        frequencyDays: 3,
+        aquariumId: _currentAquariumId ?? 'test',
+      ),
+      MaintenanceTask(
+        id: 'test_3',
+        title: 'Pulizia filtro',
+        category: MaintenanceCategory.equipment,
+        frequencyDays: 14,
+        aquariumId: _currentAquariumId ?? 'test',
+      ),
+    ];
     
-    // TODO: Espandi per supportare task custom
-    // Per ora usa solo i 4 task predefiniti (waterChange, filterCleaning, etc.)
+    await _alertManager.checkAndNotifyDailyTasks(simulatedTasks);
   }
 
   /// Carica task dall'API Mockoon
