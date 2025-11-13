@@ -205,7 +205,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
         Navigator.push(
           context,
           CustomPageRoute(
-            page: const AquariumDetails(),
+            page: AquariumDetails(aquariumId: aquarium.id),
             transitionType: PageTransitionType.fadeSlide,
           ),
         );
@@ -228,16 +228,12 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
           ),
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
-            color: isGood 
-                ? const Color(0xFF34d399).withValues(alpha: 0.3)
-                : theme.colorScheme.error.withValues(alpha: 0.3),
+            color: const Color(0xFF34d399).withValues(alpha: 0.3),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: isGood 
-                  ? const Color(0xFF34d399).withValues(alpha: 0.2)
-                  : theme.colorScheme.error.withValues(alpha: 0.2),
+              color: const Color(0xFF34d399).withValues(alpha: 0.2),
               blurRadius: 24,
               offset: const Offset(0, 8),
             ),
@@ -328,14 +324,10 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: isGood 
-                            ? const Color(0xFF34d399).withValues(alpha: 0.15)
-                            : theme.colorScheme.error.withValues(alpha: 0.15),
+                        color: const Color(0xFF34d399).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: isGood 
-                              ? const Color(0xFF34d399).withValues(alpha: 0.5)
-                              : theme.colorScheme.error.withValues(alpha: 0.5),
+                          color: const Color(0xFF34d399).withValues(alpha: 0.5),
                         ),
                       ),
                       child: Row(
@@ -345,11 +337,11 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: isGood ? const Color(0xFF34d399) : theme.colorScheme.error,
+                              color: const Color(0xFF34d399),
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: isGood ? const Color(0xFF34d399) : theme.colorScheme.error,
+                                  color: const Color(0xFF34d399),
                                   blurRadius: 4,
                                   spreadRadius: 1,
                                 ),
@@ -360,7 +352,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                           Text(
                             isGood ? "Online" : "Alert",
                             style: TextStyle(
-                              color: isGood ? const Color(0xFF34d399) : theme.colorScheme.error,
+                              color: const Color(0xFF34d399),
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.5,

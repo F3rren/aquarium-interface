@@ -54,15 +54,12 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
 
   Future<void> _loadCoralDatabase() async {
     try {
-      print('🔄 Caricamento database coralli...');
       final corals = await _coralDatabaseService.getAllCorals();
-      print('✅ Database coralli caricato: ${corals.length} specie');
       setState(() {
         _coralDatabase = corals;
         _isLoadingDatabase = false;
       });
     } catch (e) {
-      print('❌ Errore caricamento database coralli: $e');
       setState(() => _isLoadingDatabase = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -502,7 +499,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                   ),
                 )
               : DropdownButtonFormField<CoralSpecies>(
-                  value: _selectedCoralSpecies,
+                  initialValue: _selectedCoralSpecies,
                   dropdownColor: theme.colorScheme.surfaceContainerHigh,
                   menuMaxHeight: 300,
                   decoration: InputDecoration(

@@ -4,13 +4,17 @@ import 'package:acquariumfe/views/aquarium/add_aquarium.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
 import 'package:acquariumfe/views/aquarium/delete_aquarium.dart';
 import 'package:acquariumfe/views/aquarium/edit_aquarium.dart';
+import 'package:acquariumfe/views/maintenance/maintenance_view.dart';
 import 'package:flutter/material.dart';
 
 class AppRouter {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteNames.details:
-        return MaterialPageRoute(builder: (_) => const AquariumDetails());
+        final aquariumId = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) => AquariumDetails(aquariumId: aquariumId),
+        );
       
       case RouteNames.addAquarium:
         return MaterialPageRoute(builder: (_) => const AddAquarium());
@@ -20,6 +24,12 @@ class AppRouter {
       
       case RouteNames.deleteAquarium:
         return MaterialPageRoute(builder: (_) => const DeleteAquarium());
+      
+      case RouteNames.maintenance:
+        final aquariumId = settings.arguments as String?;
+        return MaterialPageRoute(
+          builder: (_) => MaintenanceView(aquariumId: aquariumId),
+        );
 
       default:
         return MaterialPageRoute(builder: (_) => const HomePage());

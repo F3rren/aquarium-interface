@@ -87,6 +87,18 @@ class ApiService {
     }
   }
 
+  /// Ottiene i dati di manutenzione per un acquario
+  Future<Map<String, dynamic>> getMaintenanceData(String aquariumId) async {
+    try {
+      final response = await get('/aquariumslist/$aquariumId/maintenance');
+      print(response);
+      return response as Map<String, dynamic>;
+    } catch (e) {
+      print('Errore caricamento dati manutenzione: $e');
+      rethrow;
+    }
+  }
+
   /// Gestisce la risposta HTTP
   dynamic _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {

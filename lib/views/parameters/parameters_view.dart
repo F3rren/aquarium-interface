@@ -119,9 +119,6 @@ class _ParametersViewState extends State<ParametersView> {
             child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
-              _buildHeader(),
-              const SizedBox(height: 24),
               Thermometer(
                 currentTemperature: temperature,
                 targetTemperature: _targetParams['temperature'],
@@ -149,54 +146,6 @@ class _ParametersViewState extends State<ParametersView> {
           const ManualParametersWidget(),
         ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    final theme = Theme.of(context);
-    
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [theme.colorScheme.surfaceContainerHighest, theme.colorScheme.surface],
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(Icons.science, color: theme.colorScheme.primary, size: 32),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Parametri Acquario', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.wifi_tethering, color: Colors.green, size: 14),
-                    const SizedBox(width: 4),
-                    const Text('Live • Auto-refresh 3s', style: TextStyle(color: Colors.green, fontSize: 11, fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            onPressed: _loadParameters,
-            icon: Icon(Icons.refresh, color: theme.colorScheme.primary),
-            tooltip: 'Aggiorna ora',
-          ),
-        ],
       ),
     );
   }

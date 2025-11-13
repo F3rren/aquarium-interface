@@ -189,28 +189,4 @@ class OrpMeter extends StatelessWidget {
     }
   }
 
-  Widget _buildProgressBar(Color color, ThemeData theme) {
-    final progress = ((currentOrp - 200) / (500 - 200)).clamp(0.0, 1.0);
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('200 mV', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
-            Text('500 mV', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: LinearProgressIndicator(
-            value: progress,
-            backgroundColor: theme.colorScheme.surfaceContainerHighest,
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-            minHeight: 8,
-          ),
-        ),
-      ],
-    );
-  }
 }

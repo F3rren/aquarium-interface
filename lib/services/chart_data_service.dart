@@ -26,19 +26,36 @@ class ChartDataService {
         to: to,
         limit: 100, // Max 100 punti per performance
       );
-
+      
       // Se non ci sono dati, usa mock
       if (history.isEmpty) {
         return _generateMockData(parameter, hours);
       }
 
-      // Filtra i dati nel range temporale richiesto (caso MockOn restituisca tutti i dati)
-      final filteredHistory = history.where((param) {
-        return param.timestamp.isAfter(from) && param.timestamp.isBefore(to.add(Duration(minutes: 1)));
+      // Filtra SOLO i dati nel range temporale richiesto
+      // Converti timestamp UTC in locale per confronto corretto
+      var filteredHistory = history.where((param) {
+        final localTimestamp = param.timestamp.toLocal();
+        return localTimestamp.isAfter(from) && localTimestamp.isBefore(to.add(Duration(minutes: 1)));
       }).toList();
+      
+      // Se il filtro trova pochi dati (dati vecchi in MockOn), usa gli ultimi disponibili
+      final minPoints = hours == 24 ? 4 : hours == 168 ? 10 : 20;
+      if (filteredHistory.length < minPoints && history.length >= minPoints) {
+        // Ordina per timestamp e prendi gli ultimi N
+        history.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        filteredHistory = history.sublist(history.length - minPoints);
+      }
+
+      // Se non ci sono dati nel range, usa mock
+      if (filteredHistory.isEmpty) {
+        return _generateMockData(parameter, hours);
+      }
 
       // Converti in ParameterDataPoint
-      return _convertToDataPoints(filteredHistory, parameter);
+      final dataPoints = _convertToDataPoints(filteredHistory, parameter);
+     
+      return dataPoints;
     } catch (e) {
       // Fallback a dati mock se backend non disponibile
       return _generateMockData(parameter, hours);
