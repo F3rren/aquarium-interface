@@ -38,7 +38,6 @@ class CoralDatabaseService {
       _cachedCorals = coralList.map((json) => CoralSpecies.fromJson(json as Map<String, dynamic>)).toList();
       return _cachedCorals!;
     } catch (e) {
-      print('Errore caricamento database coralli: $e');
       return [];
     }
   }

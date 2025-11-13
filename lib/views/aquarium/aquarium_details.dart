@@ -3,12 +3,15 @@ import 'package:acquariumfe/views/parameters/parameters_view.dart';
 import 'package:acquariumfe/views/charts/charts_view.dart';
 import 'package:acquariumfe/views/notifications/notifications_page.dart';
 import 'package:acquariumfe/views/profile/profile_page.dart';
+import 'package:acquariumfe/views/maintenance/maintenance_view.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
 import 'package:flutter/material.dart';
 
 class AquariumDetails extends StatefulWidget {
-  const AquariumDetails({super.key});
+  final String? aquariumId;
+  
+  const AquariumDetails({super.key, this.aquariumId});
 
   @override
   State<StatefulWidget> createState() => _AquariumDetailsState();
@@ -21,16 +24,21 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
   bool _isLoading = true;
 
   // Lista delle pagine da mostrare
-  final List<Widget> _pages = const [
-    HealthDashboard(),
-    ParametersView(),
-    ChartsView(),
-    ProfilePage(),
-  ];
+  late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
+    
+    // Inizializza le pagine con aquariumId
+    _pages = [
+      const HealthDashboard(),
+      const ParametersView(),
+      const ChartsView(),
+      MaintenanceView(aquariumId: widget.aquariumId),
+      const ProfilePage(),
+    ];
+    
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -189,14 +197,15 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(Icons.dashboard, 'Dashboard', 0),
                 _buildNavItem(Icons.science, 'Parametri', 1),
                 _buildNavItem(Icons.analytics, 'Grafici', 2),
-                _buildNavItem(Icons.person, 'Profilo', 3),
+                _buildNavItem(Icons.build_circle, 'Manutenzione', 3),
+                _buildNavItem(Icons.person, 'Profilo', 4),
               ],
             ),
           ),
@@ -214,10 +223,10 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.2) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -228,15 +237,15 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
               child: Icon(
                 icon,
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
-                size: 24,
+                size: 22,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 3),
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),
               style: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
-                fontSize: 10,
+                fontSize: 9,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
               child: Text(label),

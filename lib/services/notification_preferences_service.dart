@@ -23,6 +23,8 @@ class NotificationPreferencesService {
         return settings;
       }
     } catch (e) {
+      // In caso di errore, restituisci impostazioni di default
+      return NotificationSettings();
     }
     
     // Restituisce impostazioni di default se non trovate

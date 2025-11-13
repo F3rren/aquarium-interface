@@ -2,6 +2,7 @@ import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/views/aquarium/add_aquarium.dart';
 import 'package:acquariumfe/views/aquarium/edit_aquarium.dart';
 import 'package:acquariumfe/views/aquarium/delete_aquarium.dart';
+
 import 'package:flutter/material.dart';
 
 class Navbar extends StatefulWidget implements PreferredSizeWidget {

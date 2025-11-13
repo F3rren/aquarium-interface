@@ -104,12 +104,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        _buildHeader(
-          icon: Icons.notifications_active,
-          title: 'Impostazioni Notifiche',
-          subtitle: 'Configura quando ricevere le notifiche',
-        ),
-        const SizedBox(height: 20),
         
         // Alert Parametri
         _buildSwitchCard(
@@ -280,13 +274,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        _buildHeader(
-          icon: Icons.tune,
-          title: 'Soglie Parametri',
-          subtitle: 'Configura i valori min/max per gli alert',
-        ),
-        const SizedBox(height: 20),
-        
         _buildThresholdCard('Temperatura', '°C', _settings.temperature, Icons.thermostat, const Color(0xFFef4444)),
         const SizedBox(height: 12),
         _buildThresholdCard('pH', '', _settings.ph, Icons.science_outlined, const Color(0xFF60a5fa)),

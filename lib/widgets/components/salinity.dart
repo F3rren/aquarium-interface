@@ -191,33 +191,4 @@ void _showEditTargetDialog(BuildContext context) async {
     }
   }
 
-  Widget _buildProgressBar(Color color, ThemeData theme) {
-    if (targetSalinity == null) return const SizedBox.shrink();
-    
-    final minRange = targetSalinity! - 10;
-    final maxRange = targetSalinity! + 10;
-    final progress = ((currentSalinity - minRange) / (maxRange - minRange)).clamp(0.0, 1.0);
-    
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(minRange.toStringAsFixed(0), style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
-            Text(maxRange.toStringAsFixed(0), style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: LinearProgressIndicator(
-            value: progress,
-            backgroundColor: theme.colorScheme.surfaceContainerHighest,
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-            minHeight: 8,
-          ),
-        ),
-      ],
-    );
-  }
 }
