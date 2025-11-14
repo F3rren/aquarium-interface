@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/fish.dart';
 import '../../models/coral.dart';
 import '../../services/inhabitants_service.dart';
@@ -49,7 +50,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
         SnackBar(
           content: const Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.white),
+              FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
               SizedBox(width: 12),
               Text('Abitanti aggiornati!'),
             ],
@@ -201,8 +202,8 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
           labelColor: theme.colorScheme.primary,
           unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
           tabs: const [
-            Tab(text: 'Pesci', icon: Icon(Icons.pets)),
-            Tab(text: 'Coralli', icon: Icon(Icons.spa)),
+            Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
+            Tab(text: 'Coralli', icon: FaIcon(FontAwesomeIcons.seedling)),
           ],
         ),
       ),
@@ -236,7 +237,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
           }
         },
         backgroundColor: theme.colorScheme.primary,
-        child: const Icon(Icons.add),
+        child: const FaIcon(FontAwesomeIcons.plus),
       ),
     );
   }
@@ -274,7 +275,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
         children: [
           Row(
             children: [
-              const Icon(Icons.analytics, color: Colors.white, size: 24),
+              const FaIcon(FontAwesomeIcons.chartLine, color: Colors.white, size: 24),
               const SizedBox(width: 12),
               Text(
                 'Riepilogo Abitanti',
@@ -291,7 +292,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
             children: [
               Expanded(
                 child: _buildStatItem(
-                  icon: Icons.pets,
+                  icon: FontAwesomeIcons.fish,
                   label: 'Pesci',
                   value: totalFish.toString(),
                 ),
@@ -303,7 +304,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
               ),
               Expanded(
                 child: _buildStatItem(
-                  icon: Icons.spa,
+                  icon: FontAwesomeIcons.seedling,
                   label: 'Coralli',
                   value: totalCorals.toString(),
                 ),
@@ -315,7 +316,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
               ),
               Expanded(
                 child: _buildStatItem(
-                  icon: Icons.straighten,
+                  icon: FontAwesomeIcons.ruler,
                   label: 'Dim. media',
                   value: avgFishSize > 0 ? '${avgFishSize.toStringAsFixed(1)} cm' : '-',
                 ),
@@ -334,7 +335,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.scale, color: Colors.white, size: 20),
+                    const FaIcon(FontAwesomeIcons.scaleBalanced, color: Colors.white, size: 20),
                     const SizedBox(width: 8),
                     Text(
                       'Carico Biotico Totale',
@@ -446,7 +447,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.pets, size: 64, color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+              FaIcon(FontAwesomeIcons.fish, size: 64, color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
               const SizedBox(height: 16),
               Text(
                 'Nessun pesce aggiunto',
@@ -491,7 +492,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
                       color: theme.colorScheme.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(Icons.pets, color: theme.colorScheme.primary, size: 32),
+                      child: FaIcon(FontAwesomeIcons.fish, color: theme.colorScheme.primary, size: 32),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -515,14 +516,14 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(Icons.straighten, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                            FaIcon(FontAwesomeIcons.ruler, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                             const SizedBox(width: 4),
                             Text(
                               '${fish.size.toStringAsFixed(1)} cm',
                               style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 12),
                             ),
                             const SizedBox(width: 16),
-                            Icon(Icons.calendar_today, size: 14, color: Colors.white.withValues(alpha: 0.5)),
+                            FaIcon(FontAwesomeIcons.calendar, size: 14, color: Colors.white.withValues(alpha: 0.5)),
                             const SizedBox(width: 4),
                             Text(
                               '$daysInTank giorni in vasca',
@@ -534,7 +535,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    icon: const FaIcon(FontAwesomeIcons.trash, color: Colors.red),
                     onPressed: () => _deleteFish(fish),
                   ),
                 ],
@@ -562,7 +563,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.spa, size: 64, color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+              FaIcon(FontAwesomeIcons.seedling, size: 64, color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
               const SizedBox(height: 16),
               Text(
                 'Nessun corallo aggiunto',
@@ -619,7 +620,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
                         color: typeColor.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(Icons.spa, color: typeColor, size: 32),
+                      child: FaIcon(FontAwesomeIcons.seedling, color: typeColor, size: 32),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -660,14 +661,14 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(Icons.location_on, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                            FaIcon(FontAwesomeIcons.locationDot, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                             const SizedBox(width: 4),
                             Text(
                               coral.placement,
                               style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
                             ),
                             const SizedBox(width: 16),
-                            Icon(Icons.calendar_today, size: 14, color: Colors.white.withValues(alpha: 0.5)),
+                            FaIcon(FontAwesomeIcons.calendar, size: 14, color: Colors.white.withValues(alpha: 0.5)),
                             const SizedBox(width: 4),
                             Text(
                               '$daysInTank giorni in vasca',
@@ -679,7 +680,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    icon: const FaIcon(FontAwesomeIcons.trash, color: Colors.red),
                     onPressed: () => _deleteCoral(coral),
                   ),
                 ],
@@ -691,3 +692,5 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
     );
   }
 }
+
+

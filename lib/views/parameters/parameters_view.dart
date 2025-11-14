@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/widgets/components/thermometer.dart';
 import 'package:acquariumfe/widgets/components/ph.dart';
 import 'package:acquariumfe/widgets/components/salinity.dart';
@@ -80,7 +81,7 @@ class _ParametersViewState extends State<ParametersView> {
         SnackBar(
           content: const Row(
             children: [
-              Icon(Icons.check_circle, color: Colors.white),
+              FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
               SizedBox(width: 12),
               Text('Parametri aggiornati!'),
             ],
@@ -150,3 +151,5 @@ class _ParametersViewState extends State<ParametersView> {
     );
   }
 }
+
+

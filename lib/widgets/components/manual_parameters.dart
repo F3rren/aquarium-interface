@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/manual_parameters_service.dart';
 
 class ManualParametersWidget extends StatefulWidget {
@@ -89,7 +90,7 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
                   color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.science, color: Color(0xFF60a5fa), size: 24),
+                child: const FaIcon(FontAwesomeIcons.flask, color: Color(0xFF60a5fa), size: 24),
               ),
               const SizedBox(width: 12),
               Text(
@@ -99,15 +100,15 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
             ],
           ),
           const SizedBox(height: 20),
-          _buildParameter('Calcio (Ca)', calcium, 'mg/L', 400, 450, Icons.layers, (v) => setState(() => calcium = v)),
+          _buildParameter('Calcio (Ca)', calcium, 'mg/L', 400, 450, FontAwesomeIcons.cubesStacked, (v) => setState(() => calcium = v)),
           const SizedBox(height: 12),
-          _buildParameter('Magnesio (Mg)', magnesium, 'mg/L', 1250, 1350, Icons.auto_awesome, (v) => setState(() => magnesium = v)),
+          _buildParameter('Magnesio (Mg)', magnesium, 'mg/L', 1250, 1350, FontAwesomeIcons.atom, (v) => setState(() => magnesium = v)),
           const SizedBox(height: 12),
-          _buildParameter('KH', kh, 'dKH', 7, 9, Icons.bar_chart, (v) => setState(() => kh = v)),
+          _buildParameter('KH', kh, 'dKH', 7, 9, FontAwesomeIcons.chartColumn, (v) => setState(() => kh = v)),
           const SizedBox(height: 12),
-          _buildParameter('Nitrati (NO3)', nitrates, 'mg/L', 0.5, 5, Icons.eco, (v) => setState(() => nitrates = v)),
+          _buildParameter('Nitrati (NO3)', nitrates, 'mg/L', 0.5, 5, FontAwesomeIcons.seedling, (v) => setState(() => nitrates = v)),
           const SizedBox(height: 12),
-          _buildParameter('Fosfati (PO4)', phosphates, 'mg/L', 0.0, 0.03, Icons.water_damage, (v) => setState(() => phosphates = v)),
+          _buildParameter('Fosfati (PO4)', phosphates, 'mg/L', 0.0, 0.03, FontAwesomeIcons.vial, (v) => setState(() => phosphates = v)),
         ],
       ),
     );
@@ -132,7 +133,7 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
               color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: FaIcon(icon, color: color, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -168,7 +169,7 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
                   const SizedBox(width: 4),
                   Text(unit, style: TextStyle(color: color, fontSize: 11)),
                   const SizedBox(width: 6),
-                  Icon(Icons.edit, color: color, size: 16),
+                  FaIcon(FontAwesomeIcons.pen, color: color, size: 16),
                 ],
               ),
             ),

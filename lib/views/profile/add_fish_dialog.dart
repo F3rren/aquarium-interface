@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/fish.dart';
 import '../../models/fish_species.dart';
@@ -233,7 +234,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                           color: theme.colorScheme.primary.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(Icons.pets, color: theme.colorScheme.primary, size: 28),
+                        child: FaIcon(FontAwesomeIcons.fish, color: theme.colorScheme.primary, size: 28),
                       ),
                     ),
                   ),
@@ -266,7 +267,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                       isExpanded: true,
                       hint: Row(
                         children: [
-                          Icon(Icons.search, color: theme.colorScheme.primary, size: 20),
+                          FaIcon(FontAwesomeIcons.magnifyingGlass, color: theme.colorScheme.primary, size: 20),
                           const SizedBox(width: 12),
                           Text(
                             'Seleziona dalla lista',
@@ -276,7 +277,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                       ),
                       value: _selectedFishSpecies,
                       dropdownColor: theme.colorScheme.surface,
-                      icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
+                      icon: FaIcon(FontAwesomeIcons.caretDown, color: theme.colorScheme.primary),
                       items: _availableFish.map((species) {
                         return DropdownMenuItem<FishSpecies>(
                           value: species,
@@ -348,7 +349,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                 controller: _nameController,
                 label: 'Nome *',
                 hint: 'es: Nemo',
-                icon: Icons.label,
+                icon: FontAwesomeIcons.tag,
               ),
               const SizedBox(height: 16),
               
@@ -356,7 +357,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                 controller: _speciesController,
                 label: 'Specie *',
                 hint: 'es: Amphiprion ocellaris',
-                icon: Icons.info_outline,
+                icon: FontAwesomeIcons.circleInfo,
               ),
               const SizedBox(height: 16),
               
@@ -364,7 +365,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                 controller: _sizeController,
                 label: 'Dimensione (cm) *',
                 hint: 'es: 8.5',
-                icon: Icons.straighten,
+                icon: FontAwesomeIcons.ruler,
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
@@ -374,7 +375,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                   controller: _quantityController,
                   label: 'Quantità',
                   hint: 'Numero di esemplari da aggiungere',
-                  icon: Icons.add_circle_outline,
+                  icon: FontAwesomeIcons.circlePlus,
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 8),
@@ -393,7 +394,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                 controller: _notesController,
                 label: 'Note',
                 hint: 'Aggiungi note opzionali',
-                icon: Icons.note,
+                icon: FontAwesomeIcons.noteSticky,
                 maxLines: 3,
               ),
               
@@ -472,3 +473,5 @@ class _AddFishDialogState extends State<AddFishDialog> {
     );
   }
 }
+
+

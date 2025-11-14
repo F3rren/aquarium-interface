@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/widgets/animated_number.dart';
 import 'package:acquariumfe/widgets/tap_effect_card.dart';
@@ -20,8 +21,8 @@ class SalinityMeter extends StatelessWidget {
     if (targetSalinity == null) return const Color(0xFF34d399);
     
     final diff = (currentSalinity - targetSalinity!).abs();
-    if (diff <= 4) return const Color(0xFF34d399); // Vicino al target (±4)
-    if (diff <= 8) return const Color(0xFFfbbf24); // Poco distante (±8)
+    if (diff <= 4) return const Color(0xFF34d399); // Vicino al target (�4)
+    if (diff <= 8) return const Color(0xFFfbbf24); // Poco distante (�8)
     return const Color(0xFFef4444); // Molto distante
   }
 
@@ -61,7 +62,7 @@ class SalinityMeter extends StatelessWidget {
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.opacity, color: color, size: 28),
+                  child: FaIcon(FontAwesomeIcons.water, color: color, size: 28),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -72,7 +73,7 @@ class SalinityMeter extends StatelessWidget {
                         children: [
                           Text('Salinità', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
                           const SizedBox(width: 6),
-                          Icon(Icons.edit_outlined, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+                          FaIcon(FontAwesomeIcons.pen, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
                         ],
                       ),
                       const SizedBox(height: 2),
@@ -126,9 +127,9 @@ void _showEditTargetDialog(BuildContext context) async {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Row(
           children: [
-            Icon(Icons.opacity, color: Color(0xFF60a5fa)),
+            FaIcon(FontAwesomeIcons.water, color: Color(0xFF60a5fa)),
             SizedBox(width: 12),
-            Text('Target Salinità', style: TextStyle(color: Colors.white)),
+            Text('Target Salinit�', style: TextStyle(color: Colors.white)),
           ],
         ),
         content: Column(
@@ -136,7 +137,7 @@ void _showEditTargetDialog(BuildContext context) async {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Imposta il valore di salinità desiderato:',
+              'Imposta il valore di salinit� desiderato:',
               style: TextStyle(color: Colors.white70, fontSize: 14),
             ),
             const SizedBox(height: 16),

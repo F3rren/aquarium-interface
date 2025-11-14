@@ -1,5 +1,6 @@
 import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AddTaskDialog extends StatefulWidget {
   final String aquariumId;
@@ -77,7 +78,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(Icons.add_task, color: Colors.white, size: 24),
+                        child: const FaIcon(FontAwesomeIcons.listCheck, color: Colors.white, size: 24),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -112,7 +113,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     decoration: InputDecoration(
                       labelText: 'Titolo *',
                       hintText: 'es. Pulizia schiumatoio',
-                      prefixIcon: const Icon(Icons.title),
+                      prefixIcon: const FaIcon(FontAwesomeIcons.heading),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -134,7 +135,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     decoration: InputDecoration(
                       labelText: 'Descrizione (opzionale)',
                       hintText: 'Aggiungi note o dettagli...',
-                      prefixIcon: const Icon(Icons.notes),
+                      prefixIcon: const FaIcon(FontAwesomeIcons.noteSticky),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -150,7 +151,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     value: _selectedCategory,
                     decoration: InputDecoration(
                       labelText: 'Categoria',
-                      prefixIcon: const Icon(Icons.category),
+                      prefixIcon: const FaIcon(FontAwesomeIcons.tag),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -176,7 +177,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.event_repeat, size: 20),
+                          const FaIcon(FontAwesomeIcons.arrowsRotate, size: 20),
                           const SizedBox(width: 8),
                           Text(
                             'Frequenza',
@@ -246,7 +247,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     subtitle: _enableReminder
                         ? Text('Alle ${_reminderTime.format(context)}')
                         : const Text('Nessun promemoria'),
-                    secondary: const Icon(Icons.notifications_active),
+                    secondary: const FaIcon(FontAwesomeIcons.bell),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: BorderSide(
@@ -268,7 +269,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                             setState(() => _reminderTime = time);
                           }
                         },
-                        icon: const Icon(Icons.access_time),
+                        icon: const FaIcon(FontAwesomeIcons.clock),
                         label: Text('Cambia orario (${_reminderTime.format(context)})'),
                       ),
                     ),
@@ -307,7 +308,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.check, size: 20),
+                              FaIcon(FontAwesomeIcons.check, size: 20),
                               SizedBox(width: 8),
                               Text('Crea Task', style: TextStyle(fontWeight: FontWeight.bold)),
                             ],
@@ -344,3 +345,4 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     );
   }
 }
+

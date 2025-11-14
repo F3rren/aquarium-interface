@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/coral.dart';
 import '../../models/coral_species.dart';
@@ -231,7 +232,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                           color: const Color(0xFF34d399).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(Icons.spa, color: Color(0xFF34d399), size: 28),
+                        child: const FaIcon(FontAwesomeIcons.seedling, color: Color(0xFF34d399), size: 28),
                       ),
                     ),
                   ),
@@ -267,7 +268,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 controller: _nameController,
                 label: 'Nome *',
                 hint: 'es: Montipora arancione',
-                icon: Icons.label,
+                icon: FontAwesomeIcons.tag,
               ),
               const SizedBox(height: 16),
               
@@ -275,7 +276,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 controller: _speciesController,
                 label: 'Specie *',
                 hint: 'es: Montipora digitata',
-                icon: Icons.info_outline,
+                icon: FontAwesomeIcons.circleInfo,
               ),
               const SizedBox(height: 16),
               
@@ -283,7 +284,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 label: 'Tipo *',
                 value: _selectedType,
                 items: ['SPS', 'LPS', 'Molle'],
-                icon: Icons.category,
+                icon: FontAwesomeIcons.tag,
                 onChanged: (value) => setState(() => _selectedType = value!),
               ),
               const SizedBox(height: 16),
@@ -292,7 +293,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 controller: _sizeController,
                 label: 'Dimensione (cm) *',
                 hint: 'es: 5.0',
-                icon: Icons.straighten,
+                icon: FontAwesomeIcons.ruler,
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
@@ -301,7 +302,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 label: 'Posizionamento *',
                 value: _selectedPlacement,
                 items: ['Alto', 'Medio', 'Basso'],
-                icon: Icons.location_on,
+                icon: FontAwesomeIcons.locationDot,
                 onChanged: (value) => setState(() => _selectedPlacement = value!),
               ),
               const SizedBox(height: 16),
@@ -311,7 +312,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                   controller: _quantityController,
                   label: 'Quantità',
                   hint: 'Numero di esemplari da aggiungere',
-                  icon: Icons.add_circle_outline,
+                  icon: FontAwesomeIcons.circlePlus,
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 8),
@@ -330,7 +331,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 controller: _notesController,
                 label: 'Note',
                 hint: 'Aggiungi note opzionali',
-                icon: Icons.note,
+                icon: FontAwesomeIcons.noteSticky,
                 maxLines: 3,
               ),
               
@@ -458,7 +459,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
       children: [
         Row(
           children: [
-            Icon(Icons.spa, color: const Color(0xFF34d399), size: 16),
+            FaIcon(FontAwesomeIcons.seedling, color: const Color(0xFF34d399), size: 16),
             const SizedBox(width: 8),
             Text(
               'Seleziona da Database',
@@ -503,7 +504,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                   dropdownColor: theme.colorScheme.surfaceContainerHigh,
                   menuMaxHeight: 300,
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search, color: const Color(0xFF34d399)),
+                    prefixIcon: FaIcon(FontAwesomeIcons.magnifyingGlass, color: const Color(0xFF34d399)),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     hintText: 'Cerca nel database...',
@@ -548,10 +549,12 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                   }).toList(),
                   onChanged: _onCoralSpeciesSelected,
                   isExpanded: true,
-                  icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onSurfaceVariant),
+                  icon: FaIcon(FontAwesomeIcons.caretDown, color: theme.colorScheme.onSurfaceVariant),
                 ),
         ),
       ],
     );
   }
 }
+
+

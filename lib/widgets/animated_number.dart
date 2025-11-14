@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AnimatedNumber extends StatefulWidget {
   final double value;
@@ -316,8 +317,8 @@ class _AnimatedNumberWithIndicatorState extends State<AnimatedNumberWithIndicato
               opacity: _fadeAnimation,
               child: SlideTransition(
                 position: _slideAnimation,
-                child: Icon(
-                  _isIncreasing ? Icons.arrow_upward : Icons.arrow_downward,
+                child: FaIcon(
+                  _isIncreasing ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown,
                   size: 16,
                   color: _isIncreasing 
                       ? (widget.increaseColor ?? const Color(0xFF34d399))

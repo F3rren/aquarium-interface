@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Barra di progresso che mostra la distanza dal valore target
 class TargetProgressBar extends StatefulWidget {
@@ -131,7 +132,7 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
           children: [
             Row(
               children: [
-                Icon(Icons.flag, size: 14, color: theme.colorScheme.onSurface.withValues(alpha:0.6)),
+                FaIcon(FontAwesomeIcons.flag, size: 14, color: theme.colorScheme.onSurface.withValues(alpha:0.6)),
                 const SizedBox(width: 4),
                 Text(
                   'Target: ${widget.targetValue.toStringAsFixed(1)}${widget.unit}',

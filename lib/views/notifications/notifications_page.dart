@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/notification_preferences_service.dart';
@@ -110,7 +111,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         _buildSwitchCard(
           title: 'Alert Parametri',
           subtitle: 'Notifiche quando i parametri sono fuori range',
-          icon: Icons.warning_amber,
+          icon: FontAwesomeIcons.triangleExclamation,
           color: const Color(0xFFef4444),
           value: _settings.enabledAlerts,
           onChanged: (value) {
@@ -126,7 +127,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         _buildSwitchCard(
           title: 'Promemoria Manutenzione',
           subtitle: 'Notifiche per cambio acqua, pulizia filtro, ecc.',
-          icon: Icons.build,
+          icon: FontAwesomeIcons.wrench,
           color: const Color(0xFF34d399),
           value: _settings.enabledMaintenance,
           onChanged: (value) {
@@ -142,7 +143,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         _buildSwitchCard(
           title: 'Riepilogo Giornaliero',
           subtitle: 'Notifica giornaliera con stato acquario',
-          icon: Icons.today,
+          icon: FontAwesomeIcons.calendarDay,
           color: const Color(0xFF60a5fa),
           value: _settings.enabledDaily,
           onChanged: (value) {
@@ -159,7 +160,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         // Cambio Acqua
         _buildMaintenanceCard(
           title: 'Cambio Acqua',
-          icon: Icons.water_drop,
+          icon: FontAwesomeIcons.droplet,
           color: const Color(0xFF60a5fa),
           schedule: _settings.maintenanceReminders.waterChange,
           onToggle: (enabled) {
@@ -188,7 +189,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         // Pulizia Filtro
         _buildMaintenanceCard(
           title: 'Pulizia Filtro',
-          icon: Icons.filter_alt,
+          icon: FontAwesomeIcons.filter,
           color: const Color(0xFF34d399),
           schedule: _settings.maintenanceReminders.filterCleaning,
           onToggle: (enabled) {
@@ -217,7 +218,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         // Test Parametri
         _buildMaintenanceCard(
           title: 'Test Parametri',
-          icon: Icons.science,
+          icon: FontAwesomeIcons.flask,
           color: const Color(0xFFa855f7),
           schedule: _settings.maintenanceReminders.parameterTesting,
           onToggle: (enabled) {
@@ -259,7 +260,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.save),
+                FaIcon(FontAwesomeIcons.floppyDisk),
                 SizedBox(width: 8),
                 Text('Salva Impostazioni', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
               ],
@@ -275,23 +276,23 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     return ListView(
       padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20 + bottomPadding),
       children: [
-        _buildThresholdCard('Temperatura', '°C', _settings.temperature, Icons.thermostat, const Color(0xFFef4444)),
+        _buildThresholdCard('Temperatura', '°C', _settings.temperature, FontAwesomeIcons.temperatureHalf, const Color(0xFFef4444)),
         const SizedBox(height: 12),
-        _buildThresholdCard('pH', '', _settings.ph, Icons.science_outlined, const Color(0xFF60a5fa)),
+        _buildThresholdCard('pH', '', _settings.ph, FontAwesomeIcons.flask, const Color(0xFF60a5fa)),
         const SizedBox(height: 12),
-        _buildThresholdCard('Salinità', '', _settings.salinity, Icons.water_outlined, const Color(0xFF2dd4bf)),
+        _buildThresholdCard('Salinità', '', _settings.salinity, FontAwesomeIcons.water, const Color(0xFF2dd4bf)),
         const SizedBox(height: 12),
-        _buildThresholdCard('ORP', ' mV', _settings.orp, Icons.bolt, const Color(0xFFfbbf24)),
+        _buildThresholdCard('ORP', ' mV', _settings.orp, FontAwesomeIcons.bolt, const Color(0xFFfbbf24)),
         const SizedBox(height: 12),
-        _buildThresholdCard('Calcio', ' mg/L', _settings.calcium, Icons.analytics, const Color(0xFFa855f7)),
+        _buildThresholdCard('Calcio', ' mg/L', _settings.calcium, FontAwesomeIcons.cubesStacked, const Color(0xFFa855f7)),
         const SizedBox(height: 12),
-        _buildThresholdCard('Magnesio', ' mg/L', _settings.magnesium, Icons.bubble_chart, const Color(0xFFec4899)),
+        _buildThresholdCard('Magnesio', ' mg/L', _settings.magnesium, FontAwesomeIcons.atom, const Color(0xFFec4899)),
         const SizedBox(height: 12),
-        _buildThresholdCard('KH', ' dKH', _settings.kh, Icons.show_chart, const Color(0xFF34d399)),
+        _buildThresholdCard('KH', ' dKH', _settings.kh, FontAwesomeIcons.chartLine, const Color(0xFF34d399)),
         const SizedBox(height: 12),
-        _buildThresholdCard('Nitrati', ' mg/L', _settings.nitrate, Icons.grass, const Color(0xFF10b981)),
+        _buildThresholdCard('Nitrati', ' mg/L', _settings.nitrate, FontAwesomeIcons.seedling, const Color(0xFF10b981)),
         const SizedBox(height: 12),
-        _buildThresholdCard('Fosfati', ' mg/L', _settings.phosphate, Icons.opacity, const Color(0xFF8b5cf6)),
+        _buildThresholdCard('Fosfati', ' mg/L', _settings.phosphate, FontAwesomeIcons.droplet, const Color(0xFF8b5cf6)),
         
         const SizedBox(height: 32),
         // Pulsante Ripristina Predefiniti
@@ -299,7 +300,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           height: 50,
           child: OutlinedButton.icon(
             onPressed: () => _showResetDialog(),
-            icon: const Icon(Icons.restart_alt),
+            icon: const FaIcon(FontAwesomeIcons.arrowRotateRight),
             label: const Text('Ripristina Valori Predefiniti', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             style: OutlinedButton.styleFrom(
               foregroundColor: const Color(0xFFfbbf24),
@@ -322,7 +323,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20 + bottomPadding),
             children: [
               _buildHeader(
-                icon: Icons.history,
+                icon: FontAwesomeIcons.clockRotateLeft,
                 title: 'Storico Alert',
                 subtitle: '${history.length} notifiche recenti',
               ),
@@ -345,7 +346,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               color: theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Icon(Icons.notifications_off, color: theme.colorScheme.onSurface.withValues(alpha: 0.3), size: 64),
+            child: FaIcon(FontAwesomeIcons.bellSlash, color: theme.colorScheme.onSurface.withValues(alpha: 0.3), size: 64),
           ),
           const SizedBox(height: 20),
           Text(
@@ -541,7 +542,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 const SizedBox(width: 12),
                 Text(name, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600)),
                 const Spacer(),
-                Icon(Icons.edit, color: theme.colorScheme.onSurfaceVariant, size: 18),
+                FaIcon(FontAwesomeIcons.pen, color: theme.colorScheme.onSurfaceVariant, size: 18),
                 const SizedBox(width: 4),
                 Text('${thresholds.min} - ${thresholds.max}$unit', style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w600)),
               ],
@@ -608,19 +609,19 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     switch (alert.severity) {
       case AlertSeverity.critical:
         severityColor = const Color(0xFFef4444);
-        severityIcon = Icons.error;
+        severityIcon = FontAwesomeIcons.circleExclamation;
         break;
       case AlertSeverity.high:
         severityColor = const Color(0xFFfbbf24);
-        severityIcon = Icons.warning;
+        severityIcon = FontAwesomeIcons.triangleExclamation;
         break;
       case AlertSeverity.medium:
         severityColor = const Color(0xFF60a5fa);
-        severityIcon = Icons.info;
+        severityIcon = FontAwesomeIcons.circleInfo;
         break;
       case AlertSeverity.low:
         severityColor = const Color(0xFF34d399);
-        severityIcon = Icons.check_circle;
+        severityIcon = FontAwesomeIcons.circleCheck;
         break;
     }
 
@@ -637,7 +638,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.arrow_downward, color: Color(0xFF60a5fa), size: 12),
+            FaIcon(FontAwesomeIcons.arrowDown, color: Color(0xFF60a5fa), size: 12),
             SizedBox(width: 4),
             Text('BASSO', style: TextStyle(color: Color(0xFF60a5fa), fontSize: 10, fontWeight: FontWeight.bold)),
           ],
@@ -654,7 +655,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.arrow_upward, color: Color(0xFFef4444), size: 12),
+            FaIcon(FontAwesomeIcons.arrowUp, color: Color(0xFFef4444), size: 12),
             SizedBox(width: 4),
             Text('ALTO', style: TextStyle(color: Color(0xFFef4444), fontSize: 10, fontWeight: FontWeight.bold)),
           ],
@@ -738,7 +739,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         backgroundColor: theme.colorScheme.surface,
         title: Row(
           children: [
-            Icon(Icons.tune, color: color, size: 24),
+            FaIcon(FontAwesomeIcons.sliders, color: color, size: 24),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -801,7 +802,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, color: color, size: 16),
+                  FaIcon(FontAwesomeIcons.circleInfo, color: color, size: 16),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -1005,7 +1006,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         backgroundColor: theme.colorScheme.surface,
         title: Row(
           children: [
-            const Icon(Icons.warning_amber, color: Color(0xFFfbbf24), size: 28),
+            const FaIcon(FontAwesomeIcons.triangleExclamation, color: Color(0xFFfbbf24), size: 28),
             const SizedBox(width: 12),
             //Text('Ripristinare Valori Predefiniti?', style: TextStyle(color: Colors.white, fontSize: 18)),
             Text(
@@ -1062,3 +1063,5 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     );
   }
 }
+
+

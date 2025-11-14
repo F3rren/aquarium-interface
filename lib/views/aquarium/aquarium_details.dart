@@ -1,4 +1,4 @@
-﻿import 'package:acquariumfe/views/dashboard/health_dashboard.dart';
+import 'package:acquariumfe/views/dashboard/health_dashboard.dart';
 import 'package:acquariumfe/views/parameters/parameters_view.dart';
 import 'package:acquariumfe/views/charts/charts_view.dart';
 import 'package:acquariumfe/views/notifications/notifications_page.dart';
@@ -7,6 +7,7 @@ import 'package:acquariumfe/views/maintenance/maintenance_view.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AquariumDetails extends StatefulWidget {
   final String? aquariumId;
@@ -125,7 +126,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
+                    icon: FaIcon(FontAwesomeIcons.arrowLeft, color: theme.colorScheme.onSurface),
                     onPressed: () => Navigator.pop(context),
                   ),
                   Expanded(
@@ -144,7 +145,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.notifications_outlined, color: theme.colorScheme.onSurface),
+                    icon: FaIcon(FontAwesomeIcons.bell, color: theme.colorScheme.onSurface),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -207,11 +208,11 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(Icons.dashboard, 'Dashboard', 0),
-              _buildNavItem(Icons.science, 'Parametri', 1),
-              _buildNavItem(Icons.analytics, 'Grafici', 2),
-              _buildNavItem(Icons.build_circle, 'Manutenzione', 3),
-              _buildNavItem(Icons.person, 'Profilo', 4),
+              _buildNavItem(FontAwesomeIcons.chartPie, 'Dashboard', 0),
+              _buildNavItem(FontAwesomeIcons.flask, 'Parametri', 1),
+              _buildNavItem(FontAwesomeIcons.chartLine, 'Grafici', 2),
+              _buildNavItem(FontAwesomeIcons.wrench, 'Manutenzione', 3),
+              _buildNavItem(FontAwesomeIcons.user, 'Profilo', 4),
             ],
           ),
         ),
@@ -261,3 +262,4 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
     );
   }
 }
+

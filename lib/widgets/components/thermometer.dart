@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/widgets/animated_number.dart';
 import 'package:acquariumfe/widgets/tap_effect_card.dart';
@@ -55,7 +56,7 @@ class Thermometer extends StatelessWidget {
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.thermostat, color: color, size: 28),
+                  child: FaIcon(FontAwesomeIcons.temperatureHalf, color: color, size: 28),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -66,7 +67,7 @@ class Thermometer extends StatelessWidget {
                         children: [
                           Text('Temperatura', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
                           const SizedBox(width: 6),
-                          Icon(Icons.edit_outlined, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+                          FaIcon(FontAwesomeIcons.pen, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
                         ],
                       ),
                       const SizedBox(height: 2),
@@ -84,7 +85,7 @@ class Thermometer extends StatelessWidget {
                   child: AnimatedNumberWithIndicator(
                     value: currentTemperature,
                     decimals: 1,
-                    suffix: '°C',
+                    suffix: '�C',
                     style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
                     increaseColor: const Color(0xFFef4444),
                     decreaseColor: const Color(0xFF60a5fa),
@@ -99,7 +100,7 @@ class Thermometer extends StatelessWidget {
                 targetValue: targetTemperature!,
                 minValue: 20.0,
                 maxValue: 30.0,
-                unit: '°C',
+                unit: ' °C',
               ),
             ] else ...[
               const SizedBox(height: 12),
@@ -124,7 +125,7 @@ class Thermometer extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            const Icon(Icons.thermostat, color: Color(0xFFef4444)),
+            const FaIcon(FontAwesomeIcons.temperatureHalf, color: Color(0xFFef4444)),
             const SizedBox(width: 12),
             Text('Target Temperatura', style: TextStyle(color: theme.colorScheme.onSurface)),
           ],
@@ -144,7 +145,7 @@ class Thermometer extends StatelessWidget {
               autofocus: true,
               style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18),
               decoration: InputDecoration(
-                suffixText: '°C',
+                suffixText: '�C',
                 suffixStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                 filled: true,
                 fillColor: theme.colorScheme.surfaceContainerHighest,
@@ -158,7 +159,7 @@ class Thermometer extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Range tipico: 24-26°C',
+              'Range tipico: 24-26�C',
               style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.38), fontSize: 12),
             ),
           ],

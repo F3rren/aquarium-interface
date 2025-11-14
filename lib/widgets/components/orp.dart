@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/widgets/animated_number.dart';
 import 'package:acquariumfe/widgets/tap_effect_card.dart';
@@ -55,7 +56,7 @@ class OrpMeter extends StatelessWidget {
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.science, color: color, size: 28),
+                  child: FaIcon(FontAwesomeIcons.flask, color: color, size: 28),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -66,7 +67,7 @@ class OrpMeter extends StatelessWidget {
                         children: [
                           Text('ORP/Redox', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
                           const SizedBox(width: 6),
-                          Icon(Icons.edit_outlined, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+                          FaIcon(FontAwesomeIcons.pen, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
                         ],
                       ),
                       const SizedBox(height: 2),
@@ -122,7 +123,7 @@ class OrpMeter extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            const Icon(Icons.science, color: Color(0xFF60a5fa)),
+            const FaIcon(FontAwesomeIcons.flask, color: Color(0xFF60a5fa)),
             const SizedBox(width: 12),
             Text('Target ORP', style: TextStyle(color: theme.colorScheme.onSurface)),
           ],

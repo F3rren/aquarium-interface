@@ -2,6 +2,7 @@ import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:acquariumfe/services/maintenance_service.dart';
 import 'package:acquariumfe/widgets/add_task_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MaintenanceView extends StatefulWidget {
   final String? aquariumId;
@@ -82,7 +83,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
             bottom: 20 + bottomPadding,
             child: FloatingActionButton.extended(
               onPressed: _showAddTaskDialog,
-              icon: const Icon(Icons.add),
+              icon: const FaIcon(FontAwesomeIcons.plus),
               label: const Text('Aggiungi Task'),
               backgroundColor: const Color(0xFF8b5cf6),
             ),
@@ -138,9 +139,9 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
       ),
       child: Row(
         children: [
-          _buildTabButton('Task', Icons.checklist_rounded, 0, theme),
-          _buildTabButton('Calendario', Icons.calendar_month, 1, theme),
-          _buildTabButton('Storico', Icons.history, 2, theme),
+          _buildTabButton('Task', FontAwesomeIcons.listCheck, 0, theme),
+          _buildTabButton('Calendario', FontAwesomeIcons.calendarDays, 1, theme),
+          _buildTabButton('Storico', FontAwesomeIcons.clockRotateLeft, 2, theme),
         ],
       ),
     );
@@ -262,7 +263,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.chevron_left, color: Colors.white),
+                    icon: const FaIcon(FontAwesomeIcons.chevronLeft, color: Colors.white),
                     onPressed: () {
                       setState(() {
                         _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1);
@@ -278,7 +279,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.chevron_right, color: Colors.white),
+                    icon: const FaIcon(FontAwesomeIcons.chevronRight, color: Colors.white),
                     onPressed: () {
                       setState(() {
                         _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);
@@ -590,7 +591,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.event, color: Colors.white, size: 24),
+                      child: const FaIcon(FontAwesomeIcons.calendar, color: Colors.white, size: 24),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -684,7 +685,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.check_circle_outline),
+                            icon: const FaIcon(FontAwesomeIcons.circleCheck),
                             color: const Color(0xFF34d399),
                             onPressed: () {
                               Navigator.pop(context);
@@ -812,7 +813,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                     child: Row(
                       children: [
                         Icon(
-                          Icons.check_circle,
+                          FontAwesomeIcons.circleCheck,
                           size: 20,
                           color: const Color(0xFF34d399),
                         ),
@@ -897,7 +898,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
             child: Column(
               children: [
                 Icon(
-                  Icons.warning_amber_rounded,
+                  FontAwesomeIcons.triangleExclamation,
                   color: const Color(0xFFef4444),
                   size: 32,
                 ),
@@ -949,7 +950,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
             child: Column(
               children: [
                 Icon(
-                  Icons.today,
+                  FontAwesomeIcons.calendarDay,
                   color: const Color(0xFFf59e0b),
                   size: 32,
                 ),
@@ -1039,7 +1040,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
             });
           },
           icon: Icon(
-            Icons.arrow_drop_down,
+            FontAwesomeIcons.caretDown,
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
@@ -1129,7 +1130,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.today),
+              leading: const FaIcon(FontAwesomeIcons.calendarDay),
               title: const Text('Posticipa 1 giorno'),
               onTap: () {
                 Navigator.pop(context);
@@ -1137,7 +1138,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
               },
             ),
             ListTile(
-              leading: const Icon(Icons.date_range),
+              leading: const FaIcon(FontAwesomeIcons.calendarWeek),
               title: const Text('Posticipa 3 giorni'),
               onTap: () {
                 Navigator.pop(context);
@@ -1145,7 +1146,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
               },
             ),
             ListTile(
-              leading: const Icon(Icons.calendar_month),
+              leading: const FaIcon(FontAwesomeIcons.calendarDays),
               title: const Text('Posticipa 1 settimana'),
               onTap: () {
                 Navigator.pop(context);
@@ -1153,7 +1154,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
               },
             ),
             ListTile(
-              leading: const Icon(Icons.event),
+              leading: const FaIcon(FontAwesomeIcons.calendar),
               title: const Text('Data personalizzata'),
               onTap: () async {
                 Navigator.pop(context);
@@ -1470,19 +1471,19 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
               // Pulsante elimina (solo per task custom)
               if (task.isCustom)
                 IconButton(
-                  icon: const Icon(Icons.delete_outline, size: 22),
+                  icon: const FaIcon(FontAwesomeIcons.trash, size: 22),
                   color: const Color(0xFFef4444),
                   tooltip: 'Elimina',
                   onPressed: () => _deleteTask(task),
                 ),
               IconButton(
-                icon: const Icon(Icons.schedule, size: 24),
+                icon: const FaIcon(FontAwesomeIcons.clock, size: 24),
                 color: const Color(0xFF8b5cf6),
                 tooltip: 'Modifica scadenza',
                 onPressed: () => _rescheduleTask(task),
               ),
               IconButton(
-                icon: const Icon(Icons.check_circle_outline, size: 28),
+                icon: const FaIcon(FontAwesomeIcons.circleCheck, size: 28),
                 color: const Color(0xFF34d399),
                 tooltip: 'Completa',
                 onPressed: () => _completeTask(task),
@@ -1495,9 +1496,9 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
   }
 
   IconData _getDueIcon(MaintenanceTask task) {
-    if (task.isOverdue) return Icons.warning_amber_rounded;
-    if (task.isDueToday) return Icons.today;
-    return Icons.calendar_today;
+    if (task.isOverdue) return FontAwesomeIcons.triangleExclamation;
+    if (task.isDueToday) return FontAwesomeIcons.calendarDay;
+    return FontAwesomeIcons.calendar;
   }
 
   Color _getDueColor(MaintenanceTask task) {
@@ -1558,7 +1559,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
       builder: (context) => AlertDialog(
         title: const Row(
           children: [
-            Icon(Icons.check_circle, color: Color(0xFF34d399)),
+            FaIcon(FontAwesomeIcons.circleCheck, color: Color(0xFF34d399)),
             SizedBox(width: 12),
             Expanded(child: Text('Completa Task')),
           ],
@@ -1603,7 +1604,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  prefixIcon: const Icon(Icons.notes, size: 20),
+                  prefixIcon: const FaIcon(FontAwesomeIcons.noteSticky, size: 20),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 12,
@@ -1625,7 +1626,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
             style: FilledButton.styleFrom(
               backgroundColor: const Color(0xFF34d399),
             ),
-            icon: const Icon(Icons.check),
+            icon: const FaIcon(FontAwesomeIcons.check),
             label: const Text('Completa'),
           ),
         ],
@@ -1655,7 +1656,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle, color: Colors.white),
+            const FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
             const SizedBox(width: 12),
             Expanded(child: Text('${task.title} completato!')),
           ],
@@ -1673,3 +1674,4 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
     return '${nextDue.day}/${nextDue.month}/${nextDue.year}';
   }
 }
+

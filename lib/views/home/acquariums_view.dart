@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/widgets/animated_value.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
@@ -100,7 +101,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
           lastUpdate = DateTime.now();
         } catch (e) {
           // Se fallisce, parametri rimangono null
-          print('⚠️ Impossibile caricare parametri per ${aquarium.name}: $e');
+          print('?? Impossibile caricare parametri per ${aquarium.name}: $e');
         }
         
         aquariumsWithParams.add(AquariumWithParams(
@@ -133,7 +134,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.error_outline, color: Colors.white),
+                const FaIcon(FontAwesomeIcons.circleExclamation, color: Colors.white),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text('Errore nel caricamento delle vasche: $e'),
@@ -195,7 +196,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.water_drop_outlined,
+                FontAwesomeIcons.droplet,
                 size: 80,
                 color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
               ),
@@ -313,10 +314,10 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                             ),
                             child: Icon(
                               aquarium.type == 'Marino' 
-                                  ? Icons.water_drop 
+                                  ? FontAwesomeIcons.droplet 
                                   : aquarium.type == 'Reef'
-                                      ? Icons.bubble_chart
-                                      : Icons.water,
+                                      ? FontAwesomeIcons.atom
+                                      : FontAwesomeIcons.water,
                               color: const Color(0xFF60a5fa),
                               size: 20,
                             ),
@@ -340,7 +341,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                                 Row(
                                   children: [
                                     Icon(
-                                      Icons.water_drop,
+                                      FontAwesomeIcons.droplet,
                                       size: 11,
                                       color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                                     ),
@@ -372,7 +373,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                 child: Row(
                   children: [
                     Icon(
-                      Icons.update,
+                      FontAwesomeIcons.arrowsRotate,
                       size: 12,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                     ),
@@ -452,8 +453,8 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               _buildQuickStat(
-                                Icons.thermostat,
-                                hasData ? "${temp.toStringAsFixed(1)}°C" : "N/D",
+                                FontAwesomeIcons.temperatureHalf,
+                                hasData ? "${temp.toStringAsFixed(1)} °C" : "N/D",
                                 const Color(0xFFef4444),
                                 hasData,
                               ),
@@ -463,7 +464,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                                 color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                               ),
                               _buildQuickStat(
-                                Icons.science_outlined,
+                                FontAwesomeIcons.flask,
                                 hasData ? ph.toStringAsFixed(1) : "N/D",
                                 const Color(0xFF60a5fa),
                                 hasData,
@@ -474,8 +475,8 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                                 color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                               ),
                               _buildQuickStat(
-                                Icons.water_outlined,
-                                hasData ? salinity.toStringAsFixed(3) : "N/D",
+                                FontAwesomeIcons.water,
+                                hasData ? "${salinity.toStringAsFixed(0)} PPT" : "N/D",
                                 const Color(0xFF2dd4bf),
                                 hasData,
                               ),
@@ -568,7 +569,7 @@ class _WavePainter extends CustomPainter {
 
     canvas.drawPath(path, paint);
 
-    // Seconda onda (più chiara)
+    // Seconda onda (pi� chiara)
     final path2 = Path();
     paint.color = color.withValues(alpha: color.a * 0.5);
     
@@ -591,3 +592,4 @@ class _WavePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+

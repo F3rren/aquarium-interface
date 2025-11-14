@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CalculatorsPage extends StatefulWidget {
   const CalculatorsPage({super.key});
@@ -247,7 +248,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
           // CALCOLO VOLUME
           _buildCalculatorCard(
             title: 'Calcolo Volume Acquario',
-            icon: Icons.square_foot,
+            icon: FontAwesomeIcons.rulerCombined,
             color: theme.colorScheme.primary,
             child: Column(
               children: [
@@ -257,11 +258,11 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                _buildInputField('Lunghezza (cm)', _lengthController, Icons.straighten),
+                _buildInputField('Lunghezza (cm)', _lengthController, FontAwesomeIcons.ruler),
                 const SizedBox(height: 12),
-                _buildInputField('Larghezza (cm)', _widthController, Icons.straighten),
+                _buildInputField('Larghezza (cm)', _widthController, FontAwesomeIcons.ruler),
                 const SizedBox(height: 12),
-                _buildInputField('Altezza (cm)', _heightController, Icons.height),
+                _buildInputField('Altezza (cm)', _heightController, FontAwesomeIcons.rulerVertical),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateVolume,
@@ -300,7 +301,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
           // CALCOLO DOSAGGIO ADDITIVI
           _buildCalculatorCard(
             title: 'Calcolo Dosaggio Additivi',
-            icon: Icons.science,
+            icon: FontAwesomeIcons.flask,
             color: theme.colorScheme.tertiary,
             child: Column(
               children: [
@@ -360,18 +361,18 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                _buildInputField('Volume acquario (L)', _tankVolumeController, Icons.water),
+                _buildInputField('Volume acquario (L)', _tankVolumeController, FontAwesomeIcons.water),
                 const SizedBox(height: 12),
                 _buildInputField(
                   'Valore attuale (${_getUnit()})',
                   _currentValueController,
-                  Icons.show_chart,
+                  FontAwesomeIcons.chartLine,
                 ),
                 const SizedBox(height: 12),
                 _buildInputField(
                   'Valore target (${_getUnit()})',
                   _targetValueController,
-                  Icons.flag,
+                  FontAwesomeIcons.flag,
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
@@ -410,7 +411,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     ),
                     child: Column(
                       children: [
-                        const Icon(Icons.info_outline, color: Colors.orange, size: 32),
+                        const FaIcon(FontAwesomeIcons.circleInfo, color: Colors.orange, size: 32),
                         const SizedBox(height: 8),
                         Text(
                           _selectedAdditive == 'Nitrati (NO3)' 
@@ -432,7 +433,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
           // CALCOLO CAMBIO ACQUA
           _buildCalculatorCard(
             title: 'Calcolo Cambio Acqua',
-            icon: Icons.water_drop,
+            icon: FontAwesomeIcons.droplet,
             color: theme.colorScheme.secondary,
             child: Column(
               children: [
@@ -442,9 +443,9 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                _buildInputField('Volume acquario (L)', _tankVolumeWaterController, Icons.water),
+                _buildInputField('Volume acquario (L)', _tankVolumeWaterController, FontAwesomeIcons.water),
                 const SizedBox(height: 12),
-                _buildInputField('Percentuale cambio (%)', _percentageController, Icons.percent),
+                _buildInputField('Percentuale cambio (%)', _percentageController, FontAwesomeIcons.percent),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateWaterChange,
@@ -484,7 +485,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
           // CALCOLO DENSITÀ/SALINITÀ
           _buildCalculatorCard(
             title: 'Conversione Densità/Salinità',
-            icon: Icons.science,
+            icon: FontAwesomeIcons.flask,
             color: theme.colorScheme.tertiary,
             child: Column(
               children: [
@@ -537,10 +538,10 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     ? 'Densità (es: 1.025)' 
                     : 'Salinità (ppt, es: 35)',
                   _densityController,
-                  Icons.water,
+                  FontAwesomeIcons.water,
                 ),
                 const SizedBox(height: 12),
-                _buildInputField('Temperatura (°C)', _temperatureController, Icons.thermostat),
+                _buildInputField('Temperatura (°C)', _temperatureController, FontAwesomeIcons.temperatureHalf),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateDensitySalinity,
@@ -586,7 +587,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
           // CALCOLO ILLUMINAZIONE
           _buildCalculatorCard(
             title: 'Calcolo Illuminazione',
-            icon: Icons.light_mode,
+            icon: FontAwesomeIcons.sun,
             color: Colors.amber,
             child: Column(
               children: [
@@ -627,9 +628,9 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                 ),
                 
                 const SizedBox(height: 12),
-                _buildInputField('Volume acquario (L)', _lightVolumeController, Icons.water),
+                _buildInputField('Volume acquario (L)', _lightVolumeController, FontAwesomeIcons.water),
                 const SizedBox(height: 12),
-                _buildInputField('Potenza luci (W)', _wattsController, Icons.bolt),
+                _buildInputField('Potenza luci (W)', _wattsController, FontAwesomeIcons.bolt),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateLighting,
@@ -802,3 +803,4 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     );
   }
 }
+

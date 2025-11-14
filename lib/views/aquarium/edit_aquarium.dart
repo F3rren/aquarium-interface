@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/aquarium_service.dart';
 import 'package:acquariumfe/models/aquarium.dart';
 
@@ -70,7 +71,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.error_outline, color: Colors.white),
+                const FaIcon(FontAwesomeIcons.circleExclamation, color: Colors.white),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text('Errore nel caricamento delle vasche: $e'),
@@ -130,7 +131,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
             SnackBar(
               content: Row(
                 children: [
-                  const Icon(Icons.check_circle, color: Colors.white),
+                  const FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
                   const SizedBox(width: 12),
                   Text('Modifiche salvate per "${_nameController.text}"'),
                 ],
@@ -154,7 +155,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
             SnackBar(
               content: Row(
                 children: [
-                  const Icon(Icons.error_outline, color: Colors.white),
+                  const FaIcon(FontAwesomeIcons.circleExclamation, color: Colors.white),
                   const SizedBox(width: 12),
                   Expanded(child: Text('Errore nel salvare le modifiche: $e')),
                 ],
@@ -211,7 +212,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.water_drop_outlined, size: 64, color: theme.colorScheme.onSurfaceVariant),
+              FaIcon(FontAwesomeIcons.droplet, size: 64, color: theme.colorScheme.onSurfaceVariant),
               const SizedBox(height: 16),
               Text(
                 'Nessuna vasca trovata',
@@ -240,7 +241,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                   color: theme.colorScheme.primary.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(Icons.edit, color: theme.colorScheme.primary, size: 32),
+                child: FaIcon(FontAwesomeIcons.pen, color: theme.colorScheme.primary, size: 32),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -288,7 +289,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    aquarium.type == 'Marino' ? Icons.water_drop : Icons.water,
+                    aquarium.type == 'Marino' ? FontAwesomeIcons.droplet : FontAwesomeIcons.water,
                     color: theme.colorScheme.primary,
                     size: 24,
                   ),
@@ -304,13 +305,13 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${aquarium.volume} L • ${aquarium.type}',
+                        '${aquarium.volume} L � ${aquarium.type}',
                         style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
                       ),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right, color: theme.colorScheme.primary),
+                FaIcon(FontAwesomeIcons.chevronRight, color: theme.colorScheme.primary),
               ],
             ),
           ),
@@ -343,7 +344,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                       color: theme.colorScheme.primary.withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Icon(Icons.edit_note, color: theme.colorScheme.primary, size: 32),
+                    child: FaIcon(FontAwesomeIcons.penToSquare, color: theme.colorScheme.primary, size: 32),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -366,7 +367,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
             TextFormField(
               controller: _nameController,
               style: TextStyle(color: theme.colorScheme.onSurface),
-              decoration: _buildInputDecoration('es. La Mia Vasca', Icons.text_fields),
+              decoration: _buildInputDecoration('es. La Mia Vasca', FontAwesomeIcons.textHeight),
               validator: (value) => value?.isEmpty ?? true ? 'Inserisci un nome' : null,
             ),
             const SizedBox(height: 20),
@@ -381,9 +382,9 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
               ),
               child: Row(
                 children: [
-                  Expanded(child: _buildTypeButton('Marino', Icons.water_drop)),
-                  Expanded(child: _buildTypeButton('Dolce', Icons.water)),
-                  Expanded(child: _buildTypeButton('Reef', Icons.bubble_chart)),
+                  Expanded(child: _buildTypeButton('Marino', FontAwesomeIcons.droplet)),
+                  Expanded(child: _buildTypeButton('Dolce', FontAwesomeIcons.water)),
+                  Expanded(child: _buildTypeButton('Reef', FontAwesomeIcons.atom)),
                 ],
               ),
             ),
@@ -395,7 +396,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
               controller: _volumeController,
               style: TextStyle(color: theme.colorScheme.onSurface),
               keyboardType: TextInputType.number,
-              decoration: _buildInputDecoration('es. 200', Icons.straighten),
+              decoration: _buildInputDecoration('es. 200', FontAwesomeIcons.ruler),
               validator: (value) => value?.isEmpty ?? true ? 'Inserisci il volume' : null,
             ),
             const SizedBox(height: 32),
@@ -439,7 +440,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.save, size: 24),
+                          FaIcon(FontAwesomeIcons.floppyDisk, size: 24),
                           SizedBox(width: 12),
                           Text('Salva Modifiche', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                         ],
@@ -531,3 +532,4 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
     );
   }
 }
+

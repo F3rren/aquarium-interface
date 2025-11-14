@@ -13,7 +13,7 @@ class AlertManager {
   // Storico alert (da salvare poi su storage locale)
   final List<AlertLog> _alertHistory = [];
   
-  // Traccia se un parametro è attualmente in stato di allarme (per evitare notifiche duplicate)
+  // Traccia se un parametro Ã¨ attualmente in stato di allarme (per evitare notifiche duplicate)
   final Map<String, bool> _parameterInAlertState = {};
 
   /// Inizializza AlertManager
@@ -39,11 +39,11 @@ class AlertManager {
     if (thresholds.isOutOfRange(value)) {
       // Parametro fuori range
       
-      // Controlla se è già in stato di allarme
+      // Controlla se Ã¨ giÃ  in stato di allarme
       final isAlreadyInAlert = _parameterInAlertState[name] ?? false;
       
       if (!isAlreadyInAlert) {
-        // Prima volta che va fuori range → invia notifica
+        // Prima volta che va fuori range â†’ invia notifica
         final bool isHigh = value > thresholds.max;
         
         await _notificationService.showParameterAlert(
@@ -70,15 +70,15 @@ class AlertManager {
           severity: _calculateSeverity(value, thresholds),
         ));
       }
-      // Se è già in allarme, non fare nulla (non inviare notifica duplicata)
+      // Se Ã¨ giÃ  in allarme, non fare nulla (non inviare notifica duplicata)
     } else {
       // Parametro rientrato nella norma: resetta lo stato di allarme
-      // così se torna fuori range, invierà una nuova notifica
+      // cosÃ¬ se torna fuori range, invierÃ  una nuova notifica
       _parameterInAlertState[name] = false;
     }
   }
 
-  /// Calcola severità dell'alert
+  /// Calcola severitÃ  dell'alert
   AlertSeverity _calculateSeverity(double value, ParameterThresholds thresholds) {
     final range = thresholds.max - thresholds.min;
     final deviation = value < thresholds.min 
@@ -186,7 +186,7 @@ class AlertManager {
       await _notificationService.cancelNotification(i);
     }
 
-    // Non scheduliamo più notifiche automatiche giornaliere
+    // Non scheduliamo piÃ¹ notifiche automatiche giornaliere
     // Le notifiche verranno mostrate solo quando l'app verifica
     // attivamente che ci sono task in scadenza (checkAndNotifyDailyTasks)
   }
@@ -237,7 +237,7 @@ class AlertManager {
     _alertHistory.clear();
   }
 
-  /// Ottieni conteggio alert per severità
+  /// Ottieni conteggio alert per severitÃ 
   Map<AlertSeverity, int> getAlertCountBySeverity() {
     final counts = <AlertSeverity, int>{
       AlertSeverity.low: 0,

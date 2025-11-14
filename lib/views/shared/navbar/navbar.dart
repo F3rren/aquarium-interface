@@ -4,6 +4,7 @@ import 'package:acquariumfe/views/aquarium/edit_aquarium.dart';
 import 'package:acquariumfe/views/aquarium/delete_aquarium.dart';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Navbar extends StatefulWidget implements PreferredSizeWidget {
   const Navbar({super.key});
@@ -54,7 +55,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
         PopupMenuButton<String>(
           icon: RotationTransition(
             turns: Tween<double>(begin: 0.0, end: 0.125).animate(_iconController),
-            child: const Icon(Icons.add_circle_outline, size: 24),
+            child: const FaIcon(FontAwesomeIcons.circlePlus, size: 24),
           ),
           tooltip: 'Gestisci Acquari',
           color: theme.colorScheme.surface,
@@ -109,7 +110,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                         color: const Color(0xFF34d399).withValues(alpha:0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.add_circle, color: Color(0xFF34d399), size: 20),
+                      child: const FaIcon(FontAwesomeIcons.circlePlus, color: Color(0xFF34d399), size: 20),
                     ),
                     const SizedBox(width: 12),
                     Text('Aggiungi Vasca', style: TextStyle(color: theme.colorScheme.onSurface)),
@@ -129,7 +130,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                         color: const Color(0xFF60a5fa).withValues(alpha:0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.edit, color: Color(0xFF60a5fa), size: 20),
+                      child: const FaIcon(FontAwesomeIcons.pen, color: Color(0xFF60a5fa), size: 20),
                     ),
                     const SizedBox(width: 12),
                     Text('Modifica Vasca', style: TextStyle(color: theme.colorScheme.onSurface)),
@@ -149,7 +150,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                         color: const Color(0xFFef4444).withValues(alpha:0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.delete, color: Color(0xFFef4444), size: 20),
+                      child: const FaIcon(FontAwesomeIcons.trash, color: Color(0xFFef4444), size: 20),
                     ),
                     const SizedBox(width: 12),
                     Text('Elimina Vasca', style: TextStyle(color: theme.colorScheme.onSurface)),
@@ -164,3 +165,4 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
     );
   }
 }
+

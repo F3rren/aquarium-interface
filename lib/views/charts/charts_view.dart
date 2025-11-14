@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:acquariumfe/services/chart_data_service.dart';
 import 'package:acquariumfe/models/parameter_data_point.dart';
@@ -107,7 +108,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
         children: [
           Row(
             children: [
-              Icon(Icons.show_chart, color: _getParameterColor(_selectedParameter), size: 24),
+              Icon(FontAwesomeIcons.chartLine, color: _getParameterColor(_selectedParameter), size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -117,10 +118,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
                       'Storico $_selectedParameter',
                       style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      '${_chartData.length} punti dati',
-                      style: TextStyle(color: _getParameterColor(_selectedParameter).withValues(alpha: 0.8), fontSize: 12),
-                    ),
+                    
                   ],
                 ),
               ),
@@ -218,16 +216,16 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildLegendItem(
-            icon: Icons.check_circle,
+            icon: FontAwesomeIcons.circleCheck,
             color: const Color(0xFF10b981),
             label: 'Ideale',
             value: '${ranges['ideal_min']!.toStringAsFixed(1)} - ${ranges['ideal_max']!.toStringAsFixed(1)}',
             theme: theme,
           ),
           _buildLegendItem(
-            icon: Icons.warning_amber_rounded,
+            icon: FontAwesomeIcons.triangleExclamation,
             color: const Color(0xFFfbbf24),
-            label: 'Warning',
+            label: 'Avviso',
             value: '${ranges['warning_min']!.toStringAsFixed(1)} - ${ranges['warning_max']!.toStringAsFixed(1)}',
             theme: theme,
           ),
@@ -303,7 +301,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
           Row(
             children: [
               Icon(
-                Icons.analytics_outlined,
+                FontAwesomeIcons.chartLine,
                 color: _getParameterColor(_selectedParameter),
                 size: 18,
               ),
@@ -333,7 +331,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
               const SizedBox(width: 12),
               Expanded(
                 child: _buildAnalysisItem(
-                  icon: Icons.show_chart,
+                  icon: FontAwesomeIcons.chartLine,
                   label: 'Stabilità',
                   value: stability['text'] as String,
                   color: stability['color'] as Color,
@@ -426,7 +424,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
   Map<String, dynamic> _calculateTrend() {
     if (_chartData.length < 2) {
       return {
-        'icon': Icons.trending_flat,
+        'icon': FontAwesomeIcons.arrowRight,
         'text': 'Stabile',
         'color': const Color(0xFF6b7280),
       };
@@ -442,19 +440,19 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     
     if (diffPercent < 1) {
       return {
-        'icon': Icons.trending_flat,
+        'icon': FontAwesomeIcons.arrowRight,
         'text': 'Stabile',
         'color': const Color(0xFF10b981),
       };
     } else if (diff > 0) {
       return {
-        'icon': Icons.trending_up,
+        'icon': FontAwesomeIcons.arrowTrendUp,
         'text': 'In aumento',
         'color': const Color(0xFFef4444),
       };
     } else {
       return {
-        'icon': Icons.trending_down,
+        'icon': FontAwesomeIcons.arrowTrendDown,
         'text': 'In calo',
         'color': const Color(0xFF3b82f6),
       };
@@ -504,7 +502,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     // Controlla se fuori range critico
     if (current < ranges['warning_min']! || current > ranges['warning_max']!) {
       return {
-        'icon': Icons.warning_amber_rounded,
+        'icon': FontAwesomeIcons.triangleExclamation,
         'text': 'Attenzione: $_selectedParameter fuori range. Controlla subito e correggi.',
         'color': const Color(0xFFef4444),
       };
@@ -513,7 +511,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     // Controlla se fuori range ideale
     if (current < ranges['ideal_min']! || current > ranges['ideal_max']!) {
       return {
-        'icon': Icons.info_outline,
+        'icon': FontAwesomeIcons.circleInfo,
         'text': 'Parametro accettabile ma non ideale. Monitora attentamente.',
         'color': const Color(0xFFfbbf24),
       };
@@ -523,7 +521,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     final stabilityText = stability['text'] as String;
     if (stabilityText.contains('Bassa')) {
       return {
-        'icon': Icons.tips_and_updates_outlined,
+        'icon': FontAwesomeIcons.lightbulb,
         'text': 'Parametro instabile. Verifica cambio acqua e dosaggi additivi.',
         'color': const Color(0xFFfbbf24),
       };
@@ -531,9 +529,9 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     
     // Controlla trend
     final trendIcon = trend['icon'] as IconData;
-    if (trendIcon == Icons.trending_up && _selectedParameter == 'Temperatura') {
+    if (trendIcon == FontAwesomeIcons.arrowTrendUp && _selectedParameter == 'Temperatura') {
       return {
-        'icon': Icons.ac_unit,
+        'icon': FontAwesomeIcons.snowflake,
         'text': 'Temperatura in aumento. Verifica raffreddamento e ventilazione.',
         'color': const Color(0xFF3b82f6),
       };
@@ -541,7 +539,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     
     // Tutto ok
     return {
-      'icon': Icons.check_circle_outline,
+      'icon': FontAwesomeIcons.circleCheck,
       'text': 'Parametro ottimale e stabile.',
       'color': const Color(0xFF10b981),
     };
@@ -550,10 +548,10 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
   Widget _buildParameterSegmentedButton() {
     final theme = Theme.of(context);
     final parameters = [
-      {'name': 'Temperatura', 'icon': Icons.thermostat, 'color': const Color(0xFFef4444)},
-      {'name': 'pH', 'icon': Icons.science_outlined, 'color': const Color(0xFF60a5fa)},
-      {'name': 'Salinità', 'icon': Icons.water_outlined, 'color': const Color(0xFF2dd4bf)},
-      {'name': 'ORP', 'icon': Icons.bolt, 'color': const Color(0xFFfbbf24)},
+      {'name': 'Temperatura', 'icon': FontAwesomeIcons.temperatureHalf, 'color': const Color(0xFFef4444)},
+      {'name': 'pH', 'icon': FontAwesomeIcons.flask, 'color': const Color(0xFF60a5fa)},
+      {'name': 'Salinità', 'icon': FontAwesomeIcons.water, 'color': const Color(0xFF2dd4bf)},
+      {'name': 'ORP', 'icon': FontAwesomeIcons.bolt, 'color': const Color(0xFFfbbf24)},
     ];
     
     final selectedIndex = parameters.indexWhere((p) => p['name'] == _selectedParameter);
@@ -975,3 +973,4 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     }
   }
 }
+

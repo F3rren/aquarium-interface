@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/views/dashboard/calculators_page.dart';
 import 'package:acquariumfe/views/profile/inhabitants_page.dart';
 import 'package:acquariumfe/providers/theme_provider.dart';
@@ -28,7 +29,7 @@ class ProfilePage extends StatelessWidget {
             context,
             title: 'Calcolatori',
             subtitle: 'Volume, dosaggio additivi, cambio acqua',
-            icon: Icons.calculate,
+            icon: FontAwesomeIcons.calculator,
             color: const Color(0xFF60a5fa),
             onTap: () {
               Navigator.push(
@@ -47,7 +48,7 @@ class ProfilePage extends StatelessWidget {
             context,
             title: 'I Miei Abitanti',
             subtitle: 'Gestisci pesci e coralli',
-            icon: Icons.pets,
+            icon: FontAwesomeIcons.fish,
             color: const Color(0xFFf472b6),
             onTap: () {
               Navigator.push(
@@ -73,7 +74,7 @@ class ProfilePage extends StatelessWidget {
             context,
             title: 'Info Acquario',
             subtitle: 'Nome, volume, tipo',
-            icon: Icons.info_outline,
+            icon: FontAwesomeIcons.circleInfo,
             color: const Color(0xFF34d399),
             onTap: () {
             },
@@ -90,7 +91,7 @@ class ProfilePage extends StatelessWidget {
             context,
             title: 'Informazioni App',
             subtitle: 'Versione, crediti',
-            icon: Icons.app_settings_alt,
+            icon: FontAwesomeIcons.gear,
             color: const Color(0xFFa855f7),
             onTap: () {
               _showAboutDialog(context);
@@ -121,7 +122,7 @@ class ProfilePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+              themeProvider.isDarkMode ? FontAwesomeIcons.moon : FontAwesomeIcons.sun,
               color: const Color(0xFFfbbf24),
               size: 24,
             ),
@@ -200,7 +201,7 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant),
+            FaIcon(FontAwesomeIcons.chevronRight, color: theme.colorScheme.onSurfaceVariant),
           ],
         ),
       ),
@@ -216,7 +217,7 @@ class ProfilePage extends StatelessWidget {
         backgroundColor: theme.colorScheme.surface,
         title: Row(
           children: [
-            Icon(Icons.info, color: theme.colorScheme.primary, size: 28),
+            FaIcon(FontAwesomeIcons.circleInfo, color: theme.colorScheme.primary, size: 28),
             const SizedBox(width: 12),
             Text('AcquariumFE', style: theme.textTheme.headlineSmall),
           ],
@@ -242,4 +243,5 @@ class ProfilePage extends StatelessWidget {
     );
   }
 }
+
 

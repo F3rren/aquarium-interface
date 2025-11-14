@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/parameter_service.dart';
 import 'package:acquariumfe/services/notification_preferences_service.dart';
@@ -137,20 +138,20 @@ class _HealthDashboardState extends State<HealthDashboard> {
           // Parametri principali
           Row(
             children: [
-              Expanded(child: _buildParamCard('Temperatura', '$currentTemperature°C', Icons.thermostat, 
+              Expanded(child: _buildParamCard('Temperatura', '$currentTemperature°C', FontAwesomeIcons.temperatureHalf, 
                 const Color(0xFFef4444), settings.temperature.isOutOfRange(currentTemperature))),
               const SizedBox(width: 12),
-              Expanded(child: _buildParamCard('pH', currentPh.toString(), Icons.science_outlined, 
+              Expanded(child: _buildParamCard('pH', currentPh.toString(), FontAwesomeIcons.flask, 
                 const Color(0xFF60a5fa), settings.ph.isOutOfRange(currentPh))),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildParamCard('Salinità', '${currentSalinity.toInt()} PPT', Icons.water_outlined, 
+              Expanded(child: _buildParamCard('Salinità', '${currentSalinity.toInt()} PPT', FontAwesomeIcons.water, 
                 const Color(0xFF2dd4bf), settings.salinity.isOutOfRange(currentSalinity))),
               const SizedBox(width: 12),
-              Expanded(child: _buildParamCard('ORP', '${currentOrp.toInt()} mV', Icons.bolt, 
+              Expanded(child: _buildParamCard('ORP', '${currentOrp.toInt()} mV', FontAwesomeIcons.bolt, 
                 const Color(0xFFfbbf24), settings.orp.isOutOfRange(currentOrp))),
             ],
           ),
@@ -194,7 +195,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
               const SizedBox(width: 8),
               Text(label, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
               const Spacer(),
-              if (isOutOfRange) Icon(Icons.warning_amber, color: theme.colorScheme.error, size: 16),
+              if (isOutOfRange) FaIcon(FontAwesomeIcons.triangleExclamation, color: theme.colorScheme.error, size: 16),
             ],
           ),
           const SizedBox(height: 8),
@@ -261,11 +262,11 @@ class _HealthDashboardState extends State<HealthDashboard> {
   Widget _buildQuickStats(int okParams, int criticalParams, int alerts) {
     return Row(
       children: [
-        Expanded(child: _buildStatCard('Parametri OK', '$okParams', Icons.check_circle, const Color(0xFF34d399))),
+        Expanded(child: _buildStatCard('Parametri OK', '$okParams', FontAwesomeIcons.circleCheck, const Color(0xFF34d399))),
         const SizedBox(width: 12),
-        Expanded(child: _buildStatCard('Critici', '$criticalParams', Icons.warning_amber, const Color(0xFFef4444))),
+        Expanded(child: _buildStatCard('Critici', '$criticalParams', FontAwesomeIcons.triangleExclamation, const Color(0xFFef4444))),
         const SizedBox(width: 12),
-        Expanded(child: _buildStatCard('Alert', '$alerts', Icons.notifications_active, const Color(0xFFfbbf24))),
+        Expanded(child: _buildStatCard('Alert', '$alerts', FontAwesomeIcons.bell, const Color(0xFFfbbf24))),
       ],
     );
   }
@@ -284,7 +285,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
         children: [
           Row(
             children: [
-              const Icon(Icons.warning_amber, color: Color(0xFFef4444), size: 20),
+              const FaIcon(FontAwesomeIcons.triangleExclamation, color: Color(0xFFef4444), size: 20),
               const SizedBox(width: 8),
               Text('Alert Recenti', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600)),
             ],
@@ -323,9 +324,9 @@ class _HealthDashboardState extends State<HealthDashboard> {
   Widget _buildMaintenanceReminders() {
     final theme = Theme.of(context);
     final reminders = [
-      {'title': 'Cambio Acqua', 'days': _settings.maintenanceReminders.waterChange.frequencyDays, 'icon': Icons.water_drop},
-      {'title': 'Pulizia Filtro', 'days': _settings.maintenanceReminders.filterCleaning.frequencyDays, 'icon': Icons.filter_alt},
-      {'title': 'Test Parametri', 'days': _settings.maintenanceReminders.parameterTesting.frequencyDays, 'icon': Icons.science},
+      {'title': 'Cambio Acqua', 'days': _settings.maintenanceReminders.waterChange.frequencyDays, 'icon': FontAwesomeIcons.droplet},
+      {'title': 'Pulizia Filtro', 'days': _settings.maintenanceReminders.filterCleaning.frequencyDays, 'icon': FontAwesomeIcons.filter},
+      {'title': 'Test Parametri', 'days': _settings.maintenanceReminders.parameterTesting.frequencyDays, 'icon': FontAwesomeIcons.flask},
     ];
 
     return Container(
@@ -340,7 +341,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
         children: [
           Row(
             children: [
-              const Icon(Icons.calendar_today, color: Color(0xFF60a5fa), size: 20),
+              const FaIcon(FontAwesomeIcons.calendar, color: Color(0xFF60a5fa), size: 20),
               const SizedBox(width: 8),
               Text('Prossimi Promemoria', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600)),
             ],
@@ -409,14 +410,14 @@ class _HealthDashboardState extends State<HealthDashboard> {
       recommendations.add({
         'title': 'Controllare parametri fuori range',
         'desc': '${9 - parametersInRange} parametri necessitano attenzione',
-        'icon': Icons.warning_amber,
+        'icon': FontAwesomeIcons.triangleExclamation,
         'urgent': true
       });
     }
     
     recommendations.addAll([
-      {'title': 'Controllare skimmer', 'desc': 'Pulizia settimanale consigliata', 'icon': Icons.cleaning_services, 'urgent': false},
-      {'title': 'Test KH', 'desc': 'Ultimo test: 3 giorni fa', 'icon': Icons.science, 'urgent': false},
+      {'title': 'Controllare skimmer', 'desc': 'Pulizia settimanale consigliata', 'icon': FontAwesomeIcons.broom, 'urgent': false},
+      {'title': 'Test KH', 'desc': 'Ultimo test: 3 giorni fa', 'icon': FontAwesomeIcons.flask, 'urgent': false},
     ]);
 
     return Container(
@@ -467,3 +468,4 @@ class _HealthDashboardState extends State<HealthDashboard> {
     );
   }
 }
+

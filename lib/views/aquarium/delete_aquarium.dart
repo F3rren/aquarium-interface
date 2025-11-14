@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DeleteAquarium extends StatefulWidget {
   const DeleteAquarium({super.key});
@@ -69,7 +70,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                   color: theme.colorScheme.error.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(Icons.warning_rounded, color: theme.colorScheme.error, size: 48),
+                child: FaIcon(FontAwesomeIcons.triangleExclamation, color: theme.colorScheme.error, size: 48),
               ),
               const SizedBox(height: 20),
               Text(
@@ -91,7 +92,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
               ),
               const SizedBox(height: 8),
               Text(
-                'Questa azione non può essere annullata.',
+                'Questa azione non pu� essere annullata.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: theme.colorScheme.error,
@@ -129,7 +130,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                             SnackBar(
                               content: Row(
                                 children: [
-                                  Icon(Icons.check_circle, color: theme.colorScheme.onSurface),
+                                  FaIcon(FontAwesomeIcons.circleCheck, color: theme.colorScheme.onSurface),
                                   const SizedBox(width: 12),
                                   Text('${aquarium['name']} eliminato'),
                                 ],
@@ -149,7 +150,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.delete_forever, size: 20),
+                            FaIcon(FontAwesomeIcons.trashCan, size: 20),
                             SizedBox(width: 8),
                             Text('Elimina', style: TextStyle(fontWeight: FontWeight.w600)),
                           ],
@@ -194,7 +195,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                       color: theme.colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Icon(Icons.check_circle, color: theme.colorScheme.tertiary, size: 64),
+                    child: FaIcon(FontAwesomeIcons.circleCheck, color: theme.colorScheme.tertiary, size: 64),
                   ),
                   const SizedBox(height: 20),
                   Text(
@@ -226,7 +227,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                           color: theme.colorScheme.error.withValues(alpha:0.2),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Icon(Icons.delete, color: theme.colorScheme.error, size: 32),
+                        child: FaIcon(FontAwesomeIcons.trash, color: theme.colorScheme.error, size: 32),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -277,7 +278,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    aquarium['type'] == 'Marino' ? Icons.water_drop : Icons.water,
+                    aquarium['type'] == 'Marino' ? FontAwesomeIcons.droplet : FontAwesomeIcons.water,
                     color: theme.colorScheme.error,
                     size: 24,
                   ),
@@ -299,7 +300,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                     ],
                   ),
                 ),
-                Icon(Icons.delete_outline, color: theme.colorScheme.error, size: 24),
+                FaIcon(FontAwesomeIcons.trash, color: theme.colorScheme.error, size: 24),
               ],
             ),
           ),
@@ -308,3 +309,4 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
     );
   }
 }
+

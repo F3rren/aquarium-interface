@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/widgets/animated_number.dart';
 import 'package:acquariumfe/widgets/tap_effect_card.dart';
@@ -55,7 +56,7 @@ class PhMeter extends StatelessWidget {
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.water_drop, color: color, size: 28),
+                  child: FaIcon(FontAwesomeIcons.droplet, color: color, size: 28),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -66,7 +67,7 @@ class PhMeter extends StatelessWidget {
                         children: [
                           Text('pH', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
                           const SizedBox(width: 6),
-                          Icon(Icons.edit_outlined, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+                          FaIcon(FontAwesomeIcons.pen, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
                         ],
                       ),
                       const SizedBox(height: 2),
@@ -118,7 +119,7 @@ class PhMeter extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Row(
           children: [
-            Icon(Icons.water_drop, color: Color(0xFF60a5fa)),
+            FaIcon(FontAwesomeIcons.droplet, color: Color(0xFF60a5fa)),
             SizedBox(width: 12),
             Text('Target pH', style: TextStyle(color: Colors.white)),
           ],
