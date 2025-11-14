@@ -1,3 +1,5 @@
+import 'package:acquariumfe/models/aquarium.dart';
+import 'package:acquariumfe/services/aquarium_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -9,10 +11,9 @@ class DeleteAquarium extends StatefulWidget {
 }
 
 class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProviderStateMixin {
-  final List<Map<String, dynamic>> _aquariums = [
-    {'id': 1, 'name': 'La Mia Vasca', 'volume': 200, 'type': 'Marino'},
-    {'id': 2, 'name': 'Acquario Tropicale', 'volume': 150, 'type': 'Dolce'},
-  ];
+  final AquariumsService _aquariumsService = AquariumsService();
+  List<Aquarium> _aquariums = [];
+  bool _isLoading = true;
   
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -21,6 +22,8 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
+    _loadAquariums();
+    
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -46,15 +49,45 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
     _animationController.forward();
   }
 
+  Future<void> _loadAquariums() async {
+    try {
+      final aquariums = await _aquariumsService.getAquariums();
+      setState(() {
+        _aquariums = aquariums;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Errore nel caricamento: ${e.toString()}'),
+            backgroundColor: const Color(0xFFef4444),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
 
-  void _deleteAquarium(Map<String, dynamic> aquarium) {
+  void _deleteAquarium(Aquarium aquarium) async {
+    if (aquarium.id == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Impossibile eliminare: ID acquario mancante'),
+          backgroundColor: Color(0xFFef4444),
+        ),
+      );
+      return;
+    }
+    
     final theme = Theme.of(context);
-    showDialog(
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => Dialog(
         backgroundColor: theme.colorScheme.surface,
@@ -83,7 +116,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
               ),
               const SizedBox(height: 12),
               Text(
-                'Sei sicuro di voler eliminare "${aquarium['name']}"?',
+                'Sei sicuro di voler eliminare "${aquarium.name}"?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
@@ -123,24 +156,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                     child: SizedBox(
                       height: 48,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          setState(() => _aquariums.remove(aquarium));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                children: [
-                                  FaIcon(FontAwesomeIcons.circleCheck, color: theme.colorScheme.onSurface),
-                                  const SizedBox(width: 12),
-                                  Text('${aquarium['name']} eliminato'),
-                                ],
-                              ),
-                              backgroundColor: theme.colorScheme.error,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                          );
-                        },
+                        onPressed: () => Navigator.pop(context, true),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme.colorScheme.error,
                           foregroundColor: theme.colorScheme.onError,
@@ -165,6 +181,47 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
         ),
       ),
     );
+
+    if (confirmed == true) {
+      try {
+        await _aquariumsService.deleteAquarium(aquarium.id!);
+        await _loadAquariums();
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  FaIcon(FontAwesomeIcons.circleCheck, color: theme.colorScheme.onSurface),
+                  const SizedBox(width: 12),
+                  Text('${aquarium.name} eliminato con successo'),
+                ],
+              ),
+              backgroundColor: theme.colorScheme.error,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const FaIcon(FontAwesomeIcons.triangleExclamation, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text('Errore: ${e.toString()}')),
+                ],
+              ),
+              backgroundColor: const Color(0xFFef4444),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          );
+        }
+      }
+    }
   }
 
   @override
@@ -180,7 +237,9 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
         elevation: 0,
         centerTitle: true,
       ),
-      body: FadeTransition(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : FadeTransition(
         opacity: _fadeAnimation,
         child: SlideTransition(
           position: _slideAnimation,
@@ -252,7 +311,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
     );
   }
 
-  Widget _buildAquariumCard(Map<String, dynamic> aquarium) {
+  Widget _buildAquariumCard(Aquarium aquarium) {
     final theme = Theme.of(context);
     
     return Container(
@@ -278,7 +337,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    aquarium['type'] == 'Marino' ? FontAwesomeIcons.droplet : FontAwesomeIcons.water,
+                    aquarium.type == 'Marino' ? FontAwesomeIcons.droplet : FontAwesomeIcons.water,
                     color: theme.colorScheme.error,
                     size: 24,
                   ),
@@ -289,12 +348,12 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        aquarium['name'],
+                        aquarium.name,
                         style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${aquarium['volume']} L  ${aquarium['type']}',
+                        '${aquarium.volume} L • ${aquarium.type}',
                         style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
                       ),
                     ],
@@ -309,4 +368,3 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
     );
   }
 }
-
