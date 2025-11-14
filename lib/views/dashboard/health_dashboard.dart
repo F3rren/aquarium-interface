@@ -138,7 +138,7 @@ class _HealthDashboardState extends State<HealthDashboard> {
           // Parametri principali
           Row(
             children: [
-              Expanded(child: _buildParamCard('Temperatura', '$currentTemperature°C', FontAwesomeIcons.temperatureHalf, 
+              Expanded(child: _buildParamCard('Temperatura', '$currentTemperature °C', FontAwesomeIcons.temperatureHalf, 
                 const Color(0xFFef4444), settings.temperature.isOutOfRange(currentTemperature))),
               const SizedBox(width: 12),
               Expanded(child: _buildParamCard('pH', currentPh.toString(), FontAwesomeIcons.flask, 

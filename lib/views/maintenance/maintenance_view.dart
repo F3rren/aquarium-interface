@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MaintenanceView extends StatefulWidget {
-  final String? aquariumId;
+  final int? aquariumId;
   
   const MaintenanceView({super.key, this.aquariumId});
 
@@ -37,7 +37,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _service.initialize(aquariumId: widget.aquariumId);
+    _service.initialize(aquariumId: widget.aquariumId?.toString());
     _fadeController.forward();
     _listController.forward();
   }
@@ -105,7 +105,7 @@ class _MaintenanceViewState extends State<MaintenanceView> with TickerProviderSt
 
     final newTask = await showDialog<MaintenanceTask>(
       context: context,
-      builder: (context) => AddTaskDialog(aquariumId: widget.aquariumId!),
+      builder: (context) => AddTaskDialog(aquariumId: widget.aquariumId!.toString()),
     );
 
     if (newTask != null) {

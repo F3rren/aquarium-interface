@@ -59,7 +59,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
     setState(() => _isLoading = true);
     
     try {
-      final aquariums = await _aquariumsService.getAquariumsList();
+      final aquariums = await _aquariumsService.getAquariums();
       setState(() {
         _aquariums = aquariums;
         _isLoading = false;
@@ -119,7 +119,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
 
         // Chiama il servizio per aggiornare la vasca
         await _aquariumsService.updateAquarium(
-          _selectedAquarium!.id,
+          _selectedAquarium!.id!,
           updatedAquarium,
         );
 
@@ -305,7 +305,7 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${aquarium.volume} L � ${aquarium.type}',
+                        '${aquarium.volume} L  ${aquarium.type}',
                         style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
                       ),
                     ],

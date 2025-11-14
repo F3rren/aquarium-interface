@@ -21,8 +21,8 @@ class SalinityMeter extends StatelessWidget {
     if (targetSalinity == null) return const Color(0xFF34d399);
     
     final diff = (currentSalinity - targetSalinity!).abs();
-    if (diff <= 4) return const Color(0xFF34d399); // Vicino al target (�4)
-    if (diff <= 8) return const Color(0xFFfbbf24); // Poco distante (�8)
+    if (diff <= 4) return const Color(0xFF34d399); // Vicino al target (±4)
+    if (diff <= 8) return const Color(0xFFfbbf24); // Poco distante (±8)
     return const Color(0xFFef4444); // Molto distante
   }
 
@@ -129,7 +129,7 @@ void _showEditTargetDialog(BuildContext context) async {
           children: [
             FaIcon(FontAwesomeIcons.water, color: Color(0xFF60a5fa)),
             SizedBox(width: 12),
-            Text('Target Salinit�', style: TextStyle(color: Colors.white)),
+            Text('Target Salinità', style: TextStyle(color: Colors.white)),
           ],
         ),
         content: Column(
@@ -137,7 +137,7 @@ void _showEditTargetDialog(BuildContext context) async {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Imposta il valore di salinit� desiderato:',
+              'Imposta il valore di salinità desiderato:',
               style: TextStyle(color: Colors.white70, fontSize: 14),
             ),
             const SizedBox(height: 16),

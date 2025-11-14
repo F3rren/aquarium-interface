@@ -1,5 +1,5 @@
 class Aquarium {
-  final String id;
+  final int? id;
   final String name;
   final double volume; // litri
   final String type; // Marino, Dolce, etc.
@@ -8,7 +8,7 @@ class Aquarium {
   final String? imageUrl;
 
   Aquarium({
-    required this.id,
+    this.id,
     required this.name,
     required this.volume,
     required this.type,
@@ -18,33 +18,37 @@ class Aquarium {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
+    final json = <String, dynamic>{
       'name': name,
       'volume': volume,
       'type': type,
-      'createdAt': createdAt?.toIso8601String(),
-      'description': description,
-      'imageUrl': imageUrl,
     };
+    
+    // Aggiungi campi opzionali solo se presenti
+    if (id != null) json['id'] = id;
+    if (createdAt != null) json['createdAt'] = createdAt!.toIso8601String();
+    if (description != null) json['description'] = description;
+    if (imageUrl != null) json['imageUrl'] = imageUrl;
+    
+    return json;
   }
 
   factory Aquarium.fromJson(Map<String, dynamic> json) {
     return Aquarium(
-      id: json['id'].toString(),
-      name: json['name'],
-      volume: (json['volume'] ?? 0).toDouble(),
-      type: json['type'] ?? 'Marino',
+      id: json['id'] as int?,
+      name: json['name']?.toString() ?? 'Senza nome',
+      volume: (json['volume'] as num?)?.toDouble() ?? 0.0,
+      type: json['type']?.toString() ?? 'Marino',
       createdAt: json['createdAt'] != null 
-          ? DateTime.parse(json['createdAt']) 
+          ? DateTime.tryParse(json['createdAt'].toString())
           : null,
-      description: json['description'],
-      imageUrl: json['imageUrl'],
+      description: json['description']?.toString(),
+      imageUrl: json['imageUrl']?.toString(),
     );
   }
 
   Aquarium copyWith({
-    String? id,
+    int? id,
     String? name,
     double? volume,
     String? type,

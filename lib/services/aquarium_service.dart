@@ -6,9 +6,9 @@ import 'api_service.dart';
 class AquariumsService {
   final ApiService _apiService = ApiService();
 
-  Future<List<Aquarium>> getAquariumsList() async {
+  Future<List<Aquarium>> getAquariums() async {
     try {
-      final response = await _apiService.get('/aquariumslist');
+      final response = await _apiService.get('/aquariums');
       
       // La risposta può essere un oggetto con una chiave 'aquariums' o 'data', oppure un array diretto
       final List<dynamic> aquariumsJson;
@@ -44,7 +44,7 @@ class AquariumsService {
   }
 
   /// Recupera un singolo acquario per ID
-  Future<Aquarium?> getAquariumById(String id) async {
+  Future<Aquarium?> getAquariumById(int id) async {
     try {
       final response = await _apiService.get('/aquariums/$id');
       if (response is Map<String, dynamic>) {
@@ -63,6 +63,7 @@ class AquariumsService {
   /// Crea un nuovo acquario
   Future<Aquarium> createAquarium(Aquarium aquarium) async {
     try {
+      // Non serve più rimuovere l'ID, toJson() lo gestisce automaticamente
       final response = await _apiService.post('/aquariums', aquarium.toJson());
       return Aquarium.fromJson(response);
     } catch (e) {
@@ -71,7 +72,7 @@ class AquariumsService {
   }
 
   /// Aggiorna un acquario esistente
-  Future<Aquarium> updateAquarium(String id, Aquarium aquarium) async {
+  Future<Aquarium> updateAquarium(int id, Aquarium aquarium) async {
     try {
       final response = await _apiService.put('/aquariums/$id', aquarium.toJson());
       return Aquarium.fromJson(response);
@@ -81,7 +82,7 @@ class AquariumsService {
   }
 
   /// Elimina un acquario
-  Future<void> deleteAquarium(String id) async {
+  Future<void> deleteAquarium(int id) async {
     try {
       await _apiService.delete('/aquariums/$id');
     } catch (e) {
@@ -90,9 +91,9 @@ class AquariumsService {
   }
 
   /// Recupera i parametri attuali di una vasca specifica
-  Future<AquariumParameters> getAquariumParameters(String aquariumId) async {
+  Future<AquariumParameters> getAquariumParameters(int aquariumId) async {
     try {
-      final response = await _apiService.get('/aquariumslist/$aquariumId/parameters');
+      final response = await _apiService.get('/aquariums/$aquariumId/parameters');
       
       // Gestisci il caso in cui la risposta abbia un wrapper "data"
       final Map<String, dynamic> parametersData;
@@ -117,7 +118,7 @@ class AquariumsService {
 
   /// Recupera lo storico dei parametri di una vasca specifica
   Future<List<AquariumParameters>> getAquariumParameterHistory({
-    required String aquariumId,
+    required int aquariumId,
     DateTime? from,
     DateTime? to,
     int? limit,
@@ -130,7 +131,7 @@ class AquariumsService {
       if (limit != null) queryParams['limit'] = limit.toString();
       
       final query = queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
-      final endpoint = '/aquariumslist/$aquariumId/parameters/history${query.isNotEmpty ? '?$query' : ''}';
+      final endpoint = '/aquariums/$aquariumId/parameters/history${query.isNotEmpty ? '?$query' : ''}';
       
       final response = await _apiService.get(endpoint);
       

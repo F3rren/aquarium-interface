@@ -83,7 +83,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
     setState(() => _isLoading = true);
     
     try {
-      final aquariums = await _aquariumsService.getAquariumsList();
+      final aquariums = await _aquariumsService.getAquariums();
       
       // Carica parametri per ogni acquario
       final aquariumsWithParams = <AquariumWithParams>[];
@@ -118,8 +118,8 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
         });
         
         // Imposta la prima vasca come corrente se ce ne sono
-        if (aquariumsWithParams.isNotEmpty) {
-          ParameterService().setCurrentAquarium(aquariumsWithParams.first.aquarium.id);
+        if (aquariumsWithParams.isNotEmpty && aquariumsWithParams.first.aquarium.id != null) {
+          ParameterService().setCurrentAquarium(aquariumsWithParams.first.aquarium.id!);
         }
         
         // Riabilita alert automatici
@@ -235,18 +235,19 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
     final temp = params?.temperature ?? 0.0;
     final ph = params?.ph ?? 0.0;
     final salinity = params?.salinity ?? 0.0;
-    final hasAlert = aquariumData.hasAlert;
     final hasData = params != null;
     
     return BounceButton(
       onTap: () {
         // Imposta questa vasca come vasca corrente per i parametri
-        ParameterService().setCurrentAquarium(aquarium.id);
+        if (aquarium.id != null) {
+          ParameterService().setCurrentAquarium(aquarium.id!);
+        }
         
         Navigator.push(
           context,
           CustomPageRoute(
-            page: AquariumDetails(aquariumId: aquarium.id),
+            page: AquariumDetails(aquariumId: aquarium.id!),
             transitionType: PageTransitionType.fadeSlide,
           ),
         );
@@ -569,7 +570,7 @@ class _WavePainter extends CustomPainter {
 
     canvas.drawPath(path, paint);
 
-    // Seconda onda (pi� chiara)
+    // Seconda onda (più chiara)
     final path2 = Path();
     paint.color = color.withValues(alpha: color.a * 0.5);
     

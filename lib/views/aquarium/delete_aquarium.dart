@@ -92,7 +92,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
               ),
               const SizedBox(height: 8),
               Text(
-                'Questa azione non pu� essere annullata.',
+                'Questa azione non può essere annullata.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: theme.colorScheme.error,

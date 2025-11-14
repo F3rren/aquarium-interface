@@ -11,7 +11,7 @@ class AppRouter {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteNames.details:
-        final aquariumId = settings.arguments as String?;
+        final aquariumId = settings.arguments as int?;
         return MaterialPageRoute(
           builder: (_) => AquariumDetails(aquariumId: aquariumId),
         );
@@ -26,7 +26,7 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const DeleteAquarium());
       
       case RouteNames.maintenance:
-        final aquariumId = settings.arguments as String?;
+        final aquariumId = settings.arguments as int?;
         return MaterialPageRoute(
           builder: (_) => MaintenanceView(aquariumId: aquariumId),
         );

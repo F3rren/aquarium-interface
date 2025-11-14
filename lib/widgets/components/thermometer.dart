@@ -85,7 +85,7 @@ class Thermometer extends StatelessWidget {
                   child: AnimatedNumberWithIndicator(
                     value: currentTemperature,
                     decimals: 1,
-                    suffix: '�C',
+                    suffix: ' °C',
                     style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
                     increaseColor: const Color(0xFFef4444),
                     decreaseColor: const Color(0xFF60a5fa),
@@ -145,7 +145,7 @@ class Thermometer extends StatelessWidget {
               autofocus: true,
               style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18),
               decoration: InputDecoration(
-                suffixText: '�C',
+                suffixText: ' °C',
                 suffixStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                 filled: true,
                 fillColor: theme.colorScheme.surfaceContainerHighest,
@@ -159,7 +159,7 @@ class Thermometer extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Range tipico: 24-26�C',
+              'Range tipico: 24-26 °C',
               style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.38), fontSize: 12),
             ),
           ],

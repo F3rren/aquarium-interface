@@ -99,7 +99,7 @@ class AlertManager {
       await checkParameter(
         name: 'Temperatura',
         value: parameters['temperature']!,
-        unit: '°C',
+        unit: ' °C',
         thresholds: _settings.temperature,
       );
     }

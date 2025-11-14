@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AquariumDetails extends StatefulWidget {
-  final String? aquariumId;
+  final int? aquariumId;
   
   const AquariumDetails({super.key, this.aquariumId});
 

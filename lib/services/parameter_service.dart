@@ -17,7 +17,7 @@ class ParameterService {
   final ManualParametersService _manualService = ManualParametersService();
   
   // ID della vasca attualmente selezionata
-  String? _currentid;
+  int? _currentid;
   
   // Cache per i parametri correnti
   AquariumParameters? _cachedParameters;
@@ -40,7 +40,7 @@ class ParameterService {
   }
 
   /// Imposta la vasca corrente per cui recuperare i parametri
-  void setCurrentAquarium(String id) {
+  void setCurrentAquarium(int id) {
     if (_currentid != id) {
       _currentid = id;
       // Invalida la cache quando cambia la vasca
@@ -52,7 +52,7 @@ class ParameterService {
   /// Ottieni i parametri correnti per la vasca specificata (o quella corrente)
   /// Se useMock=true, fallback a dati mockati in caso di errore
   Future<AquariumParameters> getCurrentParameters({
-    String? id,
+    int? id,
     bool useMock = true,
   }) async {
     final targetid = id ?? _currentid;
@@ -62,8 +62,8 @@ class ParameterService {
     }
     
     try {
-      // Endpoint per vasca specifica: /api/aquariumslist/{id}/parameters
-      final response = await _apiService.get('/aquariumslist/$targetid/parameters');
+      // Endpoint per vasca specifica: /api/aquariums/{id}/parameters
+      final response = await _apiService.get('/aquariums/$targetid/parameters');
 
       // Gestisci il caso in cui la risposta abbia un wrapper "data"
       final Map<String, dynamic> parametersData;
@@ -149,8 +149,8 @@ class ParameterService {
       
       final query = queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
       
-      // Endpoint per storico vasca specifica: /api/aquariumslist/{id}/parameters/history
-      final endpoint = '/aquariumslist/$targetid/parameters/history${query.isNotEmpty ? '?$query' : ''}';
+      // Endpoint per storico vasca specifica: /api/aquariums/{id}/parameters/history
+      final endpoint = '/aquariums/$targetid/parameters/history${query.isNotEmpty ? '?$query' : ''}';
       
       
       final response = await _apiService.get(endpoint);
@@ -277,7 +277,7 @@ class ParameterService {
     await _alertManager.checkParameter(
       name: 'Temperatura',
       value: params.temperature,
-      unit: '°C',
+      unit: ' °C',
       thresholds: settings.temperature,
     );
 

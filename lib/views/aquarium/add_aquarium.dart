@@ -1,3 +1,6 @@
+import 'package:acquariumfe/models/aquarium.dart';
+import 'package:acquariumfe/services/api_service.dart';
+import 'package:acquariumfe/services/aquarium_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -9,10 +12,12 @@ class AddAquarium extends StatefulWidget {
 }
 
 class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStateMixin {
+  final AquariumsService _aquariumsService = AquariumsService();
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _volumeController = TextEditingController();
   String _selectedType = 'Marino';
+  bool _isLoading = false;
   
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -54,23 +59,103 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
     super.dispose();
   }
 
-  void _saveAquarium() {
+  void _saveAquarium() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
-              const SizedBox(width: 12),
-              Text('Acquario "${_nameController.text}" aggiunto!'),
-            ],
-          ),
-          backgroundColor: const Color(0xFF34d399),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
-      Navigator.pop(context);
+      setState(() => _isLoading = true);
+      
+      try {
+        // Validazione manuale del volume
+        final volumeText = _volumeController.text.trim();
+        final volume = double.tryParse(volumeText);
+        
+        if (volume == null || volume <= 0) {
+          throw Exception('Il volume deve essere un numero positivo');
+        }
+
+        // Crea l'oggetto Aquarium con i dati del form
+        final newAquarium = Aquarium(
+          name: _nameController.text.trim(),
+          volume: volume,
+          type: _selectedType,
+        );
+
+        // Chiamata al servizio per creare l'acquario
+        final createdAquarium = await _aquariumsService.createAquarium(newAquarium);
+        
+        setState(() => _isLoading = false);
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text('Acquario "${createdAquarium.name}" creato con successo!')),
+                ],
+              ),
+              backgroundColor: const Color(0xFF34d399),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              duration: const Duration(seconds: 3),
+            ),
+          );
+          Navigator.pop(context, true); // Ritorna true per indicare il successo
+        }
+      } on ApiException catch (apiError) {
+        setState(() => _isLoading = false);
+        
+        if (context.mounted) {
+          // Gestione specifica per errori API
+          String errorMessage = 'Impossibile creare l\'acquario';
+          
+          if (apiError.statusCode == 404) {
+            errorMessage = 'Backend non raggiungibile. Verifica che il server sia avviato.';
+          } else if (apiError.statusCode >= 500) {
+            errorMessage = 'Errore del server: ${apiError.message}';
+          } else if (apiError.statusCode >= 400) {
+            errorMessage = 'Dati non validi: ${apiError.message}';
+          } else {
+            errorMessage = apiError.message;
+          }
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const FaIcon(FontAwesomeIcons.triangleExclamation, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text(errorMessage)),
+                ],
+              ),
+              backgroundColor: const Color(0xFFef4444),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              duration: const Duration(seconds: 5),
+            ),
+          );
+        }
+      } catch (e) {
+        setState(() => _isLoading = false);
+        
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const FaIcon(FontAwesomeIcons.triangleExclamation, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Expanded(child: Text('Errore: ${e.toString()}')),
+                ],
+              ),
+              backgroundColor: const Color(0xFFef4444),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              duration: const Duration(seconds: 5),
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -178,21 +263,31 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _saveAquarium,
+                  onPressed: _isLoading ? null : _saveAquarium,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     elevation: 0,
+                    disabledBackgroundColor: theme.colorScheme.primary.withValues(alpha: 0.5),
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FaIcon(FontAwesomeIcons.circleCheck, size: 24),
-                      SizedBox(width: 12),
-                      Text('Salva Acquario', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                    ],
-                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FaIcon(FontAwesomeIcons.circleCheck, size: 24),
+                            SizedBox(width: 12),
+                            Text('Salva Acquario', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
                 ),
               ),
             ],
