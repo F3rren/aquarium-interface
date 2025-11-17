@@ -34,6 +34,36 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  
+  # Charts library for data visualization
+  fl_chart: ^0.69.0
+  
+  # Local notifications
+  flutter_local_notifications: ^18.0.1
+  
+  # Timezone support for scheduled notifications
+  timezone: ^0.9.4
+  
+  # Permission handler
+  permission_handler: ^11.3.1
+  
+  # Persistent storage for user preferences
+  shared_preferences: ^2.3.3
+  
+  # HTTP client for API calls
+  http: ^1.2.2
+  
+  # JSON serialization
+  json_annotation: ^4.9.0
+  
+  # UUID generation
+  uuid: ^4.5.1
+  
+  # State management
+  provider: ^6.1.2
+  
+  # Font Awesome icons
+  font_awesome_flutter: ^10.7.0
 
 dev_dependencies:
   flutter_test:
@@ -58,9 +88,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/aquarium.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
