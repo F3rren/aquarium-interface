@@ -392,134 +392,148 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                   ],
                 ),
               ),
-            const SizedBox(height: 12),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(18),
-                child: Container(
-                  height: 120,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: isDark
-                          ? [
-                              const Color(0xFF0c4a6e).withValues(alpha: 0.4),
-                              const Color(0xFF164e63).withValues(alpha: 0.3),
-                              const Color(0xFF0f766e).withValues(alpha: 0.2),
-                            ]
-                          : [
-                              const Color(0xFF7dd3fc).withValues(alpha: 0.3),
-                              const Color(0xFF5eead4).withValues(alpha: 0.2),
-                              const Color(0xFF60a5fa).withValues(alpha: 0.25),
-                            ],
-                    ),
-                    border: Border.all(
-                      color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Stack(
-                    children: [
-                      // Onde animate di sfondo
-                      Positioned.fill(
-                        child: CustomPaint(
-                          painter: _WavePainter(
-                            color: const Color(0xFF60a5fa).withValues(alpha: 0.1),
-                          ),
-                        ),
-                      ),
-                      // Icona vasca stilizzata
-                      
-                      // Parametri rapidi con glassmorphism
-                      Positioned(
-                        bottom: 12,
-                        left: 12,
-                        right: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.black.withValues(alpha: 0.5)
-                                : Colors.white.withValues(alpha: 0.7),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: isDark ? 0.1 : 0.4),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 10,
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _buildQuickStat(
-                                FontAwesomeIcons.temperatureHalf,
-                                hasData ? "${temp.toStringAsFixed(1)} °C" : "N/D",
-                                const Color(0xFFef4444),
-                                hasData,
-                              ),
-                              Container(
-                                width: 1,
-                                height: 24,
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                              ),
-                              _buildQuickStat(
-                                FontAwesomeIcons.flask,
-                                hasData ? ph.toStringAsFixed(1) : "N/D",
-                                const Color(0xFF60a5fa),
-                                hasData,
-                              ),
-                              Container(
-                                width: 1,
-                                height: 24,
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                              ),
-                              _buildQuickStat(
-                                FontAwesomeIcons.water,
-                                hasData ? "${salinity.toStringAsFixed(0)} PPT" : "N/D",
-                                const Color(0xFF2dd4bf),
-                                hasData,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+            const SizedBox(height: 16),
+            // Parametri principali con card separate
+            Row(
+              children: [
+                Expanded(
+                  child: _buildParameterCard(
+                    theme,
+                    FontAwesomeIcons.temperatureHalf,
+                    'Temp',
+                    hasData ? temp.toStringAsFixed(1) : '--',
+                    '°C',
+                    const Color(0xFFef4444),
+                    hasData,
                   ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildParameterCard(
+                    theme,
+                    FontAwesomeIcons.flask,
+                    'pH',
+                    hasData ? ph.toStringAsFixed(1) : '--',
+                    '',
+                    const Color(0xFF60a5fa),
+                    hasData,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildParameterCard(
+                    theme,
+                    FontAwesomeIcons.water,
+                    'Salinità',
+                    hasData ? salinity.toStringAsFixed(0) : '--',
+                    'PPT',
+                    const Color(0xFF2dd4bf),
+                    hasData,
+                  ),
+                ),
+              ],
+            ),
             ],
           ),
       ),
     );
   }
 
-  Widget _buildQuickStat(IconData icon, String value, Color color, bool hasData) {
-    final theme = Theme.of(context);
+  Widget _buildParameterCard(
+    ThemeData theme,
+    IconData icon,
+    String label,
+    String value,
+    String unit,
+    Color color,
+    bool hasData,
+  ) {
+    final isDark = theme.brightness == Brightness.dark;
     
-    return Column(
-      children: [
-        Icon(
-          icon,
-          size: 18,
-          color: hasData ? color : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [
+                  color.withValues(alpha: 0.15),
+                  color.withValues(alpha: 0.05),
+                ]
+              : [
+                  color.withValues(alpha: 0.1),
+                  color.withValues(alpha: 0.05),
+                ],
         ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            color: hasData
-                ? theme.colorScheme.onSurface
-                : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.5,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: hasData ? color.withValues(alpha: 0.3) : theme.colorScheme.onSurface.withValues(alpha: 0.1),
+          width: 1.5,
+        ),
+        boxShadow: hasData
+            ? [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.15),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
+      ),
+      child: Column(
+        children: [
+          Icon(
+            icon,
+            size: 22,
+            color: hasData ? color : theme.colorScheme.onSurface.withValues(alpha: 0.3),
           ),
-        ),
-      ],
+          const SizedBox(height: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    color: hasData ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+              if (unit.isNotEmpty) ...[
+                const SizedBox(width: 2),
+                Text(
+                  unit,
+                  style: TextStyle(
+                    color: hasData
+                        ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
     );
   }
   
@@ -540,59 +554,5 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
       return '${(difference.inDays / 7).floor()} ${(difference.inDays / 7).floor() == 1 ? 'settimana' : 'settimane'} fa';
     }
   }
-}
-
-// CustomPainter per le onde animate
-class _WavePainter extends CustomPainter {
-  final Color color;
-
-  _WavePainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    final path = Path();
-    
-    // Prima onda
-    path.moveTo(0, size.height * 0.6);
-    path.quadraticBezierTo(
-      size.width * 0.25, size.height * 0.5,
-      size.width * 0.5, size.height * 0.6,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.75, size.height * 0.7,
-      size.width, size.height * 0.6,
-    );
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-
-    canvas.drawPath(path, paint);
-
-    // Seconda onda (più chiara)
-    final path2 = Path();
-    paint.color = color.withValues(alpha: color.a * 0.5);
-    
-    path2.moveTo(0, size.height * 0.4);
-    path2.quadraticBezierTo(
-      size.width * 0.3, size.height * 0.3,
-      size.width * 0.6, size.height * 0.4,
-    );
-    path2.quadraticBezierTo(
-      size.width * 0.8, size.height * 0.5,
-      size.width, size.height * 0.4,
-    );
-    path2.lineTo(size.width, size.height);
-    path2.lineTo(0, size.height);
-    path2.close();
-
-    canvas.drawPath(path2, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
