@@ -69,7 +69,15 @@ class ParameterService {
       final Map<String, dynamic> parametersData;
       if (response is Map<String, dynamic>) {
         if (response.containsKey('data')) {
-          parametersData = response['data'] as Map<String, dynamic>;
+          final data = response['data'];
+          if (data is List && data.isNotEmpty) {
+            // Se data è un array, prendi il primo elemento
+            parametersData = data[0] as Map<String, dynamic>;
+          } else if (data is Map<String, dynamic>) {
+            parametersData = data;
+          } else {
+            throw Exception('Formato data non valido');
+          }
         } else {
           parametersData = response;
         }

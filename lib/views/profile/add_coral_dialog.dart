@@ -7,8 +7,8 @@ import '../../services/coral_database_service.dart';
 
 class AddCoralDialog extends StatefulWidget {
   final Coral? coral;
-  final Function(Coral) onSave;
-  final Function(List<Coral>)? onSaveMultiple;
+  final Function(Coral, String? speciesId) onSave;
+  final Function(List<Coral>, String? speciesId)? onSaveMultiple;
 
   const AddCoralDialog({
     super.key,
@@ -47,7 +47,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     
     if (widget.coral != null) {
       _selectedType = widget.coral!.type;
-      _selectedPlacement = widget.coral!.placement;
+      _selectedPlacement = _mapPlacementToItalian(widget.coral!.placement);
     }
     
     _loadCoralDatabase();
@@ -157,7 +157,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
         placement: _selectedPlacement,
         notes: _notesController.text.isEmpty ? null : _notesController.text,
       );
-      widget.onSave(coral);
+      widget.onSave(coral, _selectedCoralSpecies?.id);
       Navigator.pop(context);
       return;
     }
@@ -174,7 +174,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
         placement: _selectedPlacement,
         notes: _notesController.text.isEmpty ? null : _notesController.text,
       );
-      widget.onSave(coral);
+      widget.onSave(coral, _selectedCoralSpecies?.id);
     } else {
       // Se quantità > 1, crea lista con nomi numerati
       final coralList = List.generate(quantity, (index) {
@@ -192,11 +192,11 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
       });
       
       if (widget.onSaveMultiple != null) {
-        widget.onSaveMultiple!(coralList);
+        widget.onSaveMultiple!(coralList, _selectedCoralSpecies?.id);
       } else {
         // Fallback: salva uno alla volta
         for (final coral in coralList) {
-          widget.onSave(coral);
+          widget.onSave(coral, _selectedCoralSpecies?.id);
         }
       }
     }

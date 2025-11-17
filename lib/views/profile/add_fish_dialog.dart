@@ -7,8 +7,8 @@ import '../../services/fish_database_service.dart';
 
 class AddFishDialog extends StatefulWidget {
   final Fish? fish;
-  final Function(Fish) onSave;
-  final Function(List<Fish>)? onSaveMultiple;
+  final Function(Fish, String? speciesId) onSave;
+  final Function(List<Fish>, String? speciesId)? onSaveMultiple;
 
   const AddFishDialog({
     super.key,
@@ -161,7 +161,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
         addedDate: widget.fish!.addedDate,
         notes: _notesController.text.isEmpty ? null : _notesController.text,
       );
-      widget.onSave(fish);
+      widget.onSave(fish, _selectedFishSpecies?.id);
       Navigator.pop(context);
       return;
     }
@@ -176,7 +176,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
         addedDate: DateTime.now(),
         notes: _notesController.text.isEmpty ? null : _notesController.text,
       );
-      widget.onSave(fish);
+      widget.onSave(fish, _selectedFishSpecies?.id);
     } else {
       // Se quantità > 1, crea lista con nomi numerati
       final fishList = List.generate(quantity, (index) {
@@ -192,11 +192,11 @@ class _AddFishDialogState extends State<AddFishDialog> {
       });
       
       if (widget.onSaveMultiple != null) {
-        widget.onSaveMultiple!(fishList);
+        widget.onSaveMultiple!(fishList, _selectedFishSpecies?.id);
       } else {
         // Fallback: salva uno alla volta
         for (final fish in fishList) {
-          widget.onSave(fish);
+          widget.onSave(fish, _selectedFishSpecies?.id);
         }
       }
     }

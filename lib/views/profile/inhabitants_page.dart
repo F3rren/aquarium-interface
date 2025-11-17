@@ -9,7 +9,9 @@ import 'add_fish_dialog.dart';
 import 'add_coral_dialog.dart';
 
 class InhabitantsPage extends StatefulWidget {
-  const InhabitantsPage({super.key});
+  final int? aquariumId;
+  
+  const InhabitantsPage({super.key, this.aquariumId});
 
   @override
   State<InhabitantsPage> createState() => _InhabitantsPageState();
@@ -27,6 +29,9 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    if (widget.aquariumId != null) {
+      _service.setCurrentAquarium(widget.aquariumId!);
+    }
     _loadData();
   }
 
@@ -41,6 +46,15 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
     _fishList = await _service.getFish();
     _coralsList = await _service.getCorals();
     setState(() => _isLoading = false);
+  }
+
+  Future<void> _reloadDataSilently() async {
+    final newFish = await _service.getFish();
+    final newCorals = await _service.getCorals();
+    setState(() {
+      _fishList = newFish;
+      _coralsList = newCorals;
+    });
   }
 
   Future<void> _refreshData() async {
@@ -68,11 +82,14 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
     showDialog(
       context: context,
       builder: (context) => AddFishDialog(
-        onSave: (fish) async {
-          await _service.addFish(fish);
-          _loadData();
+        onSave: (fish, speciesId) async {
+          // Salva sul server
+          await _service.addFish(fish, speciesId);
+          
+          // Ricarica i dati dall'API senza loading
+          await _reloadDataSilently();
         },
-        onSaveMultiple: (fishList) async {
+        onSaveMultiple: (fishList, speciesId) async {
           await _service.addMultipleFish(fishList);
           _loadData();
         },
@@ -85,7 +102,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
       context: context,
       builder: (context) => AddFishDialog(
         fish: fish,
-        onSave: (updatedFish) async {
+        onSave: (updatedFish, speciesId) async {
           await _service.updateFish(updatedFish);
           _loadData();
         },
@@ -97,11 +114,14 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
     showDialog(
       context: context,
       builder: (context) => AddCoralDialog(
-        onSave: (coral) async {
-          await _service.addCoral(coral);
-          _loadData();
+        onSave: (coral, speciesId) async {
+          // Salva sul server
+          await _service.addCoral(coral, speciesId);
+          
+          // Ricarica i dati dall'API senza loading
+          await _reloadDataSilently();
         },
-        onSaveMultiple: (coralList) async {
+        onSaveMultiple: (coralList, speciesId) async {
           await _service.addMultipleCorals(coralList);
           _loadData();
         },
@@ -114,7 +134,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
       context: context,
       builder: (context) => AddCoralDialog(
         coral: coral,
-        onSave: (updatedCoral) async {
+        onSave: (updatedCoral, speciesId) async {
           await _service.updateCoral(updatedCoral);
           _loadData();
         },
@@ -148,8 +168,19 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
     );
 
     if (confirm == true) {
+      // Rimuovi localmente per attivare le animazioni
+      setState(() {
+        _fishList.removeWhere((f) => f.id == fish.id);
+      });
+      
+      // Attendi un attimo per le animazioni
+      await Future.delayed(const Duration(milliseconds: 100));
+      
+      // Elimina dal server
       await _service.deleteFish(fish.id);
-      _loadData();
+      
+      // Ricarica silenziosamente per sincronizzare
+      _reloadDataSilently();
     }
   }
 
@@ -179,8 +210,19 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
     );
 
     if (confirm == true) {
+      // Rimuovi localmente per attivare le animazioni
+      setState(() {
+        _coralsList.removeWhere((c) => c.id == coral.id);
+      });
+      
+      // Attendi un attimo per le animazioni
+      await Future.delayed(const Duration(milliseconds: 100));
+      
+      // Elimina dal server
       await _service.deleteCoral(coral.id);
-      _loadData();
+      
+      // Ricarica silenziosamente per sincronizzare
+      _reloadDataSilently();
     }
   }
 
@@ -215,7 +257,11 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
               backgroundColor: theme.colorScheme.surface,
               child: Column(
                 children: [
-                  _buildStatsCard(),
+                  _InhabitantsStatsCard(
+                    key: const ValueKey('stats_card'),
+                    fishList: _fishList,
+                    coralsList: _coralsList,
+                  ),
                   Expanded(
                     child: TabBarView(
                       controller: _tabController,
@@ -239,195 +285,6 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
         backgroundColor: theme.colorScheme.primary,
         child: const FaIcon(FontAwesomeIcons.plus),
       ),
-    );
-  }
-
-  Widget _buildStatsCard() {
-    final theme = Theme.of(context);
-    
-    // Calcolo statistiche
-    final totalFish = _fishList.length;
-    final totalCorals = _coralsList.length;
-    final avgFishSize = _fishList.isEmpty 
-        ? 0.0 
-        : _fishList.map((f) => f.size).reduce((a, b) => a + b) / _fishList.length;
-    final totalBioLoad = _fishList.fold<double>(0, (sum, f) => sum + f.size) + (totalCorals * 2.0);
-    
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: theme.colorScheme.primary.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const FaIcon(FontAwesomeIcons.chartLine, color: Colors.white, size: 24),
-              const SizedBox(width: 12),
-              Text(
-                'Riepilogo Abitanti',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatItem(
-                  icon: FontAwesomeIcons.fish,
-                  label: 'Pesci',
-                  value: totalFish.toString(),
-                ),
-              ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
-              Expanded(
-                child: _buildStatItem(
-                  icon: FontAwesomeIcons.seedling,
-                  label: 'Coralli',
-                  value: totalCorals.toString(),
-                ),
-              ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
-              Expanded(
-                child: _buildStatItem(
-                  icon: FontAwesomeIcons.ruler,
-                  label: 'Dim. media',
-                  value: avgFishSize > 0 ? '${avgFishSize.toStringAsFixed(1)} cm' : '-',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const FaIcon(FontAwesomeIcons.scaleBalanced, color: Colors.white, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Carico Biotico Totale',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-                AnimatedNumber(
-                  value: totalBioLoad,
-                  decimals: 1,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Formula: (Σ dimensioni pesci) + (n° coralli × 2)',
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
-              fontSize: 12,
-            ),
-          ),
-          if (totalBioLoad > 0) ...[
-            const SizedBox(height: 12),
-            Text(
-              _getBioLoadRecommendation(totalBioLoad, totalFish, totalCorals),
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 13,
-                fontStyle: FontStyle.italic,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  String _getBioLoadRecommendation(double bioLoad, int fishCount, int coralCount) {
-    if (fishCount == 0 && coralCount == 0) {
-      return 'Aggiungi i tuoi primi abitanti!';
-    }
-    
-    // Raccomandazioni generiche basate sul carico totale
-    if (bioLoad < 20) {
-      return 'Vasca poco popolata - Puoi aggiungere altri abitanti';
-    } else if (bioLoad < 50) {
-      return 'Popolazione equilibrata - Buona base per la vasca';
-    } else if (bioLoad < 100) {
-      return 'Vasca ben popolata - Monitora regolarmente i parametri';
-    } else if (bioLoad < 150) {
-      return 'Carico elevato - Assicurati di avere filtrazione adeguata';
-    } else {
-      return 'Carico molto alto - Cambio acqua frequente essenziale';
-    }
-  }
-
-  Widget _buildStatItem({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white, size: 20),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.8),
-            fontSize: 12,
-          ),
-        ),
-      ],
     );
   }
 
@@ -690,6 +547,211 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
         );
       },
     );
+  }
+}
+
+// Widget separato per le statistiche per permettere le animazioni
+class _InhabitantsStatsCard extends StatefulWidget {
+  final List<Fish> fishList;
+  final List<Coral> coralsList;
+
+  const _InhabitantsStatsCard({
+    super.key,
+    required this.fishList,
+    required this.coralsList,
+  });
+
+  @override
+  State<_InhabitantsStatsCard> createState() => _InhabitantsStatsCardState();
+}
+
+class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    // Calcolo statistiche
+    final totalFish = widget.fishList.length;
+    final totalCorals = widget.coralsList.length;
+    final avgFishSize = widget.fishList.isEmpty 
+        ? 0.0 
+        : widget.fishList.map((f) => f.size).reduce((a, b) => a + b) / widget.fishList.length;
+    final totalBioLoad = widget.fishList.fold<double>(0, (sum, f) => sum + f.size) + (totalCorals * 2.0);
+    
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.primary.withValues(alpha: 0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const FaIcon(FontAwesomeIcons.chartLine, color: Colors.white, size: 24),
+              const SizedBox(width: 12),
+              Text(
+                'Riepilogo Abitanti',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatItem(
+                  icon: FontAwesomeIcons.fish,
+                  label: 'Pesci',
+                  value: totalFish.toDouble(),
+                ),
+              ),
+              Container(
+                width: 1,
+                height: 40,
+                color: Colors.white.withValues(alpha: 0.3),
+              ),
+              Expanded(
+                child: _buildStatItem(
+                  icon: FontAwesomeIcons.seedling,
+                  label: 'Coralli',
+                  value: totalCorals.toDouble(),
+                ),
+              ),
+              Container(
+                width: 1,
+                height: 40,
+                color: Colors.white.withValues(alpha: 0.3),
+              ),
+              Expanded(
+                child: _buildStatItem(
+                  icon: FontAwesomeIcons.ruler,
+                  label: 'Dim. media',
+                  value: avgFishSize,
+                  suffix: avgFishSize > 0 ? ' cm' : '',
+                  showZero: false,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const FaIcon(FontAwesomeIcons.scaleBalanced, color: Colors.white, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Carico Biotico Totale',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                AnimatedNumber(
+                  key: const ValueKey('bioload'),
+                  value: totalBioLoad,
+                  decimals: 1,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Formula: (Σ dimensioni pesci) + (n° coralli × 2)',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 12,
+            ),
+          ),
+          if (totalBioLoad > 0) ...[
+            const SizedBox(height: 12),
+            Text(
+              _getBioLoadRecommendation(totalBioLoad, totalFish, totalCorals),
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 13,
+                fontStyle: FontStyle.italic,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem({
+    required IconData icon,
+    required String label,
+    required double value,
+    String suffix = '',
+    bool showZero = true,
+  }) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white, size: 20),
+        const SizedBox(height: 4),
+        AnimatedNumber(
+          key: ValueKey('stat_$label'),
+          value: value,
+          decimals: label == 'Dim. media' ? 1 : 0,
+          suffix: suffix,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.8),
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getBioLoadRecommendation(double bioLoad, int fish, int corals) {
+    if (bioLoad < 20) {
+      return '✅ Carico biotico ottimale - acquario ben bilanciato';
+    } else if (bioLoad < 35) {
+      return '⚠️ Carico biotico moderato - monitora i parametri dell\'acqua';
+    } else {
+      return '🔴 Carico biotico elevato - considera un acquario più grande o riduci gli abitanti';
+    }
   }
 }
 

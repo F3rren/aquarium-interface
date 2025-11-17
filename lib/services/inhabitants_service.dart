@@ -2,19 +2,59 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/fish.dart';
 import '../models/coral.dart';
+import 'api_service.dart';
 
 class InhabitantsService {
+  static final InhabitantsService _instance = InhabitantsService._internal();
+  factory InhabitantsService() => _instance;
+  
+  InhabitantsService._internal();
+
+  final ApiService _apiService = ApiService();
+  int? _currentAquariumId;
+
+  void setCurrentAquarium(int aquariumId) {
+    _currentAquariumId = aquariumId;
+  }
+
   static const String _fishKey = 'fish_list';
   static const String _coralsKey = 'corals_list';
 
   // Fish operations
   Future<List<Fish>> getFish() async {
-    final prefs = await SharedPreferences.getInstance();
-    final fishJson = prefs.getString(_fishKey);
-    if (fishJson == null) return [];
-    
-    final List<dynamic> decoded = jsonDecode(fishJson);
-    return decoded.map((json) => Fish.fromJson(json)).toList();
+    if (_currentAquariumId == null) {
+      return [];
+    }
+
+    try {
+      final response = await _apiService.get('/aquariums/$_currentAquariumId/inhabitants');
+      
+      if (response['data'] == null) return [];
+      
+      final List<dynamic> inhabitants = response['data'] as List;
+      
+      // Filtra solo i pesci (type == 'fish')
+      return inhabitants
+          .where((item) => item['type'] == 'fish')
+          .map((item) {
+            // Estrai la dimensione dai dettagli o usa un valore di default
+            final size = item['details']?['size'] ?? item['details']?['maxSize'] ?? 10.0;
+            
+            return Fish.fromJson({
+              'id': item['id'].toString(),
+              'name': item['commonName'] ?? '',
+              'species': item['scientificName'] ?? '',
+              'size': size is int ? size.toDouble() : (size as double),
+              'addedDate': item['addedDate'] ?? DateTime.now().toIso8601String(),
+              'notes': item['details']?['notes'] ?? '',
+              'imageUrl': null,
+            });
+          })
+          .toList();
+    } catch (e) {
+      print('Error loading fish: $e');
+      return [];
+    }
   }
 
   Future<void> saveFish(List<Fish> fish) async {
@@ -23,10 +63,25 @@ class InhabitantsService {
     await prefs.setString(_fishKey, encoded);
   }
 
-  Future<void> addFish(Fish fish) async {
-    final fishList = await getFish();
-    fishList.add(fish);
-    await saveFish(fishList);
+  Future<void> addFish(Fish fish, String? speciesId) async {
+    if (_currentAquariumId == null) {
+      throw Exception('No aquarium selected');
+    }
+    if (speciesId == null) {
+      throw Exception('Species ID is required');
+    }
+
+    final body = {
+      'inhabitantType': 'fish',
+      'inhabitantId': int.parse(speciesId),
+      'quantity': 1,
+      'notes': fish.notes ?? '',
+    };
+
+    await _apiService.post(
+      '/aquariums/$_currentAquariumId/inhabitants',
+      body,
+    );
   }
 
   Future<void> addMultipleFish(List<Fish> fish) async {
@@ -36,28 +91,66 @@ class InhabitantsService {
   }
 
   Future<void> updateFish(Fish fish) async {
-    final fishList = await getFish();
-    final index = fishList.indexWhere((f) => f.id == fish.id);
-    if (index != -1) {
-      fishList[index] = fish;
-      await saveFish(fishList);
+    if (_currentAquariumId == null) {
+      throw Exception('No aquarium selected');
     }
+
+    final body = {
+      'quantity': fish.size.toInt(),
+      'notes': fish.notes ?? '',
+    };
+
+    await _apiService.put(
+      '/aquariums/$_currentAquariumId/inhabitants/${fish.id}',
+      body,
+    );
   }
 
   Future<void> deleteFish(String id) async {
-    final fishList = await getFish();
-    fishList.removeWhere((f) => f.id == id);
-    await saveFish(fishList);
+    if (_currentAquariumId == null) {
+      throw Exception('No aquarium selected');
+    }
+
+    await _apiService.delete('/aquariums/$_currentAquariumId/inhabitants/$id');
   }
 
   // Coral operations
   Future<List<Coral>> getCorals() async {
-    final prefs = await SharedPreferences.getInstance();
-    final coralsJson = prefs.getString(_coralsKey);
-    if (coralsJson == null) return [];
-    
-    final List<dynamic> decoded = jsonDecode(coralsJson);
-    return decoded.map((json) => Coral.fromJson(json)).toList();
+    if (_currentAquariumId == null) {
+      return [];
+    }
+
+    try {
+      final response = await _apiService.get('/aquariums/$_currentAquariumId/inhabitants');
+      
+      if (response['data'] == null) return [];
+      
+      final List<dynamic> inhabitants = response['data'] as List;
+      
+      // Filtra solo i coralli (type == 'coral')
+      return inhabitants
+          .where((item) => item['type'] == 'coral')
+          .map((item) {
+            // Estrai la dimensione dai dettagli o usa un valore di default
+            final size = item['details']?['size'] ?? item['details']?['maxSize'] ?? 5.0;
+            
+            return Coral.fromJson({
+              'id': item['id'].toString(),
+              'name': item['commonName'] ?? '',
+              'species': item['scientificName'] ?? '',
+              'type': item['details']?['type'] ?? 'SPS',
+              'size': size is int ? size.toDouble() : (size as double),
+              'addedDate': item['addedDate'] ?? DateTime.now().toIso8601String(),
+              'placement': item['details']?['placement'] ?? 'Medio',
+              'notes': item['details']?['notes'] ?? '',
+              'imageUrl': null,
+            });
+          })
+          .toList();
+    } catch (e) {
+      print('Error loading corals: $e');
+      return [];
+    }
   }
 
   Future<void> saveCorals(List<Coral> corals) async {
@@ -66,10 +159,25 @@ class InhabitantsService {
     await prefs.setString(_coralsKey, encoded);
   }
 
-  Future<void> addCoral(Coral coral) async {
-    final coralsList = await getCorals();
-    coralsList.add(coral);
-    await saveCorals(coralsList);
+  Future<void> addCoral(Coral coral, String? speciesId) async {
+    if (_currentAquariumId == null) {
+      throw Exception('No aquarium selected');
+    }
+    if (speciesId == null) {
+      throw Exception('Species ID is required');
+    }
+
+    final body = {
+      'inhabitantType': 'coral',
+      'inhabitantId': int.parse(speciesId),
+      'quantity': 1,
+      'notes': coral.notes ?? '',
+    };
+
+    await _apiService.post(
+      '/aquariums/$_currentAquariumId/inhabitants',
+      body,
+    );
   }
 
   Future<void> addMultipleCorals(List<Coral> corals) async {
@@ -79,18 +187,27 @@ class InhabitantsService {
   }
 
   Future<void> updateCoral(Coral coral) async {
-    final coralsList = await getCorals();
-    final index = coralsList.indexWhere((c) => c.id == coral.id);
-    if (index != -1) {
-      coralsList[index] = coral;
-      await saveCorals(coralsList);
+    if (_currentAquariumId == null) {
+      throw Exception('No aquarium selected');
     }
+
+    final body = {
+      'quantity': coral.size.toInt(),
+      'notes': coral.notes ?? '',
+    };
+
+    await _apiService.put(
+      '/aquariums/$_currentAquariumId/inhabitants/${coral.id}',
+      body,
+    );
   }
 
   Future<void> deleteCoral(String id) async {
-    final coralsList = await getCorals();
-    coralsList.removeWhere((c) => c.id == id);
-    await saveCorals(coralsList);
+    if (_currentAquariumId == null) {
+      throw Exception('No aquarium selected');
+    }
+
+    await _apiService.delete('/aquariums/$_currentAquariumId/inhabitants/$id');
   }
 
   // Statistics

@@ -7,7 +7,9 @@ import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  final int? aquariumId;
+  
+  const ProfilePage({super.key, this.aquariumId});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +56,7 @@ class ProfilePage extends StatelessWidget {
               Navigator.push(
                 context,
                 CustomPageRoute(
-                  page: const InhabitantsPage(),
+                  page: InhabitantsPage(aquariumId: aquariumId),
                   transitionType: PageTransitionType.fadeSlide,
                 ),
               );

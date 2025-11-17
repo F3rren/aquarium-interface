@@ -37,7 +37,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
       const ParametersView(),
       const ChartsView(),
       MaintenanceView(aquariumId: widget.aquariumId),
-      const ProfilePage(),
+      ProfilePage(aquariumId: widget.aquariumId),
     ];
     
     _animationController = AnimationController(

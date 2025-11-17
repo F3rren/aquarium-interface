@@ -17,7 +17,7 @@ class CoralDatabaseService {
     }
 
     try {
-      final response = await _apiService.get('/corals');
+      final response = await _apiService.get('/species/corals');
       
       // Gestisci sia formato array diretto che con wrapper
       List<dynamic> coralList;
