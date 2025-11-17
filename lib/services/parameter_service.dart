@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:acquariumfe/models/aquarium_parameters.dart';
-import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/services/api_service.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/manual_parameters_service.dart';
+import 'package:acquariumfe/services/notification_settings_service.dart';
+import 'package:acquariumfe/services/maintenance_task_service.dart';
+import 'package:acquariumfe/services/target_parameters_service.dart';
 
 /// Service per gestire i parametri dell'acquario tramite API
 class ParameterService {
@@ -15,6 +17,9 @@ class ParameterService {
   final ApiService _apiService = ApiService();
   final AlertManager _alertManager = AlertManager();
   final ManualParametersService _manualService = ManualParametersService();
+  final NotificationSettingsService _notificationService = NotificationSettingsService();
+  final MaintenanceTaskService _maintenanceService = MaintenanceTaskService();
+  final TargetParametersService _targetService = TargetParametersService();
   
   // ID della vasca attualmente selezionata
   int? _currentid;
@@ -46,6 +51,12 @@ class ParameterService {
       // Invalida la cache quando cambia la vasca
       _cachedParameters = null;
       _lastFetch = null;
+      
+      // Imposta anche nei servizi dipendenti
+      _manualService.setCurrentAquarium(id);
+      _notificationService.setCurrentAquarium(id);
+      _maintenanceService.setCurrentAquarium(id);
+      _targetService.setCurrentAquarium(id);
     }
   }
 
@@ -223,6 +234,68 @@ class ParameterService {
     }
   }
 
+  /// Ottiene lo storico di un singolo parametro per i grafici
+  /// param può essere: 'temperature', 'ph', 'salinity', 'orp', 'calcium', 'magnesium', 'kh', 'nitrate', 'phosphate'
+  Future<List<Map<String, dynamic>>> getParameterHistoryForChart({
+    required int aquariumId,
+    required String parameterName,
+    required Duration hours,
+  }) async {
+    
+    final now = DateTime.now();
+    
+    // Calcola il range basandosi sui giorni invece che sulle ore precise
+    final DateTime from;
+    final DateTime to = DateTime(now.year, now.month, now.day, 23, 59, 59); // Fine di oggi
+    
+    if (hours.inHours == 24) {
+      // Ultime 24 ore: da inizio di ieri a fine di oggi
+      from = DateTime(now.year, now.month, now.day - 1, 0, 0, 0);
+    } else if (hours.inHours == 168) {
+      // Ultimi 7 giorni: da 7 giorni fa a fine di oggi
+      from = DateTime(now.year, now.month, now.day - 7, 0, 0, 0);
+    } else if (hours.inHours == 720) {
+      // Ultimi 30 giorni: da 30 giorni fa a fine di oggi
+      from = DateTime(now.year, now.month, now.day - 30, 0, 0, 0);
+    } else {
+      // Fallback: usa sottrazione diretta
+      from = now.subtract(hours);
+    }
+    
+    try {
+      // Costruisci query parameters
+      final queryParams = <String, String>{
+        'param': parameterName,
+        'from': from.toIso8601String(),
+        'to': to.toIso8601String(),
+      };
+      
+      final query = queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
+      final endpoint = '/aquariums/$aquariumId/parameters/history?$query';
+      final response = await _apiService.get(endpoint);
+      
+      // Estrai i dati dalla risposta
+      if (response is Map<String, dynamic> && response.containsKey('data')) {
+        final data = response['data'];
+        if (data is List) {
+          // Il backend ritorna già {timestamp, value} nel formato corretto!
+          final result = data.map<Map<String, dynamic>>((item) {
+            return {
+              'timestamp': item['timestamp'] ?? DateTime.now().toIso8601String(),
+              'value': (item['value'] ?? 0).toDouble(),
+            };
+          }).toList();
+          
+          return result;
+        }
+      }
+      
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   /// Invia nuovi parametri al server
   Future<void> updateParameters(AquariumParameters parameters) async {
     try {
@@ -279,7 +352,7 @@ class ParameterService {
 
   /// Controlla tutti i parametri e invia alert se necessario
   Future<void> _checkAllParametersForAlerts(AquariumParameters params) async {
-    final settings = NotificationSettings(); // Usa impostazioni di default
+    final settings = await _notificationService.loadSettings();
     
     // Temperatura (sempre disponibile da sensori)
     await _alertManager.checkParameter(

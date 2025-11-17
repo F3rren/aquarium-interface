@@ -39,9 +39,11 @@ class AquariumParameters {
       kh: json['kh'] != null ? (json['kh'] as num).toDouble() : null,
       nitrate: json['nitrate'] != null ? (json['nitrate'] as num).toDouble() : null,
       phosphate: json['phosphate'] != null ? (json['phosphate'] as num).toDouble() : null,
-      timestamp: json['timestamp'] != null 
-          ? DateTime.parse(json['timestamp'])
-          : DateTime.now(),
+      timestamp: json['measuredAt'] != null 
+          ? DateTime.parse(json['measuredAt'])
+          : (json['timestamp'] != null 
+              ? DateTime.parse(json['timestamp'])
+              : DateTime.now()),
     );
   }
 

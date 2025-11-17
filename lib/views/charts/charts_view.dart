@@ -15,7 +15,7 @@ class ChartsView extends StatefulWidget {
 class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateMixin {
   final ChartDataService _chartService = ChartDataService();
   Timer? _refreshTimer;
-  int _selectedHours = 24;
+  int _selectedHours = 24; // 24 ore come default
   String _selectedParameter = 'Temperatura';
   List<ParameterDataPoint> _chartData = [];
   Map<String, double> _stats = {};
@@ -678,9 +678,9 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
   Widget _buildPeriodTabBar() {
     final theme = Theme.of(context);
     final periods = [
-      {'label': '24 ore', 'hours': 24},
-      {'label': '7 giorni', 'hours': 168},
-      {'label': '30 giorni', 'hours': 720},
+      {'label': '24h', 'hours': 24},
+      {'label': '7d', 'hours': 168},
+      {'label': '30d', 'hours': 720},
     ];
     
     return Container(
@@ -695,7 +695,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
           AnimatedAlign(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOutCubic,
-            alignment: _selectedHours == 24 
+            alignment: _selectedHours == 24
                 ? Alignment.centerLeft
                 : _selectedHours == 168
                     ? Alignment.center

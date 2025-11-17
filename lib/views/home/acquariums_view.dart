@@ -6,6 +6,7 @@ import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
 import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
 import 'package:acquariumfe/services/aquarium_service.dart';
 import 'package:acquariumfe/services/parameter_service.dart';
+import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/models/aquarium.dart';
 import 'package:acquariumfe/models/aquarium_parameters.dart';
 
@@ -101,7 +102,6 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
           lastUpdate = DateTime.now();
         } catch (e) {
           // Se fallisce, parametri rimangono null
-          print('?? Impossibile caricare parametri per ${aquarium.name}: $e');
         }
         
         aquariumsWithParams.add(AquariumWithParams(
@@ -120,6 +120,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
         // Imposta la prima vasca come corrente se ce ne sono
         if (aquariumsWithParams.isNotEmpty && aquariumsWithParams.first.aquarium.id != null) {
           ParameterService().setCurrentAquarium(aquariumsWithParams.first.aquarium.id!);
+          TargetParametersService().setCurrentAquarium(aquariumsWithParams.first.aquarium.id!);
         }
         
         // Riabilita alert automatici
@@ -242,6 +243,7 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
         // Imposta questa vasca come vasca corrente per i parametri
         if (aquarium.id != null) {
           ParameterService().setCurrentAquarium(aquarium.id!);
+          TargetParametersService().setCurrentAquarium(aquarium.id!);
         }
         
         Navigator.push(

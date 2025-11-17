@@ -5,8 +5,16 @@ class MaintenanceTask {
   final String title;
   final String? description;
   final MaintenanceCategory category;
-  final int frequencyDays; // Ogni quanti giorni si ripete
-  final DateTime? lastCompleted; // Ultima volta completato
+  final int frequencyDays; // Ogni quanti giorni si ripete (retrocompatibilità)
+  final String? frequency; // Frequenza come string (daily, weekly, monthly, custom)
+  final String? priority; // Priorità (low, medium, high)
+  final DateTime? dueDate; // Data/ora scadenza specifica
+  final String? notes; // Note aggiuntive
+  final bool isCompleted; // Se il task è completato
+  final DateTime? completedAt; // Quando è stato completato
+  final DateTime? lastCompleted; // Retrocompatibilità
+  final String? status; // Status dal backend (completed, pending, overdue)
+  final bool? overdue; // Se è in ritardo
   final bool enabled;
   final int? reminderHour; // Ora notifica (0-23)
   final int? reminderMinute; // Minuto notifica (0-59)
@@ -18,8 +26,16 @@ class MaintenanceTask {
     required this.title,
     this.description,
     required this.category,
-    required this.frequencyDays,
+    this.frequencyDays = 7,
+    this.frequency,
+    this.priority,
+    this.dueDate,
+    this.notes,
+    this.isCompleted = false,
+    this.completedAt,
     this.lastCompleted,
+    this.status,
+    this.overdue,
     this.enabled = true,
     this.reminderHour = 9,
     this.reminderMinute = 0,
@@ -28,6 +44,11 @@ class MaintenanceTask {
 
   /// Data prossimo completamento previsto
   DateTime get nextDue {
+    // Se c'è una dueDate specifica, usa quella
+    if (dueDate != null) {
+      return dueDate!;
+    }
+    
     if (lastCompleted == null) {
       return DateTime.now();
     }
@@ -78,7 +99,15 @@ class MaintenanceTask {
     String? description,
     MaintenanceCategory? category,
     int? frequencyDays,
+    String? frequency,
+    String? priority,
+    DateTime? dueDate,
+    String? notes,
+    bool? isCompleted,
+    DateTime? completedAt,
     DateTime? lastCompleted,
+    String? status,
+    bool? overdue,
     bool? enabled,
     int? reminderHour,
     int? reminderMinute,
@@ -91,7 +120,15 @@ class MaintenanceTask {
       description: description ?? this.description,
       category: category ?? this.category,
       frequencyDays: frequencyDays ?? this.frequencyDays,
+      frequency: frequency ?? this.frequency,
+      priority: priority ?? this.priority,
+      dueDate: dueDate ?? this.dueDate,
+      notes: notes ?? this.notes,
+      isCompleted: isCompleted ?? this.isCompleted,
+      completedAt: completedAt ?? this.completedAt,
       lastCompleted: lastCompleted ?? this.lastCompleted,
+      status: status ?? this.status,
+      overdue: overdue ?? this.overdue,
       enabled: enabled ?? this.enabled,
       reminderHour: reminderHour ?? this.reminderHour,
       reminderMinute: reminderMinute ?? this.reminderMinute,
@@ -105,6 +142,10 @@ class MaintenanceTask {
       'aquariumId': aquariumId,
       'title': title,
       'description': description,
+      'frequency': frequency,
+      'priority': priority,
+      'dueDate': dueDate?.toIso8601String(),
+      'notes': notes,
       'category': category.name,
       'frequencyDays': frequencyDays,
       'lastCompleted': lastCompleted?.toIso8601String(),
@@ -116,21 +157,60 @@ class MaintenanceTask {
   }
 
   factory MaintenanceTask.fromJson(Map<String, dynamic> json) {
+    // Parse category - se non c'è, prova a dedurlo dal titolo o usa 'other'
+    MaintenanceCategory parsedCategory = MaintenanceCategory.other;
+    if (json['category'] != null) {
+      parsedCategory = MaintenanceCategory.values.firstWhere(
+        (e) => e.name == json['category'],
+        orElse: () => MaintenanceCategory.other,
+      );
+    } else {
+      // Deduzione categoria da titolo/descrizione
+      final title = json['title']?.toString().toLowerCase() ?? '';
+      final desc = json['description']?.toString().toLowerCase() ?? '';
+      final text = '$title $desc';
+      
+      if (text.contains('acqua') || text.contains('water') || text.contains('cambio')) {
+        parsedCategory = MaintenanceCategory.water;
+      } else if (text.contains('vetri') || text.contains('pulizia') || text.contains('clean') || text.contains('glass')) {
+        parsedCategory = MaintenanceCategory.cleaning;
+      } else if (text.contains('filtro') || text.contains('pompa') || text.contains('schiumatoio') || text.contains('filter') || text.contains('pump')) {
+        parsedCategory = MaintenanceCategory.equipment;
+      } else if (text.contains('test') || text.contains('parametr')) {
+        parsedCategory = MaintenanceCategory.testing;
+      } else if (text.contains('dosaggio') || text.contains('calcio') || text.contains('magnesio') || text.contains('kh')) {
+        parsedCategory = MaintenanceCategory.dosing;
+      } else if (text.contains('cibo') || text.contains('alimenta') || text.contains('feed')) {
+        parsedCategory = MaintenanceCategory.feeding;
+      }
+    }
+    
     return MaintenanceTask(
       id: json['id'].toString(),
       aquariumId: json['aquariumId'].toString(),
       title: json['title'].toString(),
       description: json['description']?.toString(),
-      category: MaintenanceCategory.values.firstWhere(
-        (e) => e.name == json['category'],
-        orElse: () => MaintenanceCategory.other,
-      ),
+      frequency: json['frequency']?.toString(),
+      priority: json['priority']?.toString(),
+      dueDate: json['dueDate'] != null
+          ? DateTime.parse(json['dueDate'])
+          : null,
+      notes: json['notes']?.toString(),
+      isCompleted: json['isCompleted'] ?? false,
+      completedAt: json['completedAt'] != null
+          ? DateTime.parse(json['completedAt'])
+          : null,
+      status: json['status']?.toString(),
+      overdue: json['overdue'] as bool?,
+      category: parsedCategory,
       frequencyDays: json['frequencyDays'] is int 
           ? json['frequencyDays'] 
-          : int.parse(json['frequencyDays'].toString()),
-      lastCompleted: json['lastCompleted'] != null
-          ? DateTime.parse(json['lastCompleted'])
-          : null,
+          : int.tryParse(json['frequencyDays']?.toString() ?? '') ?? 7,
+      lastCompleted: json['completedAt'] != null
+          ? DateTime.parse(json['completedAt'])
+          : (json['lastCompleted'] != null
+              ? DateTime.parse(json['lastCompleted'])
+              : null),
       enabled: json['enabled'] ?? true,
       reminderHour: json['reminderHour'],
       reminderMinute: json['reminderMinute'],

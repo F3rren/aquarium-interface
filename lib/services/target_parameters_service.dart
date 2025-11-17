@@ -1,4 +1,4 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'api_service.dart';
 
 /// Servizio per gestire i valori target desiderati dei parametri
 class TargetParametersService {
@@ -6,11 +6,14 @@ class TargetParametersService {
   factory TargetParametersService() => _instance;
   TargetParametersService._internal();
 
-  // Chiavi per SharedPreferences
-  static const String _keyTargetTemperature = 'target_temperature';
-  static const String _keyTargetPh = 'target_ph';
-  static const String _keyTargetSalinity = 'target_salinity';
-  static const String _keyTargetOrp = 'target_orp';
+  final ApiService _apiService = ApiService();
+  int? _currentAquariumId;
+  Map<String, double>? _cachedTargets;
+
+  void setCurrentAquarium(int id) {
+    _currentAquariumId = id;
+    _cachedTargets = null; // Invalida cache
+  }
 
   // Valori di default
   static const double defaultTemperature = 25.0;
@@ -18,67 +21,106 @@ class TargetParametersService {
   static const double defaultSalinity = 1024.0;
   static const double defaultOrp = 360.0;
 
-  /// Carica tutti i target
-  Future<Map<String, double>> loadAllTargets() async {
-    final prefs = await SharedPreferences.getInstance();
+  Map<String, double> _getDefaults() {
     return {
-      'temperature': prefs.getDouble(_keyTargetTemperature) ?? defaultTemperature,
-      'ph': prefs.getDouble(_keyTargetPh) ?? defaultPh,
-      'salinity': prefs.getDouble(_keyTargetSalinity) ?? defaultSalinity,
-      'orp': prefs.getDouble(_keyTargetOrp) ?? defaultOrp,
+      'temperature': defaultTemperature,
+      'ph': defaultPh,
+      'salinity': defaultSalinity,
+      'orp': defaultOrp,
     };
   }
 
-  /// Salva un target specifico
+  /// Carica tutti i target dal backend
+  Future<Map<String, double>> loadAllTargets() async {
+    if (_currentAquariumId == null) {
+      return _getDefaults();
+    }
+
+    if (_cachedTargets != null) {
+      return _cachedTargets!;
+    }
+
+    try {
+      final response = await _apiService.get('/aquariums/$_currentAquariumId/settings/targets');
+      
+      if (response is Map<String, dynamic> && response.containsKey('data')) {
+        final data = response['data'] as Map<String, dynamic>;
+        _cachedTargets = {
+          'temperature': (data['temperature'] ?? defaultTemperature).toDouble(),
+          'ph': (data['ph'] ?? defaultPh).toDouble(),
+          'salinity': (data['salinity'] ?? defaultSalinity).toDouble(),
+          'orp': (data['orp'] ?? defaultOrp).toDouble(),
+        };
+        return _cachedTargets!;
+      }
+      
+      return _getDefaults();
+    } catch (e) {
+      return _getDefaults();
+    }
+  }
+
+  /// Salva un target specifico sul backend
   Future<void> saveTarget(String parameter, double value) async {
-    final prefs = await SharedPreferences.getInstance();
-    
-    switch (parameter.toLowerCase()) {
-      case 'temperature':
-        await prefs.setDouble(_keyTargetTemperature, value);
-        break;
-      case 'ph':
-        await prefs.setDouble(_keyTargetPh, value);
-        break;
-      case 'salinity':
-        await prefs.setDouble(_keyTargetSalinity, value);
-        break;
-      case 'orp':
-        await prefs.setDouble(_keyTargetOrp, value);
-        break;
+    if (_currentAquariumId == null) {
+      throw Exception('Nessun acquario selezionato');
+    }
+
+    try {
+      // Carica tutti i target correnti
+      final allTargets = await loadAllTargets();
+      
+      // Aggiorna il parametro specifico
+      allTargets[parameter.toLowerCase()] = value;
+      
+      // Salva tutto sul backend
+      await _apiService.post(
+        '/aquariums/$_currentAquariumId/settings/targets',
+        allTargets,
+      );
+      
+      // Aggiorna cache
+      _cachedTargets = allTargets;
+    } catch (e) {
+      rethrow;
     }
   }
 
   /// Ottieni target temperatura
   Future<double> getTargetTemperature() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getDouble(_keyTargetTemperature) ?? defaultTemperature;
+    final targets = await loadAllTargets();
+    return targets['temperature'] ?? defaultTemperature;
   }
 
   /// Ottieni target pH
   Future<double> getTargetPh() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getDouble(_keyTargetPh) ?? defaultPh;
+    final targets = await loadAllTargets();
+    return targets['ph'] ?? defaultPh;
   }
 
   /// Ottieni target salinità
   Future<double> getTargetSalinity() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getDouble(_keyTargetSalinity) ?? defaultSalinity;
+    final targets = await loadAllTargets();
+    return targets['salinity'] ?? defaultSalinity;
   }
 
   /// Ottieni target ORP
   Future<double> getTargetOrp() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getDouble(_keyTargetOrp) ?? defaultOrp;
+    final targets = await loadAllTargets();
+    return targets['orp'] ?? defaultOrp;
   }
 
   /// Reset ai valori di default
   Future<void> resetToDefaults() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble(_keyTargetTemperature, defaultTemperature);
-    await prefs.setDouble(_keyTargetPh, defaultPh);
-    await prefs.setDouble(_keyTargetSalinity, defaultSalinity);
-    await prefs.setDouble(_keyTargetOrp, defaultOrp);
+    if (_currentAquariumId == null) {
+      throw Exception('Nessun acquario selezionato');
+    }
+
+    await _apiService.post(
+      '/aquariums/$_currentAquariumId/settings/targets',
+      _getDefaults(),
+    );
+    
+    _cachedTargets = _getDefaults();
   }
 }

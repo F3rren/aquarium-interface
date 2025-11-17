@@ -1,19 +1,20 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:acquariumfe/services/api_service.dart';
 
-/// Service per gestire i parametri manuali salvati localmente
+/// Service per gestire i parametri manuali tramite API
 class ManualParametersService {
   static final ManualParametersService _instance = ManualParametersService._internal();
   factory ManualParametersService() => _instance;
   ManualParametersService._internal();
 
-  static const String _calciumKey = 'manual_calcium';
-  static const String _magnesiumKey = 'manual_magnesium';
-  static const String _khKey = 'manual_kh';
-  static const String _nitrateKey = 'manual_nitrate';
-  static const String _phosphateKey = 'manual_phosphate';
-  static const String _lastUpdateKey = 'manual_last_update';
-
-  /// Salva parametri manuali
+  final ApiService _apiService = ApiService();
+  
+  int? _currentAquariumId;
+  
+  void setCurrentAquarium(int id) {
+    _currentAquariumId = id;
+  }
+  
+  /// Salva parametri manuali sul backend
   Future<void> saveManualParameters({
     double? calcium,
     double? magnesium,
@@ -21,94 +22,121 @@ class ManualParametersService {
     double? nitrate,
     double? phosphate,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
+    if (_currentAquariumId == null) {
+      throw Exception('Nessun acquario selezionato');
+    }
     
-    if (calcium != null) await prefs.setDouble(_calciumKey, calcium);
-    if (magnesium != null) await prefs.setDouble(_magnesiumKey, magnesium);
-    if (kh != null) await prefs.setDouble(_khKey, kh);
-    if (nitrate != null) await prefs.setDouble(_nitrateKey, nitrate);
-    if (phosphate != null) await prefs.setDouble(_phosphateKey, phosphate);
-    
-    // Salva timestamp ultimo aggiornamento
-    await prefs.setString(_lastUpdateKey, DateTime.now().toIso8601String());
+    try {
+      final body = <String, dynamic>{
+        if (calcium != null) 'calcium': calcium,
+        if (magnesium != null) 'magnesium': magnesium,
+        if (kh != null) 'kh': kh,
+        if (nitrate != null) 'nitrate': nitrate,
+        if (phosphate != null) 'phosphate': phosphate,
+        'measuredAt': DateTime.now().toIso8601String(),
+      };
+      
+      await _apiService.post('/aquariums/$_currentAquariumId/parameters/manual', body);
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  /// Carica parametri manuali
+  /// Carica parametri manuali dal backend
   Future<Map<String, double>> loadManualParameters() async {
-    final prefs = await SharedPreferences.getInstance();
+    if (_currentAquariumId == null) {
+      return _getDefaultValues();
+    }
     
-    return {
-      'calcium': prefs.getDouble(_calciumKey) ?? 420.0,
-      'magnesium': prefs.getDouble(_magnesiumKey) ?? 1280.0,
-      'kh': prefs.getDouble(_khKey) ?? 9.0,
-      'nitrate': prefs.getDouble(_nitrateKey) ?? 5.0,
-      'phosphate': prefs.getDouble(_phosphateKey) ?? 0.03,
-    };
+    try {
+      final response = await _apiService.get('/aquariums/$_currentAquariumId/parameters/manual');
+      
+      final Map<String, dynamic> data;
+      if (response is Map<String, dynamic>) {
+        if (response.containsKey('data')) {
+          final dataValue = response['data'];
+          if (dataValue is Map<String, dynamic>) {
+            data = dataValue;
+          } else {
+            return _getDefaultValues();
+          }
+        } else {
+          data = response;
+        }
+      } else {
+        return _getDefaultValues();
+      }
+      
+      return {
+        'calcium': (data['calcium'] ?? 420.0).toDouble(),
+        'magnesium': (data['magnesium'] ?? 1280.0).toDouble(),
+        'kh': (data['kh'] ?? 9.0).toDouble(),
+        'nitrate': (data['nitrate'] ?? 5.0).toDouble(),
+        'phosphate': (data['phosphate'] ?? 0.03).toDouble(),
+      };
+      
+    } catch (e) {
+      return _getDefaultValues();
+    }
   }
 
   /// Ottieni singolo parametro
   Future<double> getParameter(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    
-    switch (key) {
-      case 'calcium':
-        return prefs.getDouble(_calciumKey) ?? 420.0;
-      case 'magnesium':
-        return prefs.getDouble(_magnesiumKey) ?? 1280.0;
-      case 'kh':
-        return prefs.getDouble(_khKey) ?? 9.0;
-      case 'nitrate':
-        return prefs.getDouble(_nitrateKey) ?? 5.0;
-      case 'phosphate':
-        return prefs.getDouble(_phosphateKey) ?? 0.03;
-      default:
-        return 0.0;
-    }
+    final params = await loadManualParameters();
+    return params[key] ?? 0.0;
   }
 
   /// Aggiorna singolo parametro
   Future<void> updateParameter(String key, double value) async {
-    final prefs = await SharedPreferences.getInstance();
+    final current = await loadManualParameters();
     
-    switch (key) {
-      case 'calcium':
-        await prefs.setDouble(_calciumKey, value);
-        break;
-      case 'magnesium':
-        await prefs.setDouble(_magnesiumKey, value);
-        break;
-      case 'kh':
-        await prefs.setDouble(_khKey, value);
-        break;
-      case 'nitrate':
-        await prefs.setDouble(_nitrateKey, value);
-        break;
-      case 'phosphate':
-        await prefs.setDouble(_phosphateKey, value);
-        break;
-    }
-    
-    await prefs.setString(_lastUpdateKey, DateTime.now().toIso8601String());
+    await saveManualParameters(
+      calcium: key == 'calcium' ? value : current['calcium'],
+      magnesium: key == 'magnesium' ? value : current['magnesium'],
+      kh: key == 'kh' ? value : current['kh'],
+      nitrate: key == 'nitrate' ? value : current['nitrate'],
+      phosphate: key == 'phosphate' ? value : current['phosphate'],
+    );
   }
 
   /// Ottieni data ultimo aggiornamento
   Future<DateTime?> getLastUpdate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final timestamp = prefs.getString(_lastUpdateKey);
+    if (_currentAquariumId == null) return null;
     
-    if (timestamp == null) return null;
-    return DateTime.parse(timestamp);
+    try {
+      final response = await _apiService.get('/aquariums/$_currentAquariumId/parameters/manual');
+      
+      if (response is Map<String, dynamic> && response.containsKey('data')) {
+        final data = response['data'];
+        if (data is Map<String, dynamic> && data.containsKey('measuredAt')) {
+          return DateTime.parse(data['measuredAt']);
+        }
+      }
+    } catch (e) {
+      // Ignora errori
+    }
+    
+    return null;
+  }
+
+  Map<String, double> _getDefaultValues() {
+    return {
+      'calcium': 420.0,
+      'magnesium': 1280.0,
+      'kh': 9.0,
+      'nitrate': 5.0,
+      'phosphate': 0.03,
+    };
   }
 
   /// Resetta tutti i parametri ai valori di default
   Future<void> resetToDefaults() async {
-    final prefs = await SharedPreferences.getInstance();
+    if (_currentAquariumId == null) return;
     
-    await prefs.setDouble(_calciumKey, 420.0);
-    await prefs.setDouble(_magnesiumKey, 1280.0);
-    await prefs.setDouble(_khKey, 9.0);
-    await prefs.setDouble(_nitrateKey, 5.0);
-    await prefs.setDouble(_phosphateKey, 0.03);
-    await prefs.remove(_lastUpdateKey);
+    try {
+      await _apiService.delete('/aquariums/$_currentAquariumId/parameters/manual');
+    } catch (e) {
+      rethrow;
+    }
   }
 }

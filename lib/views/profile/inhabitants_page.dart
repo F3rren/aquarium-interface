@@ -90,7 +90,9 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
           await _reloadDataSilently();
         },
         onSaveMultiple: (fishList, speciesId) async {
-          await _service.addMultipleFish(fishList);
+          for (final fish in fishList) {
+            await _service.addFish(fish, speciesId);
+          }
           _loadData();
         },
       ),
@@ -122,7 +124,9 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
           await _reloadDataSilently();
         },
         onSaveMultiple: (coralList, speciesId) async {
-          await _service.addMultipleCorals(coralList);
+          for (final coral in coralList) {
+            await _service.addCoral(coral, speciesId);
+          }
           _loadData();
         },
       ),

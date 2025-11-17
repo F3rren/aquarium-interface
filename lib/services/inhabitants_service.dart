@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/fish.dart';
 import '../models/coral.dart';
 import 'api_service.dart';
@@ -16,9 +14,6 @@ class InhabitantsService {
   void setCurrentAquarium(int aquariumId) {
     _currentAquariumId = aquariumId;
   }
-
-  static const String _fishKey = 'fish_list';
-  static const String _coralsKey = 'corals_list';
 
   // Fish operations
   Future<List<Fish>> getFish() async {
@@ -52,15 +47,8 @@ class InhabitantsService {
           })
           .toList();
     } catch (e) {
-      print('Error loading fish: $e');
       return [];
     }
-  }
-
-  Future<void> saveFish(List<Fish> fish) async {
-    final prefs = await SharedPreferences.getInstance();
-    final encoded = jsonEncode(fish.map((f) => f.toJson()).toList());
-    await prefs.setString(_fishKey, encoded);
   }
 
   Future<void> addFish(Fish fish, String? speciesId) async {
@@ -82,12 +70,6 @@ class InhabitantsService {
       '/aquariums/$_currentAquariumId/inhabitants',
       body,
     );
-  }
-
-  Future<void> addMultipleFish(List<Fish> fish) async {
-    final fishList = await getFish();
-    fishList.addAll(fish);
-    await saveFish(fishList);
   }
 
   Future<void> updateFish(Fish fish) async {
@@ -148,15 +130,8 @@ class InhabitantsService {
           })
           .toList();
     } catch (e) {
-      print('Error loading corals: $e');
       return [];
     }
-  }
-
-  Future<void> saveCorals(List<Coral> corals) async {
-    final prefs = await SharedPreferences.getInstance();
-    final encoded = jsonEncode(corals.map((c) => c.toJson()).toList());
-    await prefs.setString(_coralsKey, encoded);
   }
 
   Future<void> addCoral(Coral coral, String? speciesId) async {
@@ -178,12 +153,6 @@ class InhabitantsService {
       '/aquariums/$_currentAquariumId/inhabitants',
       body,
     );
-  }
-
-  Future<void> addMultipleCorals(List<Coral> corals) async {
-    final coralsList = await getCorals();
-    coralsList.addAll(corals);
-    await saveCorals(coralsList);
   }
 
   Future<void> updateCoral(Coral coral) async {
