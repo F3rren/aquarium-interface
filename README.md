@@ -7,7 +7,7 @@
 A cross-platform aquarium monitoring app designed for hobbyists to track water parameters, tank inhabitants, and maintenance activities with real-time integration.
 
 ![App Demo](./assets/app.gif)
-
+![App Demo](./assets/inhabitant.gif)
 ## Current Status
 
 - The project is fully functional for major features; IoT sensor integration (Arduino + Raspberry Pi) is in progress.
