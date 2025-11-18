@@ -27,11 +27,11 @@ A cross-platform aquarium monitoring app designed for hobbyists to track water p
 This app is designed for aquarium enthusiasts who want a unified solution for monitoring critical water parameters, eliminating the need for expensive manual tests and messy records.
 
 ## Getting Started
-
 1. Clone the repository:
+```bash
 git clone https://github.com/F3rren/acquarium-interface.git
 cd acquarium-interface
-
+```
 2. Install Flutter and required dependencies (see `pubspec.yaml`).
 
 3. Configure connection to backend and database if required.
