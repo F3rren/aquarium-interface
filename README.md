@@ -1,4 +1,4 @@
-# Acquarium Interface
+# Aquarium Interface
 
 ![Flutter](https://img.shields.io/badge/flutter-3.10-blue.svg)
 ![Status: Stable](https://img.shields.io/badge/status-stable-success.svg)
@@ -45,8 +45,8 @@ This app is designed for aquarium enthusiasts who want a unified solution for mo
 ## Getting Started
 1. Clone the repository:
 ```bash
-git clone https://github.com/F3rren/acquarium-interface.git
-cd acquarium-interface
+git clone https://github.com/F3rren/aquarium-interface.git
+cd aquarium-interface
 ```
 2. Install Flutter and required dependencies (see `pubspec.yaml`).
 ```bash
@@ -55,7 +55,7 @@ flutter pub get
 3. Configure connection to backend and database if required.
 
 > **Important:**  
-> This application requires the companion backend service [Acquarium Monitor](https://github.com/F3rren/acquarium-monitor) to operate.  
+> This application requires the companion backend service [Aquarium Monitor](https://github.com/F3rren/aquarium-monitor) to operate.  
 > Without this backend, real-time data, database persistence, and most features will not be available.
 > 
 > Make sure to set up the backend before running the app and configure the API connection in your project settings.
