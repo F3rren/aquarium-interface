@@ -4,6 +4,12 @@
 ![Status: Stable](https://img.shields.io/badge/status-stable-success.svg)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
 
+> **Important:**  
+> This application requires the companion backend service [Aquarium Monitor](https://github.com/F3rren/aquarium-monitor) to operate.  
+> Without this backend, real-time data, database persistence, and most features will not be available.
+> 
+> Make sure to set up the backend before running the app and configure the API connection in your project settings.
+
 A cross-platform aquarium monitoring app designed for hobbyists to track water parameters, tank inhabitants, and maintenance activities with real-time integration.
 
 ![Dashboard Demo](./assets/app.gif)
@@ -53,12 +59,6 @@ cd aquarium-interface
 flutter pub get
 ```
 3. Configure connection to backend and database if required.
-
-> **Important:**  
-> This application requires the companion backend service [Aquarium Monitor](https://github.com/F3rren/aquarium-monitor) to operate.  
-> Without this backend, real-time data, database persistence, and most features will not be available.
-> 
-> Make sure to set up the backend before running the app and configure the API connection in your project settings.
 
 ## License
 
