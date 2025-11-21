@@ -176,11 +176,14 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
                   padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
                   itemCount: _aquariumsWithParams.length,
                   itemBuilder: (context, index) {
-                    return FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: SlideTransition(
-                        position: _slideAnimation,
-                        child: _buildAquariumCard(context, _aquariumsWithParams[index]),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: SlideTransition(
+                          position: _slideAnimation,
+                          child: _buildAquariumCard(context, _aquariumsWithParams[index]),
+                        ),
                       ),
                     );
                   },

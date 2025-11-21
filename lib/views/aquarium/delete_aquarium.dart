@@ -194,7 +194,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                 children: [
                   FaIcon(FontAwesomeIcons.circleCheck, color: theme.colorScheme.onSurface),
                   const SizedBox(width: 12),
-                  Text('${aquarium.name} eliminato con successo'),
+                  Text('Aquario eliminato con successo'),
                 ],
               ),
               backgroundColor: theme.colorScheme.error,

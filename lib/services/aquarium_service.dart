@@ -48,7 +48,9 @@ class AquariumsService {
     try {
       final response = await _apiService.get('/aquariums/$id');
       if (response is Map<String, dynamic>) {
-        return Aquarium.fromJson(response);
+        // Estrai i dati dall'oggetto wrapper se presente
+        final aquariumData = response['data'] ?? response;
+        return Aquarium.fromJson(aquariumData as Map<String, dynamic>);
       } else {
         throw ApiException(
           statusCode: 500,
