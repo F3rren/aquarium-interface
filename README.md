@@ -3,7 +3,6 @@
 ![Flutter](https://img.shields.io/badge/flutter-3.10-blue.svg)
 ![Status: Stable](https://img.shields.io/badge/status-stable-success.svg)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
-![CI](https://github.com/F3rren/acquarium-interface/workflows/Flutter%20CI%2FCD/badge.svg)
 ![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)
 ![Coverage](https://img.shields.io/badge/coverage-80%25-green.svg)
 
