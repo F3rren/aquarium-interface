@@ -6,6 +6,8 @@ import 'package:acquariumfe/services/manual_parameters_service.dart';
 import 'package:acquariumfe/services/notification_settings_service.dart';
 import 'package:acquariumfe/services/maintenance_task_service.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
+import 'package:acquariumfe/utils/exceptions.dart';
+import 'package:acquariumfe/utils/retry_policy.dart';
 
 /// Service per gestire i parametri dell'acquario tramite API
 class ParameterService {
@@ -69,12 +71,17 @@ class ParameterService {
     final targetid = id ?? _currentid;
     
     if (targetid == null) {
-      throw Exception('Nessuna vasca selezionata. Usa setCurrentAquarium() prima.');
+      throw NoAquariumSelectedException(
+        details: 'Usa setCurrentAquarium() per selezionare una vasca prima di recuperare i parametri',
+      );
     }
     
     try {
       // Endpoint per vasca specifica: /api/aquariums/{id}/parameters
-      final response = await _apiService.get('/aquariums/$targetid/parameters');
+      final response = await _apiService.get(
+        '/aquariums/$targetid/parameters',
+        retry: RetryPolicies.critical, // Dati critici, retry automatico
+      );
 
       // Gestisci il caso in cui la risposta abbia un wrapper "data"
       final Map<String, dynamic> parametersData;
@@ -87,13 +94,19 @@ class ParameterService {
           } else if (data is Map<String, dynamic>) {
             parametersData = data;
           } else {
-            throw Exception('Formato data non valido');
+            throw DataFormatException(
+              'Formato data non valido dalla risposta API',
+              details: 'Atteso oggetto o array, ricevuto: ${data.runtimeType}',
+            );
           }
         } else {
           parametersData = response;
         }
       } else {
-        throw Exception('Formato risposta non valido: attesa mappa');
+        throw DataFormatException(
+          'Formato risposta non valido',
+          details: 'Attesa mappa, ricevuto: ${response.runtimeType}',
+        );
       }
       
       final parameters = AquariumParameters.fromJson(parametersData);
@@ -123,12 +136,22 @@ class ParameterService {
       }
       
       return completeParameters;
-    } catch (e) {
+    } on AppException {
+      // Rilancia le nostre eccezioni custom senza modificarle
       if (useMock) {
         return _getMockParameters();
-      } else {
-        rethrow;
       }
+      rethrow;
+    } catch (e) {
+      // Errori imprevisti
+      if (useMock) {
+        return _getMockParameters();
+      }
+      throw AppError(
+        'Errore imprevisto durante il recupero dei parametri',
+        details: e.toString(),
+        originalError: e,
+      );
     }
   }
 
@@ -228,8 +251,12 @@ class ParameterService {
       
       return parameters;
       
+    } on AppException catch (e) {
+      // Log dell'errore per debug (in produzione potresti usare un logger)
+      print('Errore recupero storico parametri: ${e.toString()}');
+      return [];
     } catch (e) {
-      
+      print('Errore imprevisto in getParametersHistory: $e');
       return [];
     }
   }
@@ -291,22 +318,21 @@ class ParameterService {
       }
       
       return [];
+    } on AppException catch (e) {
+      print('Errore recupero storico per grafico: ${e.toString()}');
+      return [];
     } catch (e) {
+      print('Errore imprevisto in getParameterHistoryForChart: $e');
       return [];
     }
   }
 
   /// Invia nuovi parametri al server
   Future<void> updateParameters(AquariumParameters parameters) async {
-    try {
-      await _apiService.post('/parameters', parameters.toJson());
-      
-      _cachedParameters = parameters;
-      _parametersController.add(parameters);
-      
-    } catch (e) {
-      rethrow;
-    }
+    await _apiService.post('/parameters', parameters.toJson());
+    
+    _cachedParameters = parameters;
+    _parametersController.add(parameters);
   }
 
   /// Avvia auto-refresh dei parametri

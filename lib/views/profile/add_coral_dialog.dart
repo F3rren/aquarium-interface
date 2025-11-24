@@ -25,7 +25,6 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   final _coralDatabaseService = CoralDatabaseService();
   List<CoralSpecies> _coralDatabase = [];
   CoralSpecies? _selectedCoralSpecies;
-  bool _isLoadingDatabase = true;
   
   late TextEditingController _nameController;
   late TextEditingController _speciesController;
@@ -58,10 +57,8 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
       final corals = await _coralDatabaseService.getAllCorals();
       setState(() {
         _coralDatabase = corals;
-        _isLoadingDatabase = false;
       });
     } catch (e) {
-      setState(() => _isLoadingDatabase = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Errore caricamento database: $e')),
@@ -252,13 +249,15 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
               // Dropdown database coralli
               if (widget.coral == null) ...[
                 _buildCoralDatabaseDropdown(theme),
-                const SizedBox(height: 8),
-                Text(
-                  'Seleziona da database o inserisci manualmente',
-                  style: TextStyle(
-                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
+                const SizedBox(height: 16),
+                Center(
+                  child: Text(
+                    'oppure inserisci manualmente',
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -454,105 +453,97 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   }
 
   Widget _buildCoralDatabaseDropdown(ThemeData theme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            FaIcon(FontAwesomeIcons.seedling, color: const Color(0xFF34d399), size: 16),
-            const SizedBox(width: 8),
-            Text(
-              'Seleziona da Database',
-              style: TextStyle(
-                color: theme.colorScheme.onSurfaceVariant,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFF34d399).withValues(alpha: 0.3),
+        ),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<CoralSpecies>(
+          isExpanded: true,
+          hint: Row(
+            children: [
+              FaIcon(FontAwesomeIcons.magnifyingGlass, color: const Color(0xFF34d399), size: 20),
+              const SizedBox(width: 12),
+              Text(
+                'Seleziona dalla lista',
+                style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+            ],
           ),
-          child: _isLoadingDatabase
-              ? Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: const Color(0xFF34d399),
+          value: _selectedCoralSpecies,
+          dropdownColor: theme.colorScheme.surface,
+          icon: FaIcon(FontAwesomeIcons.caretDown, color: const Color(0xFF34d399)),
+          items: _coralDatabase.map((coral) {
+            // Funzione helper per ottenere il colore della difficoltà
+            Color getDifficultyColor(String difficulty) {
+              switch (difficulty.toLowerCase()) {
+                case 'facile':
+                  return const Color(0xFF34d399);
+                case 'medio':
+                  return const Color(0xFFfbbf24);
+                case 'difficile':
+                  return const Color(0xFFef4444);
+                default:
+                  return const Color(0xFF6b7280);
+              }
+            }
+            
+            return DropdownMenuItem<CoralSpecies>(
+              value: coral,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          coral.commonName,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Caricamento database...',
-                        style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
-                      ),
-                    ],
-                  ),
-                )
-              : DropdownButtonFormField<CoralSpecies>(
-                  initialValue: _selectedCoralSpecies,
-                  dropdownColor: theme.colorScheme.surfaceContainerHigh,
-                  menuMaxHeight: 300,
-                  decoration: InputDecoration(
-                    prefixIcon: FaIcon(FontAwesomeIcons.magnifyingGlass, color: const Color(0xFF34d399)),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    hintText: 'Cerca nel database...',
-                    hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
-                  ),
-                  items: _coralDatabase.map((coral) {
-                    return DropdownMenuItem<CoralSpecies>(
-                      value: coral,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              coral.commonName,
-                              style: TextStyle(
-                                color: theme.colorScheme.onSurface,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                        Text(
+                          coral.scientificName,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 11,
+                            fontStyle: FontStyle.italic,
                           ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: coral.difficultyColor.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              coral.difficultyLabel,
-                              style: TextStyle(
-                                color: coral.difficultyColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Badge difficoltà
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: getDifficultyColor(coral.difficulty),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      coral.difficultyLabel[0],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  }).toList(),
-                  onChanged: _onCoralSpeciesSelected,
-                  isExpanded: true,
-                  icon: FaIcon(FontAwesomeIcons.caretDown, color: theme.colorScheme.onSurfaceVariant),
-                ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+          onChanged: _onCoralSpeciesSelected,
         ),
-      ],
+      ),
     );
   }
 }

@@ -51,6 +51,23 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   Future<void> _saveSettings() async {
     await _prefsService.saveSettings(_settings);
     
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 12),
+              Text('Impostazioni salvate'),
+            ],
+          ),
+          backgroundColor: const Color(0xFF34d399),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      );
+    }
   }
 
   @override
@@ -171,7 +188,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
-            _saveSettings(); // Salva automaticamente quando cambi lo switch
           },
           onFrequencyChanged: (days) {
             setState(() {
@@ -181,7 +197,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
-            _saveSettings(); // Salva automaticamente quando cambi la frequenza
           },
         ),
         const SizedBox(height: 12),
@@ -200,7 +215,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
-            _saveSettings(); // Salva automaticamente quando cambi lo switch
           },
           onFrequencyChanged: (days) {
             setState(() {
@@ -210,7 +224,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
-            _saveSettings(); // Salva automaticamente quando cambi la frequenza
           },
         ),
         const SizedBox(height: 12),
@@ -229,7 +242,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
-            _saveSettings(); // Salva automaticamente quando cambi lo switch
           },
           onFrequencyChanged: (days) {
             setState(() {
@@ -239,7 +251,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
               );
             });
-            _saveSettings(); // Salva automaticamente quando cambi la frequenza
           },
         ),
         
@@ -840,9 +851,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               });
 
               Navigator.pop(context);
-              
-              // Salva persistenza
-              await _saveSettings();
              
             },
             style: ElevatedButton.styleFrom(
@@ -994,7 +1002,6 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         break;
     }
     _alertManager.updateSettings(_settings);
-    _saveSettings(); // Salva automaticamente quando si modifica lo switch
   }
 
   /// Mostra dialog di conferma per ripristino valori predefiniti

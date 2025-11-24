@@ -12,6 +12,7 @@ class FishSpecies {
   final String diet; // herbivore, carnivore, omnivore
   final String? imageUrl;
   final String? description;
+  final String? waterType; // Marino, Dolce, etc.
 
   FishSpecies({
     required this.id,
@@ -26,6 +27,7 @@ class FishSpecies {
     required this.diet,
     this.imageUrl,
     this.description,
+    this.waterType,
   });
 
   factory FishSpecies.fromJson(Map<String, dynamic> json) {
@@ -42,6 +44,7 @@ class FishSpecies {
       diet: json['diet'] ?? 'omnivore',
       imageUrl: json['imageUrl'] ?? json['image_url'],
       description: json['description'],
+      waterType: json['waterType'] ?? json['water_type'],
     );
   }
 
@@ -59,6 +62,7 @@ class FishSpecies {
       'diet': diet,
       'imageUrl': imageUrl,
       'description': description,
+      'waterType': waterType,
     };
   }
 

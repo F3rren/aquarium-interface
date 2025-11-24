@@ -9,12 +9,14 @@ class AddFishDialog extends StatefulWidget {
   final Fish? fish;
   final Function(Fish, String? speciesId) onSave;
   final Function(List<Fish>, String? speciesId)? onSaveMultiple;
+  final String? aquariumWaterType;
 
   const AddFishDialog({
     super.key,
     this.fish,
     required this.onSave,
     this.onSaveMultiple,
+    this.aquariumWaterType,
   });
 
   @override
@@ -47,7 +49,15 @@ class _AddFishDialogState extends State<AddFishDialog> {
   
   Future<void> _loadFishDatabase() async {
     try {
-      final fish = await _fishDbService.getAllFish();
+      List<FishSpecies> fish;
+      
+      // Se è specificato il tipo d'acqua dell'acquario, filtra i pesci compatibili
+      if (widget.aquariumWaterType != null && widget.aquariumWaterType!.isNotEmpty) {
+        fish = await _fishDbService.getFishByWaterType(widget.aquariumWaterType!);
+      } else {
+        fish = await _fishDbService.getAllFish();
+      }
+      
       setState(() {
         _availableFish = fish;
         _isLoadingDatabase = false;
@@ -109,11 +119,15 @@ class _AddFishDialogState extends State<AddFishDialog> {
   }
   
   Color _getDifficultyColor(String difficulty) {
-    switch (difficulty) {
-      case 'beginner': return const Color(0xFF34d399);
-      case 'intermediate': return const Color(0xFFfbbf24);
-      case 'expert': return const Color(0xFFef4444);
-      default: return const Color(0xFF6b7280);
+    switch (difficulty.toLowerCase()) {
+      case 'facile':
+        return const Color(0xFF34d399);
+      case 'intermedio':
+        return const Color(0xFFfbbf24);
+      case 'difficile':
+        return const Color(0xFFef4444);
+      default:
+        return const Color(0xFF6b7280);
     }
   }
 
@@ -253,37 +267,63 @@ class _AddFishDialogState extends State<AddFishDialog> {
               
               // Dropdown per selezionare dal database
               if (widget.fish == null && !_isLoadingDatabase) ...[
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<FishSpecies>(
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          FaIcon(FontAwesomeIcons.magnifyingGlass, color: theme.colorScheme.primary, size: 20),
-                          const SizedBox(width: 12),
-                          Text(
-                            'Seleziona dalla lista',
-                            style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
-                          ),
-                        ],
+                if (_availableFish.isEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.errorContainer,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: theme.colorScheme.error.withValues(alpha: 0.3),
                       ),
-                      value: _selectedFishSpecies,
-                      dropdownColor: theme.colorScheme.surface,
-                      icon: FaIcon(FontAwesomeIcons.caretDown, color: theme.colorScheme.primary),
-                      items: _availableFish.map((species) {
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(FontAwesomeIcons.circleExclamation, color: theme.colorScheme.error, size: 20),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            widget.aquariumWaterType != null
+                                ? 'Nessun pesce compatibile con acquario ${widget.aquariumWaterType}'
+                                : 'Nessun pesce disponibile nel database',
+                            style: TextStyle(color: theme.colorScheme.onErrorContainer),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<FishSpecies>(
+                        isExpanded: true,
+                        hint: Row(
+                          children: [
+                            FaIcon(FontAwesomeIcons.magnifyingGlass, color: theme.colorScheme.primary, size: 20),
+                            const SizedBox(width: 12),
+                            Text(
+                              'Seleziona dalla lista',
+                              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                            ),
+                          ],
+                        ),
+                        value: _selectedFishSpecies,
+                        dropdownColor: theme.colorScheme.surface,
+                        icon: FaIcon(FontAwesomeIcons.caretDown, color: theme.colorScheme.primary),
+                        items: _availableFish.map((species) {
                         return DropdownMenuItem<FishSpecies>(
                           value: species,
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,7 +371,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 Center(
                   child: Text(
                     'oppure inserisci manualmente',

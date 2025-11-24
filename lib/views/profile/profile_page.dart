@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/views/dashboard/calculators_page.dart';
 import 'package:acquariumfe/views/profile/inhabitants_page.dart';
 import 'package:acquariumfe/providers/theme_provider.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
-import 'package:provider/provider.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends ConsumerWidget {
   final int? aquariumId;
   
   const ProfilePage({super.key, this.aquariumId});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     
     return Scaffold(
@@ -85,7 +85,7 @@ class ProfilePage extends StatelessWidget {
           const SizedBox(height: 12),
           
           // THEME TOGGLE
-          _buildThemeToggle(context),
+          _buildThemeToggle(context, ref),
           
           const SizedBox(height: 12),
           
@@ -104,8 +104,8 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildThemeToggle(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+  Widget _buildThemeToggle(BuildContext context, WidgetRef ref) {
+    final isDarkMode = ref.watch(appThemeModeProvider);
     final theme = Theme.of(context);
     
     return Container(
@@ -124,7 +124,7 @@ class ProfilePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              themeProvider.isDarkMode ? FontAwesomeIcons.moon : FontAwesomeIcons.sun,
+              isDarkMode ? FontAwesomeIcons.moon : FontAwesomeIcons.sun,
               color: const Color(0xFFfbbf24),
               size: 24,
             ),
@@ -140,15 +140,15 @@ class ProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  themeProvider.isDarkMode ? 'Modalità scura' : 'Modalità chiara',
+                  isDarkMode ? 'Modalità scura' : 'Modalità chiara',
                   style: theme.textTheme.bodySmall,
                 ),
               ],
             ),
           ),
           Switch(
-            value: themeProvider.isDarkMode,
-            onChanged: (_) => themeProvider.toggleTheme(),
+            value: isDarkMode,
+            onChanged: (_) => ref.read(appThemeModeProvider.notifier).toggle(),
             activeThumbColor: theme.colorScheme.primary,
           ),
         ],
@@ -221,7 +221,7 @@ class ProfilePage extends StatelessWidget {
           children: [
             FaIcon(FontAwesomeIcons.circleInfo, color: theme.colorScheme.primary, size: 28),
             const SizedBox(width: 12),
-            Text('AcquariumFE', style: theme.textTheme.headlineSmall),
+            Text('ReefLife', style: theme.textTheme.headlineSmall),
           ],
         ),
         content: Column(
@@ -230,9 +230,9 @@ class ProfilePage extends StatelessWidget {
           children: [
             Text('Versione: 1.0.0', style: theme.textTheme.bodyMedium),
             const SizedBox(height: 8),
-            Text('Sistema di monitoraggio acquario marino', style: theme.textTheme.bodySmall),
+            Text('Gestione intelligente del tuo acquario', style: theme.textTheme.bodySmall),
             const SizedBox(height: 16),
-            Text('Sviluppato con Flutter', style: theme.textTheme.bodySmall),
+            Text('Sviluppato con Flutter & Riverpod', style: theme.textTheme.bodySmall),
           ],
         ),
         actions: [
