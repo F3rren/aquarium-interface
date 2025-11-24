@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/fish.dart';
 import '../../models/coral.dart';
 import '../../services/inhabitants_service.dart';
-import '../../services/aquarium_service.dart';
 import '../../widgets/components/skeleton_loader.dart';
 import '../../widgets/animated_number.dart';
+import '../../providers/aquarium_providers.dart';
 import 'add_fish_dialog.dart';
 import 'add_coral_dialog.dart';
 
-class InhabitantsPage extends StatefulWidget {
+class InhabitantsPage extends ConsumerStatefulWidget {
   final int? aquariumId;
   
   const InhabitantsPage({super.key, this.aquariumId});
 
   @override
-  State<InhabitantsPage> createState() => _InhabitantsPageState();
+  ConsumerState<InhabitantsPage> createState() => _InhabitantsPageState();
 }
 
-class _InhabitantsPageState extends State<InhabitantsPage> with TickerProviderStateMixin {
+class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerProviderStateMixin {
   late TabController _tabController;
   final InhabitantsService _service = InhabitantsService();
-  final AquariumsService _aquariumService = AquariumsService();
   
   List<Fish> _fishList = [];
   List<Coral> _coralsList = [];
@@ -52,10 +52,22 @@ class _InhabitantsPageState extends State<InhabitantsPage> with TickerProviderSt
     String? previousWaterType = _aquariumWaterType;
     if (widget.aquariumId != null) {
       try {
-        final aquarium = await _aquariumService.getAquariumById(widget.aquariumId!);
-        if (aquarium != null) {
-          _aquariumWaterType = aquarium.type;
-        }
+        // Usa il provider invece del servizio diretto
+        final aquariumsAsync = ref.read(aquariumsProvider);
+        await aquariumsAsync.when(
+          data: (aquariumsWithParams) {
+            final aquarium = aquariumsWithParams
+                .firstWhere((a) => a.aquarium.id == widget.aquariumId)
+                .aquarium;
+            _aquariumWaterType = aquarium.type;
+          },
+          loading: () {
+            _aquariumWaterType = 'Marino'; // Default durante caricamento
+          },
+          error: (_, __) {
+            _aquariumWaterType = 'Marino'; // Default in caso di errore
+          },
+        );
       } catch (e) {
         // Se fallisce, continua senza waterType (default marino)
         _aquariumWaterType = 'Marino';

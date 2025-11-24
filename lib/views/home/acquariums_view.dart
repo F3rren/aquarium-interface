@@ -1,56 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/widgets/animated_value.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
-import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
-import 'package:acquariumfe/services/aquarium_service.dart';
+import 'package:acquariumfe/widgets/skeleton_loader.dart';
+import 'package:acquariumfe/widgets/empty_state.dart';
 import 'package:acquariumfe/services/parameter_service.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
-import 'package:acquariumfe/models/aquarium.dart';
-import 'package:acquariumfe/models/aquarium_parameters.dart';
+import 'package:acquariumfe/providers/aquarium_providers.dart';
 
-// Classe helper per combinare acquario + parametri
-class AquariumWithParams {
-  final Aquarium aquarium;
-  final AquariumParameters? parameters;
-  final DateTime? lastUpdate;
-  
-  AquariumWithParams({
-    required this.aquarium,
-    this.parameters,
-    this.lastUpdate,
-  });
-  
-  bool get hasAlert {
-    if (parameters == null) return false;
-    
-    // Verifica parametri fuori range (valori tipici per acquario marino)
-    final tempOk = parameters!.temperature >= 24.0 && parameters!.temperature <= 27.0;
-    final phOk = parameters!.ph >= 7.8 && parameters!.ph <= 8.5;
-    final salinityOk = parameters!.salinity >= 1.023 && parameters!.salinity <= 1.026;
-    
-    return !tempOk || !phOk || !salinityOk;
-  }
-}
-
-class AquariumView extends StatefulWidget {
+class AquariumView extends ConsumerStatefulWidget {
   const AquariumView({super.key});
 
   @override
-  State<AquariumView> createState() => _AquariumViewState();
+  ConsumerState<AquariumView> createState() => _AquariumViewState();
 }
 
-class _AquariumViewState extends State<AquariumView> with SingleTickerProviderStateMixin {
-  final AquariumsService _aquariumsService = AquariumsService();
-  final ParameterService _parameterService = ParameterService();
-  
+class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  
-  bool _isLoading = true;
-  List<AquariumWithParams> _aquariumsWithParams = [];
 
   @override
   void initState() {
@@ -76,79 +46,6 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
         curve: const Interval(0.0, 0.8, curve: Curves.easeOutCubic),
       ),
     );
-
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    setState(() => _isLoading = true);
-    
-    try {
-      final aquariums = await _aquariumsService.getAquariums();
-      
-      // Carica parametri per ogni acquario
-      final aquariumsWithParams = <AquariumWithParams>[];
-      for (final aquarium in aquariums) {
-        AquariumParameters? params;
-        DateTime? lastUpdate;
-        
-        try {
-          // Disabilita alert automatici durante il caricamento iniziale
-          _parameterService.setAutoCheckAlerts(false);
-          params = await _parameterService.getCurrentParameters(
-            id: aquarium.id,
-            useMock: false,
-          );
-          lastUpdate = DateTime.now();
-        } catch (e) {
-          // Se fallisce, parametri rimangono null
-        }
-        
-        aquariumsWithParams.add(AquariumWithParams(
-          aquarium: aquarium,
-          parameters: params,
-          lastUpdate: lastUpdate,
-        ));
-      }
-      
-      if (mounted) {
-        setState(() {
-          _aquariumsWithParams = aquariumsWithParams;
-          _isLoading = false;
-        });
-        
-        // Imposta la prima vasca come corrente se ce ne sono
-        if (aquariumsWithParams.isNotEmpty && aquariumsWithParams.first.aquarium.id != null) {
-          ParameterService().setCurrentAquarium(aquariumsWithParams.first.aquarium.id!);
-          TargetParametersService().setCurrentAquarium(aquariumsWithParams.first.aquarium.id!);
-        }
-        
-        // Riabilita alert automatici
-        _parameterService.setAutoCheckAlerts(true);
-        
-        _controller.forward();
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const FaIcon(FontAwesomeIcons.circleExclamation, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text('Errore nel caricamento delle vasche: $e'),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
-      }
-    }
   }
 
   @override
@@ -160,72 +57,86 @@ class _AquariumViewState extends State<AquariumView> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final aquariumsAsync = ref.watch(aquariumsProvider);
     
     return RefreshIndicator(
-      onRefresh: _loadData,
+      onRefresh: () => ref.read(aquariumsProvider.notifier).refresh(),
       color: theme.colorScheme.primary,
       backgroundColor: theme.colorScheme.surface,
-      child: _isLoading
-          ? ListView(
-              padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
-              children: List.generate(3, (index) => const AquariumCardSkeleton()),
-            )
-          : _aquariumsWithParams.isEmpty
-              ? _buildEmptyState(theme)
-              : ListView.builder(
-                  padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
-                  itemCount: _aquariumsWithParams.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: FadeTransition(
-                        opacity: _fadeAnimation,
-                        child: SlideTransition(
-                          position: _slideAnimation,
-                          child: _buildAquariumCard(context, _aquariumsWithParams[index]),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-    );
-  }
-
-  Widget _buildEmptyState(ThemeData theme) {
-    return ListView(
-      padding: const EdgeInsets.all(40),
-      children: [
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                FontAwesomeIcons.droplet,
-                size: 80,
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Nessuna vasca trovata',
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Aggiungi la tua prima vasca per iniziare',
-                style: TextStyle(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontSize: 14,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+      child: aquariumsAsync.when(
+        loading: () => ListView(
+          padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
+          children: List.generate(3, (index) => const AquariumCardSkeleton()),
         ),
-      ],
+        error: (error, stack) => ListView(
+          padding: const EdgeInsets.only(top: 20),
+          children: [
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const FaIcon(
+                    FontAwesomeIcons.circleExclamation,
+                    size: 48,
+                    color: Colors.red,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Errore nel caricamento',
+                    style: theme.textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    error.toString(),
+                    style: theme.textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => ref.read(aquariumsProvider.notifier).refresh(),
+                    icon: const FaIcon(FontAwesomeIcons.arrowsRotate, size: 16),
+                    label: const Text('Riprova'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        data: (aquariumsWithParams) {
+          // Imposta prima vasca come corrente
+          if (aquariumsWithParams.isNotEmpty && 
+              aquariumsWithParams.first.aquarium.id != null) {
+            ParameterService().setCurrentAquarium(aquariumsWithParams.first.aquarium.id!);
+            TargetParametersService().setCurrentAquarium(aquariumsWithParams.first.aquarium.id!);
+            
+            // Avvia animazioni se non già partite
+            if (_controller.status == AnimationStatus.dismissed) {
+              _controller.forward();
+            }
+          }
+          
+          if (aquariumsWithParams.isEmpty) {
+            return const NoAquariumsEmptyState();
+          }
+          
+          return ListView.builder(
+            padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
+            itemCount: aquariumsWithParams.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: SlideTransition(
+                    position: _slideAnimation,
+                    child: _buildAquariumCard(context, aquariumsWithParams[index]),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 

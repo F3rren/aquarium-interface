@@ -1,103 +1,109 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
-import 'package:acquariumfe/services/parameter_service.dart';
 import 'package:acquariumfe/services/notification_preferences_service.dart';
-import 'package:acquariumfe/models/aquarium_parameters.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
+import 'package:acquariumfe/providers/parameters_provider.dart';
 
-class HealthDashboard extends StatefulWidget {
+class HealthDashboard extends ConsumerStatefulWidget {
   const HealthDashboard({super.key});
 
   @override
-  State<HealthDashboard> createState() => _HealthDashboardState();
+  ConsumerState<HealthDashboard> createState() => _HealthDashboardState();
 }
 
-class _HealthDashboardState extends State<HealthDashboard> {
+class _HealthDashboardState extends ConsumerState<HealthDashboard> {
   final AlertManager _alertManager = AlertManager();
-  final ParameterService _parameterService = ParameterService();
   final NotificationPreferencesService _prefsService = NotificationPreferencesService();
-  Timer? _refreshTimer;
-  AquariumParameters? _currentParams;
   NotificationSettings _settings = NotificationSettings();
   
   @override
   void initState() {
     super.initState();
-    _loadParameters();
     _loadSettings();
-    // Avvia auto-refresh se non già attivo
-    if (!_parameterService.isAutoRefreshEnabled) {
-      _parameterService.startAutoRefresh(interval: const Duration(seconds: 10));
-    }
-    // Auto-refresh UI ogni 3 secondi
-    _refreshTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-      _loadParameters();
-    });
-  }
-
-  @override
-  void dispose() {
-    _refreshTimer?.cancel();
-    super.dispose();
-  }
-
-  Future<void> _loadParameters() async {
-    final params = await _parameterService.getCurrentParameters(useMock: false);
-    setState(() {
-      _currentParams = params;
-    });
   }
   
   Future<void> _loadSettings() async {
     final settings = await _prefsService.loadSettings();
-    setState(() {
-      _settings = settings;
-    });
+    if (mounted) {
+      setState(() {
+        _settings = settings;
+      });
+    }
   }
   
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // Usa dati di fallback se non ancora caricati
-    final currentTemperature = _currentParams?.temperature ?? 25.0;
-    final currentPh = _currentParams?.ph ?? 8.2;
-    final currentSalinity = _currentParams?.salinity ?? 1024.0;
-    final currentOrp = _currentParams?.orp ?? 350.0;
-    final calcium = _currentParams?.calcium ?? 420.0;
-    final magnesium = _currentParams?.magnesium ?? 1280.0;
-    final kh = _currentParams?.kh ?? 9.0;
-    final nitrate = _currentParams?.nitrate ?? 5.0;
-    final phosphate = _currentParams?.phosphate ?? 0.03;
+    final parametersAsync = ref.watch(currentParametersProvider);
     
-    final alerts = _alertManager.getAlertHistory();
-    final recentAlerts = alerts.take(3).toList();
-    
-    // Usa impostazioni di default per i range
-    final settings = NotificationSettings();
-    int parametersInRange = 0;
-    int totalParameters = 9;
-    
-    if (!settings.temperature.isOutOfRange(currentTemperature)) parametersInRange++;
-    if (!settings.ph.isOutOfRange(currentPh)) parametersInRange++;
-    if (!settings.salinity.isOutOfRange(currentSalinity)) parametersInRange++;
-    if (!settings.orp.isOutOfRange(currentOrp)) parametersInRange++;
-    if (!settings.calcium.isOutOfRange(calcium)) parametersInRange++;
-    if (!settings.magnesium.isOutOfRange(magnesium)) parametersInRange++;
-    if (!settings.kh.isOutOfRange(kh)) parametersInRange++;
-    if (!settings.nitrate.isOutOfRange(nitrate)) parametersInRange++;
-    if (!settings.phosphate.isOutOfRange(phosphate)) parametersInRange++;
-    
-    final healthScore = ((parametersInRange / totalParameters) * 100).round();
-    final statusMessage = healthScore >= 80 ? "TUTTO OK" : healthScore >= 60 ? "ATTENZIONE" : "CRITICO";
-    final statusColor = healthScore >= 80 ? const Color(0xFF34d399) : healthScore >= 60 ? const Color(0xFFfbbf24) : const Color(0xFFef4444);
+    return parametersAsync.when(
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      error: (error, stack) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const FaIcon(
+              FontAwesomeIcons.circleExclamation,
+              size: 48,
+              color: Colors.red,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Errore nel caricamento parametri',
+              style: theme.textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton.icon(
+              onPressed: () => ref.read(currentParametersProvider.notifier).refresh(),
+              icon: const FaIcon(FontAwesomeIcons.arrowsRotate, size: 16),
+              label: const Text('Riprova'),
+            ),
+          ],
+        ),
+      ),
+      data: (currentParams) {
+        // Usa dati di fallback se non ancora caricati
+        final currentTemperature = currentParams?.temperature ?? 25.0;
+        final currentPh = currentParams?.ph ?? 8.2;
+        final currentSalinity = currentParams?.salinity ?? 1024.0;
+        final currentOrp = currentParams?.orp ?? 350.0;
+        final calcium = currentParams?.calcium ?? 420.0;
+        final magnesium = currentParams?.magnesium ?? 1280.0;
+        final kh = currentParams?.kh ?? 9.0;
+        final nitrate = currentParams?.nitrate ?? 5.0;
+        final phosphate = currentParams?.phosphate ?? 0.03;
+        
+        final alerts = _alertManager.getAlertHistory();
+        final recentAlerts = alerts.take(3).toList();
+        
+        // Usa impostazioni di default per i range
+        final settings = NotificationSettings();
+        int parametersInRange = 0;
+        int totalParameters = 9;
+        
+        if (!settings.temperature.isOutOfRange(currentTemperature)) parametersInRange++;
+        if (!settings.ph.isOutOfRange(currentPh)) parametersInRange++;
+        if (!settings.salinity.isOutOfRange(currentSalinity)) parametersInRange++;
+        if (!settings.orp.isOutOfRange(currentOrp)) parametersInRange++;
+        if (!settings.calcium.isOutOfRange(calcium)) parametersInRange++;
+        if (!settings.magnesium.isOutOfRange(magnesium)) parametersInRange++;
+        if (!settings.kh.isOutOfRange(kh)) parametersInRange++;
+        if (!settings.nitrate.isOutOfRange(nitrate)) parametersInRange++;
+        if (!settings.phosphate.isOutOfRange(phosphate)) parametersInRange++;
+        
+        final healthScore = ((parametersInRange / totalParameters) * 100).round();
+        final statusMessage = healthScore >= 80 ? "TUTTO OK" : healthScore >= 60 ? "ATTENZIONE" : "CRITICO";
+        final statusColor = healthScore >= 80 ? const Color(0xFF34d399) : healthScore >= 60 ? const Color(0xFFfbbf24) : const Color(0xFFef4444);
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
           // Hero Card - Check Status
           Container(
             padding: const EdgeInsets.all(24),
@@ -174,7 +180,10 @@ class _HealthDashboardState extends State<HealthDashboard> {
         ],
       ),
     );
+      },
+    );
   }
+
 
   Widget _buildParamCard(String label, String value, IconData icon, Color color, bool isOutOfRange) {
     final theme = Theme.of(context);

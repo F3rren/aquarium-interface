@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:acquariumfe/services/aquarium_service.dart';
 import 'package:acquariumfe/models/aquarium.dart';
+import 'package:acquariumfe/providers/aquarium_providers.dart';
 
-class EditAquarium extends StatefulWidget {
+class EditAquarium extends ConsumerStatefulWidget {
   const EditAquarium({super.key});
 
   @override
-  State<EditAquarium> createState() => _EditAquariumState();
+  ConsumerState<EditAquarium> createState() => _EditAquariumState();
 }
 
-class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderStateMixin {
+class _EditAquariumState extends ConsumerState<EditAquarium> with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _volumeController = TextEditingController();
-  final AquariumsService _aquariumsService = AquariumsService();
   
   String _selectedType = 'Marino';
   List<Aquarium> _aquariums = [];
@@ -58,33 +58,31 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
   Future<void> _loadAquariums() async {
     setState(() => _isLoading = true);
     
-    try {
-      final aquariums = await _aquariumsService.getAquariums();
-      setState(() {
-        _aquariums = aquariums;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const FaIcon(FontAwesomeIcons.circleExclamation, color: Colors.white),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text('Errore nel caricamento delle vasche: $e'),
-                ),
-              ],
+    final aquariumsAsync = ref.read(aquariumsProvider);
+    
+    aquariumsAsync.when(
+      data: (aquariumsWithParams) {
+        final aquariums = aquariumsWithParams.map((a) => a.aquarium).toList();
+        setState(() {
+          _aquariums = aquariums;
+          _isLoading = false;
+        });
+      },
+      loading: () {
+        setState(() => _isLoading = true);
+      },
+      error: (error, stack) {
+        setState(() => _isLoading = false);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Errore nel caricamento: $error'),
+              backgroundColor: Colors.red,
             ),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
-      }
-    }
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -117,8 +115,8 @@ class _EditAquariumState extends State<EditAquarium> with SingleTickerProviderSt
           type: _selectedType,
         );
 
-        // Chiama il servizio per aggiornare la vasca
-        await _aquariumsService.updateAquarium(
+        // Chiama il provider per aggiornare la vasca
+        await ref.read(aquariumsProvider.notifier).updateAquarium(
           _selectedAquarium!.id!,
           updatedAquarium,
         );
