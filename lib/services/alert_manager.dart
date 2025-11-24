@@ -34,12 +34,14 @@ class AlertManager {
     required String unit,
     required ParameterThresholds thresholds,
   }) async {
-    if (!_settings.enabledAlerts || !thresholds.enabled) return;
+    if (!_settings.enabledAlerts || !thresholds.enabled) {
+      return;
+    }
 
     if (thresholds.isOutOfRange(value)) {
       // Parametro fuori range
       
-      // Controlla se Ã¨ giÃ  in stato di allarme
+      // Controlla se è già in stato di allarme
       final isAlreadyInAlert = _parameterInAlertState[name] ?? false;
       
       if (!isAlreadyInAlert) {
@@ -70,10 +72,10 @@ class AlertManager {
           severity: _calculateSeverity(value, thresholds),
         ));
       }
-      // Se Ã¨ giÃ  in allarme, non fare nulla (non inviare notifica duplicata)
+      // Se è già in allarme, non fare nulla (non inviare notifica duplicata)
     } else {
       // Parametro rientrato nella norma: resetta lo stato di allarme
-      // cosÃ¬ se torna fuori range, invierÃ  una nuova notifica
+      // così se torna fuori range, invierà una nuova notifica
       _parameterInAlertState[name] = false;
     }
   }
@@ -91,6 +93,11 @@ class AlertManager {
     if (percentDeviation > 10) return AlertSeverity.high;
     if (percentDeviation > 5) return AlertSeverity.medium;
     return AlertSeverity.low;
+  }
+
+  /// Resetta tutti gli stati di allarme (utile per il debug o reset manuale)
+  void resetAllAlertStates() {
+    _parameterInAlertState.clear();
   }
 
   /// Verifica tutti i parametri dell'acquario
