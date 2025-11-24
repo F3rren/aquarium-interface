@@ -39,14 +39,14 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
     final theme = Theme.of(context);
     
     return AppBar(
-      title: const Text(
-        'Aquarium App',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 1.2,
-        ),
-      ),
+      // title: const Text(
+      //   'Aquarium App',
+      //   style: TextStyle(
+      //     fontSize: 18,
+      //     fontWeight: FontWeight.w500,
+      //     letterSpacing: 1.2,
+      //   ),
+      // ),
       backgroundColor: theme.appBarTheme.backgroundColor,
       foregroundColor: theme.appBarTheme.foregroundColor,
       elevation: 0,

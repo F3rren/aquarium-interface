@@ -61,7 +61,7 @@ class _ExampleErrorHandlingState extends State<ExampleErrorHandling> {
         _successMessage = 'Parametri caricati: Temp ${parameters.temperature}°C';
         _isLoading = false;
       });
-    } on NoAquariumSelectedException catch (e) {
+    } on NoAquariumSelectedException {
       // Nessun acquario selezionato - naviga alla selezione acquario
       if (mounted) {
         Navigator.pushNamed(context, '/aquariums');
@@ -79,7 +79,7 @@ class _ExampleErrorHandlingState extends State<ExampleErrorHandling> {
         _errorMessage = '⏱️ ${e.userMessage}';
         _isLoading = false;
       });
-    } on AuthException catch (e) {
+    } on AuthException {
       // Autenticazione fallita - redirect al login
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/login');
@@ -113,8 +113,6 @@ class _ExampleErrorHandlingState extends State<ExampleErrorHandling> {
         _errorMessage = 'Si è verificato un errore imprevisto';
         _isLoading = false;
       });
-      // In produzione, logga questo errore a un servizio di analytics
-      print('Unexpected error: $e');
     }
   }
 
@@ -131,7 +129,7 @@ class _ExampleErrorHandlingState extends State<ExampleErrorHandling> {
 
     while (attempts < maxAttempts) {
       try {
-        final parameters = await _parameterService.getCurrentParameters();
+        await _parameterService.getCurrentParameters();
         
         setState(() {
           _successMessage = 'Parametri caricati al tentativo ${attempts + 1}';
