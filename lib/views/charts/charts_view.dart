@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:acquariumfe/services/chart_data_service.dart';
 import 'package:acquariumfe/models/parameter_data_point.dart';
+import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 
 class ChartsView extends StatefulWidget {
   const ChartsView({super.key});
@@ -71,8 +72,11 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final padding = ResponsiveBreakpoints.horizontalPadding(screenWidth);
+    
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(padding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

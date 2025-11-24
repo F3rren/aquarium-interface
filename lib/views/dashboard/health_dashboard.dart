@@ -5,6 +5,8 @@ import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/notification_preferences_service.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/providers/parameters_provider.dart';
+import 'package:acquariumfe/widgets/responsive_builder.dart';
+import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 
 class HealthDashboard extends ConsumerStatefulWidget {
   const HealthDashboard({super.key});
@@ -99,68 +101,72 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         final statusMessage = healthScore >= 80 ? "TUTTO OK" : healthScore >= 60 ? "ATTENZIONE" : "CRITICO";
         final statusColor = healthScore >= 80 ? const Color(0xFF34d399) : healthScore >= 60 ? const Color(0xFFfbbf24) : const Color(0xFFef4444);
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-          // Hero Card - Check Status
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [statusColor.withValues(alpha:0.3), theme.colorScheme.surface]),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: statusColor.withValues(alpha:0.5)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    'Stato Acquario',
-                    style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 12),
-                  ),
+        return ResponsiveBuilder(
+          builder: (context, info) {
+            final screenWidth = MediaQuery.of(context).size.width;
+            final padding = ResponsiveBreakpoints.horizontalPadding(screenWidth);
+            
+            return SingleChildScrollView(
+              padding: EdgeInsets.all(padding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+              // Hero Card - Check Status
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [statusColor.withValues(alpha:0.3), theme.colorScheme.surface]),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: statusColor.withValues(alpha:0.5)),
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  statusMessage,
-                  style: TextStyle(color: statusColor, fontSize: 48, fontWeight: FontWeight.bold),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Stato Acquario',
+                        style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      statusMessage,
+                      style: TextStyle(color: statusColor, fontSize: 48, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Aggiornato ora • $parametersInRange/$totalParameters parametri OK',
+                      style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  'Aggiornato ora • $parametersInRange/$totalParameters parametri OK',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // Parametri principali
-          Row(
-            children: [
-              Expanded(child: _buildParamCard('Temperatura', '$currentTemperature °C', FontAwesomeIcons.temperatureHalf, 
-                const Color(0xFFef4444), settings.temperature.isOutOfRange(currentTemperature))),
-              const SizedBox(width: 12),
-              Expanded(child: _buildParamCard('pH', currentPh.toString(), FontAwesomeIcons.flask, 
-                const Color(0xFF60a5fa), settings.ph.isOutOfRange(currentPh))),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(child: _buildParamCard('Salinità', '${currentSalinity.toInt()} PPT', FontAwesomeIcons.water, 
-                const Color(0xFF2dd4bf), settings.salinity.isOutOfRange(currentSalinity))),
-              const SizedBox(width: 12),
-              Expanded(child: _buildParamCard('ORP', '${currentOrp.toInt()} mV', FontAwesomeIcons.bolt, 
-                const Color(0xFFfbbf24), settings.orp.isOutOfRange(currentOrp))),
-            ],
-          ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Parametri principali - Grid responsive
+              GridView.count(
+                crossAxisCount: info.value(mobile: 2, tablet: 4, desktop: 4),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisSpacing: 19,
+                mainAxisSpacing: 12,
+                childAspectRatio: info.value(mobile: 1.8, tablet: 1.8, desktop: 2.0),
+                children: [
+                  _buildParamCard('Temperatura', '$currentTemperature °C', FontAwesomeIcons.temperatureHalf, 
+                    const Color(0xFFef4444), settings.temperature.isOutOfRange(currentTemperature)),
+                  _buildParamCard('pH', currentPh.toString(), FontAwesomeIcons.flask, 
+                    const Color(0xFF60a5fa), settings.ph.isOutOfRange(currentPh)),
+                  _buildParamCard('Salinità', '${currentSalinity.toInt()} PPT', FontAwesomeIcons.water, 
+                    const Color(0xFF2dd4bf), settings.salinity.isOutOfRange(currentSalinity)),
+                  _buildParamCard('ORP', '${currentOrp.toInt()} mV', FontAwesomeIcons.bolt, 
+                    const Color(0xFFfbbf24), settings.orp.isOutOfRange(currentOrp)),
+                ],
+              ),
           
           const SizedBox(height: 20),
           _buildHealthScore(healthScore, parametersInRange, totalParameters),
@@ -173,13 +179,15 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
             _buildCriticalAlerts(recentAlerts),
           ],
           
-          const SizedBox(height: 24),
-          _buildMaintenanceReminders(),
-          const SizedBox(height: 24),
-          _buildRecommendations(healthScore, parametersInRange),
-        ],
-      ),
-    );
+              const SizedBox(height: 24),
+              _buildMaintenanceReminders(),
+              const SizedBox(height: 24),
+              _buildRecommendations(healthScore, parametersInRange),
+            ],
+          ),
+        );
+          },
+        );
       },
     );
   }

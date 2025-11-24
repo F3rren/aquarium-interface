@@ -8,6 +8,7 @@ import 'package:acquariumfe/services/maintenance_task_service.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:acquariumfe/utils/retry_policy.dart';
+import 'package:logger/logger.dart';
 
 /// Service per gestire i parametri dell'acquario tramite API
 class ParameterService {
@@ -18,6 +19,7 @@ class ParameterService {
 
   final ApiService _apiService = ApiService();
   final AlertManager _alertManager = AlertManager();
+  final Logger _logger = Logger();
   final ManualParametersService _manualService = ManualParametersService();
   final NotificationSettingsService _notificationService = NotificationSettingsService();
   final MaintenanceTaskService _maintenanceService = MaintenanceTaskService();
@@ -253,10 +255,10 @@ class ParameterService {
       
     } on AppException catch (e) {
       // Log dell'errore per debug (in produzione potresti usare un logger)
-      print('Errore recupero storico parametri: ${e.toString()}');
+      _logger.e('Errore recupero storico parametri', error: e);
       return [];
     } catch (e) {
-      print('Errore imprevisto in getParametersHistory: $e');
+      _logger.e('Errore imprevisto in getParametersHistory', error: e);
       return [];
     }
   }
@@ -319,10 +321,10 @@ class ParameterService {
       
       return [];
     } on AppException catch (e) {
-      print('Errore recupero storico per grafico: ${e.toString()}');
+      _logger.e('Errore recupero storico per grafico', error: e);
       return [];
     } catch (e) {
-      print('Errore imprevisto in getParameterHistoryForChart: $e');
+      _logger.e('Errore imprevisto in getParameterHistoryForChart', error: e);
       return [];
     }
   }

@@ -2,6 +2,7 @@ import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:acquariumfe/services/maintenance_task_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 
 class MaintenanceView extends StatefulWidget {
   final int? aquariumId;
@@ -63,6 +64,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final padding = ResponsiveBreakpoints.horizontalPadding(screenWidth);
     
     return Scaffold(
       body: _isLoading
@@ -71,10 +74,10 @@ class _MaintenanceViewState extends State<MaintenanceView> {
               onRefresh: _loadTasks,
               child: SingleChildScrollView(
                 padding: EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 20,
-                  bottom: 20 + bottomPadding + 80,
+                  left: padding,
+                  right: padding,
+                  top: padding,
+                  bottom: padding + bottomPadding + 80,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,13 +309,13 @@ class _MaintenanceViewState extends State<MaintenanceView> {
               FaIcon(
                 _showCompleted ? FontAwesomeIcons.circleCheck : FontAwesomeIcons.clipboardCheck,
                 size: 48,
-                color: theme.colorScheme.onSurface.withOpacity(0.3),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               const SizedBox(height: 16),
               Text(
                 _showCompleted ? 'Nessun task completato' : 'Nessun task in corso',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -363,7 +366,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: _getCategoryColor(task.category).withOpacity(0.1),
+                      color: _getCategoryColor(task.category).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: FaIcon(
@@ -425,7 +428,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.1),
+                        color: statusColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -440,7 +443,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getPriorityColor(task.priority!).withOpacity(0.1),
+                        color: _getPriorityColor(task.priority!).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -574,6 +577,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                       lastDate: DateTime.now().add(const Duration(days: 365)),
                     );
                     if (date != null) {
+                      if (!context.mounted) return;
                       final time = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay.fromDateTime(selectedDueDate ?? DateTime.now()),
@@ -745,6 +749,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                       lastDate: DateTime.now().add(const Duration(days: 365)),
                     );
                     if (date != null) {
+                      if (!context.mounted) return;
                       final time = await showTimePicker(
                         context: context,
                         initialTime: TimeOfDay.fromDateTime(selectedDueDate ?? DateTime.now()),
@@ -881,7 +886,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: _getCategoryColor(task.category).withOpacity(0.1),
+                    color: _getCategoryColor(task.category).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: FaIcon(
