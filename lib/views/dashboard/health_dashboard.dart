@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -19,15 +20,33 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
   final AlertManager _alertManager = AlertManager();
   final NotificationPreferencesService _prefsService = NotificationPreferencesService();
   NotificationSettings _settings = NotificationSettings();
+  Timer? _refreshTimer;
   
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    _startAutoRefresh();
+  }
+  
+  void _startAutoRefresh() {
+    // Polling ogni 5 secondi per aggiornare i parametri in tempo reale
+    _refreshTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (mounted) {
+        ref.invalidate(currentParametersProvider);
+      }
+    });
+  }
+  
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
   }
   
   Future<void> _loadSettings() async {
     final settings = await _prefsService.loadSettings();
+    _alertManager.updateSettings(settings);
     if (mounted) {
       setState(() {
         _settings = settings;
