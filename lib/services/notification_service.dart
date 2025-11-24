@@ -69,6 +69,10 @@ class NotificationService {
     String? payload,
     NotificationPriority priority = NotificationPriority.high,
   }) async {
+    if (!_isInitialized) {
+      return;
+    }
+    
     const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       'aquarium_alerts',
       'Acquario Alerts',

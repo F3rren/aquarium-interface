@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/manual_parameters_service.dart';
+import 'package:acquariumfe/providers/parameters_provider.dart';
 
-class ManualParametersWidget extends StatefulWidget {
+class ManualParametersWidget extends ConsumerStatefulWidget {
   const ManualParametersWidget({super.key});
 
   @override
-  State<ManualParametersWidget> createState() => _ManualParametersWidgetState();
+  ConsumerState<ManualParametersWidget> createState() => _ManualParametersWidgetState();
 }
 
-class _ManualParametersWidgetState extends State<ManualParametersWidget> {
+class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget> {
   final ManualParametersService _manualService = ManualParametersService();
   
   double calcium = 420.0;
@@ -66,6 +68,11 @@ class _ManualParametersWidgetState extends State<ManualParametersWidget> {
     if (key.isNotEmpty) {
       await _manualService.updateParameter(key, value);
       await _loadParameters(); // Ricarica per aggiornare lastUpdate
+      
+      // IMPORTANTE: Invalida cache e provider per aggiornare in tempo reale
+      if (mounted) {
+        ref.invalidate(currentParametersProvider);
+      }
     }
   }
 

@@ -20,16 +20,13 @@ class CurrentParameters extends _$CurrentParameters {
     final parameterService = ref.watch(parameterServiceProvider);
     
     try {
-      // Disabilita alert durante il caricamento
-      parameterService.setAutoCheckAlerts(false);
+      // IMPORTANTE: Abilita alert per le notifiche in tempo reale
+      parameterService.setAutoCheckAlerts(true);
       
       final parameters = await parameterService.getCurrentParameters(
         id: currentAquariumId,
         useMock: false,
       );
-      
-      // Riabilita alert
-      parameterService.setAutoCheckAlerts(true);
       
       return parameters;
     } catch (e) {
@@ -49,6 +46,9 @@ class CurrentParameters extends _$CurrentParameters {
       }
       
       final parameterService = ref.read(parameterServiceProvider);
+      
+      // IMPORTANTE: Abilita check alert per notifiche in tempo reale
+      parameterService.setAutoCheckAlerts(true);
       
       return await parameterService.getCurrentParameters(
         id: currentAquariumId,
