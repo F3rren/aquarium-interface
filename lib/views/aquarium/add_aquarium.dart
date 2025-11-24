@@ -1,6 +1,6 @@
 import 'package:acquariumfe/models/aquarium.dart';
-import 'package:acquariumfe/services/api_service.dart';
 import 'package:acquariumfe/services/aquarium_service.dart';
+import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -102,30 +102,18 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
           );
           Navigator.pop(context, true); // Ritorna true per indicare il successo
         }
-      } on ApiException catch (apiError) {
+      } on AppException catch (error) {
         setState(() => _isLoading = false);
         
         if (context.mounted) {
-          // Gestione specifica per errori API
-          String errorMessage = 'Impossibile creare l\'acquario';
-          
-          if (apiError.statusCode == 404) {
-            errorMessage = 'Backend non raggiungibile. Verifica che il server sia avviato.';
-          } else if (apiError.statusCode >= 500) {
-            errorMessage = 'Errore del server: ${apiError.message}';
-          } else if (apiError.statusCode >= 400) {
-            errorMessage = 'Dati non validi: ${apiError.message}';
-          } else {
-            errorMessage = apiError.message;
-          }
-          
+          // Usa il messaggio user-friendly delle nuove eccezioni
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
                 children: [
                   const FaIcon(FontAwesomeIcons.triangleExclamation, color: Colors.white),
                   const SizedBox(width: 12),
-                  Expanded(child: Text(errorMessage)),
+                  Expanded(child: Text(error.userMessage)),
                 ],
               ),
               backgroundColor: const Color(0xFFef4444),

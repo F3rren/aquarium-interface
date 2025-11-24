@@ -25,7 +25,6 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   final _coralDatabaseService = CoralDatabaseService();
   List<CoralSpecies> _coralDatabase = [];
   CoralSpecies? _selectedCoralSpecies;
-  bool _isLoadingDatabase = true;
   
   late TextEditingController _nameController;
   late TextEditingController _speciesController;
@@ -58,10 +57,8 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
       final corals = await _coralDatabaseService.getAllCorals();
       setState(() {
         _coralDatabase = corals;
-        _isLoadingDatabase = false;
       });
     } catch (e) {
-      setState(() => _isLoadingDatabase = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Errore caricamento database: $e')),
