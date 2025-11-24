@@ -67,8 +67,10 @@ class Aquariums extends _$Aquariums {
       DateTime? lastUpdate;
       
       try {
-        // Disabilita alert automatici durante il caricamento
+        // Carica parametri senza trigger di alert (primo caricamento)
+        // Gli alert saranno gestiti dal polling successivo
         parameterService.setAutoCheckAlerts(false);
+        
         params = await parameterService.getCurrentParameters(
           id: aquarium.id,
           useMock: false,
@@ -87,7 +89,7 @@ class Aquariums extends _$Aquariums {
       ));
     }
     
-    // Riabilita alert
+    // Riabilita alert dopo il caricamento iniziale
     parameterService.setAutoCheckAlerts(true);
     
     // Imposta il primo acquario come corrente se disponibile

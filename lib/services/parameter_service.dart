@@ -43,9 +43,18 @@ class ParameterService {
   // Flag per abilitare/disabilitare controllo automatico alert
   bool _autoCheckAlerts = true;
   
+  /// Ottieni lo stato corrente del controllo automatico alert
+  bool get autoCheckAlertsEnabled => _autoCheckAlerts;
+  
   /// Abilita o disabilita il controllo automatico degli alert
   void setAutoCheckAlerts(bool enabled) {
     _autoCheckAlerts = enabled;
+  }
+  
+  /// Invalida la cache forzando il prossimo fetch dal server
+  void invalidateCache() {
+    _cachedParameters = null;
+    _lastFetch = null;
   }
 
   /// Imposta la vasca corrente per cui recuperare i parametri
