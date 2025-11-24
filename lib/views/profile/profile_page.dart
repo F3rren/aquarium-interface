@@ -221,7 +221,7 @@ class ProfilePage extends ConsumerWidget {
           children: [
             FaIcon(FontAwesomeIcons.circleInfo, color: theme.colorScheme.primary, size: 28),
             const SizedBox(width: 12),
-            Text('AcquariumFE', style: theme.textTheme.headlineSmall),
+            Text('ReefLife', style: theme.textTheme.headlineSmall),
           ],
         ),
         content: Column(
@@ -230,9 +230,9 @@ class ProfilePage extends ConsumerWidget {
           children: [
             Text('Versione: 1.0.0', style: theme.textTheme.bodyMedium),
             const SizedBox(height: 8),
-            Text('Sistema di monitoraggio acquario marino', style: theme.textTheme.bodySmall),
+            Text('Gestione intelligente del tuo acquario', style: theme.textTheme.bodySmall),
             const SizedBox(height: 16),
-            Text('Sviluppato con Flutter', style: theme.textTheme.bodySmall),
+            Text('Sviluppato con Flutter & Riverpod', style: theme.textTheme.bodySmall),
           ],
         ),
         actions: [

@@ -25,6 +25,7 @@ void main() async {
     // ProviderScope è il root di Riverpod
     const ProviderScope(
       child: MyApp(),
+      
     ),
   );
 }
@@ -38,7 +39,7 @@ class MyApp extends ConsumerWidget {
     
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Aquarium HomePage',
+      title: 'ReefLife',
       theme: ref.watch(lightThemeProvider),
       darkTheme: ref.watch(darkThemeProvider),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,

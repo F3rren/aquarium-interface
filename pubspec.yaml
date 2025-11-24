@@ -1,5 +1,5 @@
 name: acquariumfe
-description: "A new Flutter project."
+description: "ReefLife: Gestione intelligente del tuo acquario"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -84,6 +84,8 @@ dev_dependencies:
   riverpod_lint: ^2.6.2
   custom_lint: ^0.7.0
   http_mock_adapter: ^0.6.1
+  flutter_launcher_icons: ^0.14.2
+  flutter_native_splash: ^2.4.3
   integration_test:
     sdk: flutter
 
@@ -123,3 +125,23 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Flutter Launcher Icons configuration
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  remove_alpha_ios: true
+
+# Flutter Native Splash configuration
+flutter_native_splash:
+  color: "#0a0e27"
+  image: "assets/icon/app_icon.png"
+  android: true
+  ios: true
+  web: false
+  
+  android_12:
+    image: "assets/icon/app_icon.png"
+    color: "#0a0e27"
+    icon_background_color: "#0a0e27"
