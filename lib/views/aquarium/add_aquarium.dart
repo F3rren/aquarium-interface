@@ -1,18 +1,18 @@
 import 'package:acquariumfe/models/aquarium.dart';
-import 'package:acquariumfe/services/aquarium_service.dart';
 import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/providers/aquarium_providers.dart';
 
-class AddAquarium extends StatefulWidget {
+class AddAquarium extends ConsumerStatefulWidget {
   const AddAquarium({super.key});
 
   @override
-  State<AddAquarium> createState() => _AddAquariumState();
+  ConsumerState<AddAquarium> createState() => _AddAquariumState();
 }
 
-class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStateMixin {
-  final AquariumsService _aquariumsService = AquariumsService();
+class _AddAquariumState extends ConsumerState<AddAquarium> with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _volumeController = TextEditingController();
@@ -79,8 +79,8 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
           type: _selectedType,
         );
 
-        // Chiamata al servizio per creare l'acquario
-        final createdAquarium = await _aquariumsService.createAquarium(newAquarium);
+        // Chiamata al provider per creare l'acquario
+        await ref.read(aquariumsProvider.notifier).addAquarium(newAquarium);
         
         setState(() => _isLoading = false);
 
@@ -91,7 +91,7 @@ class _AddAquariumState extends State<AddAquarium> with SingleTickerProviderStat
                 children: [
                   const FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
                   const SizedBox(width: 12),
-                  Expanded(child: Text('Acquario "${createdAquarium.name}" creato con successo!')),
+                  Expanded(child: Text('Acquario "${newAquarium.name}" creato con successo!')),
                 ],
               ),
               backgroundColor: const Color(0xFF34d399),
