@@ -178,12 +178,6 @@ class RouteAnimations {
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const curve = Curves.easeInOutCubic;
         
-        // Animazione in uscita della pagina precedente
-        final exitAnimation = CurvedAnimation(
-          parent: secondaryAnimation,
-          curve: curve,
-        );
-
         // Animazione in entrata della nuova pagina
         final enterAnimation = CurvedAnimation(
           parent: animation,

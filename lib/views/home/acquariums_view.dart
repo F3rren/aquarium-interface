@@ -9,6 +9,8 @@ import 'package:acquariumfe/widgets/empty_state.dart';
 import 'package:acquariumfe/services/parameter_service.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
+import 'package:acquariumfe/widgets/responsive_builder.dart';
+import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 
 class AquariumView extends ConsumerStatefulWidget {
   const AquariumView({super.key});
@@ -119,19 +121,50 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
             return const NoAquariumsEmptyState();
           }
           
-          return ListView.builder(
-            padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
-            itemCount: aquariumsWithParams.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: SlideTransition(
-                    position: _slideAnimation,
-                    child: _buildAquariumCard(context, aquariumsWithParams[index]),
-                  ),
+          return ResponsiveBuilder(
+            builder: (context, info) {
+              final padding = ResponsiveBreakpoints.horizontalPadding(info.screenWidth);
+              final columns = info.value(mobile: 1, tablet: 2, desktop: 3);
+              
+              // Per mobile usa ListView, per tablet/desktop usa GridView
+              if (info.isMobile) {
+                return ListView.builder(
+                  padding: EdgeInsets.all(padding),
+                  itemCount: aquariumsWithParams.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: SlideTransition(
+                          position: _slideAnimation,
+                          child: _buildAquariumCard(context, aquariumsWithParams[index]),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+              
+              // Grid view per tablet e desktop
+              return GridView.builder(
+                padding: EdgeInsets.all(padding),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: info.value(mobile: 1.0, tablet: 1.2, desktop: 1.3),
                 ),
+                itemCount: aquariumsWithParams.length,
+                itemBuilder: (context, index) {
+                  return FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: SlideTransition(
+                      position: _slideAnimation,
+                      child: _buildAquariumCard(context, aquariumsWithParams[index]),
+                    ),
+                  );
+                },
               );
             },
           );

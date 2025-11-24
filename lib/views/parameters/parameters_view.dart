@@ -7,6 +7,8 @@ import 'package:acquariumfe/widgets/components/salinity.dart';
 import 'package:acquariumfe/widgets/components/orp.dart';
 import 'package:acquariumfe/widgets/components/manual_parameters.dart';
 import 'package:acquariumfe/providers/parameters_provider.dart';
+import 'package:acquariumfe/widgets/responsive_builder.dart';
+import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 
 class ParametersView extends ConsumerWidget {
   const ParametersView({super.key});
@@ -65,33 +67,66 @@ class ParametersView extends ConsumerWidget {
             error: (_, __) => <String, double>{},
           );
           
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
+          return ResponsiveBuilder(
+            builder: (context, info) {
+              final padding = ResponsiveBreakpoints.horizontalPadding(info.screenWidth);
+              
+              // Widget list
+              final parameterWidgets = [
                 Thermometer(
                   currentTemperature: currentParams.temperature,
                   targetTemperature: targetParams['temperature'] ?? 25.0,
                 ),
-                const SizedBox(height: 16),
                 PhMeter(
                   currentPh: currentParams.ph,
                   targetPh: targetParams['ph'] ?? 8.2,
                 ),
-                const SizedBox(height: 16),
                 SalinityMeter(
                   currentSalinity: currentParams.salinity,
                   targetSalinity: targetParams['salinity'] ?? 1.025,
                 ),
-                const SizedBox(height: 16),
                 OrpMeter(
                   currentOrp: currentParams.orp,
                   targetOrp: targetParams['orp'] ?? 350.0,
                 ),
-                const SizedBox(height: 16),
-                const ManualParametersWidget(),
-              ],
-            ),
+              ];
+              
+              // Mobile: layout verticale
+              if (info.isMobile) {
+                return SingleChildScrollView(
+                  padding: EdgeInsets.all(padding),
+                  child: Column(
+                    children: [
+                      ...parameterWidgets.map((w) => Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: w,
+                      )),
+                      const ManualParametersWidget(),
+                    ],
+                  ),
+                );
+              }
+              
+              // Tablet/Desktop: layout a griglia 2 colonne
+              return SingleChildScrollView(
+                padding: EdgeInsets.all(padding),
+                child: Column(
+                  children: [
+                    GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: info.value(mobile: 1.0, tablet: 1.5, desktop: 2.0),
+                      children: parameterWidgets,
+                    ),
+                    const SizedBox(height: 16),
+                    const ManualParametersWidget(),
+                  ],
+                ),
+              );
+            },
           );
         },
       ),
