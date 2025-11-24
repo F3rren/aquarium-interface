@@ -1056,6 +1056,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               _alertManager.updateSettings(_settings);
               await _prefsService.resetToDefaults();
               
+              if (!context.mounted) return;
               Navigator.pop(context);
               
             },
