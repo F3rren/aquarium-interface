@@ -1,34 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/fish.dart';
 import '../../models/coral.dart';
 import '../../services/inhabitants_service.dart';
 import '../../widgets/components/skeleton_loader.dart';
 import '../../widgets/animated_number.dart';
+import '../../providers/aquarium_providers.dart';
 import 'add_fish_dialog.dart';
 import 'add_coral_dialog.dart';
 
-class InhabitantsPage extends StatefulWidget {
+class InhabitantsPage extends ConsumerStatefulWidget {
   final int? aquariumId;
   
   const InhabitantsPage({super.key, this.aquariumId});
 
   @override
-  State<InhabitantsPage> createState() => _InhabitantsPageState();
+  ConsumerState<InhabitantsPage> createState() => _InhabitantsPageState();
 }
 
-class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProviderStateMixin {
+class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerProviderStateMixin {
   late TabController _tabController;
   final InhabitantsService _service = InhabitantsService();
   
   List<Fish> _fishList = [];
   List<Coral> _coralsList = [];
   bool _isLoading = true;
+  String? _aquariumWaterType;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    // Inizia con 1 tab, verrà aggiornato dopo aver caricato i dati
+    _tabController = TabController(length: 1, vsync: this);
     if (widget.aquariumId != null) {
       _service.setCurrentAquarium(widget.aquariumId!);
     }
@@ -43,6 +47,49 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
+    
+    // Recupera il waterType dell'acquario se disponibile
+    String? previousWaterType = _aquariumWaterType;
+    if (widget.aquariumId != null) {
+      try {
+        // Usa il provider invece del servizio diretto
+        final aquariumsAsync = ref.read(aquariumsProvider);
+        await aquariumsAsync.when(
+          data: (aquariumsWithParams) {
+            final aquarium = aquariumsWithParams
+                .firstWhere((a) => a.aquarium.id == widget.aquariumId)
+                .aquarium;
+            _aquariumWaterType = aquarium.type;
+          },
+          loading: () {
+            _aquariumWaterType = 'Marino'; // Default durante caricamento
+          },
+          error: (_, __) {
+            _aquariumWaterType = 'Marino'; // Default in caso di errore
+          },
+        );
+      } catch (e) {
+        // Se fallisce, continua senza waterType (default marino)
+        _aquariumWaterType = 'Marino';
+      }
+    } else {
+      // Se non c'è aquariumId, default marino
+      _aquariumWaterType = 'Marino';
+    }
+    
+    // Ricrea TabController se il tipo d'acqua è cambiato o è la prima volta
+    if (_aquariumWaterType != previousWaterType || previousWaterType == null) {
+      final currentIndex = _tabController.index;
+      _tabController.dispose();
+      // Solo 1 tab (pesci) per acquari dolci, 2 tab (pesci + coralli) per marini/reef
+      final isDolce = _aquariumWaterType?.toLowerCase() == 'dolce';
+      _tabController = TabController(
+        length: isDolce ? 1 : 2, 
+        vsync: this,
+        initialIndex: isDolce ? 0 : (currentIndex < 2 ? currentIndex : 0),
+      );
+    }
+    
     _fishList = await _service.getFish();
     _coralsList = await _service.getCorals();
     setState(() => _isLoading = false);
@@ -82,6 +129,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
     showDialog(
       context: context,
       builder: (context) => AddFishDialog(
+        aquariumWaterType: _aquariumWaterType,
         onSave: (fish, speciesId) async {
           // Salva sul server
           await _service.addFish(fish, speciesId);
@@ -104,6 +152,7 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
       context: context,
       builder: (context) => AddFishDialog(
         fish: fish,
+        aquariumWaterType: _aquariumWaterType,
         onSave: (updatedFish, speciesId) async {
           await _service.updateFish(updatedFish);
           _loadData();
@@ -234,6 +283,11 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
+    // Determina il numero di tab in base al tipo d'acqua
+    // Marino e Reef hanno 2 tab (pesci + coralli), Dolce ha solo 1 tab (pesci)
+    final isDolce = (_aquariumWaterType ?? 'Marino').toLowerCase() == 'dolce';
+    final tabCount = isDolce ? 1 : 2;
+    
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -242,18 +296,22 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
         centerTitle: true,
-        bottom: TabBar(
+        bottom: _tabController.length == tabCount ? TabBar(
           controller: _tabController,
           indicatorColor: theme.colorScheme.primary,
           labelColor: theme.colorScheme.primary,
           unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
-          tabs: const [
-            Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
-            Tab(text: 'Coralli', icon: FaIcon(FontAwesomeIcons.seedling)),
-          ],
-        ),
+          tabs: isDolce
+              ? const [
+                  Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
+                ]
+              : const [
+                  Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
+                  Tab(text: 'Coralli', icon: FaIcon(FontAwesomeIcons.seedling)),
+                ],
+        ) : null,
       ),
-      body: _isLoading
+      body: _isLoading || _tabController.length != tabCount
           ? Center(child: CircularProgressIndicator(color: theme.colorScheme.primary))
           : RefreshIndicator(
               onRefresh: _refreshData,
@@ -269,10 +327,14 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
                   Expanded(
                     child: TabBarView(
                       controller: _tabController,
-                      children: [
-                        _buildFishTab(),
-                        _buildCoralsTab(),
-                      ],
+                      children: isDolce
+                          ? [
+                              _buildFishTab(),
+                            ]
+                          : [
+                              _buildFishTab(),
+                              _buildCoralsTab(),
+                            ],
                     ),
                   ),
                 ],
@@ -280,7 +342,9 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_tabController.index == 0) {
+          // Se acquario dolce, mostra sempre dialog pesci (no coralli)
+          final isDolce = (_aquariumWaterType ?? 'Marino').toLowerCase() == 'dolce';
+          if (isDolce || _tabController.index == 0) {
             _showAddFishDialog();
           } else {
             _showAddCoralDialog();
@@ -353,7 +417,9 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
                       color: theme.colorScheme.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                       ),
-                      child: FaIcon(FontAwesomeIcons.fish, color: theme.colorScheme.primary, size: 32),
+                      child: Center(
+                        child: FaIcon(FontAwesomeIcons.fish, color: theme.colorScheme.primary, size: 32),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -481,7 +547,9 @@ class _InhabitantsPageState extends State<InhabitantsPage> with SingleTickerProv
                         color: typeColor.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: FaIcon(FontAwesomeIcons.seedling, color: typeColor, size: 32),
+                      child: Center(
+                        child: FaIcon(FontAwesomeIcons.seedling, color: typeColor, size: 32),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -750,11 +818,11 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
 
   String _getBioLoadRecommendation(double bioLoad, int fish, int corals) {
     if (bioLoad < 20) {
-      return '✅ Carico biotico ottimale - acquario ben bilanciato';
+      return 'Carico biotico ottimale - acquario ben bilanciato';
     } else if (bioLoad < 35) {
-      return '⚠️ Carico biotico moderato - monitora i parametri dell\'acqua';
+      return 'Carico biotico moderato - monitora i parametri dell\'acqua';
     } else {
-      return '🔴 Carico biotico elevato - considera un acquario più grande o riduci gli abitanti';
+      return 'Carico biotico elevato - considera un acquario più grande o riduci gli abitanti';
     }
   }
 }

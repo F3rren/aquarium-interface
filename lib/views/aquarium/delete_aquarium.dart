@@ -1,17 +1,17 @@
 import 'package:acquariumfe/models/aquarium.dart';
-import 'package:acquariumfe/services/aquarium_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/providers/aquarium_providers.dart';
 
-class DeleteAquarium extends StatefulWidget {
+class DeleteAquarium extends ConsumerStatefulWidget {
   const DeleteAquarium({super.key});
 
   @override
-  State<DeleteAquarium> createState() => _DeleteAquariumState();
+  ConsumerState<DeleteAquarium> createState() => _DeleteAquariumState();
 }
 
-class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProviderStateMixin {
-  final AquariumsService _aquariumsService = AquariumsService();
+class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTickerProviderStateMixin {
   List<Aquarium> _aquariums = [];
   bool _isLoading = true;
   
@@ -50,23 +50,31 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
   }
 
   Future<void> _loadAquariums() async {
-    try {
-      final aquariums = await _aquariumsService.getAquariums();
-      setState(() {
-        _aquariums = aquariums;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Errore nel caricamento: ${e.toString()}'),
-            backgroundColor: const Color(0xFFef4444),
-          ),
-        );
-      }
-    }
+    final aquariumsAsync = ref.read(aquariumsProvider);
+    
+    aquariumsAsync.when(
+      data: (aquariumsWithParams) {
+        final aquariums = aquariumsWithParams.map((a) => a.aquarium).toList();
+        setState(() {
+          _aquariums = aquariums;
+          _isLoading = false;
+        });
+      },
+      loading: () {
+        setState(() => _isLoading = true);
+      },
+      error: (error, stack) {
+        setState(() => _isLoading = false);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Errore nel caricamento: $error'),
+              backgroundColor: const Color(0xFFef4444),
+            ),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -184,7 +192,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
 
     if (confirmed == true) {
       try {
-        await _aquariumsService.deleteAquarium(aquarium.id!);
+        await ref.read(aquariumsProvider.notifier).deleteAquarium(aquarium.id!);
         await _loadAquariums();
         
         if (mounted) {
@@ -194,7 +202,7 @@ class _DeleteAquariumState extends State<DeleteAquarium> with SingleTickerProvid
                 children: [
                   FaIcon(FontAwesomeIcons.circleCheck, color: theme.colorScheme.onSurface),
                   const SizedBox(width: 12),
-                  Text('${aquarium.name} eliminato con successo'),
+                  Text('Aquario eliminato con successo'),
                 ],
               ),
               backgroundColor: theme.colorScheme.error,
