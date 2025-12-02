@@ -28,13 +28,13 @@ class ApiService {
   static String get baseUrl {
     // Per Android dispositivo fisico, usa l'IP del PC
     if (Platform.isAndroid) {
-      return 'http://REDACTED:8080/api';
+      return 'http://REDACTED:8080';
     } else if (Platform.isIOS) {
       // iOS Simulator può usare localhost
-      return 'http://localhost:8080/api';
+      return 'http://localhost:8080';
     } else {
       // Desktop/Web
-      return 'http://localhost:8080/api';
+      return 'http://localhost:8080';
     }
   }
   
@@ -316,4 +316,3 @@ class ApiService {
     }
   }
 }
-
