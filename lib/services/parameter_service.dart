@@ -319,8 +319,8 @@ class ParameterService {
           // Il backend ritorna già {timestamp, value} nel formato corretto!
           final result = data.map<Map<String, dynamic>>((item) {
             return {
-              'timestamp': item['timestamp'] ?? DateTime.now().toIso8601String(),
-              'value': (item['value'] ?? 0).toDouble(),
+              'timestamp': item['timestamp'] ?? item['measuredAt'] ?? DateTime.now().toIso8601String(),
+              'value': (item['value'] ?? item[parameterName] ?? 0).toDouble(),
             };
           }).toList();
           
