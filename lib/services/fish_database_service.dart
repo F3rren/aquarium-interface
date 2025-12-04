@@ -17,7 +17,7 @@ class FishDatabaseService {
     }
 
     try {
-      final response = await _apiService.get('/species/fish');
+      final response = await _apiService.get('/species/fishs');
       
       // Gestisci sia formato array diretto che con wrapper
       List<dynamic> fishList;
