@@ -7,7 +7,7 @@
 ![Coverage](https://img.shields.io/badge/coverage-80%25-green.svg)
 
 > **Important:**  
-> This application requires the companion backend service [Aquarium Monitor](https://github.com/F3rren/aquarium-monitor) to operate.  
+> This application requires the companion backend service [Aquarium Microservice](https://github.com/F3rren/aquarium-ms) to operate.  
 > Without this backend, real-time data, database persistence, and most features will not be available.
 > 
 > Make sure to set up the backend before running the app and configure the API connection in your project settings.
