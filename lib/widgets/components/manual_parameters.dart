@@ -8,12 +8,14 @@ class ManualParametersWidget extends ConsumerStatefulWidget {
   const ManualParametersWidget({super.key});
 
   @override
-  ConsumerState<ManualParametersWidget> createState() => _ManualParametersWidgetState();
+  ConsumerState<ManualParametersWidget> createState() =>
+      _ManualParametersWidgetState();
 }
 
-class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget> {
+class _ManualParametersWidgetState
+    extends ConsumerState<ManualParametersWidget> {
   final ManualParametersService _manualService = ManualParametersService();
-  
+
   double calcium = 420.0;
   double magnesium = 1300.0;
   double kh = 8.0;
@@ -30,7 +32,7 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
   Future<void> _loadParameters() async {
     final params = await _manualService.loadManualParameters();
     final update = await _manualService.getLastUpdate();
-    
+
     setState(() {
       calcium = params['calcium'] ?? 420.0;
       magnesium = params['magnesium'] ?? 1300.0;
@@ -43,10 +45,10 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
 
   Future<void> _saveParameter(String name, double value) async {
     String key = '';
-    
+
     // Estrai il nome base (rimuovi le parti tra parentesi)
     final baseName = name.split('(').first.trim();
-    
+
     switch (baseName) {
       case 'Calcio':
         key = 'calcium';
@@ -64,11 +66,11 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
         key = 'phosphate';
         break;
     }
-    
+
     if (key.isNotEmpty) {
       await _manualService.updateParameter(key, value);
       await _loadParameters(); // Ricarica per aggiornare lastUpdate
-      
+
       // IMPORTANTE: Invalida cache e provider per aggiornare in tempo reale
       if (mounted) {
         ref.invalidate(currentParametersProvider);
@@ -84,7 +86,9 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,35 +101,91 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
                   color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const FaIcon(FontAwesomeIcons.flask, color: Color(0xFF60a5fa), size: 24),
+                child: const FaIcon(
+                  FontAwesomeIcons.flask,
+                  color: Color(0xFF60a5fa),
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
                 'Parametri Chimici',
-                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          _buildParameter('Calcio (Ca)', calcium, 'mg/L', 400, 450, FontAwesomeIcons.cubesStacked, (v) => setState(() => calcium = v)),
+          _buildParameter(
+            'Calcio (Ca)',
+            calcium,
+            'mg/L',
+            400,
+            450,
+            FontAwesomeIcons.cubesStacked,
+            (v) => setState(() => calcium = v),
+          ),
           const SizedBox(height: 12),
-          _buildParameter('Magnesio (Mg)', magnesium, 'mg/L', 1250, 1350, FontAwesomeIcons.atom, (v) => setState(() => magnesium = v)),
+          _buildParameter(
+            'Magnesio (Mg)',
+            magnesium,
+            'mg/L',
+            1250,
+            1350,
+            FontAwesomeIcons.atom,
+            (v) => setState(() => magnesium = v),
+          ),
           const SizedBox(height: 12),
-          _buildParameter('KH', kh, 'dKH', 7, 9, FontAwesomeIcons.chartColumn, (v) => setState(() => kh = v)),
+          _buildParameter(
+            'KH',
+            kh,
+            'dKH',
+            7,
+            9,
+            FontAwesomeIcons.chartColumn,
+            (v) => setState(() => kh = v),
+          ),
           const SizedBox(height: 12),
-          _buildParameter('Nitrati (NO3)', nitrates, 'mg/L', 0.5, 5, FontAwesomeIcons.seedling, (v) => setState(() => nitrates = v)),
+          _buildParameter(
+            'Nitrati (NO3)',
+            nitrates,
+            'mg/L',
+            0.5,
+            5,
+            FontAwesomeIcons.seedling,
+            (v) => setState(() => nitrates = v),
+          ),
           const SizedBox(height: 12),
-          _buildParameter('Fosfati (PO4)', phosphates, 'mg/L', 0.0, 0.03, FontAwesomeIcons.vial, (v) => setState(() => phosphates = v)),
+          _buildParameter(
+            'Fosfati (PO4)',
+            phosphates,
+            'mg/L',
+            0.0,
+            0.03,
+            FontAwesomeIcons.vial,
+            (v) => setState(() => phosphates = v),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildParameter(String name, double value, String unit, double min, double max, IconData icon, Function(double) onChanged) {
+  Widget _buildParameter(
+    String name,
+    double value,
+    String unit,
+    double min,
+    double max,
+    IconData icon,
+    Function(double) onChanged,
+  ) {
     final theme = Theme.of(context);
     final isInRange = value >= min && value <= max;
     final color = isInRange ? const Color(0xFF34d399) : const Color(0xFFef4444);
-    
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -147,9 +207,22 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 13, fontWeight: FontWeight.w600)),
+                Text(
+                  name,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text('$min-$max $unit', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
+                Text(
+                  '$min-$max $unit',
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 11,
+                  ),
+                ),
               ],
             ),
           ),
@@ -171,7 +244,11 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
                 children: [
                   Text(
                     value.toStringAsFixed(value < 10 ? 2 : 0),
-                    style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(width: 4),
                   Text(unit, style: TextStyle(color: color, fontSize: 11)),
@@ -186,7 +263,12 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
     );
   }
 
-  void _showEditDialog(String name, double currentValue, String unit, Function(double) onChanged) {
+  void _showEditDialog(
+    String name,
+    double currentValue,
+    String unit,
+    Function(double) onChanged,
+  ) {
     final theme = Theme.of(context);
     final controller = TextEditingController(text: currentValue.toString());
     showDialog(
@@ -194,7 +276,10 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Modifica $name', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18)),
+        title: Text(
+          'Modifica $name',
+          style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18),
+        ),
         content: TextField(
           controller: controller,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -203,7 +288,9 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
             labelText: 'Valore ($unit)',
             labelStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
+              borderSide: BorderSide(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+              ),
             ),
             focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Color(0xFF60a5fa)),
@@ -213,7 +300,10 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Annulla', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
+            child: Text(
+              'Annulla',
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -226,7 +316,9 @@ class _ManualParametersWidgetState extends ConsumerState<ManualParametersWidget>
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF60a5fa),
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Salva'),
           ),

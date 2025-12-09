@@ -24,7 +24,7 @@ class ChartDataService {
         parameterName: paramName,
         hours: Duration(hours: hours),
       );
-      
+
       // Converti in ParameterDataPoint
       final dataPoints = historyData.map((item) {
         return ParameterDataPoint(
@@ -33,7 +33,7 @@ class ChartDataService {
           parameterName: parameter,
         );
       }).toList();
-     
+
       return dataPoints;
     } catch (e) {
       // Ritorna lista vuota invece di mock
@@ -70,12 +70,7 @@ class ChartDataService {
   /// Calcola statistiche dai dati
   Map<String, double> calculateStats(List<ParameterDataPoint> data) {
     if (data.isEmpty) {
-      return {
-        'min': 0.0,
-        'max': 0.0,
-        'avg': 0.0,
-        'current': 0.0,
-      };
+      return {'min': 0.0, 'max': 0.0, 'avg': 0.0, 'current': 0.0};
     }
 
     final values = data.map((p) => p.value).toList();
@@ -84,11 +79,6 @@ class ChartDataService {
     final avg = values.reduce((a, b) => a + b) / values.length;
     final current = data.last.value;
 
-    return {
-      'min': min,
-      'max': max,
-      'avg': avg,
-      'current': current,
-    };
+    return {'min': min, 'max': max, 'avg': avg, 'current': current};
   }
 }

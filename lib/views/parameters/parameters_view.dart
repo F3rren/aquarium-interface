@@ -17,12 +17,12 @@ class ParametersView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final parametersAsync = ref.watch(currentParametersProvider);
     final targetsAsync = ref.watch(targetParametersProvider);
-    
+
     return RefreshIndicator(
       onRefresh: () async {
         await ref.read(currentParametersProvider.notifier).refresh();
         ref.invalidate(targetParametersProvider);
-        
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -48,7 +48,8 @@ class ParametersView extends ConsumerWidget {
               Text('Errore: $error'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => ref.read(currentParametersProvider.notifier).refresh(),
+                onPressed: () =>
+                    ref.read(currentParametersProvider.notifier).refresh(),
                 child: const Text('Riprova'),
               ),
             ],
@@ -56,21 +57,21 @@ class ParametersView extends ConsumerWidget {
         ),
         data: (currentParams) {
           if (currentParams == null) {
-            return const Center(
-              child: Text('Nessun parametro disponibile'),
-            );
+            return const Center(child: Text('Nessun parametro disponibile'));
           }
-          
+
           final targetParams = targetsAsync.when(
             data: (targets) => targets,
             loading: () => <String, double>{},
             error: (_, __) => <String, double>{},
           );
-          
+
           return ResponsiveBuilder(
             builder: (context, info) {
-              final padding = ResponsiveBreakpoints.horizontalPadding(info.screenWidth);
-              
+              final padding = ResponsiveBreakpoints.horizontalPadding(
+                info.screenWidth,
+              );
+
               // Widget list
               final parameterWidgets = [
                 Thermometer(
@@ -90,23 +91,25 @@ class ParametersView extends ConsumerWidget {
                   targetOrp: targetParams['orp'] ?? 350.0,
                 ),
               ];
-              
+
               // Mobile: layout verticale
               if (info.isMobile) {
                 return SingleChildScrollView(
                   padding: EdgeInsets.all(padding),
                   child: Column(
                     children: [
-                      ...parameterWidgets.map((w) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: w,
-                      )),
+                      ...parameterWidgets.map(
+                        (w) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: w,
+                        ),
+                      ),
                       const ManualParametersWidget(),
                     ],
                   ),
                 );
               }
-              
+
               // Tablet/Desktop: layout a griglia 2 colonne
               return SingleChildScrollView(
                 padding: EdgeInsets.all(padding),
@@ -118,7 +121,11 @@ class ParametersView extends ConsumerWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: info.value(mobile: 1.0, tablet: 1.5, desktop: 2.0),
+                      childAspectRatio: info.value(
+                        mobile: 1.0,
+                        tablet: 1.5,
+                        desktop: 2.0,
+                      ),
                       children: parameterWidgets,
                     ),
                     const SizedBox(height: 16),

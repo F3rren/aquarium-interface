@@ -18,7 +18,7 @@ class FishDatabaseService {
 
     try {
       final response = await _apiService.get('/species/fishs');
-      
+
       // Gestisci sia formato array diretto che con wrapper
       List<dynamic> fishList;
       if (response is List) {
@@ -34,8 +34,10 @@ class FishDatabaseService {
       } else {
         fishList = [];
       }
-      
-      _cachedFish = fishList.map((json) => FishSpecies.fromJson(json as Map<String, dynamic>)).toList();
+
+      _cachedFish = fishList
+          .map((json) => FishSpecies.fromJson(json as Map<String, dynamic>))
+          .toList();
       return _cachedFish!;
     } catch (e) {
       return [];
@@ -70,7 +72,9 @@ class FishDatabaseService {
   /// Filtra pesci per dimensione vasca minima
   Future<List<FishSpecies>> getFishByTankSize(int tankSizeInLiters) async {
     final allFish = await getAllFish();
-    return allFish.where((fish) => fish.minTankSize <= tankSizeInLiters).toList();
+    return allFish
+        .where((fish) => fish.minTankSize <= tankSizeInLiters)
+        .toList();
   }
 
   /// Ottieni un pesce per ID
@@ -92,43 +96,49 @@ class FishDatabaseService {
   /// Filtra per famiglia
   Future<List<FishSpecies>> getFishByFamily(String family) async {
     final allFish = await getAllFish();
-    return allFish.where((fish) => fish.family.toLowerCase().contains(family.toLowerCase())).toList();
+    return allFish
+        .where(
+          (fish) => fish.family.toLowerCase().contains(family.toLowerCase()),
+        )
+        .toList();
   }
 
   /// Filtra pesci per tipo d'acqua (es. "Marino", "Dolce")
   Future<List<FishSpecies>> getFishByWaterType(String waterType) async {
     final allFish = await getAllFish();
     if (waterType.isEmpty) return allFish;
-    
+
     // Normalizza il tipo d'acqua per il confronto
     String normalizedWaterType = _normalizeWaterType(waterType);
-    
+
     return allFish.where((fish) {
       // Se il pesce non ha un waterType specificato, NON lo mostra
       if (fish.waterType == null || fish.waterType!.isEmpty) return false;
-      
+
       // Normalizza e confronta
       String fishWaterType = _normalizeWaterType(fish.waterType!);
       return fishWaterType == normalizedWaterType;
     }).toList();
   }
-  
+
   /// Normalizza il tipo d'acqua per il confronto
   /// "Marino" / "Reef" / "salata" / "marino" / "reef" -> "salata"
   /// "Dolce" / "dolce" -> "dolce"
   String _normalizeWaterType(String waterType) {
     final normalized = waterType.toLowerCase().trim();
-    
+
     // Mappa tutte le varianti di acqua salata (Marino e Reef sono entrambi salati)
-    if (normalized == 'marino' || normalized == 'reef' || normalized == 'salata') {
+    if (normalized == 'marino' ||
+        normalized == 'reef' ||
+        normalized == 'salata') {
       return 'salata';
     }
-    
+
     // Mappa "dolce" a "dolce"
     if (normalized == 'dolce') {
       return 'dolce';
     }
-    
+
     return normalized;
   }
 

@@ -11,10 +11,11 @@ class DeleteAquarium extends ConsumerStatefulWidget {
   ConsumerState<DeleteAquarium> createState() => _DeleteAquariumState();
 }
 
-class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTickerProviderStateMixin {
+class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
+    with SingleTickerProviderStateMixin {
   List<Aquarium> _aquariums = [];
   bool _isLoading = true;
-  
+
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -23,35 +24,30 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
   void initState() {
     super.initState();
     _loadAquariums();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-    
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.15),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-    
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     _animationController.forward();
   }
 
   Future<void> _loadAquariums() async {
     final aquariumsAsync = ref.read(aquariumsProvider);
-    
+
     aquariumsAsync.when(
       data: (aquariumsWithParams) {
         final aquariums = aquariumsWithParams.map((a) => a.aquarium).toList();
@@ -93,7 +89,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
       );
       return;
     }
-    
+
     final theme = Theme.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
@@ -108,10 +104,14 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.error.withValues(alpha:0.2),
+                  color: theme.colorScheme.error.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: FaIcon(FontAwesomeIcons.triangleExclamation, color: theme.colorScheme.error, size: 48),
+                child: FaIcon(
+                  FontAwesomeIcons.triangleExclamation,
+                  color: theme.colorScheme.error,
+                  size: 48,
+                ),
               ),
               const SizedBox(height: 20),
               Text(
@@ -151,10 +151,19 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
                         onPressed: () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: theme.colorScheme.onSurfaceVariant,
-                          side: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha:0.3)),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          side: BorderSide(
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.3,
+                            ),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                        child: const Text('Annulla', style: TextStyle(fontWeight: FontWeight.w600)),
+                        child: const Text(
+                          'Annulla',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
                       ),
                     ),
                   ),
@@ -168,7 +177,9 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme.colorScheme.error,
                           foregroundColor: theme.colorScheme.onError,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           elevation: 0,
                         ),
                         child: const Row(
@@ -176,7 +187,10 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
                           children: [
                             FaIcon(FontAwesomeIcons.trashCan, size: 20),
                             SizedBox(width: 8),
-                            Text('Elimina', style: TextStyle(fontWeight: FontWeight.w600)),
+                            Text(
+                              'Elimina',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
                           ],
                         ),
                       ),
@@ -194,20 +208,25 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
       try {
         await ref.read(aquariumsProvider.notifier).deleteAquarium(aquarium.id!);
         await _loadAquariums();
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
                 children: [
-                  FaIcon(FontAwesomeIcons.circleCheck, color: theme.colorScheme.onSurface),
+                  FaIcon(
+                    FontAwesomeIcons.circleCheck,
+                    color: theme.colorScheme.onSurface,
+                  ),
                   const SizedBox(width: 12),
                   Text('Aquario eliminato con successo'),
                 ],
               ),
               backgroundColor: theme.colorScheme.error,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           );
         }
@@ -217,14 +236,19 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
             SnackBar(
               content: Row(
                 children: [
-                  const FaIcon(FontAwesomeIcons.triangleExclamation, color: Colors.white),
+                  const FaIcon(
+                    FontAwesomeIcons.triangleExclamation,
+                    color: Colors.white,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(child: Text('Errore: ${e.toString()}')),
                 ],
               ),
               backgroundColor: const Color(0xFFef4444),
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           );
         }
@@ -235,11 +259,14 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Elimina Acquario', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        title: const Text(
+          'Elimina Acquario',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
@@ -248,86 +275,124 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : FadeTransition(
-        opacity: _fadeAnimation,
-        child: SlideTransition(
-          position: _slideAnimation,
-          child: _aquariums.isEmpty
-              ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: FaIcon(FontAwesomeIcons.circleCheck, color: theme.colorScheme.tertiary, size: 64),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Nessun Acquario',
-                    style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Non ci sono acquari da eliminare',
-                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
-                  ),
-                ],
-              ),
-            )
-          : ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.error.withValues(alpha:0.2),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: FaIcon(FontAwesomeIcons.trash, color: theme.colorScheme.error, size: 32),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
+              opacity: _fadeAnimation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: _aquariums.isEmpty
+                    ? Center(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('Gestione Acquari', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 4),
-                            Text('Seleziona per eliminare', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
+                            Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color:
+                                    theme.colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: FaIcon(
+                                FontAwesomeIcons.circleCheck,
+                                color: theme.colorScheme.tertiary,
+                                size: 64,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              'Nessun Acquario',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Non ci sono acquari da eliminare',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurfaceVariant,
+                                fontSize: 14,
+                              ),
+                            ),
                           ],
                         ),
+                      )
+                    : ListView(
+                        padding: const EdgeInsets.all(20),
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surface,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.error.withValues(
+                                      alpha: 0.2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.trash,
+                                    color: theme.colorScheme.error,
+                                    size: 32,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Gestione Acquari',
+                                        style: TextStyle(
+                                          color: theme.colorScheme.onSurface,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Seleziona per eliminare',
+                                        style: TextStyle(
+                                          color: theme
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          ..._aquariums.map(
+                            (aquarium) => _buildAquariumCard(aquarium),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ..._aquariums.map((aquarium) => _buildAquariumCard(aquarium)),
-              ],
+              ),
             ),
-        ),
-      ),
     );
   }
 
   Widget _buildAquariumCard(Aquarium aquarium) {
     final theme = Theme.of(context);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.error.withValues(alpha:0.3)),
+        border: Border.all(
+          color: theme.colorScheme.error.withValues(alpha: 0.3),
+        ),
       ),
       child: Material(
         color: Colors.transparent,
@@ -341,11 +406,13 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.error.withValues(alpha:0.2),
+                    color: theme.colorScheme.error.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    aquarium.type == 'Marino' ? FontAwesomeIcons.droplet : FontAwesomeIcons.water,
+                    aquarium.type == 'Marino'
+                        ? FontAwesomeIcons.droplet
+                        : FontAwesomeIcons.water,
                     color: theme.colorScheme.error,
                     size: 24,
                   ),
@@ -357,17 +424,28 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium> with SingleTick
                     children: [
                       Text(
                         aquarium.name,
-                        style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '${aquarium.volume} L • ${aquarium.type}',
-                        style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 13,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                FaIcon(FontAwesomeIcons.trash, color: theme.colorScheme.error, size: 24),
+                FaIcon(
+                  FontAwesomeIcons.trash,
+                  color: theme.colorScheme.error,
+                  size: 24,
+                ),
               ],
             ),
           ),

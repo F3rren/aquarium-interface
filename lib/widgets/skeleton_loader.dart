@@ -32,9 +32,10 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
       vsync: this,
     )..repeat();
 
-    _animation = Tween<double>(begin: -2, end: 2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: -2,
+      end: 2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -46,7 +47,7 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
@@ -62,16 +63,8 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: isDark
-                  ? [
-                      Colors.grey[800]!,
-                      Colors.grey[700]!,
-                      Colors.grey[800]!,
-                    ]
-                  : [
-                      Colors.grey[300]!,
-                      Colors.grey[200]!,
-                      Colors.grey[300]!,
-                    ],
+                  ? [Colors.grey[800]!, Colors.grey[700]!, Colors.grey[800]!]
+                  : [Colors.grey[300]!, Colors.grey[200]!, Colors.grey[300]!],
               stops: [
                 (_animation.value - 0.5).clamp(0.0, 1.0),
                 _animation.value.clamp(0.0, 1.0),
@@ -100,11 +93,7 @@ class AquariumCardSkeleton extends StatelessWidget {
           children: [
             Row(
               children: [
-                const SkeletonLoader(
-                  height: 50,
-                  width: 50,
-                  isCircle: true,
-                ),
+                const SkeletonLoader(height: 50, width: 50, isCircle: true),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -344,11 +333,7 @@ class DashboardSkeleton extends StatelessWidget {
           // Header
           Row(
             children: [
-              const SkeletonLoader(
-                height: 60,
-                width: 60,
-                isCircle: true,
-              ),
+              const SkeletonLoader(height: 60, width: 60, isCircle: true),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -371,7 +356,7 @@ class DashboardSkeleton extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 24),
-          
+
           // Stats cards
           Row(
             children: [
@@ -391,11 +376,11 @@ class DashboardSkeleton extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 24),
-          
+
           // Chart
           const ChartSkeleton(height: 200),
           const SizedBox(height: 24),
-          
+
           // Parameters list
           ...List.generate(
             4,

@@ -10,23 +10,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Inizializza il servizio notifiche
   await NotificationService().initialize();
-  
+
   // Inizializza l'alert manager con impostazioni di default
-  AlertManager().initialize(NotificationSettings(
-    enabledAlerts: true,
-    enabledMaintenance: true,
-    enabledDaily: false,
-  ));
-  
+  AlertManager().initialize(
+    NotificationSettings(
+      enabledAlerts: true,
+      enabledMaintenance: true,
+      enabledDaily: false,
+    ),
+  );
+
   runApp(
     // ProviderScope è il root di Riverpod
-    const ProviderScope(
-      child: MyApp(),
-      
-    ),
+    const ProviderScope(child: MyApp()),
   );
 }
 
@@ -36,7 +35,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(appThemeModeProvider);
-    
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'ReefLife',
@@ -56,7 +55,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(

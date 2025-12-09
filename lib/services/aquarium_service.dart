@@ -9,10 +9,10 @@ class AquariumsService {
 
   Future<List<Aquarium>> getAquariums() async {
     final response = await _apiService.get('/aquariums');
-    
+
     // La risposta può essere un oggetto con una chiave 'aquariums' o 'data', oppure un array diretto
     final List<dynamic> aquariumsJson;
-    
+
     if (response is List) {
       // Risposta diretta come array
       aquariumsJson = response;
@@ -33,7 +33,7 @@ class AquariumsService {
         details: 'Ricevuto tipo: ${response.runtimeType}',
       );
     }
-    
+
     return aquariumsJson
         .map((json) => Aquarium.fromJson(json as Map<String, dynamic>))
         .toList();
@@ -75,7 +75,7 @@ class AquariumsService {
   /// Recupera i parametri attuali di una vasca specifica
   Future<AquariumParameters> getAquariumParameters(int aquariumId) async {
     final response = await _apiService.get('/aquariums/$aquariumId/parameters');
-    
+
     // Gestisci il caso in cui la risposta abbia un wrapper "data"
     final Map<String, dynamic> parametersData;
     if (response is Map<String, dynamic>) {
@@ -90,7 +90,7 @@ class AquariumsService {
         details: 'Ricevuto tipo: ${response.runtimeType}',
       );
     }
-    
+
     return AquariumParameters.fromJson(parametersData);
   }
 
@@ -106,12 +106,15 @@ class AquariumsService {
     if (from != null) queryParams['from'] = from.toIso8601String();
     if (to != null) queryParams['to'] = to.toIso8601String();
     if (limit != null) queryParams['limit'] = limit.toString();
-    
-    final query = queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
-    final endpoint = '/aquariums/$aquariumId/parameters/history${query.isNotEmpty ? '?$query' : ''}';
-    
+
+    final query = queryParams.entries
+        .map((e) => '${e.key}=${e.value}')
+        .join('&');
+    final endpoint =
+        '/aquariums/$aquariumId/parameters/history${query.isNotEmpty ? '?$query' : ''}';
+
     final response = await _apiService.get(endpoint);
-    
+
     // Gestisci diversi formati di risposta
     final List<dynamic> historyJson;
     if (response is List) {
@@ -134,9 +137,11 @@ class AquariumsService {
         details: 'Ricevuto tipo: ${response.runtimeType}',
       );
     }
-    
+
     return historyJson
-        .map((json) => AquariumParameters.fromJson(json as Map<String, dynamic>))
+        .map(
+          (json) => AquariumParameters.fromJson(json as Map<String, dynamic>),
+        )
         .toList();
   }
 }

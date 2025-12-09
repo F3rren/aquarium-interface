@@ -9,6 +9,16 @@ class Coral {
   final String? notes;
   final String? imageUrl;
 
+  // Dettagli aggiuntivi dalla specie
+  final String? difficulty;
+  final String? lightRequirement;
+  final String? flowRequirement;
+  final String? feeding;
+  final String? description;
+  final bool? aggressive;
+  final int? minTankSize;
+  final int? maxSize;
+
   Coral({
     required this.id,
     required this.name,
@@ -19,6 +29,14 @@ class Coral {
     required this.placement,
     this.notes,
     this.imageUrl,
+    this.difficulty,
+    this.lightRequirement,
+    this.flowRequirement,
+    this.feeding,
+    this.description,
+    this.aggressive,
+    this.minTankSize,
+    this.maxSize,
   });
 
   Map<String, dynamic> toJson() {
@@ -32,6 +50,14 @@ class Coral {
       'placement': placement,
       'notes': notes,
       'imageUrl': imageUrl,
+      'difficulty': difficulty,
+      'lightRequirement': lightRequirement,
+      'flowRequirement': flowRequirement,
+      'feeding': feeding,
+      'description': description,
+      'aggressive': aggressive,
+      'minTankSize': minTankSize,
+      'maxSize': maxSize,
     };
   }
 
@@ -46,6 +72,14 @@ class Coral {
       placement: json['placement'],
       notes: json['notes'],
       imageUrl: json['imageUrl'],
+      difficulty: json['difficulty'],
+      lightRequirement: json['lightRequirement'],
+      flowRequirement: json['flowRequirement'],
+      feeding: json['feeding'],
+      description: json['description'],
+      aggressive: json['aggressive'],
+      minTankSize: json['minTankSize'],
+      maxSize: json['maxSize'],
     );
   }
 
@@ -59,6 +93,14 @@ class Coral {
     String? placement,
     String? notes,
     String? imageUrl,
+    String? difficulty,
+    String? lightRequirement,
+    String? flowRequirement,
+    String? feeding,
+    String? description,
+    bool? aggressive,
+    int? minTankSize,
+    int? maxSize,
   }) {
     return Coral(
       id: id ?? this.id,
@@ -70,6 +112,14 @@ class Coral {
       placement: placement ?? this.placement,
       notes: notes ?? this.notes,
       imageUrl: imageUrl ?? this.imageUrl,
+      difficulty: difficulty ?? this.difficulty,
+      lightRequirement: lightRequirement ?? this.lightRequirement,
+      flowRequirement: flowRequirement ?? this.flowRequirement,
+      feeding: feeding ?? this.feeding,
+      description: description ?? this.description,
+      aggressive: aggressive ?? this.aggressive,
+      minTankSize: minTankSize ?? this.minTankSize,
+      maxSize: maxSize ?? this.maxSize,
     );
   }
 }

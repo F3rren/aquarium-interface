@@ -43,7 +43,9 @@ class PhMeter extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +58,11 @@ class PhMeter extends StatelessWidget {
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: FaIcon(FontAwesomeIcons.droplet, color: color, size: 28),
+                  child: FaIcon(
+                    FontAwesomeIcons.droplet,
+                    color: color,
+                    size: 28,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -65,18 +71,41 @@ class PhMeter extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text('pH', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
+                          Text(
+                            'pH',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                           const SizedBox(width: 6),
-                          FaIcon(FontAwesomeIcons.pen, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+                          FaIcon(
+                            FontAwesomeIcons.pen,
+                            size: 14,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.4,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(status, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w500)),
+                      Text(
+                        status,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
@@ -85,31 +114,39 @@ class PhMeter extends StatelessWidget {
                   child: AnimatedNumberWithIndicator(
                     value: currentPh,
                     decimals: 2,
-                    style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
-          if (targetPh != null) ...[
-            const SizedBox(height: 16),
-            TargetProgressBar(
-              currentValue: currentPh,
-              targetValue: targetPh!,
-              minValue: 7.5,
-              maxValue: 8.5,
-              unit: '',
-            ),
-          ] else ...[
-            const SizedBox(height: 12),
+            if (targetPh != null) ...[
+              const SizedBox(height: 16),
+              TargetProgressBar(
+                currentValue: currentPh,
+                targetValue: targetPh!,
+                minValue: 7.5,
+                maxValue: 8.5,
+                unit: '',
+              ),
+            ] else ...[
+              const SizedBox(height: 12),
+            ],
+            //_buildProgressBar(color, theme),
           ],
-          //_buildProgressBar(color, theme),
-        ],
         ),
       ),
     );
-  }  void _showEditTargetDialog(BuildContext context) async {
+  }
+
+  void _showEditTargetDialog(BuildContext context) async {
     final controller = TextEditingController(
-      text: targetPh?.toStringAsFixed(2) ?? TargetParametersService.defaultPh.toStringAsFixed(2),
+      text:
+          targetPh?.toStringAsFixed(2) ??
+          TargetParametersService.defaultPh.toStringAsFixed(2),
     );
 
     final result = await showDialog<double>(
@@ -135,7 +172,9 @@ class PhMeter extends StatelessWidget {
             const SizedBox(height: 16),
             TextField(
               controller: controller,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               autofocus: true,
               style: const TextStyle(color: Colors.white, fontSize: 18),
               decoration: InputDecoration(
@@ -159,7 +198,10 @@ class PhMeter extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla', style: TextStyle(color: Colors.white60)),
+            child: const Text(
+              'Annulla',
+              style: TextStyle(color: Colors.white60),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -170,7 +212,9 @@ class PhMeter extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF60a5fa),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Salva', style: TextStyle(color: Colors.white)),
           ),
@@ -183,5 +227,4 @@ class PhMeter extends StatelessWidget {
       onTargetChanged?.call();
     }
   }
-
 }

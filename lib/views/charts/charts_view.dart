@@ -13,7 +13,8 @@ class ChartsView extends StatefulWidget {
   State<ChartsView> createState() => _ChartsViewState();
 }
 
-class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateMixin {
+class _ChartsViewState extends State<ChartsView>
+    with SingleTickerProviderStateMixin {
   final ChartDataService _chartService = ChartDataService();
   Timer? _refreshTimer;
   int _selectedHours = 24; // 24 ore come default
@@ -21,20 +22,20 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
   List<ParameterDataPoint> _chartData = [];
   Map<String, double> _stats = {};
   bool _isLoading = true;
-  
+
   // Controller per animazioni
   late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
-    
+
     // Inizializza animation controller
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-    
+
     _loadChartData();
     // Auto-refresh ogni 30 secondi
     _refreshTimer = Timer.periodic(const Duration(seconds: 30), (_) {
@@ -55,14 +56,14 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     if (wasEmpty) {
       setState(() => _isLoading = true);
     }
-    
+
     final data = await _chartService.loadHistoricalData(
       parameter: _selectedParameter,
       hours: _selectedHours,
     );
-    
+
     final stats = _chartService.calculateStats(data);
-    
+
     setState(() {
       _chartData = data;
       _stats = stats;
@@ -74,21 +75,19 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final padding = ResponsiveBreakpoints.horizontalPadding(screenWidth);
-    
+
     return SingleChildScrollView(
       padding: EdgeInsets.all(padding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHistoryChart(),
-        ],
+        children: [_buildHistoryChart()],
       ),
     );
   }
 
   Widget _buildHistoryChart() {
     final theme = Theme.of(context);
-    
+
     if (_isLoading) {
       return Container(
         padding: const EdgeInsets.all(60),
@@ -96,7 +95,9 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Center(child: CircularProgressIndicator(color: theme.colorScheme.primary)),
+        child: Center(
+          child: CircularProgressIndicator(color: theme.colorScheme.primary),
+        ),
       );
     }
 
@@ -105,14 +106,20 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(FontAwesomeIcons.chartLine, color: _getParameterColor(_selectedParameter), size: 24),
+              Icon(
+                FontAwesomeIcons.chartLine,
+                color: _getParameterColor(_selectedParameter),
+                size: 24,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -120,9 +127,12 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
                   children: [
                     Text(
                       'Storico $_selectedParameter',
-                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    
                   ],
                 ),
               ),
@@ -150,13 +160,37 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
               key: ValueKey('stats_${_selectedParameter}_$_selectedHours'),
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(child: _buildStatChip('Min', _stats['min']?.toStringAsFixed(1) ?? '-', Colors.blue)),
+                Flexible(
+                  child: _buildStatChip(
+                    'Min',
+                    _stats['min']?.toStringAsFixed(1) ?? '-',
+                    Colors.blue,
+                  ),
+                ),
                 const SizedBox(width: 4),
-                Flexible(child: _buildStatChip('Avg', _stats['avg']?.toStringAsFixed(1) ?? '-', Colors.green)),
+                Flexible(
+                  child: _buildStatChip(
+                    'Avg',
+                    _stats['avg']?.toStringAsFixed(1) ?? '-',
+                    Colors.green,
+                  ),
+                ),
                 const SizedBox(width: 4),
-                Flexible(child: _buildStatChip('Max', _stats['max']?.toStringAsFixed(1) ?? '-', Colors.red)),
+                Flexible(
+                  child: _buildStatChip(
+                    'Max',
+                    _stats['max']?.toStringAsFixed(1) ?? '-',
+                    Colors.red,
+                  ),
+                ),
                 const SizedBox(width: 4),
-                Flexible(child: _buildStatChip('Now', _stats['current']?.toStringAsFixed(1) ?? '-', _getParameterColor(_selectedParameter))),
+                Flexible(
+                  child: _buildStatChip(
+                    'Now',
+                    _stats['current']?.toStringAsFixed(1) ?? '-',
+                    _getParameterColor(_selectedParameter),
+                  ),
+                ),
               ],
             ),
           ),
@@ -171,7 +205,10 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
               return FadeTransition(
                 opacity: animation,
                 child: ScaleTransition(
-                  scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
+                  scale: Tween<double>(
+                    begin: 0.95,
+                    end: 1.0,
+                  ).animate(animation),
                   child: child,
                 ),
               );
@@ -180,18 +217,25 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
               key: ValueKey('${_selectedParameter}_$_selectedHours'),
               height: 200,
               child: _chartData.isEmpty
-                  ? Center(child: Text('Nessun dato disponibile', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)))
+                  ? Center(
+                      child: Text(
+                        'Nessun dato disponibile',
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    )
                   : LineChart(_buildLineChartData(_chartData, theme)),
             ),
           ),
 
           const SizedBox(height: 12),
-          
+
           // Legenda zone di sicurezza
           _buildSafetyZonesLegend(theme),
-          
+
           const SizedBox(height: 12),
-          
+
           // Statistiche avanzate
           _buildAdvancedStats(theme),
 
@@ -206,10 +250,10 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
       ),
     );
   }
-  
+
   Widget _buildSafetyZonesLegend(ThemeData theme) {
     final ranges = _getParameterRanges(_selectedParameter);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -223,21 +267,23 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
             icon: FontAwesomeIcons.circleCheck,
             color: const Color(0xFF10b981),
             label: 'Ideale',
-            value: '${ranges['ideal_min']!.toStringAsFixed(1)} - ${ranges['ideal_max']!.toStringAsFixed(1)}',
+            value:
+                '${ranges['ideal_min']!.toStringAsFixed(1)} - ${ranges['ideal_max']!.toStringAsFixed(1)}',
             theme: theme,
           ),
           _buildLegendItem(
             icon: FontAwesomeIcons.triangleExclamation,
             color: const Color(0xFFfbbf24),
             label: 'Avviso',
-            value: '${ranges['warning_min']!.toStringAsFixed(1)} - ${ranges['warning_max']!.toStringAsFixed(1)}',
+            value:
+                '${ranges['warning_min']!.toStringAsFixed(1)} - ${ranges['warning_max']!.toStringAsFixed(1)}',
             theme: theme,
           ),
         ],
       ),
     );
   }
-  
+
   Widget _buildLegendItem({
     required IconData icon,
     required Color color,
@@ -275,14 +321,14 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
       ],
     );
   }
-  
+
   Widget _buildAdvancedStats(ThemeData theme) {
     if (_chartData.isEmpty) return const SizedBox();
-    
+
     final trend = _calculateTrend();
     final stability = _calculateStability();
     final advice = _getAdvice(trend, stability);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -350,9 +396,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
             decoration: BoxDecoration(
               color: advice['color'].withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: advice['color'].withValues(alpha: 0.3),
-              ),
+              border: Border.all(color: advice['color'].withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
@@ -379,7 +423,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
       ),
     );
   }
-  
+
   Widget _buildAnalysisItem({
     required IconData icon,
     required String label,
@@ -424,7 +468,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
       ),
     );
   }
-  
+
   Map<String, dynamic> _calculateTrend() {
     if (_chartData.length < 2) {
       return {
@@ -433,15 +477,25 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
         'color': const Color(0xFF6b7280),
       };
     }
-    
+
     // Calcola trend tra prima metà e seconda metà dei dati
     final midPoint = _chartData.length ~/ 2;
-    final firstHalfAvg = _chartData.sublist(0, midPoint).map((e) => e.value).reduce((a, b) => a + b) / midPoint;
-    final secondHalfAvg = _chartData.sublist(midPoint).map((e) => e.value).reduce((a, b) => a + b) / (_chartData.length - midPoint);
-    
+    final firstHalfAvg =
+        _chartData
+            .sublist(0, midPoint)
+            .map((e) => e.value)
+            .reduce((a, b) => a + b) /
+        midPoint;
+    final secondHalfAvg =
+        _chartData
+            .sublist(midPoint)
+            .map((e) => e.value)
+            .reduce((a, b) => a + b) /
+        (_chartData.length - midPoint);
+
     final diff = secondHalfAvg - firstHalfAvg;
     final diffPercent = (diff / firstHalfAvg * 100).abs();
-    
+
     if (diffPercent < 1) {
       return {
         'icon': FontAwesomeIcons.arrowRight,
@@ -462,56 +516,51 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
       };
     }
   }
-  
+
   Map<String, dynamic> _calculateStability() {
-    if (_chartData.isEmpty) return {'text': '-', 'color': const Color(0xFF6b7280)};
-    
+    if (_chartData.isEmpty)
+      return {'text': '-', 'color': const Color(0xFF6b7280)};
+
     final values = _chartData.map((e) => e.value).toList();
     final avg = values.reduce((a, b) => a + b) / values.length;
-    
+
     // Calcola deviazione standard
-    final variance = values.map((v) => (v - avg) * (v - avg)).reduce((a, b) => a + b) / values.length;
+    final variance =
+        values.map((v) => (v - avg) * (v - avg)).reduce((a, b) => a + b) /
+        values.length;
     final stdDev = variance > 0 ? (variance).abs().toDouble() : 0.0;
-    
+
     // Determina stabilità basata su deviazione standard relativa
     final relativeStdDev = (stdDev / avg * 100).abs();
-    
+
     if (relativeStdDev < 2) {
-      return {
-        'text': 'Ottima',
-        'color': const Color(0xFF10b981),
-      };
+      return {'text': 'Ottima', 'color': const Color(0xFF10b981)};
     } else if (relativeStdDev < 5) {
-      return {
-        'text': 'Buona',
-        'color': const Color(0xFF22c55e),
-      };
+      return {'text': 'Buona', 'color': const Color(0xFF22c55e)};
     } else if (relativeStdDev < 10) {
-      return {
-        'text': 'Media',
-        'color': const Color(0xFFfbbf24),
-      };
+      return {'text': 'Media', 'color': const Color(0xFFfbbf24)};
     } else {
-      return {
-        'text': 'Bassa',
-        'color': const Color(0xFFef4444),
-      };
+      return {'text': 'Bassa', 'color': const Color(0xFFef4444)};
     }
   }
-  
-  Map<String, dynamic> _getAdvice(Map<String, dynamic> trend, Map<String, dynamic> stability) {
+
+  Map<String, dynamic> _getAdvice(
+    Map<String, dynamic> trend,
+    Map<String, dynamic> stability,
+  ) {
     final ranges = _getParameterRanges(_selectedParameter);
     final current = _stats['current'] ?? 0.0;
-    
+
     // Controlla se fuori range critico
     if (current < ranges['warning_min']! || current > ranges['warning_max']!) {
       return {
         'icon': FontAwesomeIcons.triangleExclamation,
-        'text': 'Attenzione: $_selectedParameter fuori range. Controlla subito e correggi.',
+        'text':
+            'Attenzione: $_selectedParameter fuori range. Controlla subito e correggi.',
         'color': const Color(0xFFef4444),
       };
     }
-    
+
     // Controlla se fuori range ideale
     if (current < ranges['ideal_min']! || current > ranges['ideal_max']!) {
       return {
@@ -520,27 +569,30 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
         'color': const Color(0xFFfbbf24),
       };
     }
-    
+
     // Controlla stabilità
     final stabilityText = stability['text'] as String;
     if (stabilityText.contains('Bassa')) {
       return {
         'icon': FontAwesomeIcons.lightbulb,
-        'text': 'Parametro instabile. Verifica cambio acqua e dosaggi additivi.',
+        'text':
+            'Parametro instabile. Verifica cambio acqua e dosaggi additivi.',
         'color': const Color(0xFFfbbf24),
       };
     }
-    
+
     // Controlla trend
     final trendIcon = trend['icon'] as IconData;
-    if (trendIcon == FontAwesomeIcons.arrowTrendUp && _selectedParameter == 'Temperatura') {
+    if (trendIcon == FontAwesomeIcons.arrowTrendUp &&
+        _selectedParameter == 'Temperatura') {
       return {
         'icon': FontAwesomeIcons.snowflake,
-        'text': 'Temperatura in aumento. Verifica raffreddamento e ventilazione.',
+        'text':
+            'Temperatura in aumento. Verifica raffreddamento e ventilazione.',
         'color': const Color(0xFF3b82f6),
       };
     }
-    
+
     // Tutto ok
     return {
       'icon': FontAwesomeIcons.circleCheck,
@@ -552,14 +604,32 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
   Widget _buildParameterSegmentedButton() {
     final theme = Theme.of(context);
     final parameters = [
-      {'name': 'Temperatura', 'icon': FontAwesomeIcons.temperatureHalf, 'color': const Color(0xFFef4444)},
-      {'name': 'pH', 'icon': FontAwesomeIcons.flask, 'color': const Color(0xFF60a5fa)},
-      {'name': 'Salinità', 'icon': FontAwesomeIcons.water, 'color': const Color(0xFF2dd4bf)},
-      {'name': 'ORP', 'icon': FontAwesomeIcons.bolt, 'color': const Color(0xFFfbbf24)},
+      {
+        'name': 'Temperatura',
+        'icon': FontAwesomeIcons.temperatureHalf,
+        'color': const Color(0xFFef4444),
+      },
+      {
+        'name': 'pH',
+        'icon': FontAwesomeIcons.flask,
+        'color': const Color(0xFF60a5fa),
+      },
+      {
+        'name': 'Salinità',
+        'icon': FontAwesomeIcons.water,
+        'color': const Color(0xFF2dd4bf),
+      },
+      {
+        'name': 'ORP',
+        'icon': FontAwesomeIcons.bolt,
+        'color': const Color(0xFFfbbf24),
+      },
     ];
-    
-    final selectedIndex = parameters.indexWhere((p) => p['name'] == _selectedParameter);
-    
+
+    final selectedIndex = parameters.indexWhere(
+      (p) => p['name'] == _selectedParameter,
+    );
+
     return Container(
       height: 56,
       decoration: BoxDecoration(
@@ -572,13 +642,13 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
           AnimatedAlign(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOutCubic,
-            alignment: selectedIndex == 0 
+            alignment: selectedIndex == 0
                 ? Alignment.centerLeft
                 : selectedIndex == 1
-                    ? const Alignment(-0.33, 0)
-                    : selectedIndex == 2
-                        ? const Alignment(0.33, 0)
-                        : Alignment.centerRight,
+                ? const Alignment(-0.33, 0)
+                : selectedIndex == 2
+                ? const Alignment(0.33, 0)
+                : Alignment.centerRight,
             child: FractionallySizedBox(
               widthFactor: 1 / 4,
               child: Container(
@@ -586,14 +656,17 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      (parameters[selectedIndex]['color'] as Color).withValues(alpha: 0.8),
+                      (parameters[selectedIndex]['color'] as Color).withValues(
+                        alpha: 0.8,
+                      ),
                       (parameters[selectedIndex]['color'] as Color),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: (parameters[selectedIndex]['color'] as Color).withValues(alpha: 0.4),
+                      color: (parameters[selectedIndex]['color'] as Color)
+                          .withValues(alpha: 0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 3),
                     ),
@@ -608,7 +681,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
               final name = param['name'] as String;
               final icon = param['icon'] as IconData;
               final isSelected = _selectedParameter == name;
-              
+
               return Expanded(
                 child: Material(
                   color: Colors.transparent,
@@ -630,7 +703,9 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
                             curve: Curves.easeInOut,
                             child: Icon(
                               icon,
-                              color: isSelected ? Colors.white : theme.colorScheme.onSurfaceVariant,
+                              color: isSelected
+                                  ? Colors.white
+                                  : theme.colorScheme.onSurfaceVariant,
                               size: isSelected ? 22 : 20,
                             ),
                           ),
@@ -639,8 +714,12 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
                             duration: const Duration(milliseconds: 250),
                             curve: Curves.easeInOut,
                             style: TextStyle(
-                              color: isSelected ? Colors.white : theme.colorScheme.onSurfaceVariant,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                              color: isSelected
+                                  ? Colors.white
+                                  : theme.colorScheme.onSurfaceVariant,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
                               fontSize: 11,
                             ),
                             child: Text(name),
@@ -661,7 +740,10 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
   Widget _buildStatChip(String label, String value, Color color) {
     return Column(
       children: [
-        Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10)),
+        Text(
+          label,
+          style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10),
+        ),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -672,7 +754,11 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
           ),
           child: Text(
             value,
-            style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
@@ -686,7 +772,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
       {'label': '7d', 'hours': 168},
       {'label': '30d', 'hours': 720},
     ];
-    
+
     return Container(
       height: 50,
       decoration: BoxDecoration(
@@ -702,8 +788,8 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
             alignment: _selectedHours == 24
                 ? Alignment.centerLeft
                 : _selectedHours == 168
-                    ? Alignment.center
-                    : Alignment.centerRight,
+                ? Alignment.center
+                : Alignment.centerRight,
             child: FractionallySizedBox(
               widthFactor: 1 / 3,
               child: Container(
@@ -744,10 +830,12 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
                         duration: const Duration(milliseconds: 250),
                         curve: Curves.easeInOut,
                         style: TextStyle(
-                          color: isSelected 
-                              ? Colors.white 
+                          color: isSelected
+                              ? Colors.white
                               : theme.colorScheme.onSurfaceVariant,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
                           fontSize: 14,
                         ),
                         child: Text(period['label'] as String),
@@ -763,7 +851,10 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     );
   }
 
-  LineChartData _buildLineChartData(List<ParameterDataPoint> data, ThemeData theme) {
+  LineChartData _buildLineChartData(
+    List<ParameterDataPoint> data,
+    ThemeData theme,
+  ) {
     // Se non ci sono dati, crea un grafico vuoto
     if (data.isEmpty) {
       return LineChartData(
@@ -778,7 +869,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     final spots = data.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.value);
     }).toList();
-    
+
     // Ottieni i range per il parametro selezionato
     final ranges = _getParameterRanges(_selectedParameter);
 
@@ -834,7 +925,8 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
             showTitles: true,
             reservedSize: 30,
             getTitlesWidget: (value, meta) {
-              if (data.isEmpty || value.toInt() >= data.length) return const SizedBox();
+              if (data.isEmpty || value.toInt() >= data.length)
+                return const SizedBox();
               final interval = data.length > 6 ? (data.length ~/ 6) : 1;
               if (value.toInt() % interval != 0) return const SizedBox();
               final point = data[value.toInt()];
@@ -842,7 +934,10 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   '${point.timestamp.hour}:${point.timestamp.minute.toString().padLeft(2, '0')}',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 10),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 10,
+                  ),
                 ),
               );
             },
@@ -854,12 +949,17 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
             reservedSize: 40,
             getTitlesWidget: (value, meta) => Text(
               value.toStringAsFixed(1),
-              style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 10),
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 10,
+              ),
             ),
           ),
         ),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
       ),
       borderData: FlBorderData(show: false),
       lineTouchData: LineTouchData(
@@ -904,7 +1004,9 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
           dotData: const FlDotData(show: false),
           belowBarData: BarAreaData(
             show: true,
-            color: _getParameterColor(_selectedParameter).withValues(alpha: 0.1),
+            color: _getParameterColor(
+              _selectedParameter,
+            ).withValues(alpha: 0.1),
           ),
         ),
       ],
@@ -925,7 +1027,7 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
         return const Color(0xFF60a5fa);
     }
   }
-  
+
   /// Restituisce i range ideali e di warning per ogni parametro
   Map<String, double> _getParameterRanges(String parameter) {
     switch (parameter) {
@@ -977,4 +1079,3 @@ class _ChartsViewState extends State<ChartsView> with SingleTickerProviderStateM
     }
   }
 }
-

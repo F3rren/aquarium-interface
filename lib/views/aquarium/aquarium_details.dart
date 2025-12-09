@@ -11,14 +11,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AquariumDetails extends StatefulWidget {
   final int? aquariumId;
-  
+
   const AquariumDetails({super.key, this.aquariumId});
 
   @override
   State<StatefulWidget> createState() => _AquariumDetailsState();
 }
 
-class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProviderStateMixin {
+class _AquariumDetailsState extends State<AquariumDetails>
+    with SingleTickerProviderStateMixin {
   int _selectedBottomIndex = 0;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -30,7 +31,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
   @override
   void initState() {
     super.initState();
-    
+
     // Inizializza le pagine con aquariumId
     _pages = [
       const HealthDashboard(),
@@ -39,7 +40,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
       MaintenanceView(aquariumId: widget.aquariumId),
       ProfilePage(aquariumId: widget.aquariumId),
     ];
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -47,7 +48,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
-    
+
     _loadData();
   }
 
@@ -67,7 +68,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
 
   void _onTabTapped(int index) {
     if (index == _selectedBottomIndex) return;
-    
+
     _animationController.reverse().then((_) {
       setState(() {
         _selectedBottomIndex = index;
@@ -81,7 +82,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
@@ -126,7 +127,10 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: FaIcon(FontAwesomeIcons.arrowLeft, color: theme.colorScheme.onSurface),
+                    icon: FaIcon(
+                      FontAwesomeIcons.arrowLeft,
+                      color: theme.colorScheme.onSurface,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                   Expanded(
@@ -145,7 +149,10 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
                     ),
                   ),
                   IconButton(
-                    icon: FaIcon(FontAwesomeIcons.bell, color: theme.colorScheme.onSurface),
+                    icon: FaIcon(
+                      FontAwesomeIcons.bell,
+                      color: theme.colorScheme.onSurface,
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -167,11 +174,20 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
                         child: Column(
                           children: [
                             const SizedBox(height: 20),
-                            const SkeletonLoader(width: double.infinity, height: 100),
+                            const SkeletonLoader(
+                              width: double.infinity,
+                              height: 100,
+                            ),
                             const SizedBox(height: 16),
-                            const SkeletonLoader(width: double.infinity, height: 100),
+                            const SkeletonLoader(
+                              width: double.infinity,
+                              height: 100,
+                            ),
                             const SizedBox(height: 16),
-                            const SkeletonLoader(width: double.infinity, height: 100),
+                            const SkeletonLoader(
+                              width: double.infinity,
+                              height: 100,
+                            ),
                           ],
                         ),
                       ),
@@ -223,7 +239,7 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
   Widget _buildNavItem(IconData icon, String label, int index) {
     final isSelected = _selectedBottomIndex == index;
     final theme = Theme.of(context);
-    
+
     return GestureDetector(
       onTap: () => _onTabTapped(index),
       child: AnimatedContainer(
@@ -231,7 +247,9 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
         curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.2) : Colors.transparent,
+          color: isSelected
+              ? theme.colorScheme.primary.withValues(alpha: 0.2)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
@@ -242,7 +260,9 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
               scale: isSelected ? 1.1 : 1.0,
               child: Icon(
                 icon,
-                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurfaceVariant,
                 size: 22,
               ),
             ),
@@ -250,7 +270,9 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
             AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),
               style: TextStyle(
-                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurfaceVariant,
                 fontSize: 9,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
@@ -262,4 +284,3 @@ class _AquariumDetailsState extends State<AquariumDetails> with SingleTickerProv
     );
   }
 }
-

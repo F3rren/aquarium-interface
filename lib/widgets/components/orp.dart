@@ -43,7 +43,9 @@ class OrpMeter extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,18 +67,41 @@ class OrpMeter extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text('ORP/Redox', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
+                          Text(
+                            'ORP/Redox',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                           const SizedBox(width: 6),
-                          FaIcon(FontAwesomeIcons.pen, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+                          FaIcon(
+                            FontAwesomeIcons.pen,
+                            size: 14,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.4,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(status, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w500)),
+                      Text(
+                        status,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
@@ -86,7 +111,11 @@ class OrpMeter extends StatelessWidget {
                     value: currentOrp,
                     decimals: 0,
                     suffix: ' mV',
-                    style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -113,7 +142,9 @@ class OrpMeter extends StatelessWidget {
   void _showEditTargetDialog(BuildContext context) async {
     final theme = Theme.of(context);
     final controller = TextEditingController(
-      text: targetOrp?.toStringAsFixed(0) ?? TargetParametersService.defaultOrp.toStringAsFixed(0),
+      text:
+          targetOrp?.toStringAsFixed(0) ??
+          TargetParametersService.defaultOrp.toStringAsFixed(0),
     );
 
     final result = await showDialog<double>(
@@ -125,7 +156,10 @@ class OrpMeter extends StatelessWidget {
           children: [
             const FaIcon(FontAwesomeIcons.flask, color: Color(0xFF60a5fa)),
             const SizedBox(width: 12),
-            Text('Target ORP', style: TextStyle(color: theme.colorScheme.onSurface)),
+            Text(
+              'Target ORP',
+              style: TextStyle(color: theme.colorScheme.onSurface),
+            ),
           ],
         ),
         content: Column(
@@ -134,17 +168,25 @@ class OrpMeter extends StatelessWidget {
           children: [
             Text(
               'Imposta il valore ORP desiderato:',
-              style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: controller,
               keyboardType: TextInputType.number,
               autofocus: true,
-              style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18),
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+                fontSize: 18,
+              ),
               decoration: InputDecoration(
                 suffixText: 'mV',
-                suffixStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                suffixStyle: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 filled: true,
                 fillColor: theme.colorScheme.surfaceContainerHighest,
                 border: OutlineInputBorder(
@@ -152,20 +194,28 @@ class OrpMeter extends StatelessWidget {
                   borderSide: BorderSide.none,
                 ),
                 hintText: '360',
-                hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                ),
               ),
             ),
             const SizedBox(height: 12),
             Text(
               'Range tipico: 300-400 mV',
-              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.38), fontSize: 12),
+              style: TextStyle(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
+                fontSize: 12,
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Annulla', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
+            child: Text(
+              'Annulla',
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -176,7 +226,9 @@ class OrpMeter extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF60a5fa),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Salva', style: TextStyle(color: Colors.white)),
           ),
@@ -189,5 +241,4 @@ class OrpMeter extends StatelessWidget {
       onTargetChanged?.call();
     }
   }
-
 }

@@ -21,36 +21,39 @@ class ParameterService {
   final AlertManager _alertManager = AlertManager();
   final Logger _logger = Logger();
   final ManualParametersService _manualService = ManualParametersService();
-  final NotificationSettingsService _notificationService = NotificationSettingsService();
+  final NotificationSettingsService _notificationService =
+      NotificationSettingsService();
   final MaintenanceTaskService _maintenanceService = MaintenanceTaskService();
   final TargetParametersService _targetService = TargetParametersService();
-  
+
   // ID della vasca attualmente selezionata
   int? _currentid;
-  
+
   // Cache per i parametri correnti
   AquariumParameters? _cachedParameters;
   DateTime? _lastFetch;
-  
+
   // Timer per auto-refresh
   Timer? _refreshTimer;
   bool _isAutoRefreshEnabled = false;
-  
+
   // Stream per notificare aggiornamenti
-  final _parametersController = StreamController<AquariumParameters>.broadcast();
-  Stream<AquariumParameters> get parametersStream => _parametersController.stream;
+  final _parametersController =
+      StreamController<AquariumParameters>.broadcast();
+  Stream<AquariumParameters> get parametersStream =>
+      _parametersController.stream;
 
   // Flag per abilitare/disabilitare controllo automatico alert
   bool _autoCheckAlerts = true;
-  
+
   /// Ottieni lo stato corrente del controllo automatico alert
   bool get autoCheckAlertsEnabled => _autoCheckAlerts;
-  
+
   /// Abilita o disabilita il controllo automatico degli alert
   void setAutoCheckAlerts(bool enabled) {
     _autoCheckAlerts = enabled;
   }
-  
+
   /// Invalida la cache forzando il prossimo fetch dal server
   void invalidateCache() {
     _cachedParameters = null;
@@ -64,7 +67,7 @@ class ParameterService {
       // Invalida la cache quando cambia la vasca
       _cachedParameters = null;
       _lastFetch = null;
-      
+
       // Imposta anche nei servizi dipendenti
       _manualService.setCurrentAquarium(id);
       _notificationService.setCurrentAquarium(id);
@@ -80,13 +83,14 @@ class ParameterService {
     bool useMock = true,
   }) async {
     final targetid = id ?? _currentid;
-    
+
     if (targetid == null) {
       throw NoAquariumSelectedException(
-        details: 'Usa setCurrentAquarium() per selezionare una vasca prima di recuperare i parametri',
+        details:
+            'Usa setCurrentAquarium() per selezionare una vasca prima di recuperare i parametri',
       );
     }
-    
+
     try {
       // Endpoint per vasca specifica: /api/aquariums/{id}/parameters
       final response = await _apiService.get(
@@ -119,9 +123,9 @@ class ParameterService {
           details: 'Attesa mappa, ricevuto: ${response.runtimeType}',
         );
       }
-      
+
       final parameters = AquariumParameters.fromJson(parametersData);
-      
+
       // Carica parametri manuali e uniscili
       final manualParams = await _manualService.loadManualParameters();
       final completeParameters = AquariumParameters(
@@ -136,16 +140,16 @@ class ParameterService {
         phosphate: manualParams['phosphate'] ?? parameters.phosphate,
         timestamp: parameters.timestamp,
       );
-      
+
       _cachedParameters = completeParameters;
       _lastFetch = DateTime.now();
       _parametersController.add(completeParameters);
-      
+
       // Controlla automaticamente gli alert se abilitato
       if (_autoCheckAlerts) {
         await _checkAllParametersForAlerts(completeParameters);
       }
-      
+
       return completeParameters;
     } on AppException {
       // Rilancia le nostre eccezioni custom senza modificarle
@@ -167,16 +171,18 @@ class ParameterService {
   }
 
   /// Ottieni parametri da cache (se disponibili e recenti)
-  AquariumParameters? getCachedParameters({Duration maxAge = const Duration(minutes: 5)}) {
+  AquariumParameters? getCachedParameters({
+    Duration maxAge = const Duration(minutes: 5),
+  }) {
     if (_cachedParameters == null || _lastFetch == null) {
       return null;
     }
-    
+
     final age = DateTime.now().difference(_lastFetch!);
     if (age > maxAge) {
       return null;
     }
-    
+
     return _cachedParameters;
   }
 
@@ -188,36 +194,39 @@ class ParameterService {
     int? limit,
   }) async {
     final targetid = id ?? _currentid;
-    
+
     if (targetid == null) {
       return []; // Ritorna lista vuota invece di errore
     }
-    
+
     try {
       // Costruisci query parameters
       final queryParams = <String, String>{};
       if (from != null) queryParams['from'] = from.toIso8601String();
       if (to != null) queryParams['to'] = to.toIso8601String();
       if (limit != null) queryParams['limit'] = limit.toString();
-      
-      final query = queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
-      
+
+      final query = queryParams.entries
+          .map((e) => '${e.key}=${e.value}')
+          .join('&');
+
       // Endpoint per storico vasca specifica: /api/aquariums/{id}/parameters/history
-      final endpoint = '/aquariums/$targetid/parameters/history${query.isNotEmpty ? '?$query' : ''}';
-      
-      
+      final endpoint =
+          '/aquariums/$targetid/parameters/history${query.isNotEmpty ? '?$query' : ''}';
+
       final response = await _apiService.get(endpoint);
-     
+
       // Gestisci il nuovo formato con id e measurements
       List<dynamic> historyJson;
       if (response is Map<String, dynamic>) {
         // Risposta con wrapper object {"data": {"id": 1, "measurements": [...]}}
         if (response.containsKey('data')) {
           var dataValue = response['data'];
-          
+
           if (dataValue is Map<String, dynamic>) {
             // dataValue è l'oggetto con id e measurements
-            if (dataValue['id'].toString() == targetid && dataValue['measurements'] != null) {
+            if (dataValue['id'].toString() == targetid &&
+                dataValue['measurements'] != null) {
               historyJson = dataValue['measurements'] as List<dynamic>;
             } else {
               historyJson = [];
@@ -228,7 +237,7 @@ class ParameterService {
               (item) => item['id'].toString() == targetid,
               orElse: () => null,
             );
-            
+
             if (aquariumData != null && aquariumData['measurements'] != null) {
               historyJson = aquariumData['measurements'] as List<dynamic>;
             } else {
@@ -246,7 +255,7 @@ class ParameterService {
           (item) => item['id'].toString() == targetid,
           orElse: () => null,
         );
-        
+
         if (aquariumData != null && aquariumData['measurements'] != null) {
           historyJson = aquariumData['measurements'] as List<dynamic>;
         } else {
@@ -255,13 +264,14 @@ class ParameterService {
       } else {
         historyJson = [];
       }
-      
+
       final parameters = historyJson
-          .map((json) => AquariumParameters.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) => AquariumParameters.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
-      
+
       return parameters;
-      
     } on AppException catch (e) {
       // Log dell'errore per debug (in produzione potresti usare un logger)
       _logger.e('Errore recupero storico parametri', error: e);
@@ -279,13 +289,19 @@ class ParameterService {
     required String parameterName,
     required Duration hours,
   }) async {
-    
     final now = DateTime.now();
-    
+
     // Calcola il range basandosi sui giorni invece che sulle ore precise
     final DateTime from;
-    final DateTime to = DateTime(now.year, now.month, now.day, 23, 59, 59); // Fine di oggi
-    
+    final DateTime to = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      23,
+      59,
+      59,
+    ); // Fine di oggi
+
     if (hours.inHours == 24) {
       // Ultime 24 ore: da inizio di ieri a fine di oggi
       from = DateTime(now.year, now.month, now.day - 1, 0, 0, 0);
@@ -299,7 +315,7 @@ class ParameterService {
       // Fallback: usa sottrazione diretta
       from = now.subtract(hours);
     }
-    
+
     try {
       // Costruisci query parameters
       final queryParams = <String, String>{
@@ -307,11 +323,13 @@ class ParameterService {
         'from': from.toIso8601String(),
         'to': to.toIso8601String(),
       };
-      
-      final query = queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
+
+      final query = queryParams.entries
+          .map((e) => '${e.key}=${e.value}')
+          .join('&');
       final endpoint = '/aquariums/$aquariumId/parameters/history?$query';
       final response = await _apiService.get(endpoint);
-      
+
       // Estrai i dati dalla risposta
       if (response is Map<String, dynamic> && response.containsKey('data')) {
         final data = response['data'];
@@ -319,15 +337,18 @@ class ParameterService {
           // Il backend ritorna già {timestamp, value} nel formato corretto!
           final result = data.map<Map<String, dynamic>>((item) {
             return {
-              'timestamp': item['timestamp'] ?? item['measuredAt'] ?? DateTime.now().toIso8601String(),
+              'timestamp':
+                  item['timestamp'] ??
+                  item['measuredAt'] ??
+                  DateTime.now().toIso8601String(),
               'value': (item['value'] ?? item[parameterName] ?? 0).toDouble(),
             };
           }).toList();
-          
+
           return result;
         }
       }
-      
+
       return [];
     } on AppException catch (e) {
       _logger.e('Errore recupero storico per grafico', error: e);
@@ -341,7 +362,7 @@ class ParameterService {
   /// Invia nuovi parametri al server
   Future<void> updateParameters(AquariumParameters parameters) async {
     await _apiService.post('/parameters', parameters.toJson());
-    
+
     _cachedParameters = parameters;
     _parametersController.add(parameters);
   }
@@ -349,17 +370,16 @@ class ParameterService {
   /// Avvia auto-refresh dei parametri
   void startAutoRefresh({Duration interval = const Duration(seconds: 10)}) {
     if (_isAutoRefreshEnabled) return;
-    
+
     _isAutoRefreshEnabled = true;
-    
+
     // Primo caricamento immediato
     getCurrentParameters();
-    
+
     // Poi carica periodicamente
     _refreshTimer = Timer.periodic(interval, (timer) {
       getCurrentParameters();
     });
-    
   }
 
   /// Ferma auto-refresh
@@ -390,7 +410,7 @@ class ParameterService {
   /// Controlla tutti i parametri e invia alert se necessario
   Future<void> _checkAllParametersForAlerts(AquariumParameters params) async {
     final settings = await _notificationService.loadSettings();
-    
+
     // Temperatura (sempre disponibile da sensori)
     await _alertManager.checkParameter(
       name: 'Temperatura',

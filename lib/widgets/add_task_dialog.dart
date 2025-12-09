@@ -15,7 +15,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   MaintenanceCategory _selectedCategory = MaintenanceCategory.water;
   int _frequencyDays = 7;
   TimeOfDay _reminderTime = const TimeOfDay(hour: 9, minute: 0);
@@ -34,8 +34,8 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     final task = MaintenanceTask(
       id: 'task_custom_${DateTime.now().millisecondsSinceEpoch}',
       title: _titleController.text.trim(),
-      description: _descriptionController.text.trim().isEmpty 
-          ? null 
+      description: _descriptionController.text.trim().isEmpty
+          ? null
           : _descriptionController.text.trim(),
       category: _selectedCategory,
       frequencyDays: _frequencyDays,
@@ -78,7 +78,11 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const FaIcon(FontAwesomeIcons.listCheck, color: Colors.white, size: 24),
+                        child: const FaIcon(
+                          FontAwesomeIcons.listCheck,
+                          color: Colors.white,
+                          size: 24,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -104,7 +108,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
 
                   // Titolo
@@ -206,9 +210,14 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                           ),
                           const SizedBox(width: 12),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF8b5cf6).withValues(alpha: 0.1),
+                              color: const Color(
+                                0xFF8b5cf6,
+                              ).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -251,7 +260,9 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: BorderSide(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.1,
+                        ),
                       ),
                     ),
                   ),
@@ -270,7 +281,9 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                           }
                         },
                         icon: const FaIcon(FontAwesomeIcons.clock),
-                        label: Text('Cambia orario (${_reminderTime.format(context)})'),
+                        label: Text(
+                          'Cambia orario (${_reminderTime.format(context)})',
+                        ),
                       ),
                     ),
                   ],
@@ -310,7 +323,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                             children: [
                               FaIcon(FontAwesomeIcons.check, size: 20),
                               SizedBox(width: 8),
-                              Text('Crea Task', style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                'Crea Task',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ],
                           ),
                         ),
@@ -328,7 +344,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
 
   Widget _buildFrequencyChip(String label, int days) {
     final isSelected = _frequencyDays == days;
-    
+
     return FilterChip(
       label: Text(label),
       selected: isSelected,
@@ -345,4 +361,3 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     );
   }
 }
-

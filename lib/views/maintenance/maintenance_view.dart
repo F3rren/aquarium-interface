@@ -6,7 +6,7 @@ import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 
 class MaintenanceView extends StatefulWidget {
   final int? aquariumId;
-  
+
   const MaintenanceView({super.key, this.aquariumId});
 
   @override
@@ -17,20 +17,20 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   final MaintenanceTaskService _service = MaintenanceTaskService();
   MaintenanceCategory? _filterCategory;
   bool _showCompleted = false; // Toggle tra task in corso e completati
-  
+
   List<MaintenanceTask> _tasks = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    
+
     if (widget.aquariumId != null) {
       _service.setCurrentAquarium(widget.aquariumId!);
       _loadTasks();
     }
   }
-  
+
   Future<void> _loadTasks() async {
     setState(() => _isLoading = true);
     try {
@@ -53,12 +53,17 @@ class _MaintenanceViewState extends State<MaintenanceView> {
       }
     }
   }
-  
-  List<MaintenanceTask> get _pendingTasks => _tasks.where((t) => !t.isCompleted).toList();
-  List<MaintenanceTask> get _completedTasks => _tasks.where((t) => t.isCompleted).toList();
-  List<MaintenanceTask> get _overdueTasks => _pendingTasks.where((t) => t.isOverdue || (t.overdue ?? false)).toList();
-  List<MaintenanceTask> get _dueTodayTasks => _pendingTasks.where((t) => t.isDueToday).toList();
-  List<MaintenanceTask> get _dueThisWeekTasks => _pendingTasks.where((t) => t.isDueThisWeek && !t.isDueToday).toList();
+
+  List<MaintenanceTask> get _pendingTasks =>
+      _tasks.where((t) => !t.isCompleted).toList();
+  List<MaintenanceTask> get _completedTasks =>
+      _tasks.where((t) => t.isCompleted).toList();
+  List<MaintenanceTask> get _overdueTasks =>
+      _pendingTasks.where((t) => t.isOverdue || (t.overdue ?? false)).toList();
+  List<MaintenanceTask> get _dueTodayTasks =>
+      _pendingTasks.where((t) => t.isDueToday).toList();
+  List<MaintenanceTask> get _dueThisWeekTasks =>
+      _pendingTasks.where((t) => t.isDueThisWeek && !t.isDueToday).toList();
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +71,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
     final screenWidth = MediaQuery.of(context).size.width;
     final padding = ResponsiveBreakpoints.horizontalPadding(screenWidth);
-    
+
     return Scaffold(
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -120,7 +125,9 @@ class _MaintenanceViewState extends State<MaintenanceView> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: !_showCompleted ? const Color(0xFF8b5cf6) : Colors.transparent,
+                  color: !_showCompleted
+                      ? const Color(0xFF8b5cf6)
+                      : Colors.transparent,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
@@ -132,14 +139,20 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                     FaIcon(
                       FontAwesomeIcons.listCheck,
                       size: 16,
-                      color: !_showCompleted ? Colors.white : theme.textTheme.bodyMedium?.color,
+                      color: !_showCompleted
+                          ? Colors.white
+                          : theme.textTheme.bodyMedium?.color,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'In Corso (${_pendingTasks.length})',
                       style: TextStyle(
-                        color: !_showCompleted ? Colors.white : theme.textTheme.bodyMedium?.color,
-                        fontWeight: !_showCompleted ? FontWeight.bold : FontWeight.normal,
+                        color: !_showCompleted
+                            ? Colors.white
+                            : theme.textTheme.bodyMedium?.color,
+                        fontWeight: !_showCompleted
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -157,7 +170,9 @@ class _MaintenanceViewState extends State<MaintenanceView> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: _showCompleted ? const Color(0xFF10b981) : Colors.transparent,
+                  color: _showCompleted
+                      ? const Color(0xFF10b981)
+                      : Colors.transparent,
                   borderRadius: const BorderRadius.only(
                     topRight: Radius.circular(12),
                     bottomRight: Radius.circular(12),
@@ -169,14 +184,20 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                     FaIcon(
                       FontAwesomeIcons.circleCheck,
                       size: 16,
-                      color: _showCompleted ? Colors.white : theme.textTheme.bodyMedium?.color,
+                      color: _showCompleted
+                          ? Colors.white
+                          : theme.textTheme.bodyMedium?.color,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Completati (${_completedTasks.length})',
                       style: TextStyle(
-                        color: _showCompleted ? Colors.white : theme.textTheme.bodyMedium?.color,
-                        fontWeight: _showCompleted ? FontWeight.bold : FontWeight.normal,
+                        color: _showCompleted
+                            ? Colors.white
+                            : theme.textTheme.bodyMedium?.color,
+                        fontWeight: _showCompleted
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
                   ],
@@ -225,7 +246,13 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color, ThemeData theme) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+    ThemeData theme,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -275,9 +302,13 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     );
   }
 
-  Widget _buildFilterChip(String label, MaintenanceCategory? category, ThemeData theme) {
+  Widget _buildFilterChip(
+    String label,
+    MaintenanceCategory? category,
+    ThemeData theme,
+  ) {
     final isSelected = _filterCategory == category;
-    
+
     return FilterChip(
       label: Text(label),
       selected: isSelected,
@@ -299,7 +330,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     final filteredTasks = _filterCategory == null
         ? tasksToShow
         : tasksToShow.where((t) => t.category == _filterCategory).toList();
-    
+
     if (filteredTasks.isEmpty) {
       return Center(
         child: Padding(
@@ -307,13 +338,17 @@ class _MaintenanceViewState extends State<MaintenanceView> {
           child: Column(
             children: [
               FaIcon(
-                _showCompleted ? FontAwesomeIcons.circleCheck : FontAwesomeIcons.clipboardCheck,
+                _showCompleted
+                    ? FontAwesomeIcons.circleCheck
+                    : FontAwesomeIcons.clipboardCheck,
                 size: 48,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               const SizedBox(height: 16),
               Text(
-                _showCompleted ? 'Nessun task completato' : 'Nessun task in corso',
+                _showCompleted
+                    ? 'Nessun task completato'
+                    : 'Nessun task in corso',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
@@ -323,9 +358,11 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         ),
       );
     }
-    
+
     return Column(
-      children: filteredTasks.map((task) => _buildTaskCard(task, theme)).toList(),
+      children: filteredTasks
+          .map((task) => _buildTaskCard(task, theme))
+          .toList(),
     );
   }
 
@@ -333,10 +370,10 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     final daysUntil = task.daysUntilDue;
     final isOverdue = task.isOverdue;
     final isDueToday = task.isDueToday;
-    
+
     Color statusColor;
     String statusText;
-    
+
     if (isOverdue) {
       statusColor = const Color(0xFFef4444);
       statusText = 'In ritardo di ${-daysUntil} giorni';
@@ -350,7 +387,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
       statusColor = const Color(0xFF10b981);
       statusText = 'Tra $daysUntil giorni';
     }
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
@@ -366,7 +403,9 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: _getCategoryColor(task.category).withValues(alpha: 0.1),
+                      color: _getCategoryColor(
+                        task.category,
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: FaIcon(
@@ -411,7 +450,9 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   Row(
                     children: [
                       FaIcon(
-                        _showCompleted ? FontAwesomeIcons.circleCheck : FontAwesomeIcons.repeat,
+                        _showCompleted
+                            ? FontAwesomeIcons.circleCheck
+                            : FontAwesomeIcons.repeat,
                         size: 14,
                         color: theme.textTheme.bodySmall?.color,
                       ),
@@ -426,7 +467,10 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   ),
                   if (!_showCompleted)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: statusColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -441,9 +485,14 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                     ),
                   if (_showCompleted && task.priority != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
-                        color: _getPriorityColor(task.priority!).withValues(alpha: 0.1),
+                        color: _getPriorityColor(
+                          task.priority!,
+                        ).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -483,7 +532,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
       );
       return;
     }
-    
+
     final TextEditingController titleController = TextEditingController();
     final TextEditingController descController = TextEditingController();
     final TextEditingController notesController = TextEditingController();
@@ -491,7 +540,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     String selectedFrequency = 'weekly';
     String selectedPriority = 'medium';
     DateTime? selectedDueDate;
-    
+
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -533,10 +582,19 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   value: selectedFrequency,
                   decoration: const InputDecoration(labelText: 'Frequenza'),
                   items: const [
-                    DropdownMenuItem(value: 'daily', child: Text('Giornaliero')),
-                    DropdownMenuItem(value: 'weekly', child: Text('Settimanale')),
+                    DropdownMenuItem(
+                      value: 'daily',
+                      child: Text('Giornaliero'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'weekly',
+                      child: Text('Settimanale'),
+                    ),
                     DropdownMenuItem(value: 'monthly', child: Text('Mensile')),
-                    DropdownMenuItem(value: 'custom', child: Text('Personalizzato')),
+                    DropdownMenuItem(
+                      value: 'custom',
+                      child: Text('Personalizzato'),
+                    ),
                   ],
                   onChanged: (value) {
                     if (value != null) {
@@ -580,7 +638,9 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                       if (!context.mounted) return;
                       final time = await showTimePicker(
                         context: context,
-                        initialTime: TimeOfDay.fromDateTime(selectedDueDate ?? DateTime.now()),
+                        initialTime: TimeOfDay.fromDateTime(
+                          selectedDueDate ?? DateTime.now(),
+                        ),
                       );
                       if (time != null) {
                         setDialogState(() {
@@ -619,7 +679,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         ),
       ),
     );
-    
+
     if (result == true && titleController.text.isNotEmpty) {
       final newTask = MaintenanceTask(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -633,7 +693,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         notes: notesController.text.isEmpty ? null : notesController.text,
         isCustom: true,
       );
-      
+
       try {
         await _service.createTask(newTask);
         await _loadTasks();
@@ -645,10 +705,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Errore: $e'),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
           );
         }
       }
@@ -656,14 +713,20 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   }
 
   Future<void> _showEditTaskDialog(MaintenanceTask task) async {
-    final TextEditingController titleController = TextEditingController(text: task.title);
-    final TextEditingController descController = TextEditingController(text: task.description ?? '');
-    final TextEditingController notesController = TextEditingController(text: task.notes ?? '');
+    final TextEditingController titleController = TextEditingController(
+      text: task.title,
+    );
+    final TextEditingController descController = TextEditingController(
+      text: task.description ?? '',
+    );
+    final TextEditingController notesController = TextEditingController(
+      text: task.notes ?? '',
+    );
     MaintenanceCategory selectedCategory = task.category;
     String selectedFrequency = task.frequency ?? 'weekly';
     String selectedPriority = task.priority ?? 'medium';
     DateTime? selectedDueDate = task.dueDate;
-    
+
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -705,10 +768,19 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   value: selectedFrequency,
                   decoration: const InputDecoration(labelText: 'Frequenza'),
                   items: const [
-                    DropdownMenuItem(value: 'daily', child: Text('Giornaliero')),
-                    DropdownMenuItem(value: 'weekly', child: Text('Settimanale')),
+                    DropdownMenuItem(
+                      value: 'daily',
+                      child: Text('Giornaliero'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'weekly',
+                      child: Text('Settimanale'),
+                    ),
                     DropdownMenuItem(value: 'monthly', child: Text('Mensile')),
-                    DropdownMenuItem(value: 'custom', child: Text('Personalizzato')),
+                    DropdownMenuItem(
+                      value: 'custom',
+                      child: Text('Personalizzato'),
+                    ),
                   ],
                   onChanged: (value) {
                     if (value != null) {
@@ -752,7 +824,9 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                       if (!context.mounted) return;
                       final time = await showTimePicker(
                         context: context,
-                        initialTime: TimeOfDay.fromDateTime(selectedDueDate ?? DateTime.now()),
+                        initialTime: TimeOfDay.fromDateTime(
+                          selectedDueDate ?? DateTime.now(),
+                        ),
                       );
                       if (time != null) {
                         setDialogState(() {
@@ -791,7 +865,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         ),
       ),
     );
-    
+
     if (result == true && titleController.text.isNotEmpty) {
       final updatedTask = task.copyWith(
         title: titleController.text,
@@ -802,7 +876,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         dueDate: selectedDueDate,
         notes: notesController.text.isEmpty ? null : notesController.text,
       );
-      
+
       try {
         await _service.updateTask(task.id, updatedTask);
         await _loadTasks();
@@ -814,10 +888,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Errore: $e'),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
           );
         }
       }
@@ -862,10 +933,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Errore: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -886,7 +954,9 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: _getCategoryColor(task.category).withValues(alpha: 0.1),
+                    color: _getCategoryColor(
+                      task.category,
+                    ).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: FaIcon(
@@ -1019,9 +1089,9 @@ class _MaintenanceViewState extends State<MaintenanceView> {
           ),
           Text(
             value,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -1047,23 +1117,20 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         ],
       ),
     );
-    
+
     if (confirm == true) {
       try {
         await _service.deleteTask(task.id);
         await _loadTasks();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Task eliminato')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Task eliminato')));
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Errore: $e'),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
           );
         }
       }
@@ -1172,11 +1239,11 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final dateDay = DateTime(date.year, date.month, date.day);
-    
+
     if (dateDay == today) return 'Oggi';
     if (dateDay == today.add(const Duration(days: 1))) return 'Domani';
     if (dateDay == today.subtract(const Duration(days: 1))) return 'Ieri';
-    
+
     return '${date.day}/${date.month}/${date.year}';
   }
 
