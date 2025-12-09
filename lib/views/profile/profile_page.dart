@@ -9,25 +9,22 @@ import 'package:acquariumfe/utils/custom_page_route.dart';
 
 class ProfilePage extends ConsumerWidget {
   final int? aquariumId;
-  
+
   const ProfilePage({super.key, this.aquariumId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           // SEZIONE STRUMENTI
-          Text(
-            'Strumenti',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text('Strumenti', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 12),
-          
+
           _buildMenuCard(
             context,
             title: 'Calcolatori',
@@ -44,9 +41,9 @@ class ProfilePage extends ConsumerWidget {
               );
             },
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           _buildMenuCard(
             context,
             title: 'I Miei Abitanti',
@@ -63,16 +60,13 @@ class ProfilePage extends ConsumerWidget {
               );
             },
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // SEZIONE IMPOSTAZIONI
-          Text(
-            'Impostazioni',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text('Impostazioni', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 12),
-          
+
           _buildMenuCard(
             context,
             title: 'Info Acquario',
@@ -83,14 +77,14 @@ class ProfilePage extends ConsumerWidget {
               _showAquariumInfoDialog(context, ref);
             },
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // THEME TOGGLE
           _buildThemeToggle(context, ref),
-          
+
           const SizedBox(height: 12),
-          
+
           _buildMenuCard(
             context,
             title: 'Informazioni App',
@@ -109,13 +103,15 @@ class ProfilePage extends ConsumerWidget {
   Widget _buildThemeToggle(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(appThemeModeProvider);
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       child: Row(
         children: [
@@ -138,7 +134,9 @@ class ProfilePage extends ConsumerWidget {
               children: [
                 Text(
                   'Tema',
-                  style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -167,7 +165,7 @@ class ProfilePage extends ConsumerWidget {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -176,7 +174,9 @@ class ProfilePage extends ConsumerWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+          ),
         ),
         child: Row(
           children: [
@@ -195,17 +195,19 @@ class ProfilePage extends ConsumerWidget {
                 children: [
                   Text(
                     title,
-                    style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: theme.textTheme.bodySmall,
-                  ),
+                  Text(subtitle, style: theme.textTheme.bodySmall),
                 ],
               ),
             ),
-            FaIcon(FontAwesomeIcons.chevronRight, color: theme.colorScheme.onSurfaceVariant),
+            FaIcon(
+              FontAwesomeIcons.chevronRight,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ],
         ),
       ),
@@ -214,7 +216,7 @@ class ProfilePage extends ConsumerWidget {
 
   void _showAboutDialog(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -225,7 +227,12 @@ class ProfilePage extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('ReefLife', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  'ReefLife',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 Text(
                   'Sistema di Gestione Acquari',
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -253,7 +260,7 @@ class ProfilePage extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Legal & Copyright
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -316,7 +323,7 @@ class ProfilePage extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildSection({
     required String title,
     required IconData icon,
@@ -344,8 +351,13 @@ class ProfilePage extends ConsumerWidget {
       ],
     );
   }
-  
-  Widget _buildTechItem(String name, String description, IconData icon, ThemeData theme) {
+
+  Widget _buildTechItem(
+    String name,
+    String description,
+    IconData icon,
+    ThemeData theme,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -385,11 +397,11 @@ class ProfilePage extends ConsumerWidget {
       ),
     );
   }
-  
+
   void _showAquariumInfoDialog(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final aquariumsAsync = ref.read(aquariumsProvider);
-    
+
     aquariumsAsync.when(
       data: (aquariumsWithParams) {
         if (aquariumsWithParams.isEmpty) {
@@ -397,7 +409,9 @@ class ProfilePage extends ConsumerWidget {
             context: context,
             builder: (context) => AlertDialog(
               backgroundColor: theme.colorScheme.surface,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               title: Row(
                 children: [
                   Container(
@@ -432,23 +446,26 @@ class ProfilePage extends ConsumerWidget {
           );
           return;
         }
-        
+
         // Se c'è un acquario corrente, mostralo, altrimenti il primo
-        final currentAquariumId = aquariumId ?? ref.read(currentAquariumProvider);
+        final currentAquariumId =
+            aquariumId ?? ref.read(currentAquariumProvider);
         final aquariumData = currentAquariumId != null
             ? aquariumsWithParams.firstWhere(
                 (a) => a.aquarium.id == currentAquariumId,
                 orElse: () => aquariumsWithParams.first,
               )
             : aquariumsWithParams.first;
-        
+
         final aquarium = aquariumData.aquarium;
-        
+
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: theme.colorScheme.surface,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             title: Row(
               children: [
                 Container(
@@ -461,8 +478,8 @@ class ProfilePage extends ConsumerWidget {
                     aquarium.type == 'Marino'
                         ? FontAwesomeIcons.droplet
                         : aquarium.type == 'Reef'
-                            ? FontAwesomeIcons.atom
-                            : FontAwesomeIcons.water,
+                        ? FontAwesomeIcons.atom
+                        : FontAwesomeIcons.water,
                     color: const Color(0xFF34d399),
                     size: 24,
                   ),
@@ -474,7 +491,9 @@ class ProfilePage extends ConsumerWidget {
                     children: [
                       Text(
                         aquarium.name,
-                        style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
@@ -502,7 +521,7 @@ class ProfilePage extends ConsumerWidget {
                     theme,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Volume
                   _buildInfoRow(
                     'Volume',
@@ -511,7 +530,7 @@ class ProfilePage extends ConsumerWidget {
                     theme,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Data creazione
                   if (aquarium.createdAt != null)
                     _buildInfoRow(
@@ -520,11 +539,12 @@ class ProfilePage extends ConsumerWidget {
                       FontAwesomeIcons.calendar,
                       theme,
                     ),
-                  
+
                   if (aquarium.createdAt != null) const SizedBox(height: 16),
-                  
+
                   // Descrizione
-                  if (aquarium.description != null && aquarium.description!.isNotEmpty) ...[
+                  if (aquarium.description != null &&
+                      aquarium.description!.isNotEmpty) ...[
                     Row(
                       children: [
                         FaIcon(
@@ -578,9 +598,7 @@ class ProfilePage extends ConsumerWidget {
           context: context,
           barrierDismissible: false,
           builder: (context) => Center(
-            child: CircularProgressIndicator(
-              color: theme.colorScheme.primary,
-            ),
+            child: CircularProgressIndicator(color: theme.colorScheme.primary),
           ),
         );
       },
@@ -589,7 +607,10 @@ class ProfilePage extends ConsumerWidget {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: theme.colorScheme.surface,
-            title: Text('Errore', style: TextStyle(color: theme.colorScheme.error)),
+            title: Text(
+              'Errore',
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
             content: Text('Impossibile caricare le informazioni: $error'),
             actions: [
               TextButton(
@@ -602,8 +623,13 @@ class ProfilePage extends ConsumerWidget {
       },
     );
   }
-  
-  Widget _buildInfoRow(String label, String value, IconData icon, ThemeData theme) {
+
+  Widget _buildInfoRow(
+    String label,
+    String value,
+    IconData icon,
+    ThemeData theme,
+  ) {
     return Row(
       children: [
         Container(
@@ -642,7 +668,7 @@ class ProfilePage extends ConsumerWidget {
       ],
     );
   }
-  
+
   Widget _buildFeatureItem(String text, ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -658,12 +684,7 @@ class ProfilePage extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: theme.textTheme.bodySmall,
-            ),
-          ),
+          Expanded(child: Text(text, style: theme.textTheme.bodySmall)),
         ],
       ),
     );

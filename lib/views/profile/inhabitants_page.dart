@@ -9,20 +9,23 @@ import '../../widgets/animated_number.dart';
 import '../../providers/aquarium_providers.dart';
 import 'add_fish_dialog.dart';
 import 'add_coral_dialog.dart';
+import 'coral_details_dialog.dart';
+import 'fish_details_dialog.dart';
 
 class InhabitantsPage extends ConsumerStatefulWidget {
   final int? aquariumId;
-  
+
   const InhabitantsPage({super.key, this.aquariumId});
 
   @override
   ConsumerState<InhabitantsPage> createState() => _InhabitantsPageState();
 }
 
-class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerProviderStateMixin {
+class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   final InhabitantsService _service = InhabitantsService();
-  
+
   List<Fish> _fishList = [];
   List<Coral> _coralsList = [];
   bool _isLoading = true;
@@ -47,7 +50,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
-    
+
     // Recupera il waterType dell'acquario se disponibile
     String? previousWaterType = _aquariumWaterType;
     if (widget.aquariumId != null) {
@@ -76,7 +79,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       // Se non c'è aquariumId, default marino
       _aquariumWaterType = 'Marino';
     }
-    
+
     // Ricrea TabController se il tipo d'acqua è cambiato o è la prima volta
     if (_aquariumWaterType != previousWaterType || previousWaterType == null) {
       final currentIndex = _tabController.index;
@@ -84,12 +87,12 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       // Solo 1 tab (pesci) per acquari dolci, 2 tab (pesci + coralli) per marini/reef
       final isDolce = _aquariumWaterType?.toLowerCase() == 'dolce';
       _tabController = TabController(
-        length: isDolce ? 1 : 2, 
+        length: isDolce ? 1 : 2,
         vsync: this,
         initialIndex: isDolce ? 0 : (currentIndex < 2 ? currentIndex : 0),
       );
     }
-    
+
     _fishList = await _service.getFish();
     _coralsList = await _service.getCorals();
     setState(() => _isLoading = false);
@@ -119,7 +122,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
           backgroundColor: const Color(0xFF34d399),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 1),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     }
@@ -133,7 +138,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
         onSave: (fish, speciesId) async {
           // Salva sul server
           await _service.addFish(fish, speciesId);
-          
+
           // Ricarica i dati dall'API senza loading
           await _reloadDataSilently();
         },
@@ -168,7 +173,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
         onSave: (coral, speciesId) async {
           // Salva sul server
           await _service.addCoral(coral, speciesId);
-          
+
           // Ricarica i dati dall'API senza loading
           await _reloadDataSilently();
         },
@@ -195,13 +200,30 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
     );
   }
 
+  void _showCoralDetailsDialog(Coral coral) {
+    showDialog(
+      context: context,
+      builder: (context) => CoralDetailsDialog(coral: coral),
+    );
+  }
+
+  void _showFishDetailsDialog(Fish fish) {
+    showDialog(
+      context: context,
+      builder: (context) => FishDetailsDialog(fish: fish),
+    );
+  }
+
   Future<void> _deleteFish(Fish fish) async {
     final theme = Theme.of(context);
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
-        title: Text('Conferma eliminazione', style: TextStyle(color: theme.colorScheme.onSurface)),
+        title: Text(
+          'Conferma eliminazione',
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
         content: Text(
           'Vuoi eliminare "${fish.name}"?',
           style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
@@ -213,7 +235,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.error,
+            ),
             child: const Text('Elimina'),
           ),
         ],
@@ -225,13 +249,13 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       setState(() {
         _fishList.removeWhere((f) => f.id == fish.id);
       });
-      
+
       // Attendi un attimo per le animazioni
       await Future.delayed(const Duration(milliseconds: 100));
-      
+
       // Elimina dal server
       await _service.deleteFish(fish.id);
-      
+
       // Ricarica silenziosamente per sincronizzare
       _reloadDataSilently();
     }
@@ -243,7 +267,10 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
-        title: Text('Conferma eliminazione', style: TextStyle(color: theme.colorScheme.onSurface)),
+        title: Text(
+          'Conferma eliminazione',
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
         content: Text(
           'Vuoi eliminare "${coral.name}"?',
           style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
@@ -255,7 +282,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.error,
+            ),
             child: const Text('Elimina'),
           ),
         ],
@@ -267,13 +296,13 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       setState(() {
         _coralsList.removeWhere((c) => c.id == coral.id);
       });
-      
+
       // Attendi un attimo per le animazioni
       await Future.delayed(const Duration(milliseconds: 100));
-      
+
       // Elimina dal server
       await _service.deleteCoral(coral.id);
-      
+
       // Ricarica silenziosamente per sincronizzare
       _reloadDataSilently();
     }
@@ -282,37 +311,50 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     // Determina il numero di tab in base al tipo d'acqua
     // Marino e Reef hanno 2 tab (pesci + coralli), Dolce ha solo 1 tab (pesci)
     final isDolce = (_aquariumWaterType ?? 'Marino').toLowerCase() == 'dolce';
     final tabCount = isDolce ? 1 : 2;
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('I Miei Abitanti', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        title: const Text(
+          'I Miei Abitanti',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
         centerTitle: true,
-        bottom: _tabController.length == tabCount ? TabBar(
-          controller: _tabController,
-          indicatorColor: theme.colorScheme.primary,
-          labelColor: theme.colorScheme.primary,
-          unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
-          tabs: isDolce
-              ? const [
-                  Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
-                ]
-              : const [
-                  Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
-                  Tab(text: 'Coralli', icon: FaIcon(FontAwesomeIcons.seedling)),
-                ],
-        ) : null,
+        bottom: _tabController.length == tabCount
+            ? TabBar(
+                controller: _tabController,
+                indicatorColor: theme.colorScheme.primary,
+                labelColor: theme.colorScheme.primary,
+                unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+                tabs: isDolce
+                    ? const [
+                        Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
+                      ]
+                    : const [
+                        Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
+                        Tab(
+                          text: 'Coralli',
+                          icon: FaIcon(FontAwesomeIcons.seedling),
+                        ),
+                      ],
+              )
+            : null,
       ),
       body: _isLoading || _tabController.length != tabCount
-          ? Center(child: CircularProgressIndicator(color: theme.colorScheme.primary))
+          ? Center(
+              child: CircularProgressIndicator(
+                color: theme.colorScheme.primary,
+              ),
+            )
           : RefreshIndicator(
               onRefresh: _refreshData,
               color: theme.colorScheme.primary,
@@ -328,12 +370,10 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                     child: TabBarView(
                       controller: _tabController,
                       children: isDolce
-                          ? [
-                              _buildFishTab(),
-                            ]
+                          ? [_buildFishTab(bottomPadding)]
                           : [
-                              _buildFishTab(),
-                              _buildCoralsTab(),
+                              _buildFishTab(bottomPadding),
+                              _buildCoralsTab(bottomPadding),
                             ],
                     ),
                   ),
@@ -343,7 +383,8 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Se acquario dolce, mostra sempre dialog pesci (no coralli)
-          final isDolce = (_aquariumWaterType ?? 'Marino').toLowerCase() == 'dolce';
+          final isDolce =
+              (_aquariumWaterType ?? 'Marino').toLowerCase() == 'dolce';
           if (isDolce || _tabController.index == 0) {
             _showAddFishDialog();
           } else {
@@ -356,32 +397,47 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
     );
   }
 
-  Widget _buildFishTab() {
+  Widget _buildFishTab(double bottomPadding) {
     final theme = Theme.of(context);
-    
+
     if (_isLoading) {
       return ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: 16 + bottomPadding,
+        ),
         children: List.generate(5, (index) => const ListItemSkeleton()),
       );
     }
-    
+
     if (_fishList.isEmpty) {
       return Center(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FaIcon(FontAwesomeIcons.fish, size: 64, color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+              FaIcon(
+                FontAwesomeIcons.fish,
+                size: 64,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              ),
               const SizedBox(height: 16),
               Text(
                 'Nessun pesce aggiunto',
-                style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 16),
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Tocca + per aggiungere il tuo primo pesce',
-                style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -390,19 +446,25 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: 16 + bottomPadding,
+      ),
       itemCount: _fishList.length,
       itemBuilder: (context, index) {
         final fish = _fishList[index];
-        final daysInTank = DateTime.now().difference(fish.addedDate).inDays;
         final theme = Theme.of(context);
-        
+
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           color: theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: InkWell(
-            onTap: () => _showEditFishDialog(fish),
+            onTap: () => _showFishDetailsDialog(fish),
             borderRadius: BorderRadius.circular(12),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -414,11 +476,15 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(
-                        child: FaIcon(FontAwesomeIcons.fish, color: theme.colorScheme.primary, size: 32),
+                        child: FaIcon(
+                          FontAwesomeIcons.fish,
+                          color: theme.colorScheme.primary,
+                          size: 32,
+                        ),
                       ),
                     ),
                   ),
@@ -438,32 +504,66 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                         const SizedBox(height: 4),
                         Text(
                           fish.species,
-                          style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            FaIcon(FontAwesomeIcons.ruler, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${fish.size.toStringAsFixed(1)} cm',
-                              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 12),
-                            ),
-                            const SizedBox(width: 16),
-                            FaIcon(FontAwesomeIcons.calendar, size: 14, color: Colors.white.withValues(alpha: 0.5)),
-                            const SizedBox(width: 4),
-                            Text(
-                              '$daysInTank giorni in vasca',
-                              style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
-                            ),
-                          ],
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.trash, color: Colors.red),
-                    onPressed: () => _deleteFish(fish),
+                  PopupMenuButton<String>(
+                    icon: FaIcon(
+                      FontAwesomeIcons.ellipsisVertical,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        _showEditFishDialog(fish);
+                      } else if (value == 'delete') {
+                        _deleteFish(fish);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.pen,
+                              color: const Color(0xFF60a5fa),
+                              size: 16,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'Modifica',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            const FaIcon(
+                              FontAwesomeIcons.trash,
+                              color: Colors.red,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'Elimina',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -474,32 +574,47 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
     );
   }
 
-  Widget _buildCoralsTab() {
+  Widget _buildCoralsTab(double bottomPadding) {
     final theme = Theme.of(context);
-    
+
     if (_isLoading) {
       return ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: 16 + bottomPadding,
+        ),
         children: List.generate(5, (index) => const ListItemSkeleton()),
       );
     }
-    
+
     if (_coralsList.isEmpty) {
       return Center(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FaIcon(FontAwesomeIcons.seedling, size: 64, color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+              FaIcon(
+                FontAwesomeIcons.seedling,
+                size: 64,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              ),
               const SizedBox(height: 16),
               Text(
                 'Nessun corallo aggiunto',
-                style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 16),
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Tocca + per aggiungere il tuo primo corallo',
-                style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -508,13 +623,17 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: 16 + bottomPadding,
+      ),
       itemCount: _coralsList.length,
       itemBuilder: (context, index) {
         final coral = _coralsList[index];
-        final daysInTank = DateTime.now().difference(coral.addedDate).inDays;
         final theme = Theme.of(context);
-        
+
         Color typeColor;
         switch (coral.type) {
           case 'SPS':
@@ -526,29 +645,35 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
           default:
             typeColor = theme.colorScheme.secondary;
         }
-        
+
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           color: theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: InkWell(
-            onTap: () => _showEditCoralDialog(coral),
+            onTap: () => _showCoralDetailsDialog(coral),
             borderRadius: BorderRadius.circular(12),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                    Hero(
-                      tag: 'coral_${coral.id}',
-                      child: Container(
-                        width: 60,
-                        height: 60,
+                  Hero(
+                    tag: 'coral_${coral.id}',
+                    child: Container(
+                      width: 60,
+                      height: 60,
                       decoration: BoxDecoration(
                         color: typeColor.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(
-                        child: FaIcon(FontAwesomeIcons.seedling, color: typeColor, size: 32),
+                        child: FaIcon(
+                          FontAwesomeIcons.seedling,
+                          color: typeColor,
+                          size: 32,
+                        ),
                       ),
                     ),
                   ),
@@ -570,14 +695,21 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: typeColor.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
                                 coral.type,
-                                style: TextStyle(color: typeColor, fontSize: 11, fontWeight: FontWeight.w600),
+                                style: TextStyle(
+                                  color: typeColor,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ],
@@ -585,32 +717,66 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                         const SizedBox(height: 4),
                         Text(
                           coral.species,
-                          style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            FaIcon(FontAwesomeIcons.locationDot, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
-                            const SizedBox(width: 4),
-                            Text(
-                              coral.placement,
-                              style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
-                            ),
-                            const SizedBox(width: 16),
-                            FaIcon(FontAwesomeIcons.calendar, size: 14, color: Colors.white.withValues(alpha: 0.5)),
-                            const SizedBox(width: 4),
-                            Text(
-                              '$daysInTank giorni in vasca',
-                              style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
-                            ),
-                          ],
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.trash, color: Colors.red),
-                    onPressed: () => _deleteCoral(coral),
+                  PopupMenuButton<String>(
+                    icon: FaIcon(
+                      FontAwesomeIcons.ellipsisVertical,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        _showEditCoralDialog(coral);
+                      } else if (value == 'delete') {
+                        _deleteCoral(coral);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.pen,
+                              color: const Color(0xFF60a5fa),
+                              size: 16,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'Modifica',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            const FaIcon(
+                              FontAwesomeIcons.trash,
+                              color: Colors.red,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'Elimina',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -641,21 +807,27 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // Calcolo statistiche
     final totalFish = widget.fishList.length;
     final totalCorals = widget.coralsList.length;
-    final avgFishSize = widget.fishList.isEmpty 
-        ? 0.0 
-        : widget.fishList.map((f) => f.size).reduce((a, b) => a + b) / widget.fishList.length;
-    final totalBioLoad = widget.fishList.fold<double>(0, (sum, f) => sum + f.size) + (totalCorals * 2.0);
-    
+    final avgFishSize = widget.fishList.isEmpty
+        ? 0.0
+        : widget.fishList.map((f) => f.size).reduce((a, b) => a + b) /
+              widget.fishList.length;
+    final totalBioLoad =
+        widget.fishList.fold<double>(0, (sum, f) => sum + f.size) +
+        (totalCorals * 2.0);
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)],
+          colors: [
+            theme.colorScheme.primary,
+            theme.colorScheme.primary.withValues(alpha: 0.8),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -672,7 +844,11 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
         children: [
           Row(
             children: [
-              const FaIcon(FontAwesomeIcons.chartLine, color: Colors.white, size: 24),
+              const FaIcon(
+                FontAwesomeIcons.chartLine,
+                color: Colors.white,
+                size: 24,
+              ),
               const SizedBox(width: 12),
               Text(
                 'Riepilogo Abitanti',
@@ -733,7 +909,11 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
               children: [
                 Row(
                   children: [
-                    const FaIcon(FontAwesomeIcons.scaleBalanced, color: Colors.white, size: 20),
+                    const FaIcon(
+                      FontAwesomeIcons.scaleBalanced,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       'Carico Biotico Totale',
@@ -826,5 +1006,3 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
     }
   }
 }
-
-

@@ -19,7 +19,7 @@ class SalinityMeter extends StatelessWidget {
 
   Color _getSalinityColor() {
     if (targetSalinity == null) return const Color(0xFF34d399);
-    
+
     final diff = (currentSalinity - targetSalinity!).abs();
     if (diff <= 4) return const Color(0xFF34d399); // Vicino al target (±4)
     if (diff <= 8) return const Color(0xFFfbbf24); // Poco distante (±8)
@@ -28,7 +28,7 @@ class SalinityMeter extends StatelessWidget {
 
   String _getStatus() {
     if (targetSalinity == null) return 'Monitoraggio';
-    
+
     final diff = (currentSalinity - targetSalinity!).abs();
     if (diff <= 4) return 'Ottimale';
     if (diff <= 8) return 'Attenzione';
@@ -49,7 +49,9 @@ class SalinityMeter extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,18 +73,41 @@ class SalinityMeter extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text('Salinità', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
+                          Text(
+                            'Salinità',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                           const SizedBox(width: 6),
-                          FaIcon(FontAwesomeIcons.pen, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+                          FaIcon(
+                            FontAwesomeIcons.pen,
+                            size: 14,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.4,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(status, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w500)),
+                      Text(
+                        status,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
@@ -91,33 +116,39 @@ class SalinityMeter extends StatelessWidget {
                   child: AnimatedNumberWithIndicator(
                     value: currentSalinity,
                     decimals: 0,
-                    style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
-          if (targetSalinity != null) ...[
-            const SizedBox(height: 16),
-            TargetProgressBar(
-              currentValue: currentSalinity,
-              targetValue: targetSalinity!,
-              minValue: 1020,
-              maxValue: 1028,
-              unit: ' PPT',
-            ),
-          ] else ...[
-            const SizedBox(height: 12),
+            if (targetSalinity != null) ...[
+              const SizedBox(height: 16),
+              TargetProgressBar(
+                currentValue: currentSalinity,
+                targetValue: targetSalinity!,
+                minValue: 1020,
+                maxValue: 1028,
+                unit: ' PPT',
+              ),
+            ] else ...[
+              const SizedBox(height: 12),
+            ],
+            //_buildProgressBar(color, theme),
           ],
-          //_buildProgressBar(color, theme),
-        ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-void _showEditTargetDialog(BuildContext context) async {
+  void _showEditTargetDialog(BuildContext context) async {
     final controller = TextEditingController(
-      text: targetSalinity?.toStringAsFixed(0) ?? TargetParametersService.defaultSalinity.toStringAsFixed(0),
+      text:
+          targetSalinity?.toStringAsFixed(0) ??
+          TargetParametersService.defaultSalinity.toStringAsFixed(0),
     );
 
     final result = await showDialog<double>(
@@ -143,7 +174,9 @@ void _showEditTargetDialog(BuildContext context) async {
             const SizedBox(height: 16),
             TextField(
               controller: controller,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               autofocus: true,
               style: const TextStyle(color: Colors.white, fontSize: 18),
               decoration: InputDecoration(
@@ -167,7 +200,10 @@ void _showEditTargetDialog(BuildContext context) async {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla', style: TextStyle(color: Colors.white60)),
+            child: const Text(
+              'Annulla',
+              style: TextStyle(color: Colors.white60),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -178,7 +214,9 @@ void _showEditTargetDialog(BuildContext context) async {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF60a5fa),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Salva', style: TextStyle(color: Colors.white)),
           ),
@@ -191,5 +229,4 @@ void _showEditTargetDialog(BuildContext context) async {
       onTargetChanged?.call();
     }
   }
-
 }

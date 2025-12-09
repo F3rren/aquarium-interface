@@ -10,7 +10,8 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _notifications =
+      FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
 
   /// Inizializza il servizio notifiche
@@ -21,14 +22,16 @@ class NotificationService {
     tz.initializeTimeZones();
 
     // Configurazione Android
-    const AndroidInitializationSettings androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     // Configurazione iOS
-    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+    const DarwinInitializationSettings iosSettings =
+        DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
     const InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
@@ -47,9 +50,7 @@ class NotificationService {
   }
 
   /// Gestisce il tap sulla notifica
-  void _onNotificationTapped(NotificationResponse response) {
-    
-  }
+  void _onNotificationTapped(NotificationResponse response) {}
 
   /// Richiedi permessi notifiche
   Future<bool> requestPermissions() async {
@@ -72,18 +73,19 @@ class NotificationService {
     if (!_isInitialized) {
       return;
     }
-    
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'aquarium_alerts',
-      'Acquario Alerts',
-      channelDescription: 'Notifiche per parametri acquario fuori range',
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-      color: Color(0xFF60a5fa),
-      enableVibration: true,
-      playSound: true,
-    );
+
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'aquarium_alerts',
+          'Acquario Alerts',
+          channelDescription: 'Notifiche per parametri acquario fuori range',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          color: Color(0xFF60a5fa),
+          enableVibration: true,
+          playSound: true,
+        );
 
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
       presentAlert: true,
@@ -109,12 +111,12 @@ class NotificationService {
   }) async {
     // Determina se il valore è troppo basso o troppo alto
     final bool isHigh = currentValue > maxValue;
-    
+
     // Usa i testi centralizzati
     final alertTitle = NotificationTexts.getTitle(parameterName);
     final alertMessage = NotificationTexts.getMessage(parameterName, isHigh);
     final suggestion = NotificationTexts.getSuggestion(parameterName, isHigh);
-    
+
     await showNotification(
       id: parameterName.hashCode,
       title: alertTitle,
@@ -132,15 +134,16 @@ class NotificationService {
     required DateTime scheduledDate,
     String? payload,
   }) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'aquarium_maintenance',
-      'Manutenzione Acquario',
-      channelDescription: 'Reminder per manutenzione acquario',
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-      color: Color(0xFF34d399),
-    );
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'aquarium_maintenance',
+          'Manutenzione Acquario',
+          channelDescription: 'Reminder per manutenzione acquario',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          color: Color(0xFF34d399),
+        );
 
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
 
@@ -156,7 +159,8 @@ class NotificationService {
       tz.TZDateTime.from(scheduledDate, tz.local),
       details,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
       payload: payload,
     );
   }
@@ -188,7 +192,8 @@ class NotificationService {
         iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
     );
   }
@@ -196,11 +201,11 @@ class NotificationService {
   /// Calcola prossima istanza del giorno della settimana
   tz.TZDateTime _nextInstanceOfWeekday(int weekday, int hour, int minute) {
     tz.TZDateTime scheduledDate = tz.TZDateTime.now(tz.local);
-    
+
     while (scheduledDate.weekday != weekday) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
-    
+
     scheduledDate = tz.TZDateTime(
       tz.local,
       scheduledDate.year,
@@ -255,17 +260,18 @@ class NotificationService {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'aquarium_maintenance',
-      'Manutenzione Acquario',
-      channelDescription: 'Promemoria giornaliero per task di manutenzione',
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-      color: Color(0xFF8b5cf6),
-      enableVibration: true,
-      playSound: true,
-    );
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'aquarium_maintenance',
+          'Manutenzione Acquario',
+          channelDescription: 'Promemoria giornaliero per task di manutenzione',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          color: Color(0xFF8b5cf6),
+          enableVibration: true,
+          playSound: true,
+        );
 
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
       presentAlert: true,
@@ -285,7 +291,8 @@ class NotificationService {
       scheduledDate,
       details,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time, // Ripete ogni giorno
       payload: 'maintenance_daily',
     );
@@ -314,8 +321,8 @@ class NotificationService {
     final body = taskCount == 1
         ? tasks.first
         : taskCount <= 3
-            ? tasks.take(taskCount).join(', ')
-            : '${tasks.take(3).join(', ')} e altre ${taskCount - 3}';
+        ? tasks.take(taskCount).join(', ')
+        : '${tasks.take(3).join(', ')} e altre ${taskCount - 3}';
 
     await showNotification(
       id: 2001,
@@ -328,10 +335,4 @@ class NotificationService {
   }
 }
 
-enum NotificationPriority {
-  min,
-  low,
-  normal,
-  high,
-  max,
-}
+enum NotificationPriority { min, low, normal, high, max }

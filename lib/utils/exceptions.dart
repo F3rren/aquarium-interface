@@ -26,7 +26,8 @@ class NetworkException extends AppException {
   NetworkException(super.message, {super.details, super.originalError});
 
   @override
-  String get userMessage => 'Errore di connessione. Verifica la tua connessione internet.';
+  String get userMessage =>
+      'Errore di connessione. Verifica la tua connessione internet.';
 }
 
 /// Errori del server (5xx)
@@ -41,7 +42,8 @@ class ServerException extends AppException {
   });
 
   @override
-  String get userMessage => 'Il server ha riscontrato un problema. Riprova più tardi.';
+  String get userMessage =>
+      'Il server ha riscontrato un problema. Riprova più tardi.';
 }
 
 /// Errori di validazione o richiesta errata (4xx)

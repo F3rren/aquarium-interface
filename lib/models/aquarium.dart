@@ -23,13 +23,13 @@ class Aquarium {
       'volume': volume,
       'type': type,
     };
-    
+
     // Aggiungi campi opzionali solo se presenti
     if (id != null) json['id'] = id;
     if (createdAt != null) json['createdAt'] = createdAt!.toIso8601String();
     if (description != null) json['description'] = description;
     if (imageUrl != null) json['imageUrl'] = imageUrl;
-    
+
     return json;
   }
 
@@ -39,7 +39,7 @@ class Aquarium {
       name: json['name']?.toString() ?? 'Senza nome',
       volume: (json['volume'] as num?)?.toDouble() ?? 0.0,
       type: json['type']?.toString() ?? 'Marino',
-      createdAt: json['createdAt'] != null 
+      createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'].toString())
           : null,
       description: json['description']?.toString(),

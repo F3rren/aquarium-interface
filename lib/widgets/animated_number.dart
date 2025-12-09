@@ -23,7 +23,8 @@ class AnimatedNumber extends StatefulWidget {
   State<AnimatedNumber> createState() => _AnimatedNumberState();
 }
 
-class _AnimatedNumberState extends State<AnimatedNumber> with SingleTickerProviderStateMixin {
+class _AnimatedNumberState extends State<AnimatedNumber>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   double _previousValue = 0;
@@ -32,38 +33,29 @@ class _AnimatedNumberState extends State<AnimatedNumber> with SingleTickerProvid
   void initState() {
     super.initState();
     _previousValue = widget.value;
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
-    
+    _controller = AnimationController(duration: widget.duration, vsync: this);
+
     _animation = Tween<double>(
       begin: _previousValue,
       end: widget.value,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
-    
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+
     _controller.forward();
   }
 
   @override
   void didUpdateWidget(AnimatedNumber oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (oldWidget.value != widget.value) {
       _previousValue = oldWidget.value;
-      
+
       _controller.reset();
-      _animation = Tween<double>(
-        begin: _previousValue,
-        end: widget.value,
-      ).animate(CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
-      ));
-      
+      _animation = Tween<double>(begin: _previousValue, end: widget.value)
+          .animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+          );
+
       _controller.forward();
     }
   }
@@ -81,7 +73,7 @@ class _AnimatedNumberState extends State<AnimatedNumber> with SingleTickerProvid
       builder: (context, child) {
         final currentValue = _animation.value;
         final formattedValue = currentValue.toStringAsFixed(widget.decimals);
-        
+
         return Text(
           '${widget.prefix ?? ''}$formattedValue${widget.suffix ?? ''}',
           style: widget.style,
@@ -112,7 +104,8 @@ class AnimatedIntNumber extends StatefulWidget {
   State<AnimatedIntNumber> createState() => _AnimatedIntNumberState();
 }
 
-class _AnimatedIntNumberState extends State<AnimatedIntNumber> with SingleTickerProviderStateMixin {
+class _AnimatedIntNumberState extends State<AnimatedIntNumber>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   int _previousValue = 0;
@@ -121,38 +114,32 @@ class _AnimatedIntNumberState extends State<AnimatedIntNumber> with SingleTicker
   void initState() {
     super.initState();
     _previousValue = widget.value;
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
-    
+    _controller = AnimationController(duration: widget.duration, vsync: this);
+
     _animation = Tween<double>(
       begin: _previousValue.toDouble(),
       end: widget.value.toDouble(),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
-    
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+
     _controller.forward();
   }
 
   @override
   void didUpdateWidget(AnimatedIntNumber oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (oldWidget.value != widget.value) {
       _previousValue = oldWidget.value;
-      
+
       _controller.reset();
-      _animation = Tween<double>(
-        begin: _previousValue.toDouble(),
-        end: widget.value.toDouble(),
-      ).animate(CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
-      ));
-      
+      _animation =
+          Tween<double>(
+            begin: _previousValue.toDouble(),
+            end: widget.value.toDouble(),
+          ).animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+          );
+
       _controller.forward();
     }
   }
@@ -169,7 +156,7 @@ class _AnimatedIntNumberState extends State<AnimatedIntNumber> with SingleTicker
       animation: _animation,
       builder: (context, child) {
         final currentValue = _animation.value.round();
-        
+
         return Text(
           '${widget.prefix ?? ''}$currentValue${widget.suffix ?? ''}',
           style: widget.style,
@@ -205,17 +192,19 @@ class AnimatedNumberWithIndicator extends StatefulWidget {
   });
 
   @override
-  State<AnimatedNumberWithIndicator> createState() => _AnimatedNumberWithIndicatorState();
+  State<AnimatedNumberWithIndicator> createState() =>
+      _AnimatedNumberWithIndicatorState();
 }
 
-class _AnimatedNumberWithIndicatorState extends State<AnimatedNumberWithIndicator> 
+class _AnimatedNumberWithIndicatorState
+    extends State<AnimatedNumberWithIndicator>
     with TickerProviderStateMixin {
   late AnimationController _numberController;
   late AnimationController _indicatorController;
   late Animation<double> _numberAnimation;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  
+
   double _previousValue = 0;
   bool _isIncreasing = false;
 
@@ -223,62 +212,59 @@ class _AnimatedNumberWithIndicatorState extends State<AnimatedNumberWithIndicato
   void initState() {
     super.initState();
     _previousValue = widget.value;
-    
+
     _numberController = AnimationController(
       duration: widget.duration,
       vsync: this,
     );
-    
+
     _indicatorController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
-    _numberAnimation = Tween<double>(
-      begin: _previousValue,
-      end: widget.value,
-    ).animate(CurvedAnimation(
-      parent: _numberController,
-      curve: Curves.easeOutCubic,
-    ));
-    
+
+    _numberAnimation = Tween<double>(begin: _previousValue, end: widget.value)
+        .animate(
+          CurvedAnimation(
+            parent: _numberController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     _fadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
       CurvedAnimation(
         parent: _indicatorController,
         curve: const Interval(0.5, 1.0, curve: Curves.easeOut),
       ),
     );
-    
-    _slideAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0, -0.3),
-    ).animate(CurvedAnimation(
-      parent: _indicatorController,
-      curve: Curves.easeOut,
-    ));
-    
+
+    _slideAnimation =
+        Tween<Offset>(begin: Offset.zero, end: const Offset(0, -0.3)).animate(
+          CurvedAnimation(parent: _indicatorController, curve: Curves.easeOut),
+        );
+
     _numberController.forward();
   }
 
   @override
   void didUpdateWidget(AnimatedNumberWithIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (oldWidget.value != widget.value) {
       _previousValue = oldWidget.value;
       _isIncreasing = widget.value > _previousValue;
-      
+
       _numberController.reset();
-      _numberAnimation = Tween<double>(
-        begin: _previousValue,
-        end: widget.value,
-      ).animate(CurvedAnimation(
-        parent: _numberController,
-        curve: Curves.easeOutCubic,
-      ));
-      
+      _numberAnimation = Tween<double>(begin: _previousValue, end: widget.value)
+          .animate(
+            CurvedAnimation(
+              parent: _numberController,
+              curve: Curves.easeOutCubic,
+            ),
+          );
+
       _numberController.forward();
-      
+
       if (widget.showIndicator) {
         _indicatorController.forward(from: 0);
       }
@@ -301,8 +287,10 @@ class _AnimatedNumberWithIndicatorState extends State<AnimatedNumberWithIndicato
           animation: _numberAnimation,
           builder: (context, child) {
             final currentValue = _numberAnimation.value;
-            final formattedValue = currentValue.toStringAsFixed(widget.decimals);
-            
+            final formattedValue = currentValue.toStringAsFixed(
+              widget.decimals,
+            );
+
             return Text(
               '${widget.prefix ?? ''}$formattedValue${widget.suffix ?? ''}',
               style: widget.style,
@@ -318,9 +306,11 @@ class _AnimatedNumberWithIndicatorState extends State<AnimatedNumberWithIndicato
               child: SlideTransition(
                 position: _slideAnimation,
                 child: FaIcon(
-                  _isIncreasing ? FontAwesomeIcons.arrowUp : FontAwesomeIcons.arrowDown,
+                  _isIncreasing
+                      ? FontAwesomeIcons.arrowUp
+                      : FontAwesomeIcons.arrowDown,
                   size: 16,
-                  color: _isIncreasing 
+                  color: _isIncreasing
                       ? (widget.increaseColor ?? const Color(0xFF34d399))
                       : (widget.decreaseColor ?? const Color(0xFFef4444)),
                 ),

@@ -2,18 +2,19 @@ import 'package:acquariumfe/services/api_service.dart';
 
 /// Service per gestire i parametri manuali tramite API
 class ManualParametersService {
-  static final ManualParametersService _instance = ManualParametersService._internal();
+  static final ManualParametersService _instance =
+      ManualParametersService._internal();
   factory ManualParametersService() => _instance;
   ManualParametersService._internal();
 
   final ApiService _apiService = ApiService();
-  
+
   int? _currentAquariumId;
-  
+
   void setCurrentAquarium(int id) {
     _currentAquariumId = id;
   }
-  
+
   /// Salva parametri manuali sul backend
   Future<void> saveManualParameters({
     double? calcium,
@@ -25,7 +26,7 @@ class ManualParametersService {
     if (_currentAquariumId == null) {
       throw Exception('Nessun acquario selezionato');
     }
-    
+
     try {
       final body = <String, dynamic>{
         if (calcium != null) 'calcium': calcium,
@@ -35,8 +36,11 @@ class ManualParametersService {
         if (phosphate != null) 'phosphate': phosphate,
         'measuredAt': DateTime.now().toIso8601String(),
       };
-      
-      await _apiService.post('/aquariums/$_currentAquariumId/parameters/manual', body);
+
+      await _apiService.post(
+        '/aquariums/$_currentAquariumId/parameters/manual',
+        body,
+      );
     } catch (e) {
       rethrow;
     }
@@ -47,10 +51,12 @@ class ManualParametersService {
     if (_currentAquariumId == null) {
       return _getDefaultValues();
     }
-    
+
     try {
-      final response = await _apiService.get('/aquariums/$_currentAquariumId/parameters/manual');
-      
+      final response = await _apiService.get(
+        '/aquariums/$_currentAquariumId/parameters/manual',
+      );
+
       final Map<String, dynamic> data;
       if (response is Map<String, dynamic>) {
         if (response.containsKey('data')) {
@@ -66,7 +72,7 @@ class ManualParametersService {
       } else {
         return _getDefaultValues();
       }
-      
+
       return {
         'calcium': (data['calcium'] ?? 420.0).toDouble(),
         'magnesium': (data['magnesium'] ?? 1280.0).toDouble(),
@@ -74,7 +80,6 @@ class ManualParametersService {
         'nitrate': (data['nitrate'] ?? 5.0).toDouble(),
         'phosphate': (data['phosphate'] ?? 0.03).toDouble(),
       };
-      
     } catch (e) {
       return _getDefaultValues();
     }
@@ -89,7 +94,7 @@ class ManualParametersService {
   /// Aggiorna singolo parametro
   Future<void> updateParameter(String key, double value) async {
     final current = await loadManualParameters();
-    
+
     await saveManualParameters(
       calcium: key == 'calcium' ? value : current['calcium'],
       magnesium: key == 'magnesium' ? value : current['magnesium'],
@@ -102,10 +107,12 @@ class ManualParametersService {
   /// Ottieni data ultimo aggiornamento
   Future<DateTime?> getLastUpdate() async {
     if (_currentAquariumId == null) return null;
-    
+
     try {
-      final response = await _apiService.get('/aquariums/$_currentAquariumId/parameters/manual');
-      
+      final response = await _apiService.get(
+        '/aquariums/$_currentAquariumId/parameters/manual',
+      );
+
       if (response is Map<String, dynamic> && response.containsKey('data')) {
         final data = response['data'];
         if (data is Map<String, dynamic> && data.containsKey('measuredAt')) {
@@ -115,7 +122,7 @@ class ManualParametersService {
     } catch (e) {
       // Ignora errori
     }
-    
+
     return null;
   }
 
@@ -132,9 +139,11 @@ class ManualParametersService {
   /// Resetta tutti i parametri ai valori di default
   Future<void> resetToDefaults() async {
     if (_currentAquariumId == null) return;
-    
+
     try {
-      await _apiService.delete('/aquariums/$_currentAquariumId/parameters/manual');
+      await _apiService.delete(
+        '/aquariums/$_currentAquariumId/parameters/manual',
+      );
     } catch (e) {
       rethrow;
     }

@@ -3,12 +3,13 @@ import '../models/parameter_data_point.dart';
 
 /// Servizio per generare e gestire dati storici dei parametri
 class ParameterHistoryService {
-  static final ParameterHistoryService _instance = ParameterHistoryService._internal();
+  static final ParameterHistoryService _instance =
+      ParameterHistoryService._internal();
   factory ParameterHistoryService() => _instance;
   ParameterHistoryService._internal();
 
   final Random _random = Random();
-  
+
   // Storage in-memory per i dati storici
   final Map<String, List<ParameterDataPoint>> _history = {};
 
@@ -27,18 +28,21 @@ class ParameterHistoryService {
 
     final dataPoints = <ParameterDataPoint>[];
     final now = DateTime.now();
-    final interval = hours > 48 ? 60 : 15; // 1h per periodi lunghi, 15min per 24h
+    final interval = hours > 48
+        ? 60
+        : 15; // 1h per periodi lunghi, 15min per 24h
     final pointsCount = (hours * 60) ~/ interval;
 
     double currentValue = baseValue;
-    
+
     for (int i = pointsCount; i >= 0; i--) {
       final timestamp = now.subtract(Duration(minutes: i * interval));
-      
+
       // Aggiungi variazione casuale con smooth transition
-      final variation = (baseValue * variationPercent / 100) * (_random.nextDouble() * 2 - 1);
+      final variation =
+          (baseValue * variationPercent / 100) * (_random.nextDouble() * 2 - 1);
       currentValue = baseValue + variation;
-      
+
       // Aggiungi trend leggero (ciclo giorno/notte per temperatura)
       if (parameterName == 'Temperatura') {
         final hourOfDay = timestamp.hour;
@@ -46,11 +50,13 @@ class ParameterHistoryService {
         currentValue += nightVariation;
       }
 
-      dataPoints.add(ParameterDataPoint(
-        timestamp: timestamp,
-        value: double.parse(currentValue.toStringAsFixed(2)),
-        parameterName: parameterName,
-      ));
+      dataPoints.add(
+        ParameterDataPoint(
+          timestamp: timestamp,
+          value: double.parse(currentValue.toStringAsFixed(2)),
+          parameterName: parameterName,
+        ),
+      );
     }
 
     _history[cacheKey] = dataPoints;
@@ -78,12 +84,16 @@ class ParameterHistoryService {
 
     // Calcola trend confrontando media prima metà vs seconda metà
     final halfPoint = values.length ~/ 2;
-    final firstHalfAvg = values.sublist(0, halfPoint).reduce((a, b) => a + b) / halfPoint;
-    final secondHalfAvg = values.sublist(halfPoint).reduce((a, b) => a + b) / (values.length - halfPoint);
-    
+    final firstHalfAvg =
+        values.sublist(0, halfPoint).reduce((a, b) => a + b) / halfPoint;
+    final secondHalfAvg =
+        values.sublist(halfPoint).reduce((a, b) => a + b) /
+        (values.length - halfPoint);
+
     final TrendDirection trend;
     final diff = secondHalfAvg - firstHalfAvg;
-    if (diff.abs() < average * 0.02) { // Meno del 2% = stabile
+    if (diff.abs() < average * 0.02) {
+      // Meno del 2% = stabile
       trend = TrendDirection.stable;
     } else if (diff > 0) {
       trend = TrendDirection.rising;
@@ -102,7 +112,9 @@ class ParameterHistoryService {
   }
 
   /// Ottieni dati per tutti i parametri principali
-  Map<String, List<ParameterDataPoint>> getAllParametersHistory({int hours = 24}) {
+  Map<String, List<ParameterDataPoint>> getAllParametersHistory({
+    int hours = 24,
+  }) {
     return {
       'Temperatura': generateHistory(
         parameterName: 'Temperatura',
@@ -142,9 +154,9 @@ class ParameterHistoryService {
     if (!_history.containsKey(key)) {
       _history[key] = [];
     }
-    
+
     _history[key]!.add(point);
-    
+
     // Mantieni solo ultime 24h (max 96 punti se interval 15min)
     if (_history[key]!.length > 96) {
       _history[key]!.removeAt(0);

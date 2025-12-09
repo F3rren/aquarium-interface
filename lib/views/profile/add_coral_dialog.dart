@@ -25,13 +25,13 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   final _coralDatabaseService = CoralDatabaseService();
   List<CoralSpecies> _coralDatabase = [];
   CoralSpecies? _selectedCoralSpecies;
-  
+
   late TextEditingController _nameController;
   late TextEditingController _speciesController;
   late TextEditingController _sizeController;
   late TextEditingController _notesController;
   late TextEditingController _quantityController;
-  
+
   String _selectedType = 'LPS';
   String _selectedPlacement = 'Medio';
 
@@ -39,16 +39,22 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.coral?.name ?? '');
-    _speciesController = TextEditingController(text: widget.coral?.species ?? '');
-    _sizeController = TextEditingController(text: widget.coral?.size.toString() ?? '');
+    _speciesController = TextEditingController(
+      text: widget.coral?.species ?? '',
+    );
+    _sizeController = TextEditingController(
+      text: widget.coral?.size.toString() ?? '',
+    );
     _notesController = TextEditingController(text: widget.coral?.notes ?? '');
-    _quantityController = TextEditingController(text: widget.coral == null ? '1' : '1');
-    
+    _quantityController = TextEditingController(
+      text: widget.coral == null ? '1' : '1',
+    );
+
     if (widget.coral != null) {
       _selectedType = widget.coral!.type;
       _selectedPlacement = _mapPlacementToItalian(widget.coral!.placement);
     }
-    
+
     _loadCoralDatabase();
   }
 
@@ -69,7 +75,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
 
   void _onCoralSpeciesSelected(CoralSpecies? species) {
     if (species == null) return;
-    
+
     setState(() {
       _selectedCoralSpecies = species;
       _nameController.text = species.commonName;
@@ -119,7 +125,9 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   }
 
   void _save() {
-    if (_nameController.text.isEmpty || _speciesController.text.isEmpty || _sizeController.text.isEmpty) {
+    if (_nameController.text.isEmpty ||
+        _speciesController.text.isEmpty ||
+        _sizeController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Compila tutti i campi obbligatori')),
       );
@@ -128,17 +136,17 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
 
     final size = double.tryParse(_sizeController.text);
     if (size == null || size <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Dimensione non valida')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Dimensione non valida')));
       return;
     }
 
     final quantity = int.tryParse(_quantityController.text) ?? 1;
     if (quantity <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Quantità non valida')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Quantità non valida')));
       return;
     }
 
@@ -178,7 +186,9 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
         final coralNumber = index + 1;
         return Coral(
           id: const Uuid().v4(),
-          name: quantity > 1 ? '${_nameController.text} #$coralNumber' : _nameController.text,
+          name: quantity > 1
+              ? '${_nameController.text} #$coralNumber'
+              : _nameController.text,
           species: _speciesController.text,
           type: _selectedType,
           size: size,
@@ -187,7 +197,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
           notes: _notesController.text.isEmpty ? null : _notesController.text,
         );
       });
-      
+
       if (widget.onSaveMultiple != null) {
         widget.onSaveMultiple!(coralList, _selectedCoralSpecies?.id);
       } else {
@@ -197,15 +207,17 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
         }
       }
     }
-    
+
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final heroTag = widget.coral != null ? 'coral_${widget.coral!.id}' : 'coral_new';
-    
+    final heroTag = widget.coral != null
+        ? 'coral_${widget.coral!.id}'
+        : 'coral_new';
+
     return Dialog(
       backgroundColor: theme.colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -229,13 +241,19 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                           color: const Color(0xFF34d399).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const FaIcon(FontAwesomeIcons.seedling, color: Color(0xFF34d399), size: 28),
+                        child: const FaIcon(
+                          FontAwesomeIcons.seedling,
+                          color: Color(0xFF34d399),
+                          size: 28,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Text(
-                    widget.coral == null ? 'Aggiungi Corallo' : 'Modifica Corallo',
+                    widget.coral == null
+                        ? 'Aggiungi Corallo'
+                        : 'Modifica Corallo',
                     style: TextStyle(
                       color: theme.colorScheme.onSurface,
                       fontSize: 20,
@@ -245,7 +263,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 ],
               ),
               const SizedBox(height: 24),
-              
+
               // Dropdown database coralli
               if (widget.coral == null) ...[
                 _buildCoralDatabaseDropdown(theme),
@@ -262,7 +280,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 ),
                 const SizedBox(height: 16),
               ],
-              
+
               _buildTextField(
                 controller: _nameController,
                 label: 'Nome *',
@@ -270,7 +288,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 icon: FontAwesomeIcons.tag,
               ),
               const SizedBox(height: 16),
-              
+
               _buildTextField(
                 controller: _speciesController,
                 label: 'Specie *',
@@ -278,7 +296,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 icon: FontAwesomeIcons.circleInfo,
               ),
               const SizedBox(height: 16),
-              
+
               _buildDropdown(
                 label: 'Tipo *',
                 value: _selectedType,
@@ -287,7 +305,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 onChanged: (value) => setState(() => _selectedType = value!),
               ),
               const SizedBox(height: 16),
-              
+
               _buildTextField(
                 controller: _sizeController,
                 label: 'Dimensione (cm) *',
@@ -296,16 +314,17 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
-              
+
               _buildDropdown(
                 label: 'Posizionamento *',
                 value: _selectedPlacement,
                 items: ['Alto', 'Medio', 'Basso'],
                 icon: FontAwesomeIcons.locationDot,
-                onChanged: (value) => setState(() => _selectedPlacement = value!),
+                onChanged: (value) =>
+                    setState(() => _selectedPlacement = value!),
               ),
               const SizedBox(height: 16),
-              
+
               if (widget.coral == null) ...[
                 _buildTextField(
                   controller: _quantityController,
@@ -325,7 +344,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 ),
                 const SizedBox(height: 16),
               ],
-              
+
               _buildTextField(
                 controller: _notesController,
                 label: 'Note',
@@ -333,14 +352,17 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 icon: FontAwesomeIcons.noteSticky,
                 maxLines: 3,
               ),
-              
+
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Annulla', style: TextStyle(color: Colors.white60)),
+                    child: const Text(
+                      'Annulla',
+                      style: TextStyle(color: Colors.white60),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
@@ -348,10 +370,18 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF34d399),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    child: const Text('Salva', style: TextStyle(fontWeight: FontWeight.w600)),
+                    child: const Text(
+                      'Salva',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
               ),
@@ -371,13 +401,17 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     int maxLines = 1,
   }) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: 8),
         TextField(
@@ -387,7 +421,9 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
           style: TextStyle(color: theme.colorScheme.onSurface),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+            ),
             prefixIcon: Icon(icon, color: const Color(0xFF34d399)),
             filled: true,
             fillColor: theme.colorScheme.surfaceContainerHighest,
@@ -397,7 +433,9 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+              borderSide: BorderSide(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -421,7 +459,11 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
       children: [
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: 8),
         Container(
@@ -436,14 +478,14 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
             decoration: InputDecoration(
               prefixIcon: Icon(icon, color: const Color(0xFF34d399)),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
             ),
             style: const TextStyle(color: Colors.white, fontSize: 15),
             items: items.map((item) {
-              return DropdownMenuItem(
-                value: item,
-                child: Text(item),
-              );
+              return DropdownMenuItem(value: item, child: Text(item));
             }).toList(),
             onChanged: onChanged,
           ),
@@ -467,7 +509,11 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
           isExpanded: true,
           hint: Row(
             children: [
-              FaIcon(FontAwesomeIcons.magnifyingGlass, color: const Color(0xFF34d399), size: 20),
+              FaIcon(
+                FontAwesomeIcons.magnifyingGlass,
+                color: const Color(0xFF34d399),
+                size: 20,
+              ),
               const SizedBox(width: 12),
               Text(
                 'Seleziona dalla lista',
@@ -477,7 +523,10 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
           ),
           value: _selectedCoralSpecies,
           dropdownColor: theme.colorScheme.surface,
-          icon: FaIcon(FontAwesomeIcons.caretDown, color: const Color(0xFF34d399)),
+          icon: FaIcon(
+            FontAwesomeIcons.caretDown,
+            color: const Color(0xFF34d399),
+          ),
           items: _coralDatabase.map((coral) {
             // Funzione helper per ottenere il colore della difficoltà
             Color getDifficultyColor(String difficulty) {
@@ -492,7 +541,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                   return const Color(0xFF6b7280);
               }
             }
-            
+
             return DropdownMenuItem<CoralSpecies>(
               value: coral,
               child: Row(
@@ -523,7 +572,10 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                   ),
                   // Badge difficoltà
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: getDifficultyColor(coral.difficulty),
                       borderRadius: BorderRadius.circular(4),
@@ -547,5 +599,3 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     );
   }
 }
-
-

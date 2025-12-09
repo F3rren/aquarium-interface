@@ -2,7 +2,8 @@ import 'api_service.dart';
 
 /// Servizio per gestire i valori target desiderati dei parametri
 class TargetParametersService {
-  static final TargetParametersService _instance = TargetParametersService._internal();
+  static final TargetParametersService _instance =
+      TargetParametersService._internal();
   factory TargetParametersService() => _instance;
   TargetParametersService._internal();
 
@@ -41,8 +42,10 @@ class TargetParametersService {
     }
 
     try {
-      final response = await _apiService.get('/aquariums/$_currentAquariumId/settings/targets');
-      
+      final response = await _apiService.get(
+        '/aquariums/$_currentAquariumId/settings/targets',
+      );
+
       if (response is Map<String, dynamic> && response.containsKey('data')) {
         final data = response['data'] as Map<String, dynamic>;
         _cachedTargets = {
@@ -53,7 +56,7 @@ class TargetParametersService {
         };
         return _cachedTargets!;
       }
-      
+
       return _getDefaults();
     } catch (e) {
       return _getDefaults();
@@ -69,16 +72,16 @@ class TargetParametersService {
     try {
       // Carica tutti i target correnti
       final allTargets = await loadAllTargets();
-      
+
       // Aggiorna il parametro specifico
       allTargets[parameter.toLowerCase()] = value;
-      
+
       // Salva tutto sul backend
       await _apiService.post(
         '/aquariums/$_currentAquariumId/settings/targets',
         allTargets,
       );
-      
+
       // Aggiorna cache
       _cachedTargets = allTargets;
     } catch (e) {
@@ -120,7 +123,7 @@ class TargetParametersService {
       '/aquariums/$_currentAquariumId/settings/targets',
       _getDefaults(),
     );
-    
+
     _cachedTargets = _getDefaults();
   }
 }

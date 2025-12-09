@@ -24,7 +24,8 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
   String _resultUnit = 'g';
 
   // Calcolo Cambio Acqua
-  final TextEditingController _tankVolumeWaterController = TextEditingController();
+  final TextEditingController _tankVolumeWaterController =
+      TextEditingController();
   final TextEditingController _percentageController = TextEditingController();
   double? _waterChangeResult;
   double? _saltNeeded;
@@ -35,7 +36,8 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
   double? _salinityPPT;
   double? _salinityPPM;
   double? _specificGravity;
-  String _conversionMode = 'density_to_salinity'; // density_to_salinity | salinity_to_density
+  String _conversionMode =
+      'density_to_salinity'; // density_to_salinity | salinity_to_density
 
   // Calcolo Illuminazione
   final TextEditingController _lightVolumeController = TextEditingController();
@@ -82,25 +84,26 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     if (volume != null && current != null && target != null) {
       setState(() {
         final difference = (current - target).abs();
-        final isReduction = _selectedAdditive.contains('NO3') || 
-                           _selectedAdditive.contains('PO4') || 
-                           _selectedAdditive.contains('Carbonio');
-        
+        final isReduction =
+            _selectedAdditive.contains('NO3') ||
+            _selectedAdditive.contains('PO4') ||
+            _selectedAdditive.contains('Carbonio');
+
         // Se è riduzione e target >= current, non calcolare
         if (isReduction && target >= current) {
           _additiveResult = null;
           return;
         }
-        
+
         // Se è dosaggio e target <= current, non calcolare
         if (!isReduction && target <= current) {
           _additiveResult = null;
           return;
         }
-        
+
         // Formula semplificata: dipende dal prodotto, qui uso coefficienti medi
         double coefficient;
-        
+
         switch (_selectedAdditive) {
           case 'Calcio':
             coefficient = 0.05; // grammi per litro per 1 mg/L di aumento
@@ -140,7 +143,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
             coefficient = 0.05;
             _resultUnit = 'g';
         }
-        
+
         if (coefficient > 0) {
           _additiveResult = difference * coefficient;
         } else {
@@ -154,7 +157,10 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     final volume = double.tryParse(_tankVolumeWaterController.text);
     final percentage = double.tryParse(_percentageController.text);
 
-    if (volume != null && percentage != null && percentage > 0 && percentage <= 100) {
+    if (volume != null &&
+        percentage != null &&
+        percentage > 0 &&
+        percentage <= 100) {
       setState(() {
         _waterChangeResult = (volume * percentage) / 100;
         // Sale necessario: ~35g/L per salinità 1.025
@@ -195,7 +201,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     if (volume != null && watts != null && volume > 0) {
       setState(() {
         _wattsPerLiter = watts / volume;
-        
+
         // Raccomandazioni basate sul tipo di vasca
         if (_tankType == 'Solo Pesci') {
           if (_wattsPerLiter! < 0.25) {
@@ -230,11 +236,14 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Calcolatori', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        title: const Text(
+          'Calcolatori',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
@@ -244,7 +253,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
         padding: const EdgeInsets.all(20),
         children: [
           const SizedBox(height: 10),
-          
+
           // CALCOLO VOLUME
           _buildCalculatorCard(
             title: 'Calcolo Volume Acquario',
@@ -254,25 +263,48 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
               children: [
                 Text(
                   'Inserisci le dimensioni dell\'acquario in centimetri',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                _buildInputField('Lunghezza (cm)', _lengthController, FontAwesomeIcons.ruler),
+                _buildInputField(
+                  'Lunghezza (cm)',
+                  _lengthController,
+                  FontAwesomeIcons.ruler,
+                ),
                 const SizedBox(height: 12),
-                _buildInputField('Larghezza (cm)', _widthController, FontAwesomeIcons.ruler),
+                _buildInputField(
+                  'Larghezza (cm)',
+                  _widthController,
+                  FontAwesomeIcons.ruler,
+                ),
                 const SizedBox(height: 12),
-                _buildInputField('Altezza (cm)', _heightController, FontAwesomeIcons.rulerVertical),
+                _buildInputField(
+                  'Altezza (cm)',
+                  _heightController,
+                  FontAwesomeIcons.rulerVertical,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateVolume,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Calcola Volume', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  child: const Text(
+                    'Calcola Volume',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
                 ),
                 if (_volumeResult != null) ...[
                   const SizedBox(height: 20),
@@ -284,12 +316,19 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   const SizedBox(height: 8),
                   Text(
                     'Volume netto stimato: ${(_volumeResult! * 0.85).toStringAsFixed(1)} L',
-                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '(considerando rocce e substrato)',
-                    style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.4), fontSize: 11, fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ],
               ],
@@ -307,29 +346,52 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
               children: [
                 Text(
                   'Calcola la quantità di additivo da dosare',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+                    border: Border.all(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                    ),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: _selectedAdditive,
                       isExpanded: true,
                       dropdownColor: theme.colorScheme.surfaceContainerHighest,
-                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15),
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                        fontSize: 15,
+                      ),
                       items: [
                         DropdownMenuItem(
                           enabled: false,
-                          child: Text('── DOSAGGIO ──', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
+                          child: Text(
+                            '── DOSAGGIO ──',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
-                        ...['Calcio', 'Magnesio', 'KH', 'Iodio', 'Stronzio'].map((String value) {
+                        ...[
+                          'Calcio',
+                          'Magnesio',
+                          'KH',
+                          'Iodio',
+                          'Stronzio',
+                        ].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Padding(
@@ -340,14 +402,28 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                         }),
                         DropdownMenuItem(
                           enabled: false,
-                          child: Text('── RIDUZIONE ──', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
+                          child: Text(
+                            '── RIDUZIONE ──',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
-                        ...['Nitrati (NO3)', 'Fosfati (PO4)', 'NO3:PO4-X (Red Sea)', 'Carbonio Attivo'].map((String value) {
+                        ...[
+                          'Nitrati (NO3)',
+                          'Fosfati (PO4)',
+                          'NO3:PO4-X (Red Sea)',
+                          'Carbonio Attivo',
+                        ].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 12),
-                              child: Text(value, style: const TextStyle(fontSize: 14)),
+                              child: Text(
+                                value,
+                                style: const TextStyle(fontSize: 14),
+                              ),
                             ),
                           );
                         }),
@@ -361,7 +437,11 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                _buildInputField('Volume acquario (L)', _tankVolumeController, FontAwesomeIcons.water),
+                _buildInputField(
+                  'Volume acquario (L)',
+                  _tankVolumeController,
+                  FontAwesomeIcons.water,
+                ),
                 const SizedBox(height: 12),
                 _buildInputField(
                   'Valore attuale (${_getUnit()})',
@@ -380,15 +460,24 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.tertiary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Calcola Dosaggio', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  child: const Text(
+                    'Calcola Dosaggio',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
                 ),
                 if (_additiveResult != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    _selectedAdditive.contains('NO3:PO4-X') || _selectedAdditive.contains('Carbonio')
+                    _selectedAdditive.contains('NO3:PO4-X') ||
+                            _selectedAdditive.contains('Carbonio')
                         ? 'Quantità da dosare (riduzione)'
                         : 'Quantità da dosare',
                     '${_additiveResult!.toStringAsFixed(2)} $_resultUnit',
@@ -400,24 +489,34 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     style: TextStyle(color: Colors.orange, fontSize: 11),
                     textAlign: TextAlign.center,
                   ),
-                ] else if (_selectedAdditive == 'Nitrati (NO3)' || _selectedAdditive == 'Fosfati (PO4)') ...[
+                ] else if (_selectedAdditive == 'Nitrati (NO3)' ||
+                    _selectedAdditive == 'Fosfati (PO4)') ...[
                   const SizedBox(height: 20),
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.orange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.orange.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Column(
                       children: [
-                        const FaIcon(FontAwesomeIcons.circleInfo, color: Colors.orange, size: 32),
+                        const FaIcon(
+                          FontAwesomeIcons.circleInfo,
+                          color: Colors.orange,
+                          size: 32,
+                        ),
                         const SizedBox(height: 8),
                         Text(
-                          _selectedAdditive == 'Nitrati (NO3)' 
-                            ? 'Per ridurre i Nitrati:\n• Cambio acqua regolare (20% settimanale)\n• Skimmer efficiente\n• Refill osmosi\n• Carbonio attivo liquido\n• NO3:PO4-X (Red Sea)'
-                            : 'Per ridurre i Fosfati:\n• Resine anti-fosfati (GFO)\n• Skimmer efficiente\n• Cambio acqua regolare\n• NO3:PO4-X (Red Sea)\n• Evitare sovralimentazione',
-                          style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                          _selectedAdditive == 'Nitrati (NO3)'
+                              ? 'Per ridurre i Nitrati:\n• Cambio acqua regolare (20% settimanale)\n• Skimmer efficiente\n• Refill osmosi\n• Carbonio attivo liquido\n• NO3:PO4-X (Red Sea)'
+                              : 'Per ridurre i Fosfati:\n• Resine anti-fosfati (GFO)\n• Skimmer efficiente\n• Cambio acqua regolare\n• NO3:PO4-X (Red Sea)\n• Evitare sovralimentazione',
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -439,23 +538,42 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
               children: [
                 Text(
                   'Calcola litri e sale necessario per il cambio acqua',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                _buildInputField('Volume acquario (L)', _tankVolumeWaterController, FontAwesomeIcons.water),
+                _buildInputField(
+                  'Volume acquario (L)',
+                  _tankVolumeWaterController,
+                  FontAwesomeIcons.water,
+                ),
                 const SizedBox(height: 12),
-                _buildInputField('Percentuale cambio (%)', _percentageController, FontAwesomeIcons.percent),
+                _buildInputField(
+                  'Percentuale cambio (%)',
+                  _percentageController,
+                  FontAwesomeIcons.percent,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateWaterChange,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.secondary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Calcola', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  child: const Text(
+                    'Calcola',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
                 ),
                 if (_waterChangeResult != null) ...[
                   const SizedBox(height: 20),
@@ -473,7 +591,10 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   const SizedBox(height: 8),
                   Text(
                     'Calcolato per salinità 1.025 (35g/L)',
-                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ],
@@ -491,25 +612,36 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
               children: [
                 Text(
                   'Converti tra densità e salinità',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Selettore modalità
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: theme.colorScheme.tertiary.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: DropdownButton<String>(
                     value: _conversionMode,
                     isExpanded: true,
                     dropdownColor: theme.colorScheme.surfaceContainerHighest,
                     underline: const SizedBox(),
-                    style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface,
+                      fontSize: 15,
+                    ),
                     items: const [
                       DropdownMenuItem(
                         value: 'density_to_salinity',
@@ -531,27 +663,39 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     },
                   ),
                 ),
-                
+
                 const SizedBox(height: 12),
                 _buildInputField(
-                  _conversionMode == 'density_to_salinity' 
-                    ? 'Densità (es: 1.025)' 
-                    : 'Salinità (ppt, es: 35)',
+                  _conversionMode == 'density_to_salinity'
+                      ? 'Densità (es: 1.025)'
+                      : 'Salinità (ppt, es: 35)',
                   _densityController,
                   FontAwesomeIcons.water,
                 ),
                 const SizedBox(height: 12),
-                _buildInputField('Temperatura (°C)', _temperatureController, FontAwesomeIcons.temperatureHalf),
+                _buildInputField(
+                  'Temperatura (°C)',
+                  _temperatureController,
+                  FontAwesomeIcons.temperatureHalf,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateDensitySalinity,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.tertiary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Converti', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  child: const Text(
+                    'Converti',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
                 ),
                 if (_salinityPPT != null) ...[
                   const SizedBox(height: 20),
@@ -575,7 +719,10 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   const SizedBox(height: 8),
                   Text(
                     'Valori indicativi - Usare rifrattometro per misure precise',
-                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ],
@@ -593,29 +740,49 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
               children: [
                 Text(
                   'Calcola il rapporto watt/litro ottimale',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Selettore tipo vasca
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: Colors.amber.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: DropdownButton<String>(
                     value: _tankType,
                     isExpanded: true,
                     dropdownColor: theme.colorScheme.surfaceContainerHighest,
                     underline: const SizedBox(),
-                    style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface,
+                      fontSize: 15,
+                    ),
                     items: const [
-                      DropdownMenuItem(value: 'Solo Pesci', child: Text('Solo Pesci')),
-                      DropdownMenuItem(value: 'Pesci + Coralli Molli', child: Text('Pesci + Coralli Molli (LPS)')),
-                      DropdownMenuItem(value: 'Coralli SPS', child: Text('Coralli SPS')),
+                      DropdownMenuItem(
+                        value: 'Solo Pesci',
+                        child: Text('Solo Pesci'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Pesci + Coralli Molli',
+                        child: Text('Pesci + Coralli Molli (LPS)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Coralli SPS',
+                        child: Text('Coralli SPS'),
+                      ),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -626,21 +793,37 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     },
                   ),
                 ),
-                
+
                 const SizedBox(height: 12),
-                _buildInputField('Volume acquario (L)', _lightVolumeController, FontAwesomeIcons.water),
+                _buildInputField(
+                  'Volume acquario (L)',
+                  _lightVolumeController,
+                  FontAwesomeIcons.water,
+                ),
                 const SizedBox(height: 12),
-                _buildInputField('Potenza luci (W)', _wattsController, FontAwesomeIcons.bolt),
+                _buildInputField(
+                  'Potenza luci (W)',
+                  _wattsController,
+                  FontAwesomeIcons.bolt,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateLighting,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,
                     foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Calcola', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  child: const Text(
+                    'Calcola',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
                 ),
                 if (_wattsPerLiter != null) ...[
                   const SizedBox(height: 20),
@@ -655,25 +838,31 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.amber.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Text(
                       _lightRecommendation!,
-                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14),
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                        fontSize: 14,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Fotoperiodo consigliato: 8-10 ore/giorno',
-                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ],
             ),
           ),
-
-
         ],
       ),
     );
@@ -707,13 +896,15 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     required Widget child,
   }) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -748,9 +939,13 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     );
   }
 
-  Widget _buildInputField(String label, TextEditingController controller, IconData icon) {
+  Widget _buildInputField(
+    String label,
+    TextEditingController controller,
+    IconData icon,
+  ) {
     final theme = Theme.of(context);
-    
+
     return TextField(
       controller: controller,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -758,11 +953,17 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
-        prefixIcon: Icon(icon, color: theme.colorScheme.onSurfaceVariant, size: 20),
+        prefixIcon: Icon(
+          icon,
+          color: theme.colorScheme.onSurfaceVariant,
+          size: 20,
+        ),
         filled: true,
         fillColor: theme.colorScheme.surfaceContainerHighest,
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
+          borderSide: BorderSide(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         focusedBorder: OutlineInputBorder(
@@ -775,7 +976,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
   Widget _buildResult(String label, String value, Color color) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -788,7 +989,10 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
         children: [
           Text(
             label,
-            style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
+            style: TextStyle(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
           ),
           Text(
             value,
@@ -803,4 +1007,3 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     );
   }
 }
-

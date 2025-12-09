@@ -29,7 +29,8 @@ class ParameterDataPoint {
   }
 
   @override
-  String toString() => 'ParameterDataPoint($parameterName: $value @ ${timestamp.toLocal()})';
+  String toString() =>
+      'ParameterDataPoint($parameterName: $value @ ${timestamp.toLocal()})';
 }
 
 /// Statistiche per un set di dati storici
@@ -59,9 +60,9 @@ class ParameterStats {
 
 /// Direzione del trend di un parametro
 enum TrendDirection {
-  rising,   // ↗️ In aumento
-  falling,  // ↘️ In diminuzione
-  stable,   // ➡️ Stabile
+  rising, // ↗️ In aumento
+  falling, // ↘️ In diminuzione
+  stable, // ➡️ Stabile
 }
 
 extension TrendDirectionExtension on TrendDirection {
