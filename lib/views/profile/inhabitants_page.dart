@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/fish.dart';
 import '../../models/coral.dart';
+import '../../models/inhabitants_filter.dart';
 import '../../services/inhabitants_service.dart';
 import '../../widgets/components/skeleton_loader.dart';
 import '../../widgets/animated_number.dart';
+import '../../widgets/inhabitants_filter_panel.dart';
 import '../../providers/aquarium_providers.dart';
 import 'add_fish_dialog.dart';
 import 'add_coral_dialog.dart';
@@ -30,6 +32,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
   List<Coral> _coralsList = [];
   bool _isLoading = true;
   String? _aquariumWaterType;
+  InhabitantsFilter _filter = InhabitantsFilter();
 
   @override
   void initState() {
@@ -128,6 +131,153 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
         ),
       );
     }
+  }
+
+  List<Fish> _getFilteredAndSortedFish() {
+    List<Fish> filtered = _fishList;
+
+    // Filtra per nome
+    if (_filter.searchText.isNotEmpty) {
+      filtered = filtered.where((fish) {
+        final searchLower = _filter.searchText.toLowerCase();
+        return fish.name.toLowerCase().contains(searchLower) ||
+            fish.species.toLowerCase().contains(searchLower);
+      }).toList();
+    }
+
+    // Filtra per difficoltà
+    if (_filter.difficultyFilter != null) {
+      filtered = filtered.where((fish) {
+        return fish.difficulty == _filter.difficultyFilter;
+      }).toList();
+    }
+
+    // Filtra per data
+    if (_filter.dateFilter != null && _filter.dateValue != null) {
+      filtered = filtered.where((fish) {
+        if (_filter.dateFilter == DateFilterType.before) {
+          return fish.addedDate.isBefore(_filter.dateValue!);
+        } else {
+          return fish.addedDate.isAfter(_filter.dateValue!);
+        }
+      }).toList();
+    }
+
+    // Ordina
+    filtered.sort((a, b) {
+      int comparison = 0;
+      switch (_filter.sortBy) {
+        case SortType.name:
+          comparison = a.name.compareTo(b.name);
+          break;
+        case SortType.dateAdded:
+          comparison = a.addedDate.compareTo(b.addedDate);
+          break;
+        case SortType.size:
+          comparison = a.size.compareTo(b.size);
+          break;
+        case SortType.difficulty:
+          final difficultyOrder = {
+            'Facile': 1,
+            'Intermedio': 2,
+            'Difficile': 3,
+          };
+          final aVal = difficultyOrder[a.difficulty] ?? 0;
+          final bVal = difficultyOrder[b.difficulty] ?? 0;
+          comparison = aVal.compareTo(bVal);
+          break;
+      }
+      return _filter.sortAscending ? comparison : -comparison;
+    });
+
+    return filtered;
+  }
+
+  List<Coral> _getFilteredAndSortedCorals() {
+    List<Coral> filtered = _coralsList;
+
+    // Filtra per nome
+    if (_filter.searchText.isNotEmpty) {
+      filtered = filtered.where((coral) {
+        final searchLower = _filter.searchText.toLowerCase();
+        return coral.name.toLowerCase().contains(searchLower) ||
+            coral.species.toLowerCase().contains(searchLower);
+      }).toList();
+    }
+
+    // Filtra per difficoltà
+    if (_filter.difficultyFilter != null) {
+      filtered = filtered.where((coral) {
+        return coral.difficulty == _filter.difficultyFilter;
+      }).toList();
+    }
+
+    // Filtra per data
+    if (_filter.dateFilter != null && _filter.dateValue != null) {
+      filtered = filtered.where((coral) {
+        if (_filter.dateFilter == DateFilterType.before) {
+          return coral.addedDate.isBefore(_filter.dateValue!);
+        } else {
+          return coral.addedDate.isAfter(_filter.dateValue!);
+        }
+      }).toList();
+    }
+
+    // Ordina
+    filtered.sort((a, b) {
+      int comparison = 0;
+      switch (_filter.sortBy) {
+        case SortType.name:
+          comparison = a.name.compareTo(b.name);
+          break;
+        case SortType.dateAdded:
+          comparison = a.addedDate.compareTo(b.addedDate);
+          break;
+        case SortType.size:
+          comparison = a.size.compareTo(b.size);
+          break;
+        case SortType.difficulty:
+          final difficultyOrder = {
+            'Facile': 1,
+            'Intermedio': 2,
+            'Difficile': 3,
+          };
+          final aVal = difficultyOrder[a.difficulty] ?? 0;
+          final bVal = difficultyOrder[b.difficulty] ?? 0;
+          comparison = aVal.compareTo(bVal);
+          break;
+      }
+      return _filter.sortAscending ? comparison : -comparison;
+    });
+
+    return filtered;
+  }
+
+  void _showFilterPanel() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: DraggableScrollableSheet(
+          initialChildSize: 0.75,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) => InhabitantsFilterPanel(
+            currentFilter: _filter,
+            onFilterChanged: (newFilter) {
+              setState(() {
+                _filter = newFilter;
+              });
+            },
+            onClose: () => Navigator.pop(context),
+          ),
+        ),
+      ),
+    );
   }
 
   void _showAddFishDialog() {
@@ -329,6 +479,42 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const FaIcon(FontAwesomeIcons.filter, size: 20),
+                onPressed: _showFilterPanel,
+                tooltip: 'Filtri e ricerca',
+              ),
+              if (_filter.hasActiveFilters)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.error,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '${_filter.activeFilterCount}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
         bottom: _tabController.length == tabCount
             ? TabBar(
                 controller: _tabController,
@@ -445,6 +631,55 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       );
     }
 
+    final filteredFish = _getFilteredAndSortedFish();
+
+    if (filteredFish.isEmpty) {
+      return Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FaIcon(
+                FontAwesomeIcons.magnifyingGlass,
+                size: 64,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Nessun risultato trovato',
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Prova a modificare i filtri',
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _filter = _filter.clearAll();
+                  });
+                },
+                icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
+                label: const Text('Cancella filtri'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return ListView.builder(
       padding: EdgeInsets.only(
         left: 16,
@@ -452,9 +687,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
         top: 16,
         bottom: 16 + bottomPadding,
       ),
-      itemCount: _fishList.length,
+      itemCount: filteredFish.length,
       itemBuilder: (context, index) {
-        final fish = _fishList[index];
+        final fish = filteredFish[index];
         final theme = Theme.of(context);
 
         return Card(
@@ -622,6 +857,55 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       );
     }
 
+    final filteredCorals = _getFilteredAndSortedCorals();
+
+    if (filteredCorals.isEmpty) {
+      return Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FaIcon(
+                FontAwesomeIcons.magnifyingGlass,
+                size: 64,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Nessun risultato trovato',
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Prova a modificare i filtri',
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _filter = _filter.clearAll();
+                  });
+                },
+                icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
+                label: const Text('Cancella filtri'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return ListView.builder(
       padding: EdgeInsets.only(
         left: 16,
@@ -629,9 +913,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
         top: 16,
         bottom: 16 + bottomPadding,
       ),
-      itemCount: _coralsList.length,
+      itemCount: filteredCorals.length,
       itemBuilder: (context, index) {
-        final coral = _coralsList[index];
+        final coral = filteredCorals[index];
         final theme = Theme.of(context);
 
         Color typeColor;
