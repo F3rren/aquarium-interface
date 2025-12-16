@@ -152,6 +152,7 @@
   "calculatorsSubtitle": "Volumen, Additivdosierung, Wasserwechsel",
   "myInhabitants": "Meine Bewohner",
   "myInhabitantsSubtitle": "Fische und Korallen verwalten",
+  "inhabitantsSummary": "\u00dcbersicht der Bewohner",
   "aquariumInfo": "Aquarium Info",
   "aquariumInfoSubtitle": "Name, Volumen, Typ",
   "theme": "Thema",
@@ -200,7 +201,14 @@
   "magnesiumMg": "Magnesium (Mg)",
   "nitratesNO3": "Nitrate (NO3)",
   "phosphatesPO4": "Phosphate (PO4)",
-  "edit": "{name} bearbeiten",
+  "editParameter": "{name} bearbeiten",
+  "@editParameter": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "value": "Wert ({unit})",
   "cancel": "Abbrechen",
   "save": "Speichern",
@@ -433,7 +441,41 @@
   "paramSalinity": "Salzgehalt",
   "paramORP": "ORP",
   
-  "errorLoadingTasks": "Fehler beim Laden von Aufgaben: {error}",
+  "warningIndicativeValues": "⚠️ Richtwerte: Herstelleranweisungen überprüfen",
+  "nitratesReductionAdvice": "Um Nitrat zu reduzieren:\n• Regelmäßiger Wasserwechsel (20% wöchentlich)\n• Effizienter Abschäumer\n• Osmose-Nachfüllung\n• Flüssiger Aktivkohle\n• NO3:PO4-X (Red Sea)",
+  "phosphatesReductionAdvice": "Um Phosphat zu reduzieren:\n• Anti-Phosphat-Harze (GFO)\n• Effizienter Abschäumer\n• Regelmäßiger Wasserwechsel\n• NO3:PO4-X (Red Sea)\n• Überfütterung vermeiden",
+  "calculateWaterAndSalt": "Berechne Liter und benötigtes Salz für Wasserwechsel",
+  "aquariumVolumeL": "Aquarienvolumen (L)",
+  "changePercentage": "Wechselprozentsatz (%)",
+  "calculate": "Berechnen",
+  "waterToChange": "Zu wechselndes Wasser",
+  "saltNeeded": "Benötigtes Salz",
+  "calculatedForSalinity": "Berechnet für Salinität 1.025 (35g/L)",
+  "densityExample": "Dichte (z.B.: 1.025)",
+  "salinityExample": "Salinität (ppt, z.B.: 35)",
+  "temperatureCelsius": "Temperatur (°C)",
+  "salinityLabel": "Salinität",
+  "salinityPPM": "Salinität (ppm)",
+  "densityLabel": "Dichte",
+  "indicativeValuesRefractometer": "Richtwerte - Refraktometer für präzise Messungen verwenden",
+  "calculateWattsPerLiter": "Berechne optimales Watt/Liter-Verhältnis",
+  "lightPowerW": "Lichtleistung (W)",
+  "wattsPerLiter": "Watt pro Liter",
+  "recommendedPhotoperiod": "Empfohlene Photoperiode: 8-10 Stunden/Tag",
+  "quantityToDose": "Zu dosierende Menge",
+  "quantityToDoseReduction": "Zu dosierende Menge (Reduktion)",
+  
+  "lightInsufficientFishOnly": "Unzureichend - Mindestens 0.25 W/L für Fische",
+  "lightOptimalFishOnly": "Optimal für Fisch-Aquarium",
+  "lightExcessiveAlgaeRisk": "Übermäßig - Algenrisiko",
+  "lightInsufficientSoftCorals": "Unzureichend - Mindestens 0.5 W/L",
+  "lightOptimalSoftCorals": "Optimal für Weichkorallen (LPS)",
+  "lightVeryGoodSPS": "Sehr gut - Auch für SPS geeignet",
+  "lightInsufficientSPS": "Unzureichend - Mindestens 1.0 W/L für SPS",
+  "lightOptimalSPS": "Optimal für SPS-Korallen",
+  "lightVeryPowerfulSPS": "Sehr leistungsstark - Ausgezeichnet für anspruchsvolle SPS",
+  
+  "errorLoadingTasks": "Fehler beim Laden der Aufgaben: {error}",
   "@errorLoadingTasks": {
     "placeholders": {
       "error": {
@@ -618,9 +660,39 @@
     }
   },
   "inhabitantsUpdated": "Bewohner aktualisiert!",
-  "delete": "L\u00f6schen",
-  "clearFilters": "Filter l\u00f6schen",
-  "aquariumIdNotAvailable": "Fehler: Aquarium-ID nicht verf\u00fcgbar",
+  "delete": "Löschen",
+  "clearFilters": "Filter löschen",
+  "confirmDeletion": "Löschen bestätigen",
+  "confirmDeleteFish": "Möchten Sie \"{name}\" löschen?",
+  "@confirmDeleteFish": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteCoral": "Möchten Sie \"{name}\" löschen?",
+  "@confirmDeleteCoral": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "filtersAndSearch": "Filter und Suche",
+  "noFishAdded": "Keine Fische hinzugefügt",
+  "tapToAddFirstFish": "Tippen Sie auf +, um Ihren ersten Fisch hinzuzufügen",
+  "noResultsFound": "Keine Ergebnisse gefunden",
+  "tryModifyingFilters": "Versuchen Sie, die Filter zu ändern",
+  "noCoralAdded": "Keine Korallen hinzugefügt",
+  "tapToAddFirstCoral": "Tippen Sie auf +, um Ihre erste Koralle hinzuzufügen",
+  "averageSize": "Durchschn. Größe",
+  "totalBioLoad": "Gesamte Biobelastung",
+  "bioLoadFormula": "Formel: (Σ Fischgrößen) + (Anzahl Korallen × 2)",
+  "bioLoadOptimal": "Optimale Biobelastung - gut ausgewogenes Aquarium",
+  "bioLoadModerate": "Moderate Biobelastung - Wasserparameter überwachen",
+  "bioLoadHigh": "Hohe Biobelastung - größeres Aquarium in Betracht ziehen oder Bewohner reduzieren",
+  "aquariumIdNotAvailable": "Fehler: Aquarium-ID nicht verfügbar",
   "newTask": "Neue Aufgabe",
   "daily": "T\u00e4glich",
   "weekly": "W\u00f6chentlich",
@@ -661,6 +733,180 @@
       }
     }
   },
-  "taskDeleted": "Aufgabe gel\u00f6scht",
-  "language": "Sprache"
+  "taskDeleted": "Aufgabe gelöscht",
+  "notSet": "Nicht festgelegt",
+  "notes": "Notizen",
+  "taskCompletedSuccess": "{title} abgeschlossen!",
+  "@taskCompletedSuccess": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmCompleteTask": "Möchten Sie \"{title}\" als abgeschlossen markieren?",
+  "@confirmCompleteTask": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "close": "Schließen",
+  "language": "Sprache",
+  
+  "temperatureAnomaly": "Temperaturanomalie",
+  "phOutOfRange": "pH außerhalb des Bereichs",
+  "salinityAnomaly": "Salzgehaltanomalie",
+  "orpOutOfRange": "ORP außerhalb des Bereichs",
+  "calciumAnomaly": "Calciumanomalie",
+  "magnesiumAnomaly": "Magnesiumanomalie",
+  "khOutOfRange": "KH außerhalb des Bereichs",
+  "nitratesHigh": "Hohe Nitrate",
+  "phosphatesHigh": "Hohe Phosphate",
+  
+  "temperatureTooHigh": "Die Temperatur ist zu hoch.",
+  "phTooHigh": "Der pH-Wert ist zu hoch.",
+  "salinityTooHigh": "Der Salzgehalt ist zu hoch.",
+  "orpTooHigh": "Der ORP ist zu hoch.",
+  "calciumTooHigh": "Das Calcium ist zu hoch.",
+  "magnesiumTooHigh": "Das Magnesium ist zu hoch.",
+  "khTooHigh": "Der KH ist zu hoch.",
+  "nitratesTooHigh": "Die Nitrate sind zu hoch.",
+  "phosphatesTooHigh": "Die Phosphate sind zu hoch.",
+  
+  "temperatureTooLow": "Die Temperatur ist zu niedrig.",
+  "phTooLow": "Der pH-Wert ist zu niedrig.",
+  "salinityTooLow": "Der Salzgehalt ist zu niedrig.",
+  "orpTooLow": "Der ORP ist zu niedrig.",
+  "calciumTooLow": "Das Calcium ist zu niedrig.",
+  "magnesiumTooLow": "Das Magnesium ist zu niedrig.",
+  "khTooLow": "Der KH ist zu niedrig.",
+  "nitratesTooLow": "Die Nitrate sind zu niedrig.",
+  "phosphatesTooLow": "Die Phosphate sind zu niedrig.",
+  
+  "suggestionTemperatureHigh": "Überprüfen Sie den Heizkörper und die Raumtemperatur.",
+  "suggestionPhHigh": "Belüftung überprüfen und Beleuchtung reduzieren.",
+  "suggestionSalinityHigh": "Osmosewasser zum Verdünnen hinzufügen.",
+  "suggestionOrpHigh": "Sauerstoffzufuhr reduzieren oder Ozonisator überprüfen.",
+  "suggestionCalciumHigh": "Calcium-Supplementierung reduzieren.",
+  "suggestionMagnesiumHigh": "Magnesium-Supplementierung reduzieren.",
+  "suggestionKhHigh": "Alkalische Puffer-Dosierung reduzieren.",
+  "suggestionNitratesHigh": "Wasserwechsel durchführen und Filter überprüfen.",
+  "suggestionPhosphatesHigh": "Wasserwechsel durchführen und Phosphat-Harze verwenden.",
+  
+  "suggestionTemperatureLow": "Heizkörperfunktion überprüfen.",
+  "suggestionPhLow": "Belüftung erhöhen und KH überprüfen.",
+  "suggestionSalinityLow": "Hochwertiges Meersalz hinzufügen.",
+  "suggestionOrpLow": "Sauerstoffzufuhr erhöhen oder Abschäumer überprüfen.",
+  "suggestionCalciumLow": "Calciumlösungen hinzufügen.",
+  "suggestionMagnesiumLow": "Magnesiumlösungen hinzufügen.",
+  "suggestionKhLow": "Alkalische Puffer allmählich hinzufügen",
+  "suggestionNitratesLow": "Normal für gut ausgewogene Aquarien",
+  "suggestionPhosphatesLow": "Normal für gut ausgewogene Aquarien",
+  
+  "maintenanceReminder": "Wartungserinnerung",
+  "weeklyMaintenance": "Wöchentliche Wartung geplant",
+  "monthlyMaintenance": "Monatliche Wartung geplant",
+  
+  "waterChangeReminder": "Erinnerung: Wasserwechsel",
+  "waterChangeReminderBody": "Zeit für den Wasserwechsel im Aquarium",
+  "filterCleaningReminder": "Erinnerung: Filterreinigung",
+  "filterCleaningReminderBody": "Aquariumfilter überprüfen und reinigen",
+  "parameterTestingReminder": "Erinnerung: Parametertest",
+  "parameterTestingReminderBody": "Wasserparameter testen",
+  "lightMaintenanceReminder": "Erinnerung: Lichtwartung",
+  "lightMaintenanceReminderBody": "Aquariumbeleuchtung überprüfen und reinigen",
+  
+  "weeklyMaintenanceDetails": "Zeit für wöchentliche Wartung:\n\u2022 10-15% Wasserwechsel\n\u2022 Scheibenreinigung\n\u2022 Parametertest\n\u2022 Geräteüberprüfung",
+  "monthlyMaintenanceDetails": "Zeit für monatliche Wartung:\n\u2022 20-25% Wasserwechsel\n\u2022 Filterreinigung\n\u2022 Pumpen- und Heizkörperüberprüfung\n\u2022 Licht- und Timerüberprüfung\n\u2022 Vollständiger Parametertest",
+  
+  "severityCritical": "KRITISCH",
+  "severityHigh": "HOCH",
+  "severityMedium": "MITTEL",
+  "severityLow": "NIEDRIG",
+  
+  "severityCriticalDesc": "Erfordert sofortiges Handeln",
+  "severityHighDesc": "Erfordert vorrangige Aufmerksamkeit",
+  "severityMediumDesc": "Sorgfältig überwachen",
+  "severityLowDesc": "Situation unter Kontrolle",
+  
+  "parameterOutOfRange": "Parameter {parameter} ist außerhalb des Bereichs",
+  "@parameterOutOfRange": {
+    "placeholders": {
+      "parameter": {
+        "type": "String"
+      }
+    }
+  },
+  "parameterAnomaly": "Parameteranomalie",
+  "checkParameterSettings": "Parameter überprüfen und Einstellungen verifizieren",
+  "alertsWillAppearHere": "Alarme werden hier angezeigt",
+  "changesWillBeSavedImmediately": "Änderungen werden sofort gespeichert.",
+  "networkError": "Verbindungsfehler. Überprüfen Sie Ihre Internetverbindung.",
+  "serverError": "Der Server hat ein Problem festgestellt. Bitte versuchen Sie es später erneut.",
+  "sessionExpired": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+  "requestTimeout": "Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es erneut.",
+  "invalidDataFormat": "Die empfangenen Daten sind nicht im erwarteten Format.",
+  "volumeMustBePositive": "Das Volumen muss eine positive Zahl sein",
+  "sortAscending": "A → Z / 0 → 9",
+  "sortDescending": "Z → A / 9 → 0",
+  "trendRising": "Steigend",
+  "trendFalling": "Fallend",
+  "trendStable": "Stabil",
+  "appTitle": "ReefLife",
+  "appSubtitle": "Aquarium-Verwaltungssystem",
+  "appDescription": "Erweiterte Plattform f\u00fcr die \u00dcberwachung und Verwaltung von Meerwasseraquarien, entwickelt f\u00fcr Aquarienliebhaber.",
+  "mitLicense": "MIT-Lizenz",
+  "copyright": "\u00a9 2024-2025 ReefLife Project. Alle Rechte vorbehalten.",
+  "openSourceMessage": "Open-Source-Software f\u00fcr die Aquarien-Community.",
+  "noAquariumCreated": "Sie haben noch kein Aquarium erstellt. Erstellen Sie Ihr erstes Aquarium, um Informationen anzuzeigen.",
+  "aquariumDetails": "Aquarium-Details",
+  "description": "Beschreibung",
+  "notifications": "Benachrichtigungen",
+  "saveSettings": "Einstellungen speichern",
+  "restoreDefaults": "Standardwerte wiederherstellen",
+  "noAlerts": "Keine Alarme",
+  "every": "Alle",
+  "min": "Min",
+  "max": "Max",
+  "lowLabel": "NIEDRIG",
+  "highLabel": "HOCH",
+  "editThresholds": "Schwellenwerte bearbeiten - {name}",
+  "@editThresholds": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationWhenOutOfRange": "Sie erhalten Benachrichtigungen, wenn der Wert au\u00dferhalb dieses Bereichs liegt",
+  "restoreDefaultsConfirm": "Standards wiederherstellen?",
+  "restoreDefaultsMessage": "Diese Aktion setzt alle benutzerdefinierten Schwellenwerte auf die Standardwerte zur\u00fcck:",
+  "temperatureDefault": "\u2022 Temperatur: 24-26\u00b0C",
+  "phDefault": "\u2022 pH: 8.0-8.4",
+  "salinityDefault": "\u2022 Salzgehalt: 1020-1028",
+  "andOtherParameters": "\u2022 Und alle anderen Parameter...",
+  "updated": "Aktualisiert {time}",
+  "@updated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "filtersAndSearch": "Filter und Suche",
+  "selectType": "Typ ausw\u00e4hlen",
+  "sortAscendingLabel": "Aufsteigende Reihenfolge",
+  "orpRedox": "ORP/Redox",
+  "addAquarium": "Aquarium hinzuf\u00fcgen",
+  "editAquariumTitle": "Aquarium bearbeiten",
+  "deleteAquariumTitle": "Aquarium l\u00f6schen",
+  "scientificName": "Wissenschaftlicher Name",
+  "requirements": "Anforderungen",
+  "selectFromList": "Aus der Liste ausw\u00e4hlen",
+  "orEnterManually": "oder manuell eingeben",
+  "multipleSpecimensNote": "Wenn Sie mehrere Exemplare hinzuf\u00fcgen, werden diese automatisch nummeriert",
+  "calculate": "Berechnen",
+  "recentAlerts": "Aktuelle Alarme"
 }

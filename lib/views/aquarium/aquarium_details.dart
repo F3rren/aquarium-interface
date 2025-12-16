@@ -138,8 +138,7 @@ class _AquariumDetailsState extends State<AquariumDetails>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          AppLocalizations.of(context)!.myAquarium,
+                        Text(AppLocalizations.of(context)!.myAquarium,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 18,
@@ -225,11 +224,31 @@ class _AquariumDetailsState extends State<AquariumDetails>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(FontAwesomeIcons.chartPie, AppLocalizations.of(context)!.dashboard, 0),
-              _buildNavItem(FontAwesomeIcons.flask, AppLocalizations.of(context)!.parameters, 1),
-              _buildNavItem(FontAwesomeIcons.chartLine, AppLocalizations.of(context)!.charts, 2),
-              _buildNavItem(FontAwesomeIcons.wrench, AppLocalizations.of(context)!.maintenance, 3),
-              _buildNavItem(FontAwesomeIcons.user, AppLocalizations.of(context)!.profile, 4),
+              _buildNavItem(
+                FontAwesomeIcons.chartPie,
+                AppLocalizations.of(context)!.dashboard,
+                0,
+              ),
+              _buildNavItem(
+                FontAwesomeIcons.flask,
+                AppLocalizations.of(context)!.parameters,
+                1,
+              ),
+              _buildNavItem(
+                FontAwesomeIcons.chartLine,
+                AppLocalizations.of(context)!.charts,
+                2,
+              ),
+              _buildNavItem(
+                FontAwesomeIcons.wrench,
+                AppLocalizations.of(context)!.maintenance,
+                3,
+              ),
+              _buildNavItem(
+                FontAwesomeIcons.user,
+                AppLocalizations.of(context)!.profile,
+                4,
+              ),
             ],
           ),
         ),

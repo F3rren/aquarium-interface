@@ -118,8 +118,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                 ),
               ),
               const SizedBox(height: 20),
-              Text(
-                l10n.deleteAquarium,
+              Text(l10n.deleteAquarium,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 22,
@@ -127,8 +126,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                 ),
               ),
               const SizedBox(height: 12),
-              Text(
-                l10n.confirmDeleteAquarium(aquarium.name),
+              Text(l10n.confirmDeleteAquarium(aquarium.name),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
@@ -136,8 +134,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                l10n.actionCannotBeUndone,
+              Text(l10n.actionCannotBeUndone,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: theme.colorScheme.error,
@@ -164,8 +161,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: Text(
-                          l10n.cancel,
+                        child: Text(l10n.cancel,
                           style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -191,8 +187,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                           children: [
                             const FaIcon(FontAwesomeIcons.trashCan, size: 20),
                             const SizedBox(width: 8),
-                            Text(
-                              l10n.delete,
+                            Text(l10n.delete,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -269,8 +264,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.deleteAquarium,
+        title: Text(AppLocalizations.of(context)!.deleteAquarium,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -303,8 +297,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                               ),
                             ),
                             const SizedBox(height: 20),
-                            Text(
-                              AppLocalizations.of(context)!.noAquarium,
+                            Text(AppLocalizations.of(context)!.noAquarium,
                               style: TextStyle(
                                 color: theme.colorScheme.onSurface,
                                 fontSize: 20,
@@ -312,8 +305,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              AppLocalizations.of(context)!.noAquariumsToDelete,
+                            Text(AppLocalizations.of(context)!.noAquariumsToDelete,
                               style: TextStyle(
                                 color: theme.colorScheme.onSurfaceVariant,
                                 fontSize: 14,
@@ -353,8 +345,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        AppLocalizations.of(
+                                      Text(AppLocalizations.of(
                                           context,
                                         )!.aquariumManagement,
                                         style: TextStyle(
@@ -364,8 +355,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                                         ),
                                       ),
                                       const SizedBox(height: 4),
-                                      Text(
-                                        AppLocalizations.of(
+                                      Text(AppLocalizations.of(
                                           context,
                                         )!.selectToDelete,
                                         style: TextStyle(
@@ -432,8 +422,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        aquarium.name,
+                      Text(aquarium.name,
                         style: TextStyle(
                           color: theme.colorScheme.onSurface,
                           fontSize: 16,
@@ -441,8 +430,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        '${aquarium.volume} L • ${aquarium.type}',
+                      Text('${aquarium.volume} L • ${aquarium.type}',
                         style: TextStyle(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 13,

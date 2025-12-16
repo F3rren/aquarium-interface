@@ -141,15 +141,13 @@ class ProfilePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.theme,
+                Text(l10n.theme,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  isDarkMode ? l10n.darkMode : l10n.lightMode,
+                Text(isDarkMode ? l10n.darkMode : l10n.lightMode,
                   style: theme.textTheme.bodySmall,
                 ),
               ],
@@ -204,8 +202,7 @@ class ProfilePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.language,
+                Text(l10n.language,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -243,8 +240,7 @@ class ProfilePage extends ConsumerWidget {
                         size: 20,
                       ),
                       const SizedBox(width: 12),
-                      Text(
-                        getLanguageName(locale.languageCode),
+                      Text(getLanguageName(locale.languageCode),
                         style: TextStyle(
                           fontWeight: isSelected
                               ? FontWeight.bold
@@ -300,8 +296,7 @@ class ProfilePage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
+                  Text(title,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -335,14 +330,12 @@ class ProfilePage extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'ReefLife',
+                Text('ReefLife',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
-                  'Sistema di Gestione Acquari',
+                Text('Sistema di Gestione Acquari',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     letterSpacing: 0.5,
@@ -360,8 +353,7 @@ class ProfilePage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Description
-                Text(
-                  'Piattaforma avanzata per il monitoraggio e la gestione degli acquari marini, progettata per gli appassionati di acquariofilia.',
+                Text('Piattaforma avanzata per il monitoraggio e la gestione degli acquari marini, progettata per gli appassionati di acquariofilia.',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     height: 1.5,
@@ -387,8 +379,7 @@ class ProfilePage extends ConsumerWidget {
                             color: theme.colorScheme.primary,
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            'MIT License',
+                          Text('MIT License',
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: theme.colorScheme.primary,
@@ -397,15 +388,13 @@ class ProfilePage extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        '© 2024-2025 ReefLife Project. Tutti i diritti riservati.',
+                      Text('© 2024-2025 ReefLife Project. Tutti i diritti riservati.',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        'Software open source per la comunità acquariofila.',
+                      Text('Software open source per la comunità acquariofila.',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontStyle: FontStyle.italic,
@@ -445,8 +434,7 @@ class ProfilePage extends ConsumerWidget {
           children: [
             FaIcon(icon, size: 16, color: theme.colorScheme.primary),
             const SizedBox(width: 8),
-            Text(
-              title,
+            Text(title,
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
@@ -486,14 +474,12 @@ class ProfilePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
+                Text(name,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Text(
-                  description,
+                Text(description,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -536,14 +522,12 @@ class ProfilePage extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text(
-                    l10n.noAquariumSelected,
+                  Text(l10n.noAquariumSelected,
                     style: theme.textTheme.titleLarge,
                   ),
                 ],
               ),
-              content: Text(
-                'Non hai ancora creato un acquario. Crea il tuo primo acquario per visualizzare le informazioni.',
+              content: Text('Non hai ancora creato un acquario. Crea il tuo primo acquario per visualizzare le informazioni.',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -601,15 +585,13 @@ class ProfilePage extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        aquarium.name,
+                      Text(aquarium.name,
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Text(
-                        'Dettagli Acquario',
+                      Text('Dettagli Acquario',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -665,8 +647,7 @@ class ProfilePage extends ConsumerWidget {
                           color: theme.colorScheme.primary,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          'Descrizione',
+                        Text('Descrizione',
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: theme.colorScheme.primary,
@@ -681,8 +662,7 @@ class ProfilePage extends ConsumerWidget {
                         color: theme.colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Text(
-                        aquarium.description!,
+                      child: Text(aquarium.description!,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -719,8 +699,7 @@ class ProfilePage extends ConsumerWidget {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: theme.colorScheme.surface,
-            title: Text(
-              'Errore',
+            title: Text('Errore',
               style: TextStyle(color: theme.colorScheme.error),
             ),
             content: Text(l10n.unableToLoadInfo(error.toString())),
@@ -760,16 +739,14 @@ class ProfilePage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
+              Text(label,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 11,
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
-                value,
+              Text(value,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),

@@ -1,4 +1,5 @@
 /// Custom exceptions per una migliore gestione degli errori nell'app
+
 library;
 
 /// Exception base per errori dell'applicazione

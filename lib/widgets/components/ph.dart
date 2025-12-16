@@ -73,8 +73,7 @@ class PhMeter extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            'pH',
+                          Text('pH',
                             style: TextStyle(
                               color: theme.colorScheme.onSurface,
                               fontSize: 14,
@@ -92,8 +91,7 @@ class PhMeter extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        status,
+                      Text(status,
                         style: TextStyle(
                           color: color,
                           fontSize: 12,
@@ -162,8 +160,7 @@ class PhMeter extends StatelessWidget {
           children: [
             const FaIcon(FontAwesomeIcons.droplet, color: Color(0xFF60a5fa)),
             const SizedBox(width: 12),
-            Text(
-              l10n.targetPh,
+            Text(l10n.targetPh,
               style: TextStyle(color: theme.colorScheme.onSurface),
             ),
           ],
@@ -172,8 +169,7 @@ class PhMeter extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              l10n.setDesiredPh,
+            Text(l10n.setDesiredPh,
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -204,8 +200,7 @@ class PhMeter extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            Text(
-              l10n.typicalRangePh,
+            Text(l10n.typicalRangePh,
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
                 fontSize: 12,
@@ -216,8 +211,7 @@ class PhMeter extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              l10n.cancel,
+            child: Text(l10n.cancel,
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),

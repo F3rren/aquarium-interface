@@ -55,8 +55,7 @@ class FishDetailsDialog extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          fish.name,
+                        Text(fish.name,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -64,8 +63,7 @@ class FishDetailsDialog extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          fish.species,
+                        Text(fish.species,
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.9),
                             fontSize: 14,
@@ -150,8 +148,7 @@ class FishDetailsDialog extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Descrizione',
+                                  Text('Descrizione',
                                     style: TextStyle(
                                       color: theme.colorScheme.onSurfaceVariant,
                                       fontSize: 11,
@@ -160,8 +157,7 @@ class FishDetailsDialog extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 4),
-                                  Text(
-                                    fish.description!,
+                                  Text(fish.description!,
                                     style: TextStyle(
                                       color: theme.colorScheme.onSurface,
                                       fontSize: 12,
@@ -221,8 +217,7 @@ class FishDetailsDialog extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                Text(
-                                  'Requisiti',
+                                Text('Requisiti',
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurface,
                                     fontSize: 14,
@@ -383,8 +378,7 @@ class FishDetailsDialog extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
+                Text(title,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 11,
@@ -393,8 +387,7 @@ class FishDetailsDialog extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  content,
+                Text(content,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: fontSize,
@@ -445,8 +438,7 @@ class FishDetailsDialog extends StatelessWidget {
         children: [
           FaIcon(icon, color: color, size: 16),
           const SizedBox(width: 10),
-          Text(
-            '$label: ',
+          Text('$label: ',
             style: TextStyle(
               color: theme.colorScheme.onSurfaceVariant,
               fontSize: 12,
@@ -454,8 +446,7 @@ class FishDetailsDialog extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Text(
-              value,
+            child: Text(value,
               style: TextStyle(
                 color: theme.colorScheme.onSurface,
                 fontSize: 12,

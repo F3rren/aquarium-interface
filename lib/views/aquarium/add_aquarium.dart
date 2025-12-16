@@ -67,7 +67,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
         final volume = double.tryParse(volumeText);
 
         if (volume == null || volume <= 0) {
-          throw Exception('Il volume deve essere un numero positivo');
+          throw Exception(l10n.volumeMustBePositive);
         }
 
         // Mappa la chiave al valore tradotto
@@ -179,8 +179,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(
-          l10n.newAquarium,
+        title: Text(l10n.newAquarium,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -227,8 +226,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                l10n.createNewAquarium,
+                              Text(l10n.createNewAquarium,
                                 style: TextStyle(
                                   color: theme.colorScheme.onSurface,
                                   fontSize: 20,
@@ -236,8 +234,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                l10n.fillTankDetails,
+                              Text(l10n.fillTankDetails,
                                 style: TextStyle(
                                   color: theme.colorScheme.onSurfaceVariant,
                                   fontSize: 13,
@@ -358,8 +355,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                                   size: 24,
                                 ),
                                 const SizedBox(width: 12),
-                                Text(
-                                  l10n.saveAquarium,
+                                Text(l10n.saveAquarium,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -381,8 +377,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
   Widget _buildLabel(String text) {
     final theme = Theme.of(context);
 
-    return Text(
-      text,
+    return Text(text,
       style: TextStyle(
         color: theme.colorScheme.onSurface,
         fontSize: 14,
@@ -448,8 +443,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
               size: 28,
             ),
             const SizedBox(height: 8),
-            Text(
-              label,
+            Text(label,
               style: TextStyle(
                 color: isSelected
                     ? theme.colorScheme.primary

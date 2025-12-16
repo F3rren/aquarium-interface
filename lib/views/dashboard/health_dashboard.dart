@@ -74,8 +74,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
               color: Colors.red,
             ),
             const SizedBox(height: 16),
-            Text(
-              l10n.errorLoadingParameters,
+            Text(l10n.errorLoadingParameters,
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
@@ -174,8 +173,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text(
-                            l10n.aquariumStatus,
+                          child: Text(l10n.aquariumStatus,
                             style: TextStyle(
                               color: theme.colorScheme.onSurface,
                               fontSize: 12,
@@ -183,8 +181,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Text(
-                          statusMessage,
+                        Text(statusMessage,
                           style: TextStyle(
                             color: statusColor,
                             fontSize: 48,
@@ -192,8 +189,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Text(
-                          l10n.updatedNow(parametersInRange, totalParameters),
+                        Text(l10n.updatedNow(parametersInRange, totalParameters),
                           style: TextStyle(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 11,
@@ -311,8 +307,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
             children: [
               Icon(icon, color: color, size: 18),
               const SizedBox(width: 8),
-              Text(
-                label,
+              Text(label,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 12,
@@ -328,8 +323,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            value,
+          Text(value,
             style: TextStyle(
               color: isOutOfRange
                   ? theme.colorScheme.error
@@ -388,8 +382,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                   ),
                 ),
                 Center(
-                  child: Text(
-                    '$score',
+                  child: Text('$score',
                     style: TextStyle(
                       color: theme.colorScheme.onSurface,
                       fontSize: 32,
@@ -405,8 +398,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.healthScore,
+                Text(l10n.healthScore,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: 20,
@@ -414,8 +406,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  label,
+                Text(label,
                   style: TextStyle(
                     color: color,
                     fontSize: 14,
@@ -423,8 +414,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  l10n.parametersInOptimalRange(okParams, totalParams),
+                Text(l10n.parametersInOptimalRange(okParams, totalParams),
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 12,
@@ -494,8 +484,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                 size: 20,
               ),
               const SizedBox(width: 8),
-              Text(
-                'Alert Recenti',
+              Text('Alert Recenti',
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 16,
@@ -523,16 +512,14 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          alert.title,
+                        Text(alert.title,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Text(
-                          alert.message,
+                        Text(alert.message,
                           style: TextStyle(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 11,
@@ -591,8 +578,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                 size: 20,
               ),
               const SizedBox(width: 8),
-              Text(
-                l10n.upcomingReminders,
+              Text(l10n.upcomingReminders,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 16,
@@ -621,8 +607,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
-                      reminder['title'] as String,
+                    child: Text(reminder['title'] as String,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: 13,
@@ -638,8 +623,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                       color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
-                      '${reminder['days']} ${l10n.days}',
+                    child: Text('${reminder['days']} ${l10n.days}',
                       style: const TextStyle(
                         color: Color(0xFF60a5fa),
                         fontSize: 11,
@@ -676,8 +660,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         children: [
           Icon(icon, color: color, size: 24),
           const SizedBox(height: 8),
-          Text(
-            value,
+          Text(value,
             style: TextStyle(
               color: color,
               fontSize: 20,
@@ -685,8 +668,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            label,
+          Text(label,
             style: TextStyle(
               color: theme.colorScheme.onSurfaceVariant,
               fontSize: 10,
@@ -739,8 +721,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.recommendations,
+          Text(l10n.recommendations,
             style: TextStyle(
               color: theme.colorScheme.onSurface,
               fontSize: 16,
@@ -781,8 +762,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          rec['title'] as String,
+                        Text(rec['title'] as String,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 13,
@@ -790,8 +770,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          rec['desc'] as String,
+                        Text(rec['desc'] as String,
                           style: TextStyle(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 11,

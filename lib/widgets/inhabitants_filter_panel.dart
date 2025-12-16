@@ -105,8 +105,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(
-                    'Filtri e Ricerca',
+                  child: Text('Filtri e Ricerca',
                     style: TextStyle(
                       color: theme.colorScheme.onSurface,
                       fontSize: 18,
@@ -258,8 +257,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                               vertical: 12,
                             ),
                           ),
-                          hint: Text(
-                            'Seleziona tipo',
+                          hint: Text('Seleziona tipo',
                             style: TextStyle(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -312,8 +310,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
-                                  child: Text(
-                                    _filter.dateValue != null
+                                  child: Text(_filter.dateValue != null
                                         ? _formatDate(_filter.dateValue!)
                                         : 'Seleziona data',
                                     style: TextStyle(
@@ -396,12 +393,10 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
 
                   // Direzione ordinamento
                   SwitchListTile(
-                    title: Text(
-                      'Ordine crescente',
+                    title: Text(l10n.sortAscendingLabel,
                       style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
-                    subtitle: Text(
-                      _filter.sortAscending ? 'A → Z / 0 → 9' : 'Z → A / 9 → 0',
+                    subtitle: Text(_filter.sortAscending ? l10n.sortAscending : l10n.sortDescending,
                       style: TextStyle(
                         color: theme.colorScheme.onSurfaceVariant,
                         fontSize: 12,
@@ -437,8 +432,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
           ),
         ),
         const SizedBox(width: 8),
-        Text(
-          title,
+        Text(title,
           style: TextStyle(
             color: theme.colorScheme.onSurface,
             fontSize: 15,

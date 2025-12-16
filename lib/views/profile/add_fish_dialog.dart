@@ -170,9 +170,9 @@ class _AddFishDialogState extends State<AddFishDialog> {
     if (_nameController.text.isEmpty ||
         _speciesController.text.isEmpty ||
         _sizeController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.fillAllRequiredFields)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.fillAllRequiredFields)));
       return;
     }
 
@@ -290,8 +290,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Text(
-                    widget.fish == null ? 'Aggiungi Pesce' : 'Modifica Pesce',
+                  Text( widget.fish == null ? 'Aggiungi Pesce' : 'Modifica Pesce',
                     style: TextStyle(
                       color: theme.colorScheme.onSurface,
                       fontSize: 20,
@@ -323,8 +322,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: Text(
-                            widget.aquariumWaterType != null
+                          child: Text(widget.aquariumWaterType != null
                                 ? 'Nessun pesce compatibile con acquario ${widget.aquariumWaterType}'
                                 : 'Nessun pesce disponibile nel database',
                             style: TextStyle(
@@ -359,8 +357,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                               size: 20,
                             ),
                             const SizedBox(width: 12),
-                            Text(
-                              'Seleziona dalla lista',
+                            Text('Seleziona dalla lista',
                               style: TextStyle(
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),
@@ -385,15 +382,13 @@ class _AddFishDialogState extends State<AddFishDialog> {
                                         CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
-                                        species.commonName,
+                                      Text(species.commonName,
                                         style: TextStyle(
                                           color: theme.colorScheme.onSurface,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      Text(
-                                        species.scientificName,
+                                      Text(species.scientificName,
                                         style: TextStyle(
                                           color: theme
                                               .colorScheme
@@ -417,9 +412,8 @@ class _AddFishDialogState extends State<AddFishDialog> {
                                     ),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
-                                  child: Text(
-                                    _getDifficultyLabel(species.difficulty)[0],
-                                    style: const TextStyle(
+                                  child: Text(_getDifficultyLabel(species.difficulty)[0],
+                                    style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
@@ -436,8 +430,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                   ),
                 const SizedBox(height: 24),
                 Center(
-                  child: Text(
-                    'oppure inserisci manualmente',
+                  child: Text('oppure inserisci manualmente',
                     style: TextStyle(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 12,
@@ -482,8 +475,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Se aggiungi più esemplari, verranno numerati automaticamente',
+                Text('Se aggiungi più esemplari, verranno numerati automaticamente',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 12,
@@ -507,8 +499,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      'Annulla',
+                    child: Text('Annulla',
                       style: TextStyle(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -528,8 +519,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
-                      'Salva',
+                    child: Text('Salva',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -555,8 +545,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
+        Text(label,
           style: TextStyle(
             color: theme.colorScheme.onSurfaceVariant,
             fontSize: 14,

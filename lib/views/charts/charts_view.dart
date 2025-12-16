@@ -126,8 +126,7 @@ class _ChartsViewState extends State<ChartsView>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      AppLocalizations.of(context)!.chartHistoryTitle(
+                    Text(AppLocalizations.of(context)!.chartHistoryTitle(
                         _getLocalizedParameterName(context, _selectedParameter),
                       ),
                       style: TextStyle(
@@ -221,8 +220,7 @@ class _ChartsViewState extends State<ChartsView>
               height: 200,
               child: _chartData.isEmpty
                   ? Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.chartNoData,
+                      child: Text(AppLocalizations.of(context)!.chartNoData,
                         style: TextStyle(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -303,16 +301,14 @@ class _ChartsViewState extends State<ChartsView>
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              label,
+            Text(label,
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            Text(
-              value,
+            Text(value,
               style: TextStyle(
                 color: color,
                 fontSize: 11,
@@ -359,8 +355,7 @@ class _ChartsViewState extends State<ChartsView>
                 size: 18,
               ),
               const SizedBox(width: 8),
-              Text(
-                AppLocalizations.of(context)!.chartAdvancedAnalysis,
+              Text(AppLocalizations.of(context)!.chartAdvancedAnalysis,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 14,
@@ -410,8 +405,7 @@ class _ChartsViewState extends State<ChartsView>
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Text(
-                    advice['text'] as String,
+                  child: Text(advice['text'] as String,
                     style: TextStyle(
                       color: theme.colorScheme.onSurface,
                       fontSize: 12,
@@ -449,15 +443,13 @@ class _ChartsViewState extends State<ChartsView>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  label,
+                Text(label,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 10,
                   ),
                 ),
-                Text(
-                  value,
+                Text(value,
                   style: TextStyle(
                     color: color,
                     fontSize: 12,
@@ -537,13 +529,25 @@ class _ChartsViewState extends State<ChartsView>
     final relativeStdDev = (stdDev / avg * 100).abs();
 
     if (relativeStdDev < 2) {
-      return {'text': AppLocalizations.of(context)!.chartStabilityExcellent, 'color': const Color(0xFF10b981)};
+      return {
+        'text': AppLocalizations.of(context)!.chartStabilityExcellent,
+        'color': const Color(0xFF10b981),
+      };
     } else if (relativeStdDev < 5) {
-      return {'text': AppLocalizations.of(context)!.chartStabilityGood, 'color': const Color(0xFF22c55e)};
+      return {
+        'text': AppLocalizations.of(context)!.chartStabilityGood,
+        'color': const Color(0xFF22c55e),
+      };
     } else if (relativeStdDev < 10) {
-      return {'text': AppLocalizations.of(context)!.chartStabilityMedium, 'color': const Color(0xFFfbbf24)};
+      return {
+        'text': AppLocalizations.of(context)!.chartStabilityMedium,
+        'color': const Color(0xFFfbbf24),
+      };
     } else {
-      return {'text': AppLocalizations.of(context)!.chartStabilityLow, 'color': const Color(0xFFef4444)};
+      return {
+        'text': AppLocalizations.of(context)!.chartStabilityLow,
+        'color': const Color(0xFFef4444),
+      };
     }
   }
 
@@ -742,8 +746,7 @@ class _ChartsViewState extends State<ChartsView>
   Widget _buildStatChip(String label, String value, Color color) {
     return Column(
       children: [
-        Text(
-          label,
+        Text(label,
           style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10),
         ),
         const SizedBox(height: 4),
@@ -754,8 +757,7 @@ class _ChartsViewState extends State<ChartsView>
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: color.withValues(alpha: 0.4)),
           ),
-          child: Text(
-            value,
+          child: Text(value,
             style: TextStyle(
               color: color,
               fontSize: 12,
@@ -902,7 +904,8 @@ class _ChartsViewState extends State<ChartsView>
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
-              labelResolver: (line) => AppLocalizations.of(context)!.chartLegendIdeal,
+              labelResolver: (line) =>
+                  AppLocalizations.of(context)!.chartLegendIdeal,
             ),
           ),
           // Linea warning superiore
@@ -934,8 +937,7 @@ class _ChartsViewState extends State<ChartsView>
               final point = data[value.toInt()];
               return Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  '${point.timestamp.hour}:${point.timestamp.minute.toString().padLeft(2, '0')}',
+                child: Text('${point.timestamp.hour}:${point.timestamp.minute.toString().padLeft(2, '0')}',
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 10,
@@ -949,8 +951,7 @@ class _ChartsViewState extends State<ChartsView>
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 40,
-            getTitlesWidget: (value, meta) => Text(
-              value.toStringAsFixed(1),
+            getTitlesWidget: (value, meta) => Text(value.toStringAsFixed(1),
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 10,

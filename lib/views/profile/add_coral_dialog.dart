@@ -131,9 +131,9 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     if (_nameController.text.isEmpty ||
         _speciesController.text.isEmpty ||
         _sizeController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.fillAllRequiredFields)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.fillAllRequiredFields)));
       return;
     }
 
@@ -253,8 +253,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Text(
-                    widget.coral == null
+                  Text( widget.coral == null
                         ? 'Aggiungi Corallo'
                         : 'Modifica Corallo',
                     style: TextStyle(
@@ -272,8 +271,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 _buildCoralDatabaseDropdown(theme),
                 const SizedBox(height: 16),
                 Center(
-                  child: Text(
-                    'oppure inserisci manualmente',
+                  child: Text('oppure inserisci manualmente',
                     style: TextStyle(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 12,
@@ -337,8 +335,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Se aggiungi più esemplari, verranno numerati automaticamente',
+                Text('Se aggiungi più esemplari, verranno numerati automaticamente',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 12,
@@ -362,8 +359,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'Annulla',
+                    child: Text('Annulla',
                       style: TextStyle(color: Colors.white60),
                     ),
                   ),
@@ -381,8 +377,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
-                      'Salva',
+                    child: Text('Salva',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -408,8 +403,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
+        Text(label,
           style: TextStyle(
             color: theme.colorScheme.onSurfaceVariant,
             fontSize: 14,
@@ -460,9 +454,8 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
+        Text(label,
+          style: TextStyle(
             color: Colors.white70,
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -486,7 +479,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 vertical: 12,
               ),
             ),
-            style: const TextStyle(color: Colors.white, fontSize: 15),
+            style: TextStyle(color: Colors.white, fontSize: 15),
             items: items.map((item) {
               return DropdownMenuItem(value: item, child: Text(item));
             }).toList(),
@@ -518,8 +511,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 size: 20,
               ),
               const SizedBox(width: 12),
-              Text(
-                'Seleziona dalla lista',
+              Text('Seleziona dalla lista',
                 style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
               ),
             ],
@@ -555,15 +547,13 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          coral.commonName,
+                        Text(coral.commonName,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        Text(
-                          coral.scientificName,
+                        Text(coral.scientificName,
                           style: TextStyle(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 11,
@@ -583,9 +573,8 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                       color: getDifficultyColor(coral.difficulty),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Text(
-                      coral.difficultyLabel[0],
-                      style: const TextStyle(
+                    child: Text(coral.difficultyLabel[0],
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,

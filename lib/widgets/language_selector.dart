@@ -35,8 +35,7 @@ class LanguageSelector extends ConsumerWidget {
                   size: 20,
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  getLanguageName(locale.languageCode),
+                Text( getLanguageName(locale.languageCode),
                   style: TextStyle(
                     fontWeight: isSelected
                         ? FontWeight.bold
@@ -87,8 +86,7 @@ class LanguageDialog extends ConsumerWidget {
                 isSelected ? Icons.check_circle : Icons.circle_outlined,
                 color: isSelected ? theme.colorScheme.primary : null,
               ),
-              title: Text(
-                getLanguageName(locale.languageCode),
+              title: Text(getLanguageName(locale.languageCode),
                 style: TextStyle(
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
@@ -104,7 +102,7 @@ class LanguageDialog extends ConsumerWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Chiudi'),
+          child: Text('Chiudi'),
         ),
       ],
     );

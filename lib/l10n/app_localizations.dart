@@ -353,8 +353,8 @@ abstract class AppLocalizations {
   /// No description provided for @edit.
   ///
   /// In it, this message translates to:
-  /// **'Modifica {name}'**
-  String edit(String name);
+  /// **'Modifica'**
+  String get edit;
 
   /// No description provided for @close.
   ///
@@ -836,6 +836,12 @@ abstract class AppLocalizations {
   /// **'Gestisci pesci e coralli'**
   String get myInhabitantsSubtitle;
 
+  /// No description provided for @inhabitantsSummary.
+  ///
+  /// In it, this message translates to:
+  /// **'Riepilogo Abitanti'**
+  String get inhabitantsSummary;
+
   /// No description provided for @aquariumInfo.
   ///
   /// In it, this message translates to:
@@ -1093,6 +1099,12 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Fosfati (PO4)'**
   String get phosphatesPO4;
+
+  /// No description provided for @editParameter.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica {name}'**
+  String editParameter(String name);
 
   /// No description provided for @value.
   ///
@@ -1487,7 +1499,7 @@ abstract class AppLocalizations {
   /// No description provided for @wattsPerLiter.
   ///
   /// In it, this message translates to:
-  /// **'Watt per litro'**
+  /// **'Watt per Litro'**
   String get wattsPerLiter;
 
   /// No description provided for @recommendation.
@@ -2000,6 +2012,138 @@ abstract class AppLocalizations {
   /// **'ORP'**
   String get paramORP;
 
+  /// No description provided for @warningIndicativeValues.
+  ///
+  /// In it, this message translates to:
+  /// **'⚠️ Valori indicativi: verifica le istruzioni del produttore'**
+  String get warningIndicativeValues;
+
+  /// No description provided for @nitratesReductionAdvice.
+  ///
+  /// In it, this message translates to:
+  /// **'Per ridurre i Nitrati:\n• Cambio acqua regolare (20% settimanale)\n• Skimmer efficiente\n• Refill osmosi\n• Carbonio attivo liquido\n• NO3:PO4-X (Red Sea)'**
+  String get nitratesReductionAdvice;
+
+  /// No description provided for @phosphatesReductionAdvice.
+  ///
+  /// In it, this message translates to:
+  /// **'Per ridurre i Fosfati:\n• Resine anti-fosfati (GFO)\n• Skimmer efficiente\n• Cambio acqua regolare\n• NO3:PO4-X (Red Sea)\n• Evitare sovralimentazione'**
+  String get phosphatesReductionAdvice;
+
+  /// No description provided for @calculateWaterAndSalt.
+  ///
+  /// In it, this message translates to:
+  /// **'Calcola litri e sale necessario per il cambio acqua'**
+  String get calculateWaterAndSalt;
+
+  /// No description provided for @aquariumVolumeL.
+  ///
+  /// In it, this message translates to:
+  /// **'Volume acquario (L)'**
+  String get aquariumVolumeL;
+
+  /// No description provided for @changePercentage.
+  ///
+  /// In it, this message translates to:
+  /// **'Percentuale cambio (%)'**
+  String get changePercentage;
+
+  /// No description provided for @calculate.
+  ///
+  /// In it, this message translates to:
+  /// **'Calcola'**
+  String get calculate;
+
+  /// No description provided for @salinityLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Salinità'**
+  String get salinityLabel;
+
+  /// No description provided for @densityLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Densità'**
+  String get densityLabel;
+
+  /// No description provided for @indicativeValuesRefractometer.
+  ///
+  /// In it, this message translates to:
+  /// **'Valori indicativi - Usare rifrattometro per misure precise'**
+  String get indicativeValuesRefractometer;
+
+  /// No description provided for @calculateWattsPerLiter.
+  ///
+  /// In it, this message translates to:
+  /// **'Calcola il rapporto watt/litro ottimale'**
+  String get calculateWattsPerLiter;
+
+  /// No description provided for @lightPowerW.
+  ///
+  /// In it, this message translates to:
+  /// **'Potenza luci (W)'**
+  String get lightPowerW;
+
+  /// No description provided for @recommendedPhotoperiod.
+  ///
+  /// In it, this message translates to:
+  /// **'Fotoperiodo consigliato: 8-10 ore/giorno'**
+  String get recommendedPhotoperiod;
+
+  /// No description provided for @lightInsufficientFishOnly.
+  ///
+  /// In it, this message translates to:
+  /// **'Insufficiente - Minimo 0.25 W/L per pesci'**
+  String get lightInsufficientFishOnly;
+
+  /// No description provided for @lightOptimalFishOnly.
+  ///
+  /// In it, this message translates to:
+  /// **'Ottimale per vasca di soli pesci'**
+  String get lightOptimalFishOnly;
+
+  /// No description provided for @lightExcessiveAlgaeRisk.
+  ///
+  /// In it, this message translates to:
+  /// **'Eccessivo - Rischio alghe'**
+  String get lightExcessiveAlgaeRisk;
+
+  /// No description provided for @lightInsufficientSoftCorals.
+  ///
+  /// In it, this message translates to:
+  /// **'Insufficiente - Minimo 0.5 W/L'**
+  String get lightInsufficientSoftCorals;
+
+  /// No description provided for @lightOptimalSoftCorals.
+  ///
+  /// In it, this message translates to:
+  /// **'Ottimale per coralli molli (LPS)'**
+  String get lightOptimalSoftCorals;
+
+  /// No description provided for @lightVeryGoodSPS.
+  ///
+  /// In it, this message translates to:
+  /// **'Molto buono - Adatto anche SPS'**
+  String get lightVeryGoodSPS;
+
+  /// No description provided for @lightInsufficientSPS.
+  ///
+  /// In it, this message translates to:
+  /// **'Insufficiente - Minimo 1.0 W/L per SPS'**
+  String get lightInsufficientSPS;
+
+  /// No description provided for @lightOptimalSPS.
+  ///
+  /// In it, this message translates to:
+  /// **'Ottimale per coralli SPS'**
+  String get lightOptimalSPS;
+
+  /// No description provided for @lightVeryPowerfulSPS.
+  ///
+  /// In it, this message translates to:
+  /// **'Molto potente - Ottimo per SPS esigenti'**
+  String get lightVeryPowerfulSPS;
+
   /// No description provided for @errorLoadingTasks.
   ///
   /// In it, this message translates to:
@@ -2372,6 +2516,96 @@ abstract class AppLocalizations {
   /// **'Cancella filtri'**
   String get clearFilters;
 
+  /// No description provided for @confirmDeletion.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma eliminazione'**
+  String get confirmDeletion;
+
+  /// No description provided for @confirmDeleteFish.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi eliminare \"{name}\"?'**
+  String confirmDeleteFish(String name);
+
+  /// No description provided for @confirmDeleteCoral.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi eliminare \"{name}\"?'**
+  String confirmDeleteCoral(String name);
+
+  /// No description provided for @noFishAdded.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun pesce aggiunto'**
+  String get noFishAdded;
+
+  /// No description provided for @tapToAddFirstFish.
+  ///
+  /// In it, this message translates to:
+  /// **'Tocca + per aggiungere il tuo primo pesce'**
+  String get tapToAddFirstFish;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun risultato trovato'**
+  String get noResultsFound;
+
+  /// No description provided for @tryModifyingFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Prova a modificare i filtri'**
+  String get tryModifyingFilters;
+
+  /// No description provided for @noCoralAdded.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun corallo aggiunto'**
+  String get noCoralAdded;
+
+  /// No description provided for @tapToAddFirstCoral.
+  ///
+  /// In it, this message translates to:
+  /// **'Tocca + per aggiungere il tuo primo corallo'**
+  String get tapToAddFirstCoral;
+
+  /// No description provided for @averageSize.
+  ///
+  /// In it, this message translates to:
+  /// **'Dim. media'**
+  String get averageSize;
+
+  /// No description provided for @totalBioLoad.
+  ///
+  /// In it, this message translates to:
+  /// **'Carico Biotico Totale'**
+  String get totalBioLoad;
+
+  /// No description provided for @bioLoadFormula.
+  ///
+  /// In it, this message translates to:
+  /// **'Formula: (Σ dimensioni pesci) + (n° coralli × 2)'**
+  String get bioLoadFormula;
+
+  /// No description provided for @bioLoadOptimal.
+  ///
+  /// In it, this message translates to:
+  /// **'Carico biotico ottimale - acquario ben bilanciato'**
+  String get bioLoadOptimal;
+
+  /// No description provided for @bioLoadModerate.
+  ///
+  /// In it, this message translates to:
+  /// **'Carico biotico moderato - monitora i parametri dell\'acqua'**
+  String get bioLoadModerate;
+
+  /// No description provided for @bioLoadHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Carico biotico elevato - considera un acquario più grande o riduci gli abitanti'**
+  String get bioLoadHigh;
+
   /// No description provided for @aquariumIdNotAvailable.
   ///
   /// In it, this message translates to:
@@ -2479,6 +2713,708 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Task eliminato'**
   String get taskDeleted;
+
+  /// No description provided for @notSet.
+  ///
+  /// In it, this message translates to:
+  /// **'Non impostata'**
+  String get notSet;
+
+  /// No description provided for @taskCompletedSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'{title} completato!'**
+  String taskCompletedSuccess(String title);
+
+  /// No description provided for @confirmCompleteTask.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi segnare \"{title}\" come completato?'**
+  String confirmCompleteTask(String title);
+
+  /// No description provided for @temperatureAnomaly.
+  ///
+  /// In it, this message translates to:
+  /// **'Temperatura Anomala'**
+  String get temperatureAnomaly;
+
+  /// No description provided for @phOutOfRange.
+  ///
+  /// In it, this message translates to:
+  /// **'pH Fuori Range'**
+  String get phOutOfRange;
+
+  /// No description provided for @salinityAnomaly.
+  ///
+  /// In it, this message translates to:
+  /// **'Salinità Anomala'**
+  String get salinityAnomaly;
+
+  /// No description provided for @orpOutOfRange.
+  ///
+  /// In it, this message translates to:
+  /// **'ORP Fuori Range'**
+  String get orpOutOfRange;
+
+  /// No description provided for @calciumAnomaly.
+  ///
+  /// In it, this message translates to:
+  /// **'Calcio Anomalo'**
+  String get calciumAnomaly;
+
+  /// No description provided for @magnesiumAnomaly.
+  ///
+  /// In it, this message translates to:
+  /// **'Magnesio Anomalo'**
+  String get magnesiumAnomaly;
+
+  /// No description provided for @khOutOfRange.
+  ///
+  /// In it, this message translates to:
+  /// **'KH Fuori Range'**
+  String get khOutOfRange;
+
+  /// No description provided for @nitratesHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Nitrati Elevati'**
+  String get nitratesHigh;
+
+  /// No description provided for @phosphatesHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Fosfati Elevati'**
+  String get phosphatesHigh;
+
+  /// No description provided for @temperatureTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'La temperatura è troppo alta.'**
+  String get temperatureTooHigh;
+
+  /// No description provided for @phTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Il pH è troppo alto.'**
+  String get phTooHigh;
+
+  /// No description provided for @salinityTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'La salinità è troppo alta.'**
+  String get salinityTooHigh;
+
+  /// No description provided for @orpTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'ORP è troppo alto.'**
+  String get orpTooHigh;
+
+  /// No description provided for @calciumTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Il calcio è troppo alto.'**
+  String get calciumTooHigh;
+
+  /// No description provided for @magnesiumTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Il magnesio è troppo alto.'**
+  String get magnesiumTooHigh;
+
+  /// No description provided for @khTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Il KH è troppo alto.'**
+  String get khTooHigh;
+
+  /// No description provided for @nitratesTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'I nitrati sono troppo alti.'**
+  String get nitratesTooHigh;
+
+  /// No description provided for @phosphatesTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'I fosfati sono troppo alti.'**
+  String get phosphatesTooHigh;
+
+  /// No description provided for @temperatureTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'La temperatura è troppo bassa.'**
+  String get temperatureTooLow;
+
+  /// No description provided for @phTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Il pH è troppo basso.'**
+  String get phTooLow;
+
+  /// No description provided for @salinityTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'La salinità è troppo bassa.'**
+  String get salinityTooLow;
+
+  /// No description provided for @orpTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'L\'ORP è troppo basso.'**
+  String get orpTooLow;
+
+  /// No description provided for @calciumTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Il calcio è troppo basso.'**
+  String get calciumTooLow;
+
+  /// No description provided for @magnesiumTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Il magnesio è troppo basso.'**
+  String get magnesiumTooLow;
+
+  /// No description provided for @khTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Il KH è troppo basso.'**
+  String get khTooLow;
+
+  /// No description provided for @nitratesTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'I nitrati sono troppo bassi.'**
+  String get nitratesTooLow;
+
+  /// No description provided for @phosphatesTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'I fosfati sono troppo bassi.'**
+  String get phosphatesTooLow;
+
+  /// No description provided for @suggestionTemperatureHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Verifica il riscaldatore e la temperatura ambiente.'**
+  String get suggestionTemperatureHigh;
+
+  /// No description provided for @suggestionPhHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Controlla l\'aerazione e riduci l\'illuminazione.'**
+  String get suggestionPhHigh;
+
+  /// No description provided for @suggestionSalinityHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi acqua osmotica per diluire.'**
+  String get suggestionSalinityHigh;
+
+  /// No description provided for @suggestionOrpHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Riduci l\'ossigenazione o controlla l\'ozonizzatore.'**
+  String get suggestionOrpHigh;
+
+  /// No description provided for @suggestionCalciumHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Riduci il dosaggio di integratori al calcio.'**
+  String get suggestionCalciumHigh;
+
+  /// No description provided for @suggestionMagnesiumHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Riduci il dosaggio di integratori al magnesio.'**
+  String get suggestionMagnesiumHigh;
+
+  /// No description provided for @suggestionKhHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Riduci il dosaggio di buffer alcalini.'**
+  String get suggestionKhHigh;
+
+  /// No description provided for @suggestionNitratesHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Effettua un cambio d\'acqua e verifica il filtro.'**
+  String get suggestionNitratesHigh;
+
+  /// No description provided for @suggestionPhosphatesHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Effettua un cambio d\'acqua e usa resine anti-fosfati.'**
+  String get suggestionPhosphatesHigh;
+
+  /// No description provided for @suggestionTemperatureLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Verifica il funzionamento del riscaldatore.'**
+  String get suggestionTemperatureLow;
+
+  /// No description provided for @suggestionPhLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Aumenta l\'aerazione e controlla il KH.'**
+  String get suggestionPhLow;
+
+  /// No description provided for @suggestionSalinityLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi sale marino di qualità.'**
+  String get suggestionSalinityLow;
+
+  /// No description provided for @suggestionOrpLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Aumenta l\'ossigenazione o controlla lo skimmer.'**
+  String get suggestionOrpLow;
+
+  /// No description provided for @suggestionCalciumLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Integra con soluzioni di calcio.'**
+  String get suggestionCalciumLow;
+
+  /// No description provided for @suggestionMagnesiumLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Integra con soluzioni di magnesio.'**
+  String get suggestionMagnesiumLow;
+
+  /// No description provided for @suggestionKhLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi buffer alcalini gradualmente'**
+  String get suggestionKhLow;
+
+  /// No description provided for @suggestionNitratesLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Normale per acquari ben bilanciati'**
+  String get suggestionNitratesLow;
+
+  /// No description provided for @suggestionPhosphatesLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Normale per acquari ben bilanciati'**
+  String get suggestionPhosphatesLow;
+
+  /// No description provided for @maintenanceReminder.
+  ///
+  /// In it, this message translates to:
+  /// **'Promemoria Manutenzione'**
+  String get maintenanceReminder;
+
+  /// No description provided for @weeklyMaintenance.
+  ///
+  /// In it, this message translates to:
+  /// **'Manutenzione settimanale prevista'**
+  String get weeklyMaintenance;
+
+  /// No description provided for @monthlyMaintenance.
+  ///
+  /// In it, this message translates to:
+  /// **'Manutenzione mensile prevista'**
+  String get monthlyMaintenance;
+
+  /// No description provided for @waterChangeReminder.
+  ///
+  /// In it, this message translates to:
+  /// **'Promemoria: Cambio Acqua'**
+  String get waterChangeReminder;
+
+  /// No description provided for @waterChangeReminderBody.
+  ///
+  /// In it, this message translates to:
+  /// **'È tempo di cambiare l\'acqua dell\'acquario'**
+  String get waterChangeReminderBody;
+
+  /// No description provided for @filterCleaningReminder.
+  ///
+  /// In it, this message translates to:
+  /// **'Promemoria: Pulizia Filtro'**
+  String get filterCleaningReminder;
+
+  /// No description provided for @filterCleaningReminderBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Controlla e pulisci il filtro dell\'acquario'**
+  String get filterCleaningReminderBody;
+
+  /// No description provided for @parameterTestingReminder.
+  ///
+  /// In it, this message translates to:
+  /// **'Promemoria: Test Parametri'**
+  String get parameterTestingReminder;
+
+  /// No description provided for @parameterTestingReminderBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Esegui i test dei parametri dell\'acqua'**
+  String get parameterTestingReminderBody;
+
+  /// No description provided for @lightMaintenanceReminder.
+  ///
+  /// In it, this message translates to:
+  /// **'Promemoria: Manutenzione Luci'**
+  String get lightMaintenanceReminder;
+
+  /// No description provided for @lightMaintenanceReminderBody.
+  ///
+  /// In it, this message translates to:
+  /// **'Controlla e pulisci le luci dell\'acquario'**
+  String get lightMaintenanceReminderBody;
+
+  /// No description provided for @weeklyMaintenanceDetails.
+  ///
+  /// In it, this message translates to:
+  /// **'È ora di effettuare la manutenzione settimanale:\n• Cambio acqua 10-15%\n• Pulizia vetri\n• Test parametri\n• Controllo attrezzature'**
+  String get weeklyMaintenanceDetails;
+
+  /// No description provided for @monthlyMaintenanceDetails.
+  ///
+  /// In it, this message translates to:
+  /// **'È ora di effettuare la manutenzione mensile:\n• Cambio acqua 20-25%\n• Pulizia filtro\n• Controllo pompe e riscaldatore\n• Verifica luci e timer\n• Test completo parametri'**
+  String get monthlyMaintenanceDetails;
+
+  /// No description provided for @severityCritical.
+  ///
+  /// In it, this message translates to:
+  /// **'CRITICO'**
+  String get severityCritical;
+
+  /// No description provided for @severityHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'ALTO'**
+  String get severityHigh;
+
+  /// No description provided for @severityMedium.
+  ///
+  /// In it, this message translates to:
+  /// **'MEDIO'**
+  String get severityMedium;
+
+  /// No description provided for @severityLow.
+  ///
+  /// In it, this message translates to:
+  /// **'BASSO'**
+  String get severityLow;
+
+  /// No description provided for @severityCriticalDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiede intervento immediato'**
+  String get severityCriticalDesc;
+
+  /// No description provided for @severityHighDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Richiede attenzione prioritaria'**
+  String get severityHighDesc;
+
+  /// No description provided for @severityMediumDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Monitorare attentamente'**
+  String get severityMediumDesc;
+
+  /// No description provided for @severityLowDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Situazione sotto controllo'**
+  String get severityLowDesc;
+
+  /// No description provided for @parameterOutOfRange.
+  ///
+  /// In it, this message translates to:
+  /// **'Il parametro {parameter} è fuori range'**
+  String parameterOutOfRange(String parameter);
+
+  /// No description provided for @parameterAnomaly.
+  ///
+  /// In it, this message translates to:
+  /// **'Parametro Anomalo'**
+  String get parameterAnomaly;
+
+  /// No description provided for @checkParameterSettings.
+  ///
+  /// In it, this message translates to:
+  /// **'Controlla il parametro e verifica le impostazioni'**
+  String get checkParameterSettings;
+
+  /// No description provided for @alertsWillAppearHere.
+  ///
+  /// In it, this message translates to:
+  /// **'Gli alert appariranno qui'**
+  String get alertsWillAppearHere;
+
+  /// No description provided for @changesWillBeSavedImmediately.
+  ///
+  /// In it, this message translates to:
+  /// **'Le modifiche verranno salvate immediatamente.'**
+  String get changesWillBeSavedImmediately;
+
+  /// No description provided for @networkError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore di connessione. Verifica la tua connessione internet.'**
+  String get networkError;
+
+  /// No description provided for @serverError.
+  ///
+  /// In it, this message translates to:
+  /// **'Il server ha riscontrato un problema. Riprova più tardi.'**
+  String get serverError;
+
+  /// No description provided for @sessionExpired.
+  ///
+  /// In it, this message translates to:
+  /// **'Sessione scaduta. Effettua nuovamente l\'accesso.'**
+  String get sessionExpired;
+
+  /// No description provided for @requestTimeout.
+  ///
+  /// In it, this message translates to:
+  /// **'La richiesta ha impiegato troppo tempo. Riprova.'**
+  String get requestTimeout;
+
+  /// No description provided for @invalidDataFormat.
+  ///
+  /// In it, this message translates to:
+  /// **'I dati ricevuti non sono nel formato atteso.'**
+  String get invalidDataFormat;
+
+  /// No description provided for @volumeMustBePositive.
+  ///
+  /// In it, this message translates to:
+  /// **'Il volume deve essere un numero positivo'**
+  String get volumeMustBePositive;
+
+  /// No description provided for @sortAscending.
+  ///
+  /// In it, this message translates to:
+  /// **'A → Z / 0 → 9'**
+  String get sortAscending;
+
+  /// No description provided for @sortDescending.
+  ///
+  /// In it, this message translates to:
+  /// **'Z → A / 9 → 0'**
+  String get sortDescending;
+
+  /// No description provided for @trendRising.
+  ///
+  /// In it, this message translates to:
+  /// **'In Aumento'**
+  String get trendRising;
+
+  /// No description provided for @trendFalling.
+  ///
+  /// In it, this message translates to:
+  /// **'In Diminuzione'**
+  String get trendFalling;
+
+  /// No description provided for @trendStable.
+  ///
+  /// In it, this message translates to:
+  /// **'Stabile'**
+  String get trendStable;
+
+  /// No description provided for @appSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Sistema di Gestione Acquari'**
+  String get appSubtitle;
+
+  /// No description provided for @appDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Piattaforma avanzata per il monitoraggio e la gestione degli acquari marini, progettata per gli appassionati di acquariofilia.'**
+  String get appDescription;
+
+  /// No description provided for @mitLicense.
+  ///
+  /// In it, this message translates to:
+  /// **'MIT License'**
+  String get mitLicense;
+
+  /// No description provided for @copyright.
+  ///
+  /// In it, this message translates to:
+  /// **'© 2024-2025 ReefLife Project. Tutti i diritti riservati.'**
+  String get copyright;
+
+  /// No description provided for @openSourceMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Software open source per la comunità acquariofila.'**
+  String get openSourceMessage;
+
+  /// No description provided for @noAquariumCreated.
+  ///
+  /// In it, this message translates to:
+  /// **'Non hai ancora creato un acquario. Crea il tuo primo acquario per visualizzare le informazioni.'**
+  String get noAquariumCreated;
+
+  /// No description provided for @aquariumDetails.
+  ///
+  /// In it, this message translates to:
+  /// **'Dettagli Acquario'**
+  String get aquariumDetails;
+
+  /// No description provided for @description.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione'**
+  String get description;
+
+  /// No description provided for @saveSettings.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva Impostazioni'**
+  String get saveSettings;
+
+  /// No description provided for @restoreDefaults.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristina Valori Predefiniti'**
+  String get restoreDefaults;
+
+  /// No description provided for @noAlerts.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun Alert'**
+  String get noAlerts;
+
+  /// No description provided for @every.
+  ///
+  /// In it, this message translates to:
+  /// **'Ogni'**
+  String get every;
+
+  /// No description provided for @lowLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'BASSO'**
+  String get lowLabel;
+
+  /// No description provided for @highLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'ALTO'**
+  String get highLabel;
+
+  /// No description provided for @editThresholds.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica Soglie - {name}'**
+  String editThresholds(String name);
+
+  /// No description provided for @notificationWhenOutOfRange.
+  ///
+  /// In it, this message translates to:
+  /// **'Riceverai notifiche quando il valore esce da questo range'**
+  String get notificationWhenOutOfRange;
+
+  /// No description provided for @restoreDefaultsConfirm.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristinare Predefiniti?'**
+  String get restoreDefaultsConfirm;
+
+  /// No description provided for @restoreDefaultsMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa azione resetterà tutte le soglie personalizzate ai valori di default:'**
+  String get restoreDefaultsMessage;
+
+  /// No description provided for @temperatureDefault.
+  ///
+  /// In it, this message translates to:
+  /// **'• Temperatura: 24-26°C'**
+  String get temperatureDefault;
+
+  /// No description provided for @phDefault.
+  ///
+  /// In it, this message translates to:
+  /// **'• pH: 8.0-8.4'**
+  String get phDefault;
+
+  /// No description provided for @salinityDefault.
+  ///
+  /// In it, this message translates to:
+  /// **'• Salinità: 1020-1028'**
+  String get salinityDefault;
+
+  /// No description provided for @andOtherParameters.
+  ///
+  /// In it, this message translates to:
+  /// **'• E tutti gli altri parametri...'**
+  String get andOtherParameters;
+
+  /// No description provided for @updated.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiornato {time}'**
+  String updated(String time);
+
+  /// No description provided for @sortAscendingLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Ordine crescente'**
+  String get sortAscendingLabel;
+
+  /// No description provided for @orpRedox.
+  ///
+  /// In it, this message translates to:
+  /// **'ORP/Redox'**
+  String get orpRedox;
+
+  /// No description provided for @addAquarium.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Vasca'**
+  String get addAquarium;
+
+  /// No description provided for @editAquariumTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica Vasca'**
+  String get editAquariumTitle;
+
+  /// No description provided for @deleteAquariumTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Vasca'**
+  String get deleteAquariumTitle;
+
+  /// No description provided for @scientificName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome Scientifico'**
+  String get scientificName;
+
+  /// No description provided for @requirements.
+  ///
+  /// In it, this message translates to:
+  /// **'Requisiti'**
+  String get requirements;
+
+  /// No description provided for @multipleSpecimensNote.
+  ///
+  /// In it, this message translates to:
+  /// **'Se aggiungi più esemplari, verranno numerati automaticamente'**
+  String get multipleSpecimensNote;
+
+  /// No description provided for @recentAlerts.
+  ///
+  /// In it, this message translates to:
+  /// **'Alert Recenti'**
+  String get recentAlerts;
 }
 
 class _AppLocalizationsDelegate

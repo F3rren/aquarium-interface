@@ -87,8 +87,7 @@ class _ManualParametersWidgetState
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                l10n.chemicalParameters,
+              Text(l10n.chemicalParameters,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 16,
@@ -192,8 +191,7 @@ class _ManualParametersWidgetState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
+                Text(name,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: 13,
@@ -201,8 +199,7 @@ class _ManualParametersWidgetState
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  '$min-$max $unit',
+                Text('$min-$max $unit',
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 11,
@@ -227,8 +224,7 @@ class _ManualParametersWidgetState
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    value.toStringAsFixed(value < 10 ? 2 : 0),
+                  Text(value.toStringAsFixed(value < 10 ? 2 : 0),
                     style: TextStyle(
                       color: color,
                       fontSize: 16,
@@ -262,8 +258,7 @@ class _ManualParametersWidgetState
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          l10n.edit(name),
+        title: Text(l10n.editParameter(name),
           style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18),
         ),
         content: TextField(
@@ -286,8 +281,7 @@ class _ManualParametersWidgetState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              l10n.cancel,
+            child: Text(l10n.cancel,
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),

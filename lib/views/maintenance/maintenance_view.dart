@@ -1,4 +1,4 @@
-import 'package:acquariumfe/models/maintenance_task.dart';
+﻿import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:acquariumfe/services/maintenance_task_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -147,8 +147,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                           : theme.textTheme.bodyMedium?.color,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      l10n.inProgress(_pendingTasks.length),
+                    Text(l10n.inProgress(_pendingTasks.length),
                       style: TextStyle(
                         color: !_showCompleted
                             ? Colors.white
@@ -192,8 +191,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                           : theme.textTheme.bodyMedium?.color,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      l10n.completed(_completedTasks.length),
+                    Text(l10n.completed(_completedTasks.length),
                       style: TextStyle(
                         color: _showCompleted
                             ? Colors.white
@@ -267,15 +265,13 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         children: [
           FaIcon(icon, color: color, size: 24),
           const SizedBox(height: 8),
-          Text(
-            value,
+          Text(value,
             style: theme.textTheme.headlineSmall?.copyWith(
               color: color,
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(
-            label,
+          Text(label,
             style: theme.textTheme.bodySmall,
             textAlign: TextAlign.center,
           ),
@@ -351,10 +347,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               const SizedBox(height: 16),
-              Text(
-                _showCompleted
-                    ? l10n.noCompletedTasks
-                    : l10n.noTasksInProgress,
+              Text(_showCompleted ? l10n.noCompletedTasks : l10n.noTasksInProgress,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
@@ -426,15 +419,13 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          task.title,
+                        Text(task.title,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         if (task.description != null)
-                          Text(
-                            task.description!,
+                          Text(task.description!,
                             style: theme.textTheme.bodySmall,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -464,8 +455,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                         color: theme.textTheme.bodySmall?.color,
                       ),
                       const SizedBox(width: 6),
-                      Text(
-                        _showCompleted && task.completedAt != null
+                      Text(_showCompleted && task.completedAt != null
                             ? l10n.completedOn(_formatDate(task.completedAt!))
                             : l10n.everyDays(task.frequencyDays),
                         style: theme.textTheme.bodySmall,
@@ -482,8 +472,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                         color: statusColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Text(
-                        statusText,
+                      child: Text(statusText,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: statusColor,
                           fontWeight: FontWeight.bold,
@@ -510,8 +499,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                             color: _getPriorityColor(task.priority!),
                           ),
                           const SizedBox(width: 4),
-                          Text(
-                            _getPriorityLabel(task.priority!),
+                          Text(_getPriorityLabel(task.priority!),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: _getPriorityColor(task.priority!),
                               fontWeight: FontWeight.bold,
@@ -531,10 +519,11 @@ class _MaintenanceViewState extends State<MaintenanceView> {
 
   Future<void> _showAddTaskDialog() async {
     if (widget.aquariumId == null) {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Errore: ID acquario non disponibile'),
-          backgroundColor: Color(0xFFef4444),
+        SnackBar(
+          content: Text(l10n.aquariumIdNotAvailable),
+          backgroundColor: const Color(0xFFef4444),
         ),
       );
       return;
@@ -551,139 +540,144 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Nuovo Task'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 16),
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(labelText: 'Titolo'),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: descController,
-                  decoration: const InputDecoration(labelText: 'Descrizione'),
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<MaintenanceCategory>(
-                  value: selectedCategory,
-                  decoration: const InputDecoration(labelText: 'Categoria'),
-                  items: MaintenanceCategory.values.map((cat) {
-                    return DropdownMenuItem(
-                      value: cat,
-                      child: Text(_getCategoryName(cat)),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setDialogState(() => selectedCategory = value);
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: selectedFrequency,
-                  decoration: const InputDecoration(labelText: 'Frequenza'),
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'daily',
-                      child: Text('Giornaliero'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'weekly',
-                      child: Text('Settimanale'),
-                    ),
-                    DropdownMenuItem(value: 'monthly', child: Text('Mensile')),
-                    DropdownMenuItem(
-                      value: 'custom',
-                      child: Text('Personalizzato'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      setDialogState(() => selectedFrequency = value);
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: selectedPriority,
-                  decoration: const InputDecoration(labelText: 'Priorità'),
-                  items: const [
-                    DropdownMenuItem(value: 'low', child: Text('Bassa')),
-                    DropdownMenuItem(value: 'medium', child: Text('Media')),
-                    DropdownMenuItem(value: 'high', child: Text('Alta')),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      setDialogState(() => selectedPriority = value);
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Data scadenza'),
-                  subtitle: Text(
-                    selectedDueDate != null
-                        ? _formatDate(selectedDueDate!)
-                        : 'Non impostata',
+        builder: (context, setDialogState) {
+          final l10n = AppLocalizations.of(context)!;
+          return AlertDialog(
+            title: Text(l10n.newTask),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: titleController,
+                    decoration: const InputDecoration(labelText: 'Titolo'),
                   ),
-                  trailing: const Icon(Icons.calendar_today),
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: selectedDueDate ?? DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (date != null) {
-                      if (!context.mounted) return;
-                      final time = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.fromDateTime(
-                          selectedDueDate ?? DateTime.now(),
-                        ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: descController,
+                    decoration: const InputDecoration(labelText: 'Descrizione'),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<MaintenanceCategory>(
+                    value: selectedCategory,
+                    decoration: const InputDecoration(labelText: 'Categoria'),
+                    items: MaintenanceCategory.values.map((cat) {
+                      return DropdownMenuItem(
+                        value: cat,
+                        child: Text(_getCategoryName(cat)),
                       );
-                      if (time != null) {
-                        setDialogState(() {
-                          selectedDueDate = DateTime(
-                            date.year,
-                            date.month,
-                            date.day,
-                            time.hour,
-                            time.minute,
-                          );
-                        });
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setDialogState(() => selectedCategory = value);
                       }
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: notesController,
-                  decoration: const InputDecoration(labelText: 'Note'),
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 16),
-              ],
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: selectedFrequency,
+                    decoration: InputDecoration(labelText: l10n.frequency),
+                    items: [
+                      DropdownMenuItem(value: 'daily', child: Text(l10n.daily)),
+                      DropdownMenuItem(
+                        value: 'weekly',
+                        child: Text(l10n.weekly),
+                      ),
+                      DropdownMenuItem(
+                        value: 'monthly',
+                        child: Text(l10n.monthly),
+                      ),
+                      DropdownMenuItem(
+                        value: 'custom',
+                        child: Text(l10n.custom),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setDialogState(() => selectedFrequency = value);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: selectedPriority,
+                    decoration: const InputDecoration(labelText: 'PrioritÃ '),
+                    items: [
+                      DropdownMenuItem(value: 'low', child: Text(l10n.low)),
+                      DropdownMenuItem(
+                        value: 'medium',
+                        child: Text(l10n.medium),
+                      ),
+                      DropdownMenuItem(value: 'high', child: Text(l10n.high)),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setDialogState(() => selectedPriority = value);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(l10n.dueDate),
+                    subtitle: Text(selectedDueDate != null
+                          ? _formatDate(selectedDueDate!)
+                          : l10n.notSet,
+                    ),
+                    trailing: const Icon(Icons.calendar_today),
+                    onTap: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDueDate ?? DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                      );
+                      if (date != null) {
+                        if (!context.mounted) return;
+                        final time = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.fromDateTime(
+                            selectedDueDate ?? DateTime.now(),
+                          ),
+                        );
+                        if (time != null) {
+                          setDialogState(() {
+                            selectedDueDate = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                              time.hour,
+                              time.minute,
+                            );
+                          });
+                        }
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: notesController,
+                    decoration: InputDecoration(labelText: l10n.notes),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Annulla'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Aggiungi'),
-            ),
-          ],
-        ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(l10n.cancel),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(l10n.add),
+              ),
+            ],
+          );
+        },
       ),
     );
 
@@ -705,14 +699,19 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         await _service.createTask(newTask);
         await _loadTasks();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Task aggiunto con successo')),
-          );
+          final l10n = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.taskAddedSuccess)));
         }
       } catch (e) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text(l10n.errorWithMessage(e.toString())),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }
@@ -737,139 +736,144 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Modifica Task'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 16),
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(labelText: 'Titolo'),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: descController,
-                  decoration: const InputDecoration(labelText: 'Descrizione'),
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<MaintenanceCategory>(
-                  value: selectedCategory,
-                  decoration: const InputDecoration(labelText: 'Categoria'),
-                  items: MaintenanceCategory.values.map((cat) {
-                    return DropdownMenuItem(
-                      value: cat,
-                      child: Text(_getCategoryName(cat)),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setDialogState(() => selectedCategory = value);
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: selectedFrequency,
-                  decoration: const InputDecoration(labelText: 'Frequenza'),
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'daily',
-                      child: Text('Giornaliero'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'weekly',
-                      child: Text('Settimanale'),
-                    ),
-                    DropdownMenuItem(value: 'monthly', child: Text('Mensile')),
-                    DropdownMenuItem(
-                      value: 'custom',
-                      child: Text('Personalizzato'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      setDialogState(() => selectedFrequency = value);
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: selectedPriority,
-                  decoration: const InputDecoration(labelText: 'Priorità'),
-                  items: const [
-                    DropdownMenuItem(value: 'low', child: Text('Bassa')),
-                    DropdownMenuItem(value: 'medium', child: Text('Media')),
-                    DropdownMenuItem(value: 'high', child: Text('Alta')),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      setDialogState(() => selectedPriority = value);
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Data scadenza'),
-                  subtitle: Text(
-                    selectedDueDate != null
-                        ? _formatDate(selectedDueDate!)
-                        : 'Non impostata',
+        builder: (context, setDialogState) {
+          final l10n = AppLocalizations.of(context)!;
+          return AlertDialog(
+            title: Text(l10n.editTask),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: titleController,
+                    decoration: const InputDecoration(labelText: 'Titolo'),
                   ),
-                  trailing: const Icon(Icons.calendar_today),
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: selectedDueDate ?? DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (date != null) {
-                      if (!context.mounted) return;
-                      final time = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.fromDateTime(
-                          selectedDueDate ?? DateTime.now(),
-                        ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: descController,
+                    decoration: const InputDecoration(labelText: 'Descrizione'),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<MaintenanceCategory>(
+                    value: selectedCategory,
+                    decoration: const InputDecoration(labelText: 'Categoria'),
+                    items: MaintenanceCategory.values.map((cat) {
+                      return DropdownMenuItem(
+                        value: cat,
+                        child: Text(_getCategoryName(cat)),
                       );
-                      if (time != null) {
-                        setDialogState(() {
-                          selectedDueDate = DateTime(
-                            date.year,
-                            date.month,
-                            date.day,
-                            time.hour,
-                            time.minute,
-                          );
-                        });
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setDialogState(() => selectedCategory = value);
                       }
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: notesController,
-                  decoration: const InputDecoration(labelText: 'Note'),
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 16),
-              ],
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: selectedFrequency,
+                    decoration: InputDecoration(labelText: l10n.frequency),
+                    items: [
+                      DropdownMenuItem(value: 'daily', child: Text(l10n.daily)),
+                      DropdownMenuItem(
+                        value: 'weekly',
+                        child: Text(l10n.weekly),
+                      ),
+                      DropdownMenuItem(
+                        value: 'monthly',
+                        child: Text(l10n.monthly),
+                      ),
+                      DropdownMenuItem(
+                        value: 'custom',
+                        child: Text(l10n.custom),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setDialogState(() => selectedFrequency = value);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: selectedPriority,
+                    decoration: const InputDecoration(labelText: 'PrioritÃ '),
+                    items: [
+                      DropdownMenuItem(value: 'low', child: Text(l10n.low)),
+                      DropdownMenuItem(
+                        value: 'medium',
+                        child: Text(l10n.medium),
+                      ),
+                      DropdownMenuItem(value: 'high', child: Text(l10n.high)),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setDialogState(() => selectedPriority = value);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(l10n.dueDate),
+                    subtitle: Text(selectedDueDate != null
+                          ? _formatDate(selectedDueDate!)
+                          : l10n.notSet,
+                    ),
+                    trailing: const Icon(Icons.calendar_today),
+                    onTap: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDueDate ?? DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                      );
+                      if (date != null) {
+                        if (!context.mounted) return;
+                        final time = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.fromDateTime(
+                            selectedDueDate ?? DateTime.now(),
+                          ),
+                        );
+                        if (time != null) {
+                          setDialogState(() {
+                            selectedDueDate = DateTime(
+                              date.year,
+                              date.month,
+                              date.day,
+                              time.hour,
+                              time.minute,
+                            );
+                          });
+                        }
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: notesController,
+                    decoration: InputDecoration(labelText: l10n.notes),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Annulla'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Salva'),
-            ),
-          ],
-        ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(l10n.cancel),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(l10n.save),
+              ),
+            ],
+          );
+        },
       ),
     );
 
@@ -888,14 +892,19 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         await _service.updateTask(task.id, updatedTask);
         await _loadTasks();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Task modificato con successo')),
-          );
+          final l10n = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.taskEditedSuccess)));
         }
       } catch (e) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text(l10n.errorWithMessage(e.toString())),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }
@@ -903,22 +912,23 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   }
 
   Future<void> _completeTask(MaintenanceTask task) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Completa Task'),
-        content: Text('Vuoi segnare "${task.title}" come completato?'),
+        title: Text(l10n.completeTask),
+        content: Text(l10n.confirmCompleteTask(task.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF10b981),
             ),
-            child: const Text('Completa'),
+            child: Text(l10n.complete),
           ),
         ],
       ),
@@ -929,24 +939,30 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     try {
       await _service.completeTask(task.id);
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         await _loadTasks();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${task.title} completato!'),
+            content: Text(l10n.taskCompletedSuccess(task.title)),
             backgroundColor: const Color(0xFF10b981),
           ),
         );
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(l10n.errorWithMessage(e.toString())),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
   }
 
   void _showTaskDetails(MaintenanceTask task) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -976,12 +992,10 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        task.title,
+                      Text(task.title,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      Text(
-                        _getCategoryName(task.category),
+                      Text(_getCategoryName(task.category),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -1030,7 +1044,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
             const Divider(),
             const SizedBox(height: 16),
             if (task.priority != null)
-              _buildTaskInfo('Priorità', _getPriorityLabel(task.priority!)),
+              _buildTaskInfo('PrioritÃ ', _getPriorityLabel(task.priority!)),
             if (task.frequency != null)
               _buildTaskInfo('Frequenza', _getFrequencyLabel(task.frequency!)),
             if (task.dueDate != null && !task.isCompleted)
@@ -1054,7 +1068,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   child: OutlinedButton.icon(
                     onPressed: () => Navigator.pop(context),
                     icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
-                    label: const Text('Chiudi'),
+                    label: Text(l10n.close),
                   ),
                 ),
                 if (!task.isCompleted) ...[
@@ -1066,7 +1080,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                         _completeTask(task);
                       },
                       icon: const FaIcon(FontAwesomeIcons.check, size: 16),
-                      label: const Text('Completa'),
+                      label: Text(l10n.complete),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF10b981),
                       ),
@@ -1088,14 +1102,12 @@ class _MaintenanceViewState extends State<MaintenanceView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
+          Text(label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).textTheme.bodySmall?.color,
             ),
           ),
-          Text(
-            value,
+          Text(value,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -1106,20 +1118,21 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   }
 
   Future<void> _deleteTask(MaintenanceTask task) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Elimina Task'),
-        content: Text('Vuoi eliminare "${task.title}"?'),
+        title: Text(l10n.deleteTask),
+        content: Text(l10n.confirmDeleteTask(task.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Elimina'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -1130,14 +1143,19 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         await _service.deleteTask(task.id);
         await _loadTasks();
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text('Task eliminato')));
+          ).showSnackBar(SnackBar(content: Text(l10n.taskDeleted)));
         }
       } catch (e) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text(l10n.errorWithMessage(e.toString())),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }

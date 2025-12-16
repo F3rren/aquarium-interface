@@ -368,29 +368,28 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
 
   Future<void> _deleteFish(Fish fish) async {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
-        title: Text(
-          'Conferma eliminazione',
+        title: Text(l10n.confirmDeletion,
           style: TextStyle(color: theme.colorScheme.onSurface),
         ),
-        content: Text(
-          'Vuoi eliminare "${fish.name}"?',
+        content: Text(l10n.confirmDeleteFish(fish.name),
           style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(
               foregroundColor: theme.colorScheme.error,
             ),
-            child: const Text('Elimina'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -415,29 +414,28 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
 
   Future<void> _deleteCoral(Coral coral) async {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
-        title: Text(
-          'Conferma eliminazione',
+        title: Text(l10n.confirmDeletion,
           style: TextStyle(color: theme.colorScheme.onSurface),
         ),
-        content: Text(
-          'Vuoi eliminare "${coral.name}"?',
+        content: Text(l10n.confirmDeleteCoral(coral.name),
           style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(
               foregroundColor: theme.colorScheme.error,
             ),
-            child: const Text('Elimina'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -463,6 +461,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     // Determina il numero di tab in base al tipo d'acqua
@@ -473,8 +472,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'I Miei Abitanti',
+        title: Text(l10n.myInhabitants,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -487,7 +485,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
               IconButton(
                 icon: const FaIcon(FontAwesomeIcons.filter, size: 20),
                 onPressed: _showFilterPanel,
-                tooltip: 'Filtri e ricerca',
+                tooltip: l10n.filtersAndSearch,
               ),
               if (_filter.hasActiveFilters)
                 Positioned(
@@ -503,8 +501,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                       minWidth: 16,
                       minHeight: 16,
                     ),
-                    child: Text(
-                      '${_filter.activeFilterCount}',
+                    child: Text('${_filter.activeFilterCount}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
@@ -524,13 +521,19 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                 labelColor: theme.colorScheme.primary,
                 unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
                 tabs: isDolce
-                    ? const [
-                        Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
-                      ]
-                    : const [
-                        Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
+                    ? [
                         Tab(
-                          text: 'Coralli',
+                          text: l10n.fish,
+                          icon: FaIcon(FontAwesomeIcons.fish),
+                        ),
+                      ]
+                    : [
+                        Tab(
+                          text: l10n.fish,
+                          icon: FaIcon(FontAwesomeIcons.fish),
+                        ),
+                        Tab(
+                          text: l10n.corals,
                           icon: FaIcon(FontAwesomeIcons.seedling),
                         ),
                       ],
@@ -587,6 +590,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
 
   Widget _buildFishTab(double bottomPadding) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     if (_isLoading) {
       return ListView(
@@ -612,16 +616,14 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               const SizedBox(height: 16),
-              Text(
-                'Nessun pesce aggiunto',
+              Text(l10n.noFishAdded,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 16,
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Tocca + per aggiungere il tuo primo pesce',
+              Text(l10n.tapToAddFirstFish,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -647,16 +649,14 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               const SizedBox(height: 16),
-              Text(
-                'Nessun risultato trovato',
+              Text(l10n.noResultsFound,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 16,
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Prova a modificare i filtri',
+              Text(l10n.tryModifyingFilters,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -670,7 +670,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                   });
                 },
                 icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
-                label: const Text('Cancella filtri'),
+                label: Text(l10n.clearFilters),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: Colors.white,
@@ -730,8 +730,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          fish.name,
+                        Text(fish.name,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 16,
@@ -739,8 +738,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          fish.species,
+                        Text(fish.species,
                           style: TextStyle(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 14,
@@ -772,8 +770,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                               size: 16,
                             ),
                             const SizedBox(width: 12),
-                            Text(
-                              'Modifica',
+                            Text(l10n.edit,
                               style: TextStyle(
                                 color: theme.colorScheme.onSurface,
                               ),
@@ -791,8 +788,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                               size: 16,
                             ),
                             const SizedBox(width: 12),
-                            Text(
-                              'Elimina',
+                            Text(l10n.delete,
                               style: TextStyle(
                                 color: theme.colorScheme.onSurface,
                               ),
@@ -813,6 +809,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
 
   Widget _buildCoralsTab(double bottomPadding) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     if (_isLoading) {
       return ListView(
@@ -838,16 +835,14 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               const SizedBox(height: 16),
-              Text(
-                'Nessun corallo aggiunto',
+              Text(l10n.noCoralAdded,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 16,
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Tocca + per aggiungere il tuo primo corallo',
+              Text(l10n.tapToAddFirstCoral,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -873,16 +868,14 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               const SizedBox(height: 16),
-              Text(
-                'Nessun risultato trovato',
+              Text(l10n.noResultsFound,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 16,
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Prova a modificare i filtri',
+              Text(l10n.tryModifyingFilters,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -896,7 +889,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                   });
                 },
                 icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
-                label: const Text('Cancella filtri'),
+                label: Text(l10n.clearFilters),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: Colors.white,
@@ -971,8 +964,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                         Row(
                           children: [
                             Expanded(
-                              child: Text(
-                                coral.name,
+                              child: Text(coral.name,
                                 style: TextStyle(
                                   color: theme.colorScheme.onSurface,
                                   fontSize: 16,
@@ -989,8 +981,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                                 color: typeColor.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: Text(
-                                coral.type,
+                              child: Text(coral.type,
                                 style: TextStyle(
                                   color: typeColor,
                                   fontSize: 11,
@@ -1001,8 +992,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          coral.species,
+                        Text(coral.species,
                           style: TextStyle(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 14,
@@ -1034,8 +1024,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                               size: 16,
                             ),
                             const SizedBox(width: 12),
-                            Text(
-                              'Modifica',
+                            Text(l10n.edit,
                               style: TextStyle(
                                 color: theme.colorScheme.onSurface,
                               ),
@@ -1053,8 +1042,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                               size: 16,
                             ),
                             const SizedBox(width: 12),
-                            Text(
-                              'Elimina',
+                            Text(l10n.delete,
                               style: TextStyle(
                                 color: theme.colorScheme.onSurface,
                               ),
@@ -1093,6 +1081,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     // Calcolo statistiche
     final totalFish = widget.fishList.length;
@@ -1136,8 +1125,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
                 size: 24,
               ),
               const SizedBox(width: 12),
-              Text(
-                'Riepilogo Abitanti',
+              Text(l10n.inhabitantsSummary,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -1152,7 +1140,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
               Expanded(
                 child: _buildStatItem(
                   icon: FontAwesomeIcons.fish,
-                  label: 'Pesci',
+                  label: l10n.fish,
                   value: totalFish.toDouble(),
                 ),
               ),
@@ -1164,7 +1152,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
               Expanded(
                 child: _buildStatItem(
                   icon: FontAwesomeIcons.seedling,
-                  label: 'Coralli',
+                  label: l10n.corals,
                   value: totalCorals.toDouble(),
                 ),
               ),
@@ -1176,7 +1164,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
               Expanded(
                 child: _buildStatItem(
                   icon: FontAwesomeIcons.ruler,
-                  label: 'Dim. media',
+                  label: l10n.averageSize,
                   value: avgFishSize,
                   suffix: avgFishSize > 0 ? ' cm' : '',
                   showZero: false,
@@ -1201,8 +1189,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
                       size: 20,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      'Carico Biotico Totale',
+                    Text(l10n.totalBioLoad,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15,
@@ -1225,8 +1212,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Formula: (Σ dimensioni pesci) + (n° coralli × 2)',
+          Text(l10n.bioLoadFormula,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.7),
               fontSize: 12,
@@ -1234,8 +1220,12 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
           ),
           if (totalBioLoad > 0) ...[
             const SizedBox(height: 12),
-            Text(
-              _getBioLoadRecommendation(totalBioLoad, totalFish, totalCorals),
+            Text(_getBioLoadRecommendation(
+                totalBioLoad,
+                totalFish,
+                totalCorals,
+                l10n,
+              ),
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.9),
                 fontSize: 13,
@@ -1271,8 +1261,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(
-          label,
+        Text(label,
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.8),
             fontSize: 12,
@@ -1282,13 +1271,18 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
     );
   }
 
-  String _getBioLoadRecommendation(double bioLoad, int fish, int corals) {
+  String _getBioLoadRecommendation(
+    double bioLoad,
+    int fish,
+    int corals,
+    AppLocalizations l10n,
+  ) {
     if (bioLoad < 20) {
-      return 'Carico biotico ottimale - acquario ben bilanciato';
+      return l10n.bioLoadOptimal;
     } else if (bioLoad < 35) {
-      return 'Carico biotico moderato - monitora i parametri dell\'acqua';
+      return l10n.bioLoadModerate;
     } else {
-      return 'Carico biotico elevato - considera un acquario più grande o riduci gli abitanti';
+      return l10n.bioLoadHigh;
     }
   }
 }

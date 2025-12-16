@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/notification_preferences_service.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -54,13 +55,14 @@ class _NotificationsPageState extends State<NotificationsPage>
     await _prefsService.saveSettings(_settings);
 
     if (mounted) {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
               Icon(Icons.check_circle, color: Colors.white),
               const SizedBox(width: 12),
-              Text('Impostazioni salvate'),
+              Text(l10n.settingsSaved),
             ],
           ),
           backgroundColor: const Color(0xFF34d399),
@@ -87,8 +89,7 @@ class _NotificationsPageState extends State<NotificationsPage>
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Notifiche',
+        title: Text('Notifiche',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -294,8 +295,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               children: [
                 FaIcon(FontAwesomeIcons.floppyDisk),
                 SizedBox(width: 8),
-                Text(
-                  'Salva Impostazioni',
+                Text('Salva Impostazioni',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ],
@@ -395,8 +395,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           child: OutlinedButton.icon(
             onPressed: () => _showResetDialog(),
             icon: const FaIcon(FontAwesomeIcons.arrowRotateRight),
-            label: const Text(
-              'Ripristina Valori Predefiniti',
+            label: Text('Ripristina Valori Predefiniti',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             style: OutlinedButton.styleFrom(
@@ -439,6 +438,7 @@ class _NotificationsPageState extends State<NotificationsPage>
 
   Widget _buildEmptyState() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Center(
       child: Column(
@@ -457,8 +457,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             ),
           ),
           const SizedBox(height: 20),
-          Text(
-            'Nessun Alert',
+          Text(l10n.noAlerts,
             style: TextStyle(
               color: theme.colorScheme.onSurface,
               fontSize: 20,
@@ -466,8 +465,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Gli alert appariranno qui',
+          Text(l10n.alertsWillAppearHere,
             style: TextStyle(
               color: theme.colorScheme.onSurfaceVariant,
               fontSize: 14,
@@ -506,8 +504,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
+                Text(title,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: 20,
@@ -515,8 +512,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  subtitle,
+                Text(subtitle,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13,
@@ -533,8 +529,7 @@ class _NotificationsPageState extends State<NotificationsPage>
   Widget _buildSectionTitle(String title) {
     final theme = Theme.of(context);
 
-    return Text(
-      title,
+    return Text(title,
       style: TextStyle(
         color: theme.colorScheme.onSurface,
         fontSize: 16,
@@ -577,8 +572,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
+                Text(title,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: 15,
@@ -586,8 +580,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  subtitle,
+                Text(subtitle,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 12,
@@ -635,8 +628,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: Text(
-                  title,
+                child: Text(title,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: 15,
@@ -655,8 +647,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             const SizedBox(height: 16),
             Row(
               children: [
-                Text(
-                  'Ogni',
+                Text('Ogni',
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13,
@@ -674,8 +665,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                     onChanged: (value) => onFrequencyChanged(value.toInt()),
                   ),
                 ),
-                Text(
-                  '${schedule.frequencyDays}d',
+                Text('${schedule.frequencyDays}d',
                   style: TextStyle(
                     color: color,
                     fontSize: 13,
@@ -717,8 +707,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               children: [
                 Icon(icon, color: color, size: 24),
                 const SizedBox(width: 12),
-                Text(
-                  name,
+                Text(name,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: 16,
@@ -732,8 +721,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                   size: 18,
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  '${thresholds.min} - ${thresholds.max}$unit',
+                Text('${thresholds.min} - ${thresholds.max}$unit',
                   style: TextStyle(
                     color: color,
                     fontSize: 13,
@@ -749,16 +737,14 @@ class _NotificationsPageState extends State<NotificationsPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Min',
+                      Text('Min',
                         style: TextStyle(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 11,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        '${thresholds.min}$unit',
+                      Text('${thresholds.min}$unit',
                         style: TextStyle(
                           color: theme.colorScheme.onSurface,
                           fontSize: 14,
@@ -772,16 +758,14 @@ class _NotificationsPageState extends State<NotificationsPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        'Max',
+                      Text('Max',
                         style: TextStyle(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 11,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        '${thresholds.max}$unit',
+                      Text('${thresholds.max}$unit',
                         style: TextStyle(
                           color: theme.colorScheme.onSurface,
                           fontSize: 14,
@@ -806,8 +790,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                   activeThumbColor: color,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  thresholds.enabled
+                Text(thresholds.enabled
                       ? 'Notifiche Attive'
                       : 'Notifiche Disattivate',
                   style: TextStyle(
@@ -869,8 +852,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               size: 12,
             ),
             SizedBox(width: 4),
-            Text(
-              'BASSO',
+            Text('BASSO',
               style: TextStyle(
                 color: Color(0xFF60a5fa),
                 fontSize: 10,
@@ -897,8 +879,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               size: 12,
             ),
             SizedBox(width: 4),
-            Text(
-              'ALTO',
+            Text('ALTO',
               style: TextStyle(
                 color: Color(0xFFef4444),
                 fontSize: 10,
@@ -936,8 +917,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
-                        alert.title,
+                      child: Text(alert.title,
                         style: TextStyle(
                           color: theme.colorScheme.onSurface,
                           fontSize: 14,
@@ -952,16 +932,14 @@ class _NotificationsPageState extends State<NotificationsPage>
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  alert.message,
+                Text(alert.message,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  _formatTimestamp(alert.timestamp),
+                Text(_formatTimestamp(alert.timestamp),
                   style: TextStyle(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     fontSize: 10,
@@ -995,6 +973,7 @@ class _NotificationsPageState extends State<NotificationsPage>
     Color color,
   ) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final minController = TextEditingController(
       text: currentThresholds.min.toString(),
     );
@@ -1011,8 +990,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             FaIcon(FontAwesomeIcons.sliders, color: color, size: 24),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                'Modifica Soglie - $name',
+              child: Text('Modifica Soglie - $name',
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 17,
@@ -1027,7 +1005,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           children: [
             TextField(
               controller: minController,
-              keyboardType: const TextInputType.numberWithOptions(
+              keyboardType: TextInputType.numberWithOptions(
                 decimal: true,
               ),
               style: TextStyle(color: theme.colorScheme.onSurface),
@@ -1053,7 +1031,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             const SizedBox(height: 16),
             TextField(
               controller: maxController,
-              keyboardType: const TextInputType.numberWithOptions(
+              keyboardType: TextInputType.numberWithOptions(
                 decimal: true,
               ),
               style: TextStyle(color: theme.colorScheme.onSurface),
@@ -1089,8 +1067,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                   FaIcon(FontAwesomeIcons.circleInfo, color: color, size: 16),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      'Riceverai notifiche quando il valore esce da questo range',
+                    child: Text('Riceverai notifiche quando il valore esce da questo range',
                       style: TextStyle(color: color, fontSize: 11),
                     ),
                   ),
@@ -1102,13 +1079,13 @@ class _NotificationsPageState extends State<NotificationsPage>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Annulla',
+            child: Text('Annulla',
               style: TextStyle(color: Colors.white60),
             ),
           ),
           ElevatedButton(
             onPressed: () async {
+              final l10n = AppLocalizations.of(context)!;
               final newMin = double.tryParse(minController.text);
               final newMax = double.tryParse(maxController.text);
 
@@ -1130,7 +1107,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               backgroundColor: color,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Salva'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -1316,6 +1293,7 @@ class _NotificationsPageState extends State<NotificationsPage>
   /// Mostra dialog di conferma per ripristino valori predefiniti
   void _showResetDialog() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1329,8 +1307,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             ),
             const SizedBox(width: 12),
             //Text('Ripristinare Valori Predefiniti?', style: TextStyle(color: Colors.white, fontSize: 18)),
-            Text(
-              'Ripristinare Predefiniti?',
+            Text('Ripristinare Predefiniti?',
               style: TextStyle(
                 color: theme.colorScheme.onSurface,
                 fontSize: 17,
@@ -1343,45 +1320,39 @@ class _NotificationsPageState extends State<NotificationsPage>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Questa azione resetterà tutte le soglie personalizzate ai valori di default:',
+            Text('Questa azione resetterà tutte le soglie personalizzate ai valori di default:',
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              '• Temperatura: 24-26°C',
+            Text('• Temperatura: 24-26°C',
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 12,
               ),
             ),
-            Text(
-              '• pH: 8.0-8.4',
+            Text('• pH: 8.0-8.4',
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 12,
               ),
             ),
-            Text(
-              '• Salinità: 1020-1028',
+            Text('• Salinità: 1020-1028',
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 12,
               ),
             ),
-            Text(
-              '• E tutti gli altri parametri...',
+            Text('• E tutti gli altri parametri...',
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 12,
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Le modifiche verranno salvate immediatamente.',
+            Text(l10n.changesWillBeSavedImmediately,
               style: TextStyle(
                 color: Color(0xFFfbbf24),
                 fontSize: 12,
@@ -1393,13 +1364,13 @@ class _NotificationsPageState extends State<NotificationsPage>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Annulla',
+            child: Text('Annulla',
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
           ElevatedButton(
             onPressed: () async {
+              final l10n = AppLocalizations.of(context)!;
               setState(() {
                 _settings = NotificationSettings(); // Reset a default
               });
@@ -1413,7 +1384,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               backgroundColor: const Color(0xFFfbbf24),
               foregroundColor: Colors.black,
             ),
-            child: const Text('Ripristina'),
+            child: Text(l10n.resetButton),
           ),
         ],
       ),

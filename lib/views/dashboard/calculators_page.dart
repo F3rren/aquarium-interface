@@ -20,7 +20,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
   final TextEditingController _tankVolumeController = TextEditingController();
   final TextEditingController _currentValueController = TextEditingController();
   final TextEditingController _targetValueController = TextEditingController();
-  String _selectedAdditive = 'Calcio';
+  String? _selectedAdditive;
   double? _additiveResult;
   String _resultUnit = 'g';
 
@@ -43,9 +43,18 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
   // Calcolo Illuminazione
   final TextEditingController _lightVolumeController = TextEditingController();
   final TextEditingController _wattsController = TextEditingController();
-  String _tankType = 'Solo Pesci';
+  String? _tankType;
   double? _wattsPerLiter;
   String? _lightRecommendation;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context)!;
+    // Inizializza solo la prima volta
+    _selectedAdditive ??= l10n.calcium;
+    _tankType ??= l10n.fishOnly;
+  }
 
   @override
   void dispose() {
@@ -86,9 +95,9 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
       setState(() {
         final difference = (current - target).abs();
         final isReduction =
-            _selectedAdditive.contains('NO3') ||
-            _selectedAdditive.contains('PO4') ||
-            _selectedAdditive.contains('Carbonio');
+            _selectedAdditive?.contains('NO3') == true ||
+            _selectedAdditive?.contains('PO4') == true ||
+            _selectedAdditive?.contains('Carbonio') == true;
 
         // Se è riduzione e target >= current, non calcolare
         if (isReduction && target >= current) {
@@ -202,32 +211,33 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     if (volume != null && watts != null && volume > 0) {
       setState(() {
         _wattsPerLiter = watts / volume;
+        final l10n = AppLocalizations.of(context)!;
 
         // Raccomandazioni basate sul tipo di vasca
-        if (_tankType == 'Solo Pesci') {
+        if (_tankType == l10n.fishOnly) {
           if (_wattsPerLiter! < 0.25) {
-            _lightRecommendation = 'Insufficiente - Minimo 0.25 W/L per pesci';
+            _lightRecommendation = l10n.lightInsufficientFishOnly;
           } else if (_wattsPerLiter! <= 0.5) {
-            _lightRecommendation = 'Ottimale per vasca di soli pesci';
+            _lightRecommendation = l10n.lightOptimalFishOnly;
           } else {
-            _lightRecommendation = 'Eccessivo - Rischio alghe';
+            _lightRecommendation = l10n.lightExcessiveAlgaeRisk;
           }
-        } else if (_tankType == 'Pesci + Coralli Molli') {
+        } else if (_tankType == l10n.fishAndSoftCorals) {
           if (_wattsPerLiter! < 0.5) {
-            _lightRecommendation = 'Insufficiente - Minimo 0.5 W/L';
+            _lightRecommendation = l10n.lightInsufficientSoftCorals;
           } else if (_wattsPerLiter! <= 1.0) {
-            _lightRecommendation = 'Ottimale per coralli molli (LPS)';
+            _lightRecommendation = l10n.lightOptimalSoftCorals;
           } else {
-            _lightRecommendation = 'Molto buono - Adatto anche SPS';
+            _lightRecommendation = l10n.lightVeryGoodSPS;
           }
         } else {
           // Coralli SPS
           if (_wattsPerLiter! < 1.0) {
-            _lightRecommendation = 'Insufficiente - Minimo 1.0 W/L per SPS';
+            _lightRecommendation = l10n.lightInsufficientSPS;
           } else if (_wattsPerLiter! <= 1.5) {
-            _lightRecommendation = 'Ottimale per coralli SPS';
+            _lightRecommendation = l10n.lightOptimalSPS;
           } else {
-            _lightRecommendation = 'Molto potente - Ottimo per SPS esigenti';
+            _lightRecommendation = l10n.lightVeryPowerfulSPS;
           }
         }
       });
@@ -242,8 +252,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(
-          l10n.calculators,
+        title: Text(l10n.calculators,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -263,8 +272,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
             color: theme.colorScheme.primary,
             child: Column(
               children: [
-                Text(
-                  l10n.enterAquariumDimensions,
+                Text(l10n.enterAquariumDimensions,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13,
@@ -303,8 +311,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text(
-                    l10n.calculateVolume,
+                  child: Text(l10n.calculateVolume,
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -319,8 +326,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     theme.colorScheme.primary,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    l10n.estimatedNetVolume(
+                  Text(l10n.estimatedNetVolume(
                       (_volumeResult! * 0.85).toStringAsFixed(1),
                     ),
                     style: TextStyle(
@@ -329,8 +335,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    l10n.consideringRocksAndSubstrate,
+                  Text(l10n.consideringRocksAndSubstrate,
                     style: TextStyle(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                       fontSize: 11,
@@ -351,8 +356,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
             color: theme.colorScheme.tertiary,
             child: Column(
               children: [
-                Text(
-                  l10n.calculateAdditiveDosage,
+                Text(l10n.calculateAdditiveDosage,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13,
@@ -384,8 +388,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       items: [
                         DropdownMenuItem(
                           enabled: false,
-                          child: Text(
-                            l10n.dosageSection,
+                          child: Text(l10n.dosageSection,
                             style: TextStyle(
                               color: theme.colorScheme.onSurfaceVariant,
                               fontSize: 13,
@@ -409,8 +412,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                         }),
                         DropdownMenuItem(
                           enabled: false,
-                          child: Text(
-                            l10n.reductionSection,
+                          child: Text(l10n.reductionSection,
                             style: TextStyle(
                               color: theme.colorScheme.onSurfaceVariant,
                               fontSize: 13,
@@ -427,8 +429,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                             value: value,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 12),
-                              child: Text(
-                                value,
+                              child: Text(value,
                                 style: const TextStyle(fontSize: 14),
                               ),
                             ),
@@ -475,8 +476,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text(
-                    l10n.calculateDosage,
+                  child: Text(l10n.calculateDosage,
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -486,21 +486,20 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                 if (_additiveResult != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    _selectedAdditive.contains('NO3:PO4-X') ||
-                            _selectedAdditive.contains('Carbonio')
-                        ? 'Quantità da dosare (riduzione)'
-                        : 'Quantità da dosare',
+                    _selectedAdditive?.contains('NO3:PO4-X') == true ||
+                            _selectedAdditive?.contains('Carbonio') == true
+                        ? l10n.quantityToDoseReduction
+                        : l10n.quantityToDose,
                     '${_additiveResult!.toStringAsFixed(2)} $_resultUnit',
                     theme.colorScheme.tertiary,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    '⚠️ Valori indicativi: verifica le istruzioni del produttore',
+                  Text(l10n.warningIndicativeValues,
                     style: TextStyle(color: Colors.orange, fontSize: 11),
                     textAlign: TextAlign.center,
                   ),
-                ] else if (_selectedAdditive == 'Nitrati (NO3)' ||
-                    _selectedAdditive == 'Fosfati (PO4)') ...[
+                ] else if (_selectedAdditive == l10n.nitrates ||
+                    _selectedAdditive == l10n.phosphates) ...[
                   const SizedBox(height: 20),
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -519,10 +518,9 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                           size: 32,
                         ),
                         const SizedBox(height: 8),
-                        Text(
-                          _selectedAdditive == 'Nitrati (NO3)'
-                              ? 'Per ridurre i Nitrati:\n• Cambio acqua regolare (20% settimanale)\n• Skimmer efficiente\n• Refill osmosi\n• Carbonio attivo liquido\n• NO3:PO4-X (Red Sea)'
-                              : 'Per ridurre i Fosfati:\n• Resine anti-fosfati (GFO)\n• Skimmer efficiente\n• Cambio acqua regolare\n• NO3:PO4-X (Red Sea)\n• Evitare sovralimentazione',
+                        Text(_selectedAdditive == l10n.nitrates
+                              ? l10n.nitratesReductionAdvice
+                              : l10n.phosphatesReductionAdvice,
                           style: TextStyle(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 12,
@@ -546,8 +544,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
             color: theme.colorScheme.secondary,
             child: Column(
               children: [
-                Text(
-                  'Calcola litri e sale necessario per il cambio acqua',
+                Text(l10n.calculateWaterAndSalt,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13,
@@ -556,13 +553,13 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                 ),
                 const SizedBox(height: 16),
                 _buildInputField(
-                  'Volume acquario (L)',
+                  l10n.aquariumVolumeL,
                   _tankVolumeWaterController,
                   FontAwesomeIcons.water,
                 ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Percentuale cambio (%)',
+                  l10n.changePercentage,
                   _percentageController,
                   FontAwesomeIcons.percent,
                 ),
@@ -580,27 +577,25 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Calcola',
+                  child: Text(l10n.calculate,
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
                 if (_waterChangeResult != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    'Acqua da cambiare',
+                    l10n.waterToChange,
                     '${_waterChangeResult!.toStringAsFixed(1)} L',
                     theme.colorScheme.secondary,
                   ),
                   const SizedBox(height: 12),
                   _buildResult(
-                    'Sale necessario',
+                    l10n.saltNeeded,
                     '${_saltNeeded!.toStringAsFixed(0)} g',
                     theme.colorScheme.secondary,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Calcolato per salinità 1.025 (35g/L)',
+                  Text(l10n.calculatedForSalinity,
                     style: TextStyle(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 12,
@@ -620,8 +615,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
             color: theme.colorScheme.tertiary,
             child: Column(
               children: [
-                Text(
-                  l10n.convertBetweenDensityAndSalinity,
+                Text(l10n.convertBetweenDensityAndSalinity,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13,
@@ -652,14 +646,14 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       color: theme.colorScheme.onSurface,
                       fontSize: 15,
                     ),
-                    items: const [
+                    items: [
                       DropdownMenuItem(
                         value: 'density_to_salinity',
-                        child: Text('Da Densità (g/cm³) a Salinità (ppt)'),
+                        child: Text(l10n.fromDensityToSalinity),
                       ),
                       DropdownMenuItem(
                         value: 'salinity_to_density',
-                        child: Text('Da Salinità (ppt) a Densità (g/cm³)'),
+                        child: Text(l10n.fromSalinityToDensity),
                       ),
                     ],
                     onChanged: (value) {
@@ -677,14 +671,14 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                 const SizedBox(height: 12),
                 _buildInputField(
                   _conversionMode == 'density_to_salinity'
-                      ? 'Densità (es: 1.025)'
-                      : 'Salinità (ppt, es: 35)',
+                      ? l10n.densityExample
+                      : l10n.salinityExample,
                   _densityController,
                   FontAwesomeIcons.water,
                 ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Temperatura (°C)',
+                  l10n.temperatureCelsius,
                   _temperatureController,
                   FontAwesomeIcons.temperatureHalf,
                 ),
@@ -702,8 +696,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text(
-                    l10n.convert,
+                  child: Text(l10n.convert,
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -713,25 +706,24 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                 if (_salinityPPT != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    'Salinità',
+                    l10n.salinityLabel,
                     '${_salinityPPT!.toStringAsFixed(2)} ppt',
                     theme.colorScheme.tertiary,
                   ),
                   const SizedBox(height: 12),
                   _buildResult(
-                    'Salinità (ppm)',
+                    l10n.salinityPPM,
                     '${_salinityPPM!.toStringAsFixed(0)} ppm',
                     theme.colorScheme.tertiary,
                   ),
                   const SizedBox(height: 12),
                   _buildResult(
-                    'Densità',
+                    l10n.densityLabel,
                     '${_specificGravity!.toStringAsFixed(4)} g/cm³',
                     theme.colorScheme.tertiary,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Valori indicativi - Usare rifrattometro per misure precise',
+                  Text(l10n.indicativeValuesRefractometer,
                     style: TextStyle(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 12,
@@ -751,8 +743,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
             color: Colors.amber,
             child: Column(
               children: [
-                Text(
-                  'Calcola il rapporto watt/litro ottimale',
+                Text(l10n.calculateWattsPerLiter,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13,
@@ -783,18 +774,18 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       color: theme.colorScheme.onSurface,
                       fontSize: 15,
                     ),
-                    items: const [
+                    items: [
                       DropdownMenuItem(
-                        value: 'Solo Pesci',
-                        child: Text('Solo Pesci'),
+                        value: l10n.fishOnly,
+                        child: Text(l10n.fishOnly),
                       ),
                       DropdownMenuItem(
-                        value: 'Pesci + Coralli Molli',
-                        child: Text('Pesci + Coralli Molli (LPS)'),
+                        value: l10n.fishAndSoftCorals,
+                        child: Text(l10n.fishAndSoftCorals),
                       ),
                       DropdownMenuItem(
-                        value: 'Coralli SPS',
-                        child: Text('Coralli SPS'),
+                        value: l10n.spsCorals,
+                        child: Text(l10n.spsCorals),
                       ),
                     ],
                     onChanged: (value) {
@@ -809,13 +800,13 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Volume acquario (L)',
+                  l10n.aquariumVolumeL,
                   _lightVolumeController,
                   FontAwesomeIcons.water,
                 ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Potenza luci (W)',
+                  l10n.lightPowerW,
                   _wattsController,
                   FontAwesomeIcons.bolt,
                 ),
@@ -833,15 +824,14 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Calcola',
+                  child: Text('Calcola',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
                 if (_wattsPerLiter != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    'Watt per Litro',
+                    l10n.wattsPerLiter,
                     '${_wattsPerLiter!.toStringAsFixed(2)} W/L',
                     Colors.amber,
                   ),
@@ -855,8 +845,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                         color: Colors.amber.withValues(alpha: 0.3),
                       ),
                     ),
-                    child: Text(
-                      _lightRecommendation!,
+                    child: Text(_lightRecommendation!,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: 14,
@@ -865,8 +854,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Fotoperiodo consigliato: 8-10 ore/giorno',
+                  Text(l10n.recommendedPhotoperiod,
                     style: TextStyle(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 12,
@@ -934,8 +922,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  title,
+                child: Text(title,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: 17,
@@ -1000,15 +987,13 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
+          Text(label,
             style: TextStyle(
               color: theme.colorScheme.onSurfaceVariant,
               fontSize: 14,
             ),
           ),
-          Text(
-            value,
+          Text(value,
             style: TextStyle(
               color: color,
               fontSize: 20,

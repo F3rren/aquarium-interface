@@ -51,8 +51,7 @@ class CoralDetailsDialog extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          coral.name,
+                        Text(coral.name,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -69,8 +68,7 @@ class CoralDetailsDialog extends StatelessWidget {
                             color: Colors.white.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: Text(
-                            coral.type,
+                          child: Text(coral.type,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,
@@ -131,8 +129,7 @@ class CoralDetailsDialog extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Nome Scientifico',
+                                Text('Nome Scientifico',
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurfaceVariant,
                                     fontSize: 10,
@@ -140,8 +137,7 @@ class CoralDetailsDialog extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 2),
-                                Text(
-                                  coral.species,
+                                Text(coral.species,
                                   style: const TextStyle(
                                     color: Color(0xFF34d399),
                                     fontSize: 14,
@@ -189,8 +185,7 @@ class CoralDetailsDialog extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Descrizione',
+                                  Text('Descrizione',
                                     style: TextStyle(
                                       color: theme.colorScheme.onSurfaceVariant,
                                       fontSize: 10,
@@ -198,8 +193,7 @@ class CoralDetailsDialog extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 4),
-                                  Text(
-                                    coral.description!,
+                                  Text(coral.description!,
                                     style: TextStyle(
                                       color: theme.colorScheme.onSurface,
                                       fontSize: 12,
@@ -254,8 +248,7 @@ class CoralDetailsDialog extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                Text(
-                                  'Requisiti',
+                                Text('Requisiti',
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurface,
                                     fontSize: 14,
@@ -427,8 +420,7 @@ class CoralDetailsDialog extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
+                Text(title,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 11,
@@ -436,8 +428,7 @@ class CoralDetailsDialog extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  content,
+                Text(content,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: fontSize,
@@ -446,8 +437,7 @@ class CoralDetailsDialog extends StatelessWidget {
                 ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 4),
-                  Text(
-                    subtitle,
+                  Text(subtitle,
                     style: TextStyle(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 12,
@@ -505,8 +495,7 @@ class CoralDetailsDialog extends StatelessWidget {
             child: FaIcon(icon, color: color, size: 14),
           ),
           const SizedBox(width: 10),
-          Text(
-            label,
+          Text(label,
             style: TextStyle(
               color: theme.colorScheme.onSurfaceVariant,
               fontSize: 11,
@@ -515,8 +504,7 @@ class CoralDetailsDialog extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              value,
+            child: Text(value,
               style: TextStyle(
                 color: color,
                 fontSize: 12,
