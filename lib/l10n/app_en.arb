@@ -595,5 +595,72 @@
   "aquariumManagement": "Aquarium Management",
   "selectToDelete": "Select an aquarium to delete",
   "selectAquarium": "Select Aquarium",
-  "chooseAquariumToEdit": "Choose an aquarium to edit"
+  "chooseAquariumToEdit": "Choose an aquarium to edit",
+  
+  "retry": "Retry",
+  "close": "Close",
+  "clearAll": "Clear all",
+  "removeDateFilter": "Remove date filter",
+  "fromDensityToSalinity": "From Density (g/cm\u00b3) to Salinity (ppt)",
+  "fromSalinityToDensity": "From Salinity (ppt) to Density (g/cm\u00b3)",
+  "fishOnly": "Fish Only",
+  "fishAndSoftCorals": "Fish + Soft Corals (LPS)",
+  "spsCorals": "SPS Corals",
+  "fillAllRequiredFields": "Fill in all required fields",
+  "invalidSize": "Invalid size",
+  "invalidQuantity": "Invalid quantity",
+  "databaseLoadError": "Database loading error: {error}",
+  "@databaseLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "inhabitantsUpdated": "Inhabitants updated!",
+  "delete": "Delete",
+  "clearFilters": "Clear filters",
+  "aquariumIdNotAvailable": "Error: Aquarium ID not available",
+  "newTask": "New Task",
+  "daily": "Daily",
+  "weekly": "Weekly",
+  "monthly": "Monthly",
+  "custom": "Custom",
+  "low": "Low",
+  "medium": "Medium",
+  "high": "High",
+  "dueDate": "Due date",
+  "add": "Add",
+  "taskAddedSuccess": "Task added successfully",
+  "editTask": "Edit Task",
+  "taskEditedSuccess": "Task edited successfully",
+  "completeTask": "Complete Task",
+  "markAsCompleted": "Do you want to mark \"{title}\" as completed?",
+  "@markAsCompleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "complete": "Complete",
+  "taskCompleted": "{title} completed!",
+  "@taskCompleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteTask": "Delete Task",
+  "confirmDeleteTask": "Do you want to delete \"{title}\"?",
+  "@confirmDeleteTask": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "taskDeleted": "Task deleted",
+  "language": "Language"
 }

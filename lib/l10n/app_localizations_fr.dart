@@ -348,7 +348,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get selectDate => 'Sélectionner date';
 
   @override
-  String get removeDateFilter => 'Retirer filtre de date';
+  String get removeDateFilter => 'Supprimer le filtre de date';
 
   @override
   String get sorting => 'Tri';
@@ -360,10 +360,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get fillAllFields => 'Remplissez tous les champs obligatoires';
 
   @override
-  String get invalidSize => 'Taille invalide';
+  String get invalidSize => 'Taille non valide';
 
   @override
-  String get invalidQuantity => 'Quantité invalide';
+  String get invalidQuantity => 'Quantité non valide';
 
   @override
   String databaseLoadError(String error) {
@@ -694,10 +694,12 @@ class AppLocalizationsFr extends AppLocalizations {
       'Convertir entre densité et salinité';
 
   @override
-  String get fromDensityToSalinity => 'De Densité (g/cm³) à Salinité (ppt)';
+  String get fromDensityToSalinity =>
+      'De la Densité (g/cm³) à la Salinité (ppt)';
 
   @override
-  String get fromSalinityToDensity => 'De Salinité (ppt) à Densité (g/cm³)';
+  String get fromSalinityToDensity =>
+      'De la Salinité (ppt) à la Densité (g/cm³)';
 
   @override
   String get densityExample => 'Densité (ex: 1.025)';
@@ -731,7 +733,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get fishOnly => 'Poissons Seulement';
 
   @override
-  String get fishAndSoftCorals => 'Poissons + Coraux Mous';
+  String get fishAndSoftCorals => 'Poissons + Coraux Mous (LPS)';
 
   @override
   String get spsCorals => 'Coraux SPS';
@@ -1222,4 +1224,74 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get resetButton => 'Réinitialiser';
+
+  @override
+  String get fillAllRequiredFields => 'Remplissez tous les champs obligatoires';
+
+  @override
+  String get inhabitantsUpdated => 'Habitants mis à jour!';
+
+  @override
+  String get clearFilters => 'Effacer les filtres';
+
+  @override
+  String get aquariumIdNotAvailable =>
+      'Erreur: ID de l\'aquarium non disponible';
+
+  @override
+  String get daily => 'Quotidien';
+
+  @override
+  String get weekly => 'Hebdomadaire';
+
+  @override
+  String get monthly => 'Mensuel';
+
+  @override
+  String get custom => 'Personnalisé';
+
+  @override
+  String get medium => 'Moyen';
+
+  @override
+  String get dueDate => 'Date d\'échéance';
+
+  @override
+  String get add => 'Ajouter';
+
+  @override
+  String get taskAddedSuccess => 'Tâche ajoutée avec succès';
+
+  @override
+  String get editTask => 'Modifier la Tâche';
+
+  @override
+  String get taskEditedSuccess => 'Tâche modifiée avec succès';
+
+  @override
+  String get completeTask => 'Terminer la Tâche';
+
+  @override
+  String markAsCompleted(String title) {
+    return 'Voulez-vous marquer \"$title\" comme terminée?';
+  }
+
+  @override
+  String get complete => 'Terminer';
+
+  @override
+  String taskCompleted(String title) {
+    return '$title terminée!';
+  }
+
+  @override
+  String get deleteTask => 'Supprimer la Tâche';
+
+  @override
+  String confirmDeleteTask(String title) {
+    return 'Voulez-vous supprimer \"$title\"?';
+  }
+
+  @override
+  String get taskDeleted => 'Tâche supprimée';
 }

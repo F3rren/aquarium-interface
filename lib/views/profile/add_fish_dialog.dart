@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../models/fish.dart';
 import '../../models/fish_species.dart';
 import '../../services/fish_database_service.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class AddFishDialog extends StatefulWidget {
   final Fish? fish;
@@ -165,11 +166,12 @@ class _AddFishDialogState extends State<AddFishDialog> {
   }
 
   void _save() {
+    final l10n = AppLocalizations.of(context)!;
     if (_nameController.text.isEmpty ||
         _speciesController.text.isEmpty ||
         _sizeController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Compila tutti i campi obbligatori')),
+        SnackBar(content: Text(l10n.fillAllRequiredFields)),
       );
       return;
     }
@@ -178,7 +180,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
     if (size == null || size <= 0) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Dimensione non valida')));
+      ).showSnackBar(SnackBar(content: Text(l10n.invalidSize)));
       return;
     }
 
@@ -186,7 +188,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
     if (quantity <= 0) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Quantità non valida')));
+      ).showSnackBar(SnackBar(content: Text(l10n.invalidQuantity)));
       return;
     }
 

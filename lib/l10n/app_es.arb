@@ -595,5 +595,72 @@
   "aquariumManagement": "Gestión de Acuarios",
   "selectToDelete": "Selecciona un acuario para eliminar",
   "selectAquarium": "Seleccionar Acuario",
-  "chooseAquariumToEdit": "Elige un acuario para editar"
+  "chooseAquariumToEdit": "Elige un acuario para editar",
+  
+  "retry": "Reintentar",
+  "close": "Cerrar",
+  "clearAll": "Borrar todo",
+  "removeDateFilter": "Eliminar filtro de fecha",
+  "fromDensityToSalinity": "De Densidad (g/cm\u00b3) a Salinidad (ppt)",
+  "fromSalinityToDensity": "De Salinidad (ppt) a Densidad (g/cm\u00b3)",
+  "fishOnly": "Solo Peces",
+  "fishAndSoftCorals": "Peces + Corales Blandos (LPS)",
+  "spsCorals": "Corales SPS",
+  "fillAllRequiredFields": "Completa todos los campos obligatorios",
+  "invalidSize": "Tama\u00f1o no v\u00e1lido",
+  "invalidQuantity": "Cantidad no v\u00e1lida",
+  "databaseLoadError": "Error al cargar la base de datos: {error}",
+  "@databaseLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "inhabitantsUpdated": "\u00a1Habitantes actualizados!",
+  "delete": "Eliminar",
+  "clearFilters": "Borrar filtros",
+  "aquariumIdNotAvailable": "Error: ID del acuario no disponible",
+  "newTask": "Nueva Tarea",
+  "daily": "Diario",
+  "weekly": "Semanal",
+  "monthly": "Mensual",
+  "custom": "Personalizado",
+  "low": "Baja",
+  "medium": "Media",
+  "high": "Alta",
+  "dueDate": "Fecha de vencimiento",
+  "add": "Agregar",
+  "taskAddedSuccess": "Tarea agregada con \u00e9xito",
+  "editTask": "Editar Tarea",
+  "taskEditedSuccess": "Tarea editada con \u00e9xito",
+  "completeTask": "Completar Tarea",
+  "markAsCompleted": "\u00bfQuieres marcar \"{title}\" como completada?",
+  "@markAsCompleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "complete": "Completar",
+  "taskCompleted": "\u00a1{title} completada!",
+  "@taskCompleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteTask": "Eliminar Tarea",
+  "confirmDeleteTask": "\u00bfQuieres eliminar \"{title}\"?",
+  "@confirmDeleteTask": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "taskDeleted": "Tarea eliminada",
+  "language": "Idioma"
 }

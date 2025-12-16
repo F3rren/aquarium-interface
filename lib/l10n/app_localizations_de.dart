@@ -366,7 +366,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String databaseLoadError(String error) {
-    return 'Datenbankladefehler: $error';
+    return 'Fehler beim Laden der Datenbank: $error';
   }
 
   @override
@@ -729,7 +729,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get fishOnly => 'Nur Fische';
 
   @override
-  String get fishAndSoftCorals => 'Fische + Weichkorallen';
+  String get fishAndSoftCorals => 'Fische + Weichkorallen (LPS)';
 
   @override
   String get spsCorals => 'SPS-Korallen';
@@ -1222,4 +1222,73 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get resetButton => 'Zurücksetzen';
+
+  @override
+  String get fillAllRequiredFields => 'Füllen Sie alle Pflichtfelder aus';
+
+  @override
+  String get inhabitantsUpdated => 'Bewohner aktualisiert!';
+
+  @override
+  String get clearFilters => 'Filter löschen';
+
+  @override
+  String get aquariumIdNotAvailable => 'Fehler: Aquarium-ID nicht verfügbar';
+
+  @override
+  String get daily => 'Täglich';
+
+  @override
+  String get weekly => 'Wöchentlich';
+
+  @override
+  String get monthly => 'Monatlich';
+
+  @override
+  String get custom => 'Benutzerdefiniert';
+
+  @override
+  String get medium => 'Mittel';
+
+  @override
+  String get dueDate => 'Fälligkeitsdatum';
+
+  @override
+  String get add => 'Hinzufügen';
+
+  @override
+  String get taskAddedSuccess => 'Aufgabe erfolgreich hinzugefügt';
+
+  @override
+  String get editTask => 'Aufgabe Bearbeiten';
+
+  @override
+  String get taskEditedSuccess => 'Aufgabe erfolgreich bearbeitet';
+
+  @override
+  String get completeTask => 'Aufgabe Abschließen';
+
+  @override
+  String markAsCompleted(String title) {
+    return 'Möchten Sie \"$title\" als abgeschlossen markieren?';
+  }
+
+  @override
+  String get complete => 'Abschließen';
+
+  @override
+  String taskCompleted(String title) {
+    return '$title abgeschlossen!';
+  }
+
+  @override
+  String get deleteTask => 'Aufgabe Löschen';
+
+  @override
+  String confirmDeleteTask(String title) {
+    return 'Möchten Sie \"$title\" löschen?';
+  }
+
+  @override
+  String get taskDeleted => 'Aufgabe gelöscht';
 }

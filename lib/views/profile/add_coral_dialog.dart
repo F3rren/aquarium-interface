@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../models/coral.dart';
 import '../../models/coral_species.dart';
 import '../../services/coral_database_service.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class AddCoralDialog extends StatefulWidget {
   final Coral? coral;
@@ -59,6 +60,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   }
 
   Future<void> _loadCoralDatabase() async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final corals = await _coralDatabaseService.getAllCorals();
       setState(() {
@@ -67,7 +69,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore caricamento database: $e')),
+          SnackBar(content: Text(l10n.databaseLoadError(e.toString()))),
         );
       }
     }
@@ -125,11 +127,12 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   }
 
   void _save() {
+    final l10n = AppLocalizations.of(context)!;
     if (_nameController.text.isEmpty ||
         _speciesController.text.isEmpty ||
         _sizeController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Compila tutti i campi obbligatori')),
+        SnackBar(content: Text(l10n.fillAllRequiredFields)),
       );
       return;
     }
@@ -138,7 +141,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     if (size == null || size <= 0) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Dimensione non valida')));
+      ).showSnackBar(SnackBar(content: Text(l10n.invalidSize)));
       return;
     }
 
@@ -146,7 +149,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
     if (quantity <= 0) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Quantità non valida')));
+      ).showSnackBar(SnackBar(content: Text(l10n.invalidQuantity)));
       return;
     }
 
