@@ -292,7 +292,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n.selectAquarium,
+                      AppLocalizations.of(context)!.selectAquarium,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: 20,
@@ -301,7 +301,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      l10n.chooseAquariumToEdit,
+                      AppLocalizations.of(context)!.chooseAquariumToEdit,
                       style: TextStyle(
                         color: theme.colorScheme.onSurfaceVariant,
                         fontSize: 13,
@@ -321,7 +321,6 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
 
   Widget _buildAquariumCard(Aquarium aquarium) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),

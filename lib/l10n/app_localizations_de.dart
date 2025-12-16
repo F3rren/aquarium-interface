@@ -98,7 +98,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Erstellen Sie Erinnerungen für Ihre Aquarienwartungsaktivitäten.';
 
   @override
-  String get createTask => 'Aufgabe erstellen';
+  String get createTask => 'Aufgabe Erstellen';
 
   @override
   String get allOk => 'ALLES OK';
@@ -480,7 +480,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get filterCleaning => 'Filterreinigung';
 
   @override
-  String get parameterTesting => 'Parametertest';
+  String get parameterTesting => 'Parametertests';
 
   @override
   String get days => 'Tage';
@@ -865,11 +865,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get deleteAquarium => 'Aquarium löschen';
+  String get deleteAquarium => 'Aquarium Löschen';
 
   @override
   String errorLoading(String error) {
-    return 'Fehler beim Laden: $error';
+    return 'Ladefehler: $error';
   }
 
   @override
@@ -878,7 +878,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String confirmDeleteAquarium(String name) {
-    return 'Sind Sie sicher, dass Sie \"$name\" löschen möchten?';
+    return 'Sind Sie sicher, dass Sie \'$name\' löschen möchten?';
   }
 
   @override
@@ -889,28 +889,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get aquariumDeletedSuccess => 'Aquarium erfolgreich gelöscht';
 
   @override
-  String errorWithMessage(String error) {
-    return 'Fehler: $error';
+  String errorWithMessage(String message) {
+    return 'Fehler: $message';
   }
 
   @override
   String get noAquariumsToDelete => 'Keine Aquarien zum Löschen';
 
   @override
-  String get aquariumManagement => 'Aquariumverwaltung';
+  String get aquariumManagement => 'Aquarienverwaltung';
 
   @override
-  String get selectToDelete => 'Zum Löschen auswählen';
+  String get selectToDelete => 'Wählen Sie ein Aquarium zum Löschen aus';
 
   @override
   String get editAquarium => 'Aquarium bearbeiten';
 
   @override
-  String get selectAquarium => 'Aquarium auswählen';
+  String get selectAquarium => 'Aquarium Auswählen';
 
   @override
-  String get chooseAquariumToEdit =>
-      'Wählen Sie aus, welchen Tank Sie bearbeiten möchten';
+  String get chooseAquariumToEdit => 'Wählen Sie ein Aquarium zum Bearbeiten';
 
   @override
   String get noAquariumsFound => 'Keine Tanks gefunden';
@@ -1130,4 +1129,97 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get other => 'Andere';
+
+  @override
+  String get createCustomMaintenance =>
+      'Erstellen Sie eine benutzerdefinierte Wartung';
+
+  @override
+  String get day => 'Tag';
+
+  @override
+  String get enableReminder => 'Erinnerung aktivieren';
+
+  @override
+  String get at => 'Um';
+
+  @override
+  String get noReminder => 'Keine Erinnerung';
+
+  @override
+  String changeTime(String time) {
+    return 'Zeit ändern ($time)';
+  }
+
+  @override
+  String get notifications => 'Benachrichtigungen';
+
+  @override
+  String get settingsSaved => 'Einstellungen gespeichert';
+
+  @override
+  String get settingsTab => 'Einstellungen';
+
+  @override
+  String get thresholdsTab => 'Schwellenwerte';
+
+  @override
+  String get historyTab => 'Verlauf';
+
+  @override
+  String get alertParameters => 'Parameterwarnungen';
+
+  @override
+  String get alertParametersSubtitle =>
+      'Benachrichtigungen, wenn Parameter außerhalb des Bereichs liegen';
+
+  @override
+  String get maintenanceReminders => 'Wartungserinnerungen';
+
+  @override
+  String get maintenanceRemindersSubtitle =>
+      'Benachrichtigungen für Wasserwechsel, Filterreinigung usw.';
+
+  @override
+  String get dailySummary => 'Tägliche Zusammenfassung';
+
+  @override
+  String get dailySummarySubtitle =>
+      'Tägliche Benachrichtigung mit Aquariumstatus';
+
+  @override
+  String get maintenanceFrequency => 'Wartungshäufigkeit';
+
+  @override
+  String get resetDefaults => 'Standardwerte Wiederherstellen';
+
+  @override
+  String get parameterThresholds => 'Parameterschwellenwerte';
+
+  @override
+  String get min => 'Min';
+
+  @override
+  String get max => 'Max';
+
+  @override
+  String get alertHistory => 'Warnungsverlauf';
+
+  @override
+  String recentNotifications(int count) {
+    return '$count aktuelle Benachrichtigungen';
+  }
+
+  @override
+  String get noNotificationsYet => 'Noch keine Benachrichtigungen';
+
+  @override
+  String get resetDefaultsQuestion => 'Auf Standardwerte zurücksetzen?';
+
+  @override
+  String get resetDefaultsMessage =>
+      'Diese Aktion setzt alle benutzerdefinierten Schwellenwerte auf die Standardwerte zurück:';
+
+  @override
+  String get resetButton => 'Zurücksetzen';
 }

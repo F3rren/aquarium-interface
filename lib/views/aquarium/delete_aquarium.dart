@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
-import 'package:acquariumfe/generated/l10n/app_localizations.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class DeleteAquarium extends ConsumerStatefulWidget {
   const DeleteAquarium({super.key});

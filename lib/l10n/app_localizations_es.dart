@@ -478,7 +478,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get upcomingReminders => 'Próximos Recordatorios';
 
   @override
-  String get filterCleaning => 'Limpieza del Filtro';
+  String get filterCleaning => 'Limpieza de Filtro';
 
   @override
   String get parameterTesting => 'Prueba de Parámetros';
@@ -874,11 +874,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cannotDeleteMissingId =>
-      'No se puede eliminar: ID del acuario faltante';
+      'No se puede eliminar: falta el ID del acuario';
 
   @override
   String confirmDeleteAquarium(String name) {
-    return '¿Estás seguro de que quieres eliminar \"$name\"?';
+    return '¿Estás seguro de que quieres eliminar \'$name\'?';
   }
 
   @override
@@ -888,8 +888,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get aquariumDeletedSuccess => 'Acuario eliminado con éxito';
 
   @override
-  String errorWithMessage(String error) {
-    return 'Error: $error';
+  String errorWithMessage(String message) {
+    return 'Error: $message';
   }
 
   @override
@@ -899,7 +899,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get aquariumManagement => 'Gestión de Acuarios';
 
   @override
-  String get selectToDelete => 'Seleccionar para eliminar';
+  String get selectToDelete => 'Selecciona un acuario para eliminar';
 
   @override
   String get editAquarium => 'Editar Acuario';
@@ -908,7 +908,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectAquarium => 'Seleccionar Acuario';
 
   @override
-  String get chooseAquariumToEdit => 'Elige qué tanque modificar';
+  String get chooseAquariumToEdit => 'Elige un acuario para editar';
 
   @override
   String get noAquariumsFound => 'No se encontraron tanques';
@@ -1128,4 +1128,96 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get other => 'Otro';
+
+  @override
+  String get createCustomMaintenance => 'Crear un mantenimiento personalizado';
+
+  @override
+  String get day => 'día';
+
+  @override
+  String get enableReminder => 'Habilitar recordatorio';
+
+  @override
+  String get at => 'A las';
+
+  @override
+  String get noReminder => 'Sin recordatorio';
+
+  @override
+  String changeTime(String time) {
+    return 'Cambiar hora ($time)';
+  }
+
+  @override
+  String get notifications => 'Notificaciones';
+
+  @override
+  String get settingsSaved => 'Configuración guardada';
+
+  @override
+  String get settingsTab => 'Configuración';
+
+  @override
+  String get thresholdsTab => 'Umbrales';
+
+  @override
+  String get historyTab => 'Historial';
+
+  @override
+  String get alertParameters => 'Alertas de Parámetros';
+
+  @override
+  String get alertParametersSubtitle =>
+      'Notificaciones cuando los parámetros están fuera de rango';
+
+  @override
+  String get maintenanceReminders => 'Recordatorios de Mantenimiento';
+
+  @override
+  String get maintenanceRemindersSubtitle =>
+      'Notificaciones para cambio de agua, limpieza de filtro, etc.';
+
+  @override
+  String get dailySummary => 'Resumen Diario';
+
+  @override
+  String get dailySummarySubtitle =>
+      'Notificación diaria con el estado del acuario';
+
+  @override
+  String get maintenanceFrequency => 'Frecuencia de Mantenimiento';
+
+  @override
+  String get resetDefaults => 'Restablecer Valores Predeterminados';
+
+  @override
+  String get parameterThresholds => 'Umbrales de Parámetros';
+
+  @override
+  String get min => 'Mín';
+
+  @override
+  String get max => 'Máx';
+
+  @override
+  String get alertHistory => 'Historial de Alertas';
+
+  @override
+  String recentNotifications(int count) {
+    return '$count notificaciones recientes';
+  }
+
+  @override
+  String get noNotificationsYet => 'Aún no hay notificaciones';
+
+  @override
+  String get resetDefaultsQuestion => '¿Restablecer Predeterminados?';
+
+  @override
+  String get resetDefaultsMessage =>
+      'Esta acción restablecerá todos los umbrales personalizados a los valores predeterminados:';
+
+  @override
+  String get resetButton => 'Restablecer';
 }

@@ -99,7 +99,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                               ),
                             ),
                             Text(
-                              'Crea una manutenzione personalizzata',
+                              l10n.createCustomMaintenance,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: theme.colorScheme.onSurfaceVariant,
@@ -204,7 +204,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                               min: 1,
                               max: 90,
                               divisions: 89,
-                              label: '$_frequencyDays giorni',
+                              label: '$_frequencyDays ${_frequencyDays == 1 ? l10n.day : l10n.days}',
                               onChanged: (value) {
                                 setState(() => _frequencyDays = value.toInt());
                               },
@@ -223,7 +223,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              '$_frequencyDays ${_frequencyDays == 1 ? 'giorno' : 'giorni'}',
+                              '$_frequencyDays ${_frequencyDays == 1 ? l10n.day : l10n.days}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF8b5cf6),
@@ -236,11 +236,11 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                       Wrap(
                         spacing: 8,
                         children: [
-                          _buildFrequencyChip('1 giorno', 1),
-                          _buildFrequencyChip('3 giorni', 3),
-                          _buildFrequencyChip('7 giorni', 7),
-                          _buildFrequencyChip('14 giorni', 14),
-                          _buildFrequencyChip('30 giorni', 30),
+                          _buildFrequencyChip('1 ${l10n.day}', 1),
+                          _buildFrequencyChip('3 ${l10n.days}', 3),
+                          _buildFrequencyChip('7 ${l10n.days}', 7),
+                          _buildFrequencyChip('14 ${l10n.days}', 14),
+                          _buildFrequencyChip('30 ${l10n.days}', 30),
                         ],
                       ),
                     ],
@@ -254,10 +254,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     onChanged: (value) {
                       setState(() => _enableReminder = value);
                     },
-                    title: const Text('Abilita promemoria'),
+                    title: Text(l10n.enableReminder),
                     subtitle: _enableReminder
-                        ? Text('Alle ${_reminderTime.format(context)}')
-                        : const Text('Nessun promemoria'),
+                        ? Text('${l10n.at} ${_reminderTime.format(context)}')
+                        : Text(l10n.noReminder),
                     secondary: const FaIcon(FontAwesomeIcons.bell),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -284,7 +284,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                         },
                         icon: const FaIcon(FontAwesomeIcons.clock),
                         label: Text(
-                          'Cambia orario (${_reminderTime.format(context)})',
+                          l10n.changeTime(_reminderTime.format(context)),
                         ),
                       ),
                     ),
@@ -296,7 +296,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                   Row(
                     children: [
                       Expanded(
-                        child: OutlinedButton(
+                          child: OutlinedButton(
                           onPressed: () => Navigator.pop(context),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 14),
@@ -304,7 +304,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Text('Annulla'),
+                          child: Text(l10n.cancel),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -320,14 +320,14 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              FaIcon(FontAwesomeIcons.check, size: 20),
-                              SizedBox(width: 8),
+                              const FaIcon(FontAwesomeIcons.check, size: 20),
+                              const SizedBox(width: 8),
                               Text(
-                                'Crea Task',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                l10n.createTask,
+                                style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),

@@ -512,5 +512,88 @@
   "testing": "Testing",
   "feeding": "Feeding",
   "equipment": "Equipment",
-  "other": "Other"
+  "other": "Other",
+  
+  "createCustomMaintenance": "Create a custom maintenance",
+  "day": "day",
+  "days": "days",
+  "enableReminder": "Enable reminder",
+  "at": "At",
+  "noReminder": "No reminder",
+  "changeTime": "Change time ({time})",
+  "@changeTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "createTask": "Create Task",
+  
+  "notifications": "Notifications",
+  "settingsSaved": "Settings saved",
+  "settingsTab": "Settings",
+  "thresholdsTab": "Thresholds",
+  "historyTab": "History",
+  "alertParameters": "Parameter Alerts",
+  "alertParametersSubtitle": "Notifications when parameters are out of range",
+  "maintenanceReminders": "Maintenance Reminders",
+  "maintenanceRemindersSubtitle": "Notifications for water change, filter cleaning, etc.",
+  "dailySummary": "Daily Summary",
+  "dailySummarySubtitle": "Daily notification with aquarium status",
+  "maintenanceFrequency": "Maintenance Frequency",
+  "waterChange": "Water Change",
+  "filterCleaning": "Filter Cleaning",
+  "parameterTesting": "Parameter Testing",
+  "resetDefaults": "Reset to Defaults",
+  "parameterThresholds": "Parameter Thresholds",
+  "min": "Min",
+  "max": "Max",
+  "alertHistory": "Alert History",
+  "recentNotifications": "{count} recent notifications",
+  "@recentNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noNotificationsYet": "No notifications yet",
+  "resetDefaultsQuestion": "Reset to Defaults?",
+  "resetDefaultsMessage": "This action will reset all customized thresholds to default values:",
+  "resetButton": "Reset",
+  
+  "errorLoading": "Loading error: {error}",
+  "@errorLoading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotDeleteMissingId": "Cannot delete: aquarium ID missing",
+  "deleteAquarium": "Delete Aquarium",
+  "confirmDeleteAquarium": "Are you sure you want to delete '{name}'?",
+  "@confirmDeleteAquarium": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actionCannotBeUndone": "This action cannot be undone.",
+  "aquariumDeletedSuccess": "Aquarium deleted successfully",
+  "errorWithMessage": "Error: {message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "noAquariumsToDelete": "No aquariums to delete",
+  "aquariumManagement": "Aquarium Management",
+  "selectToDelete": "Select an aquarium to delete",
+  "selectAquarium": "Select Aquarium",
+  "chooseAquariumToEdit": "Choose an aquarium to edit"
 }

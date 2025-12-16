@@ -605,5 +605,88 @@
   "testing": "Test",
   "feeding": "Alimentazione",
   "equipment": "Attrezzatura",
-  "other": "Altro"
+  "other": "Altro",
+  
+  "createCustomMaintenance": "Crea una manutenzione personalizzata",
+  "day": "giorno",
+  "days": "giorni",
+  "enableReminder": "Abilita promemoria",
+  "at": "Alle",
+  "noReminder": "Nessun promemoria",
+  "changeTime": "Cambia orario ({time})",
+  "@changeTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "createTask": "Crea Task",
+  
+  "notifications": "Notifiche",
+  "settingsSaved": "Impostazioni salvate",
+  "settingsTab": "Impostazioni",
+  "thresholdsTab": "Soglie",
+  "historyTab": "Storico",
+  "alertParameters": "Alert Parametri",
+  "alertParametersSubtitle": "Notifiche quando i parametri sono fuori range",
+  "maintenanceReminders": "Promemoria Manutenzione",
+  "maintenanceRemindersSubtitle": "Notifiche per cambio acqua, pulizia filtro, ecc.",
+  "dailySummary": "Riepilogo Giornaliero",
+  "dailySummarySubtitle": "Notifica giornaliera con stato acquario",
+  "maintenanceFrequency": "Frequenza Manutenzione",
+  "waterChange": "Cambio Acqua",
+  "filterCleaning": "Pulizia Filtro",
+  "parameterTesting": "Test Parametri",
+  "resetDefaults": "Ripristina Valori Predefiniti",
+  "parameterThresholds": "Soglie Parametri",
+  "min": "Min",
+  "max": "Max",
+  "alertHistory": "Storico Alert",
+  "recentNotifications": "{count} notifiche recenti",
+  "@recentNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noNotificationsYet": "Nessuna notifica ancora",
+  "resetDefaultsQuestion": "Ripristinare Predefiniti?",
+  "resetDefaultsMessage": "Questa azione resetterà tutte le soglie personalizzate ai valori di default:",
+  "resetButton": "Ripristina",
+  
+  "errorLoading": "Errore nel caricamento: {error}",
+  "@errorLoading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotDeleteMissingId": "Impossibile eliminare: ID acquario mancante",
+  "deleteAquarium": "Elimina Acquario",
+  "confirmDeleteAquarium": "Sei sicuro di voler eliminare '{name}'?",
+  "@confirmDeleteAquarium": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actionCannotBeUndone": "Questa azione non può essere annullata.",
+  "aquariumDeletedSuccess": "Acquario eliminato con successo",
+  "errorWithMessage": "Errore: {message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "noAquariumsToDelete": "Nessun acquario da eliminare",
+  "aquariumManagement": "Gestione Acquari",
+  "selectToDelete": "Seleziona un acquario da eliminare",
+  "selectAquarium": "Seleziona Acquario",
+  "chooseAquariumToEdit": "Scegli un acquario da modificare"
 }

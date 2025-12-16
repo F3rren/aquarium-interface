@@ -512,5 +512,88 @@
   "testing": "Testen",
   "feeding": "Fütterung",
   "equipment": "Ausrüstung",
-  "other": "Andere"
+  "other": "Andere",
+  
+  "createCustomMaintenance": "Erstellen Sie eine benutzerdefinierte Wartung",
+  "day": "Tag",
+  "days": "Tage",
+  "enableReminder": "Erinnerung aktivieren",
+  "at": "Um",
+  "noReminder": "Keine Erinnerung",
+  "changeTime": "Zeit ändern ({time})",
+  "@changeTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "createTask": "Aufgabe Erstellen",
+  
+  "notifications": "Benachrichtigungen",
+  "settingsSaved": "Einstellungen gespeichert",
+  "settingsTab": "Einstellungen",
+  "thresholdsTab": "Schwellenwerte",
+  "historyTab": "Verlauf",
+  "alertParameters": "Parameterwarnungen",
+  "alertParametersSubtitle": "Benachrichtigungen, wenn Parameter außerhalb des Bereichs liegen",
+  "maintenanceReminders": "Wartungserinnerungen",
+  "maintenanceRemindersSubtitle": "Benachrichtigungen für Wasserwechsel, Filterreinigung usw.",
+  "dailySummary": "Tägliche Zusammenfassung",
+  "dailySummarySubtitle": "Tägliche Benachrichtigung mit Aquariumstatus",
+  "maintenanceFrequency": "Wartungshäufigkeit",
+  "waterChange": "Wasserwechsel",
+  "filterCleaning": "Filterreinigung",
+  "parameterTesting": "Parametertests",
+  "resetDefaults": "Standardwerte Wiederherstellen",
+  "parameterThresholds": "Parameterschwellenwerte",
+  "min": "Min",
+  "max": "Max",
+  "alertHistory": "Warnungsverlauf",
+  "recentNotifications": "{count} aktuelle Benachrichtigungen",
+  "@recentNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noNotificationsYet": "Noch keine Benachrichtigungen",
+  "resetDefaultsQuestion": "Auf Standardwerte zurücksetzen?",
+  "resetDefaultsMessage": "Diese Aktion setzt alle benutzerdefinierten Schwellenwerte auf die Standardwerte zurück:",
+  "resetButton": "Zurücksetzen",
+  
+  "errorLoading": "Ladefehler: {error}",
+  "@errorLoading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotDeleteMissingId": "Löschen nicht möglich: Aquarium-ID fehlt",
+  "deleteAquarium": "Aquarium Löschen",
+  "confirmDeleteAquarium": "Sind Sie sicher, dass Sie '{name}' löschen möchten?",
+  "@confirmDeleteAquarium": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actionCannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
+  "aquariumDeletedSuccess": "Aquarium erfolgreich gelöscht",
+  "errorWithMessage": "Fehler: {message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "noAquariumsToDelete": "Keine Aquarien zum Löschen",
+  "aquariumManagement": "Aquarienverwaltung",
+  "selectToDelete": "Wählen Sie ein Aquarium zum Löschen aus",
+  "selectAquarium": "Aquarium Auswählen",
+  "chooseAquariumToEdit": "Wählen Sie ein Aquarium zum Bearbeiten"
 }

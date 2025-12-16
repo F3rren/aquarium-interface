@@ -8,7 +8,7 @@ import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class AquariumDetails extends StatefulWidget {
   final int? aquariumId;

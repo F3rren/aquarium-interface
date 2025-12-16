@@ -98,7 +98,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Créez des rappels pour les activités d\'entretien de votre aquarium.';
 
   @override
-  String get createTask => 'Créer Tâche';
+  String get createTask => 'Créer une Tâche';
 
   @override
   String get allOk => 'TOUT OK';
@@ -867,7 +867,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get deleteAquarium => 'Supprimer Aquarium';
+  String get deleteAquarium => 'Supprimer l\'Aquarium';
 
   @override
   String errorLoading(String error) {
@@ -880,7 +880,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String confirmDeleteAquarium(String name) {
-    return 'Êtes-vous sûr de vouloir supprimer \"$name\"?';
+    return 'Êtes-vous sûr de vouloir supprimer \'$name\'?';
   }
 
   @override
@@ -890,27 +890,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get aquariumDeletedSuccess => 'Aquarium supprimé avec succès';
 
   @override
-  String errorWithMessage(String error) {
-    return 'Erreur: $error';
+  String errorWithMessage(String message) {
+    return 'Erreur: $message';
   }
 
   @override
   String get noAquariumsToDelete => 'Aucun aquarium à supprimer';
 
   @override
-  String get aquariumManagement => 'Gestion des Aquariums';
+  String get aquariumManagement => 'Gestion de l\'Aquarium';
 
   @override
-  String get selectToDelete => 'Sélectionner pour supprimer';
+  String get selectToDelete => 'Sélectionnez un aquarium à supprimer';
 
   @override
   String get editAquarium => 'Modifier l\'Aquarium';
 
   @override
-  String get selectAquarium => 'Sélectionner Aquarium';
+  String get selectAquarium => 'Sélectionner un Aquarium';
 
   @override
-  String get chooseAquariumToEdit => 'Choisissez quel réservoir modifier';
+  String get chooseAquariumToEdit => 'Choisissez un aquarium à modifier';
 
   @override
   String get noAquariumsFound => 'Aucun réservoir trouvé';
@@ -1130,4 +1130,96 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get other => 'Autre';
+
+  @override
+  String get createCustomMaintenance => 'Créer une maintenance personnalisée';
+
+  @override
+  String get day => 'jour';
+
+  @override
+  String get enableReminder => 'Activer le rappel';
+
+  @override
+  String get at => 'À';
+
+  @override
+  String get noReminder => 'Aucun rappel';
+
+  @override
+  String changeTime(String time) {
+    return 'Changer l\'heure ($time)';
+  }
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get settingsSaved => 'Paramètres enregistrés';
+
+  @override
+  String get settingsTab => 'Paramètres';
+
+  @override
+  String get thresholdsTab => 'Seuils';
+
+  @override
+  String get historyTab => 'Historique';
+
+  @override
+  String get alertParameters => 'Alertes de Paramètres';
+
+  @override
+  String get alertParametersSubtitle =>
+      'Notifications lorsque les paramètres sont hors plage';
+
+  @override
+  String get maintenanceReminders => 'Rappels de Maintenance';
+
+  @override
+  String get maintenanceRemindersSubtitle =>
+      'Notifications pour changement d\'eau, nettoyage du filtre, etc.';
+
+  @override
+  String get dailySummary => 'Résumé Quotidien';
+
+  @override
+  String get dailySummarySubtitle =>
+      'Notification quotidienne avec l\'état de l\'aquarium';
+
+  @override
+  String get maintenanceFrequency => 'Fréquence de Maintenance';
+
+  @override
+  String get resetDefaults => 'Réinitialiser aux Valeurs par Défaut';
+
+  @override
+  String get parameterThresholds => 'Seuils des Paramètres';
+
+  @override
+  String get min => 'Min';
+
+  @override
+  String get max => 'Max';
+
+  @override
+  String get alertHistory => 'Historique des Alertes';
+
+  @override
+  String recentNotifications(int count) {
+    return '$count notifications récentes';
+  }
+
+  @override
+  String get noNotificationsYet => 'Aucune notification pour le moment';
+
+  @override
+  String get resetDefaultsQuestion => 'Réinitialiser aux Valeurs par Défaut?';
+
+  @override
+  String get resetDefaultsMessage =>
+      'Cette action réinitialisera tous les seuils personnalisés aux valeurs par défaut:';
+
+  @override
+  String get resetButton => 'Réinitialiser';
 }
