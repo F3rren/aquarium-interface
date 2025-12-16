@@ -183,13 +183,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get fishSpeciesLabel => 'Art *';
 
   @override
-  String get fishSpeciesHint => 'z.B.: Amphiprion ocellaris';
+  String get fishSpeciesHint => 'z.B: Amphiprion ocellaris';
 
   @override
   String get fishSizeLabel => 'Größe (cm) *';
 
   @override
-  String get fishSizeHint => 'z.B.: 8.5';
+  String get fishSizeHint => 'z.B: 8.5';
 
   @override
   String get quantityLabel => 'Menge';
@@ -231,13 +231,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coralNameLabel => 'Name *';
 
   @override
-  String get coralNameHint => 'z.B.: Orange Montipora';
+  String get coralNameHint => 'z.B: Orange Montipora';
 
   @override
   String get coralSpeciesLabel => 'Art *';
 
   @override
-  String get coralSpeciesHint => 'z.B.: Montipora digitata';
+  String get coralSpeciesHint => 'z.B: Montipora digitata';
 
   @override
   String get coralTypeLabel => 'Typ *';
@@ -246,7 +246,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coralSizeLabel => 'Größe (cm) *';
 
   @override
-  String get coralSizeHint => 'z.B.: 5.0';
+  String get coralSizeHint => 'z.B: 5.0';
 
   @override
   String get coralPlacementLabel => 'Platzierung *';
@@ -1851,8 +1851,47 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get minimumValue => 'Minimalwert';
+  String get minimumValue => 'Mindestwert';
 
   @override
   String get maximumValue => 'Maximalwert';
+
+  @override
+  String get difficultyLabel => 'Schwierigkeit';
+
+  @override
+  String get minTankSizeLabel => 'Mindestgröße Becken';
+
+  @override
+  String get temperamentLabel => 'Temperament';
+
+  @override
+  String get dietLabel => 'Ernährung';
+
+  @override
+  String get reefSafeLabel => 'Riffsicher';
+
+  @override
+  String get loadingError => 'Ladefehler';
+
+  @override
+  String get temperatureShort => 'Temp';
+
+  @override
+  String get salinityShort => 'Salzgehalt';
+
+  @override
+  String get pptUnit => 'PPT';
+
+  @override
+  String get typeLabel => 'Typ';
+
+  @override
+  String get volumeLabel => 'Volumen';
+
+  @override
+  String get litersUnit => 'Liter';
+
+  @override
+  String get createdOn => 'Erstellt am';
 }

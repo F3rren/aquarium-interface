@@ -845,6 +845,25 @@
       }
     }
   },
-  "minimumValue": "Valeur Minimale",
-  "maximumValue": "Valeur Maximale"
+  "minimumValue": "Valeur minimale",
+  "maximumValue": "Valeur maximale",
+  "difficultyLabel": "Difficulté",
+  "minTankSizeLabel": "Taille min. aquarium",
+  "temperamentLabel": "Tempérament",
+  "dietLabel": "Régime",
+  "reefSafeLabel": "Sûr pour récif",
+  "loadingError": "Erreur de chargement",
+  "temperatureShort": "Temp",
+  "salinityShort": "Salinité",
+  "pptUnit": "PPT",
+  "fishSpeciesHint": "ex: Amphiprion ocellaris",
+  "fishSizeHint": "ex: 8.5",
+  "quantityHint": "Nombre de spécimens à ajouter",
+  "coralNameHint": "ex: Montipora orange",
+  "coralSpeciesHint": "ex: Montipora digitata",
+  "coralSizeHint": "ex: 5.0",
+  "typeLabel": "Type",
+  "volumeLabel": "Volume",
+  "litersUnit": "Litres",
+  "createdOn": "Créé le"
 }

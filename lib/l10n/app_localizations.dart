@@ -3475,6 +3475,84 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Valore Massimo'**
   String get maximumValue;
+
+  /// No description provided for @difficultyLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Difficoltà'**
+  String get difficultyLabel;
+
+  /// No description provided for @minTankSizeLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Vasca minima'**
+  String get minTankSizeLabel;
+
+  /// No description provided for @temperamentLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Temperamento'**
+  String get temperamentLabel;
+
+  /// No description provided for @dietLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Dieta'**
+  String get dietLabel;
+
+  /// No description provided for @reefSafeLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Reef-safe'**
+  String get reefSafeLabel;
+
+  /// No description provided for @loadingError.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nel caricamento'**
+  String get loadingError;
+
+  /// No description provided for @temperatureShort.
+  ///
+  /// In it, this message translates to:
+  /// **'Temp'**
+  String get temperatureShort;
+
+  /// No description provided for @salinityShort.
+  ///
+  /// In it, this message translates to:
+  /// **'Salinità'**
+  String get salinityShort;
+
+  /// No description provided for @pptUnit.
+  ///
+  /// In it, this message translates to:
+  /// **'PPT'**
+  String get pptUnit;
+
+  /// No description provided for @typeLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Tipo'**
+  String get typeLabel;
+
+  /// No description provided for @volumeLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Volume'**
+  String get volumeLabel;
+
+  /// No description provided for @litersUnit.
+  ///
+  /// In it, this message translates to:
+  /// **'Litri'**
+  String get litersUnit;
+
+  /// No description provided for @createdOn.
+  ///
+  /// In it, this message translates to:
+  /// **'Creato il'**
+  String get createdOn;
 }
 
 class _AppLocalizationsDelegate

@@ -1051,5 +1051,24 @@
     }
   },
   "minimumValue": "Valore Minimo",
-  "maximumValue": "Valore Massimo"
+  "maximumValue": "Valore Massimo",
+  "difficultyLabel": "Difficoltà",
+  "minTankSizeLabel": "Vasca minima",
+  "temperamentLabel": "Temperamento",
+  "dietLabel": "Dieta",
+  "reefSafeLabel": "Reef-safe",
+  "loadingError": "Errore nel caricamento",
+  "temperatureShort": "Temp",
+  "salinityShort": "Salinità",
+  "pptUnit": "PPT",
+  "fishSpeciesHint": "es: Amphiprion ocellaris",
+  "fishSizeHint": "es: 8.5",
+  "quantityHint": "Numero di esemplari da aggiungere",
+  "coralNameHint": "es: Montipora arancione",
+  "coralSpeciesHint": "es: Montipora digitata",
+  "coralSizeHint": "es: 5.0",
+  "typeLabel": "Tipo",
+  "volumeLabel": "Volume",
+  "litersUnit": "Litri",
+  "createdOn": "Creato il"
 }

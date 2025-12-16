@@ -184,13 +184,13 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                   const SizedBox(height: 24),
 
                   // Filtro difficoltà
-                  _buildSectionTitle('Difficoltà', theme),
+                  _buildSectionTitle(l10n.difficulty, theme),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     children: [
                       _buildFilterChip(
-                        label: 'Facile',
+                        label: l10n.difficultyEasy,
                         selected: _filter.difficultyFilter == 'Facile',
                         onSelected: (selected) {
                           _updateFilter(
@@ -204,7 +204,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                         color: const Color(0xFF34d399),
                       ),
                       _buildFilterChip(
-                        label: 'Intermedio',
+                        label: l10n.difficultyIntermediate,
                         selected: _filter.difficultyFilter == 'Intermedio',
                         onSelected: (selected) {
                           _updateFilter(
@@ -218,7 +218,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                         color: const Color(0xFFf59e0b),
                       ),
                       _buildFilterChip(
-                        label: 'Difficile',
+                        label: l10n.difficultyHard,
                         selected: _filter.difficultyFilter == 'Difficile',
                         onSelected: (selected) {
                           _updateFilter(

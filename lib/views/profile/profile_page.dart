@@ -609,7 +609,7 @@ class ProfilePage extends ConsumerWidget {
                 children: [
                   // Tipo
                   _buildInfoRow(
-                    'Tipo',
+                    l10n.typeLabel,
                     aquarium.type,
                     FontAwesomeIcons.tag,
                     theme,
@@ -618,8 +618,8 @@ class ProfilePage extends ConsumerWidget {
 
                   // Volume
                   _buildInfoRow(
-                    'Volume',
-                    '${aquarium.volume.toInt()} Litri',
+                    l10n.volumeLabel,
+                    '${aquarium.volume.toInt()} ${l10n.litersUnit}',
                     FontAwesomeIcons.ruler,
                     theme,
                   ),
@@ -628,7 +628,7 @@ class ProfilePage extends ConsumerWidget {
                   // Data creazione
                   if (aquarium.createdAt != null)
                     _buildInfoRow(
-                      'Creato il',
+                      l10n.createdOn,
                       '${aquarium.createdAt!.day}/${aquarium.createdAt!.month}/${aquarium.createdAt!.year}',
                       FontAwesomeIcons.calendar,
                       theme,
