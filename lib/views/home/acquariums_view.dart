@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/widgets/animated_value.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 import 'package:acquariumfe/widgets/skeleton_loader.dart';
 import 'package:acquariumfe/widgets/empty_state.dart';
 import 'package:acquariumfe/services/parameter_service.dart';
@@ -19,7 +20,8 @@ class AquariumView extends ConsumerStatefulWidget {
   ConsumerState<AquariumView> createState() => _AquariumViewState();
 }
 
-class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerProviderStateMixin {
+class _AquariumViewState extends ConsumerState<AquariumView>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -39,15 +41,13 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
       ),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.8, curve: Curves.easeOutCubic),
-      ),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.0, 0.8, curve: Curves.easeOutCubic),
+          ),
+        );
   }
 
   @override
@@ -59,15 +59,21 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final aquariumsAsync = ref.watch(aquariumsProvider);
-    
+
     return RefreshIndicator(
       onRefresh: () => ref.read(aquariumsProvider.notifier).refresh(),
       color: theme.colorScheme.primary,
       backgroundColor: theme.colorScheme.surface,
       child: aquariumsAsync.when(
         loading: () => ListView(
-          padding: const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 20),
+          padding: const EdgeInsets.only(
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: 20,
+          ),
           children: List.generate(3, (index) => const AquariumCardSkeleton()),
         ),
         error: (error, stack) => ListView(
@@ -84,20 +90,20 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Errore nel caricamento',
+                    l10n.loadingError,
                     style: theme.textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    error.toString(),
+                  Text(error.toString(),
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
-                    onPressed: () => ref.read(aquariumsProvider.notifier).refresh(),
+                    onPressed: () =>
+                        ref.read(aquariumsProvider.notifier).refresh(),
                     icon: const FaIcon(FontAwesomeIcons.arrowsRotate, size: 16),
-                    label: const Text('Riprova'),
+                    label: Text(AppLocalizations.of(context)!.retry),
                   ),
                 ],
               ),
@@ -106,26 +112,32 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
         ),
         data: (aquariumsWithParams) {
           // Imposta prima vasca come corrente
-          if (aquariumsWithParams.isNotEmpty && 
+          if (aquariumsWithParams.isNotEmpty &&
               aquariumsWithParams.first.aquarium.id != null) {
-            ParameterService().setCurrentAquarium(aquariumsWithParams.first.aquarium.id!);
-            TargetParametersService().setCurrentAquarium(aquariumsWithParams.first.aquarium.id!);
-            
+            ParameterService().setCurrentAquarium(
+              aquariumsWithParams.first.aquarium.id!,
+            );
+            TargetParametersService().setCurrentAquarium(
+              aquariumsWithParams.first.aquarium.id!,
+            );
+
             // Avvia animazioni se non già partite
             if (_controller.status == AnimationStatus.dismissed) {
               _controller.forward();
             }
           }
-          
+
           if (aquariumsWithParams.isEmpty) {
             return const NoAquariumsEmptyState();
           }
-          
+
           return ResponsiveBuilder(
             builder: (context, info) {
-              final padding = ResponsiveBreakpoints.horizontalPadding(info.screenWidth);
+              final padding = ResponsiveBreakpoints.horizontalPadding(
+                info.screenWidth,
+              );
               final columns = info.value(mobile: 1, tablet: 2, desktop: 3);
-              
+
               // Per mobile usa ListView, per tablet/desktop usa GridView
               if (info.isMobile) {
                 return ListView.builder(
@@ -138,14 +150,17 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
                         opacity: _fadeAnimation,
                         child: SlideTransition(
                           position: _slideAnimation,
-                          child: _buildAquariumCard(context, aquariumsWithParams[index]),
+                          child: _buildAquariumCard(
+                            context,
+                            aquariumsWithParams[index],
+                          ),
                         ),
                       ),
                     );
                   },
                 );
               }
-              
+
               // Grid view per tablet e desktop
               return GridView.builder(
                 padding: EdgeInsets.all(padding),
@@ -153,7 +168,11 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
                   crossAxisCount: columns,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: info.value(mobile: 1.0, tablet: 1.2, desktop: 1.3),
+                  childAspectRatio: info.value(
+                    mobile: 1.0,
+                    tablet: 1.2,
+                    desktop: 1.3,
+                  ),
                 ),
                 itemCount: aquariumsWithParams.length,
                 itemBuilder: (context, index) {
@@ -161,7 +180,10 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
                     opacity: _fadeAnimation,
                     child: SlideTransition(
                       position: _slideAnimation,
-                      child: _buildAquariumCard(context, aquariumsWithParams[index]),
+                      child: _buildAquariumCard(
+                        context,
+                        aquariumsWithParams[index],
+                      ),
                     ),
                   );
                 },
@@ -173,18 +195,22 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
     );
   }
 
-  Widget _buildAquariumCard(BuildContext context, AquariumWithParams aquariumData) {
+  Widget _buildAquariumCard(
+    BuildContext context,
+    AquariumWithParams aquariumData,
+  ) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isDark = theme.brightness == Brightness.dark;
     final aquarium = aquariumData.aquarium;
     final params = aquariumData.parameters;
-    
+
     // Usa parametri reali o valori di fallback
     final temp = params?.temperature ?? 0.0;
     final ph = params?.ph ?? 0.0;
     final salinity = params?.salinity ?? 0.0;
     final hasData = params != null;
-    
+
     return BounceButton(
       onTap: () {
         // Imposta questa vasca come vasca corrente per i parametri
@@ -192,7 +218,7 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
           ParameterService().setCurrentAquarium(aquarium.id!);
           TargetParametersService().setCurrentAquarium(aquarium.id!);
         }
-        
+
         Navigator.push(
           context,
           CustomPageRoute(
@@ -208,14 +234,8 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isDark
-                ? [
-                    const Color(0xFF1e293b),
-                    const Color(0xFF0f172a),
-                  ]
-                : [
-                    const Color(0xFFffffff),
-                    const Color(0xFFf1f5f9),
-                  ],
+                ? [const Color(0xFF1e293b), const Color(0xFF0f172a)]
+                : [const Color(0xFFffffff), const Color(0xFFf1f5f9)],
           ),
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
@@ -253,21 +273,27 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  const Color(0xFF60a5fa).withValues(alpha: 0.2),
-                                  const Color(0xFF2dd4bf).withValues(alpha: 0.2),
+                                  const Color(
+                                    0xFF60a5fa,
+                                  ).withValues(alpha: 0.2),
+                                  const Color(
+                                    0xFF2dd4bf,
+                                  ).withValues(alpha: 0.2),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: const Color(0xFF60a5fa).withValues(alpha: 0.3),
+                                color: const Color(
+                                  0xFF60a5fa,
+                                ).withValues(alpha: 0.3),
                               ),
                             ),
                             child: Icon(
-                              aquarium.type == 'Marino' 
-                                  ? FontAwesomeIcons.droplet 
+                              aquarium.type == 'Marino'
+                                  ? FontAwesomeIcons.droplet
                                   : aquarium.type == 'Reef'
-                                      ? FontAwesomeIcons.atom
-                                      : FontAwesomeIcons.water,
+                                  ? FontAwesomeIcons.atom
+                                  : FontAwesomeIcons.water,
                               color: const Color(0xFF60a5fa),
                               size: 20,
                             ),
@@ -277,8 +303,7 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  aquarium.name,
+                                Text(aquarium.name,
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurface,
                                     fontSize: 16,
@@ -293,13 +318,14 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
                                     Icon(
                                       FontAwesomeIcons.droplet,
                                       size: 11,
-                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.5),
                                     ),
                                     const SizedBox(width: 4),
-                                    Text(
-                                      "${aquarium.volume.toInt()} L • ${aquarium.type}",
+                                    Text("${aquarium.volume.toInt()} L • ${aquarium.type}",
                                       style: TextStyle(
-                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                        color: theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.5),
                                         fontSize: 11,
                                       ),
                                     ),
@@ -317,28 +343,29 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
             ),
             const SizedBox(height: 8),
             // Timestamp ultimo aggiornamento
-            if (aquariumData.lastUpdate != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Row(
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.arrowsRotate,
-                      size: 12,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Aggiornato ${_formatRelativeTime(aquariumData.lastUpdate!)}',
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                        fontSize: 10,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            // if (aquariumData.lastUpdate != null)
+            //   Padding(
+            //     padding: const EdgeInsets.symmetric(horizontal: 4),
+            //     child: Row(
+            //       children: [
+            //         Icon(
+            //           FontAwesomeIcons.arrowsRotate,
+            //           size: 12,
+            //           color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+            //         ),
+            //         const SizedBox(width: 4),
+            //         Text(l10n.updated(_formatRelativeTime(aquariumData.lastUpdate!)),
+            //           style: TextStyle(
+            //             color: theme.colorScheme.onSurface.withValues(
+            //               alpha: 0.4,
+            //             ),
+            //             fontSize: 10,
+            //             fontStyle: FontStyle.italic,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
             const SizedBox(height: 16),
             // Parametri principali con card separate
             Row(
@@ -347,7 +374,7 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
                   child: _buildParameterCard(
                     theme,
                     FontAwesomeIcons.temperatureHalf,
-                    'Temp',
+                    l10n.temperatureShort,
                     hasData ? temp.toStringAsFixed(1) : '--',
                     '°C',
                     const Color(0xFFef4444),
@@ -371,17 +398,17 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
                   child: _buildParameterCard(
                     theme,
                     FontAwesomeIcons.water,
-                    'Salinità',
+                    l10n.salinityShort,
                     hasData ? salinity.toStringAsFixed(0) : '--',
-                    'PPT',
+                    l10n.pptUnit,
                     const Color(0xFF2dd4bf),
                     hasData,
                   ),
                 ),
               ],
             ),
-            ],
-          ),
+          ],
+        ),
       ),
     );
   }
@@ -396,7 +423,7 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
     bool hasData,
   ) {
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       decoration: BoxDecoration(
@@ -404,18 +431,14 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? [
-                  color.withValues(alpha: 0.15),
-                  color.withValues(alpha: 0.05),
-                ]
-              : [
-                  color.withValues(alpha: 0.1),
-                  color.withValues(alpha: 0.05),
-                ],
+              ? [color.withValues(alpha: 0.15), color.withValues(alpha: 0.05)]
+              : [color.withValues(alpha: 0.1), color.withValues(alpha: 0.05)],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: hasData ? color.withValues(alpha: 0.3) : theme.colorScheme.onSurface.withValues(alpha: 0.1),
+          color: hasData
+              ? color.withValues(alpha: 0.3)
+              : theme.colorScheme.onSurface.withValues(alpha: 0.1),
           width: 1.5,
         ),
         boxShadow: hasData
@@ -433,11 +456,12 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
           Icon(
             icon,
             size: 22,
-            color: hasData ? color : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+            color: hasData
+                ? color
+                : theme.colorScheme.onSurface.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 6),
-          Text(
-            label,
+          Text(label,
             style: TextStyle(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               fontSize: 10,
@@ -452,10 +476,11 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
             mainAxisSize: MainAxisSize.min,
             children: [
               Flexible(
-                child: Text(
-                  value,
+                child: Text(value,
                   style: TextStyle(
-                    color: hasData ? theme.colorScheme.onSurface : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    color: hasData
+                        ? theme.colorScheme.onSurface
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     letterSpacing: -0.5,
@@ -466,8 +491,7 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
               ),
               if (unit.isNotEmpty) ...[
                 const SizedBox(width: 2),
-                Text(
-                  unit,
+                Text(unit,
                   style: TextStyle(
                     color: hasData
                         ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
@@ -483,12 +507,12 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
       ),
     );
   }
-  
+
   /// Formatta un timestamp in formato relativo (es. "5 min fa", "2 ore fa")
   String _formatRelativeTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inSeconds < 60) {
       return 'adesso';
     } else if (difference.inMinutes < 60) {
@@ -502,4 +526,3 @@ class _AquariumViewState extends ConsumerState<AquariumView> with SingleTickerPr
     }
   }
 }
-

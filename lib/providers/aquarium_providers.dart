@@ -11,21 +11,23 @@ class AquariumWithParams {
   final Aquarium aquarium;
   final AquariumParameters? parameters;
   final DateTime? lastUpdate;
-  
+
   AquariumWithParams({
     required this.aquarium,
     this.parameters,
     this.lastUpdate,
   });
-  
+
   bool get hasAlert {
     if (parameters == null) return false;
-    
+
     // Verifica parametri fuori range (valori tipici per acquario marino)
-    final tempOk = parameters!.temperature >= 24.0 && parameters!.temperature <= 27.0;
+    final tempOk =
+        parameters!.temperature >= 24.0 && parameters!.temperature <= 27.0;
     final phOk = parameters!.ph >= 7.8 && parameters!.ph <= 8.5;
-    final salinityOk = parameters!.salinity >= 1.023 && parameters!.salinity <= 1.026;
-    
+    final salinityOk =
+        parameters!.salinity >= 1.023 && parameters!.salinity <= 1.026;
+
     return !tempOk || !phOk || !salinityOk;
   }
 
@@ -56,21 +58,21 @@ class Aquariums extends _$Aquariums {
   Future<List<AquariumWithParams>> _loadAquariums() async {
     final aquariumService = ref.read(aquariumsServiceProvider);
     final parameterService = ref.read(parameterServiceProvider);
-    
+
     // Carica lista acquari
     final aquariums = await aquariumService.getAquariums();
-    
+
     // Carica parametri per ogni acquario
     final aquariumsWithParams = <AquariumWithParams>[];
     for (final aquarium in aquariums) {
       AquariumParameters? params;
       DateTime? lastUpdate;
-      
+
       try {
         // Carica parametri senza trigger di alert (primo caricamento)
         // Gli alert saranno gestiti dal polling successivo
         parameterService.setAutoCheckAlerts(false);
-        
+
         params = await parameterService.getCurrentParameters(
           id: aquarium.id,
           useMock: false,
@@ -81,25 +83,27 @@ class Aquariums extends _$Aquariums {
       } catch (e) {
         // Ignora errori generici
       }
-      
-      aquariumsWithParams.add(AquariumWithParams(
-        aquarium: aquarium,
-        parameters: params,
-        lastUpdate: lastUpdate,
-      ));
+
+      aquariumsWithParams.add(
+        AquariumWithParams(
+          aquarium: aquarium,
+          parameters: params,
+          lastUpdate: lastUpdate,
+        ),
+      );
     }
-    
+
     // Riabilita alert dopo il caricamento iniziale
     parameterService.setAutoCheckAlerts(true);
-    
+
     // Imposta il primo acquario come corrente se disponibile
-    if (aquariumsWithParams.isNotEmpty && 
+    if (aquariumsWithParams.isNotEmpty &&
         aquariumsWithParams.first.aquarium.id != null) {
       final firstId = aquariumsWithParams.first.aquarium.id!;
       parameterService.setCurrentAquarium(firstId);
       ref.read(targetParametersServiceProvider).setCurrentAquarium(firstId);
     }
-    
+
     return aquariumsWithParams;
   }
 
@@ -147,24 +151,21 @@ class Aquariums extends _$Aquariums {
     if (currentState == null) return;
 
     final parameterService = ref.read(parameterServiceProvider);
-    
+
     try {
       final params = await parameterService.getCurrentParameters(
         id: aquariumId,
         useMock: false,
       );
-      
+
       // Aggiorna solo l'acquario specifico
       final updatedList = currentState.map((item) {
         if (item.aquarium.id == aquariumId) {
-          return item.copyWith(
-            parameters: params,
-            lastUpdate: DateTime.now(),
-          );
+          return item.copyWith(parameters: params, lastUpdate: DateTime.now());
         }
         return item;
       }).toList();
-      
+
       state = AsyncValue.data(updatedList);
     } on AppException {
       // Ignora errori, mantieni stato corrente
@@ -189,7 +190,7 @@ class CurrentAquarium extends _$CurrentAquarium {
   /// Imposta l'acquario corrente
   void setAquarium(int id) {
     state = id;
-    
+
     // Aggiorna anche i servizi
     ref.read(parameterServiceProvider).setCurrentAquarium(id);
     ref.read(targetParametersServiceProvider).setCurrentAquarium(id);

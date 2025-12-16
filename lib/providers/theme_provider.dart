@@ -37,7 +37,7 @@ ThemeData darkTheme(DarkThemeRef ref) {
     useMaterial3: true,
     brightness: Brightness.dark,
     scaffoldBackgroundColor: const Color(0xFF0a0e27),
-    
+
     colorScheme: const ColorScheme.dark(
       primary: Color(0xFF3b82f6), // Blu oceano
       secondary: Color(0xFF06b6d4), // Cyan acqua
@@ -95,11 +95,20 @@ ThemeData darkTheme(DarkThemeRef ref) {
     ),
 
     iconTheme: const IconThemeData(color: Color(0xFF3b82f6)),
-    
+
     textTheme: const TextTheme(
-      headlineLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-      headlineMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-      headlineSmall: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+      headlineLarge: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      headlineMedium: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      headlineSmall: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+      ),
       bodyLarge: TextStyle(color: Colors.white),
       bodyMedium: TextStyle(color: Color(0xFFa1a9c9)),
     ),
@@ -113,7 +122,7 @@ ThemeData lightTheme(LightThemeRef ref) {
     useMaterial3: true,
     brightness: Brightness.light,
     scaffoldBackgroundColor: const Color(0xFFf0f9ff),
-    
+
     colorScheme: const ColorScheme.light(
       primary: Color(0xFF0284c7), // Blu sky
       secondary: Color(0xFF06b6d4), // Cyan
@@ -171,11 +180,20 @@ ThemeData lightTheme(LightThemeRef ref) {
     ),
 
     iconTheme: const IconThemeData(color: Color(0xFF0284c7)),
-    
+
     textTheme: const TextTheme(
-      headlineLarge: TextStyle(color: Color(0xFF0f172a), fontWeight: FontWeight.bold),
-      headlineMedium: TextStyle(color: Color(0xFF0f172a), fontWeight: FontWeight.bold),
-      headlineSmall: TextStyle(color: Color(0xFF0f172a), fontWeight: FontWeight.w600),
+      headlineLarge: TextStyle(
+        color: Color(0xFF0f172a),
+        fontWeight: FontWeight.bold,
+      ),
+      headlineMedium: TextStyle(
+        color: Color(0xFF0f172a),
+        fontWeight: FontWeight.bold,
+      ),
+      headlineSmall: TextStyle(
+        color: Color(0xFF0f172a),
+        fontWeight: FontWeight.w600,
+      ),
       bodyLarge: TextStyle(color: Color(0xFF0f172a)),
       bodyMedium: TextStyle(color: Color(0xFF64748b)),
     ),

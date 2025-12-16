@@ -5,33 +5,33 @@ import 'package:acquariumfe/views/dashboard/calculators_page.dart';
 import 'package:acquariumfe/views/profile/inhabitants_page.dart';
 import 'package:acquariumfe/providers/theme_provider.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
+import 'package:acquariumfe/providers/locale_provider.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class ProfilePage extends ConsumerWidget {
   final int? aquariumId;
-  
+
   const ProfilePage({super.key, this.aquariumId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           // SEZIONE STRUMENTI
-          Text(
-            'Strumenti',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text(l10n.tools, style: theme.textTheme.headlineSmall),
           const SizedBox(height: 12),
-          
+
           _buildMenuCard(
             context,
-            title: 'Calcolatori',
-            subtitle: 'Volume, dosaggio additivi, cambio acqua',
+            title: l10n.calculators,
+            subtitle: l10n.calculatorsSubtitle,
             icon: FontAwesomeIcons.calculator,
             color: const Color(0xFF60a5fa),
             onTap: () {
@@ -44,13 +44,13 @@ class ProfilePage extends ConsumerWidget {
               );
             },
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           _buildMenuCard(
             context,
-            title: 'I Miei Abitanti',
-            subtitle: 'Gestisci pesci e coralli',
+            title: l10n.myInhabitants,
+            subtitle: l10n.myInhabitantsSubtitle,
             icon: FontAwesomeIcons.fish,
             color: const Color(0xFFf472b6),
             onTap: () {
@@ -63,38 +63,40 @@ class ProfilePage extends ConsumerWidget {
               );
             },
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // SEZIONE IMPOSTAZIONI
-          Text(
-            'Impostazioni',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text(l10n.settings, style: theme.textTheme.headlineSmall),
           const SizedBox(height: 12),
-          
+
           _buildMenuCard(
             context,
-            title: 'Info Acquario',
-            subtitle: 'Nome, volume, tipo',
+            title: l10n.aquariumInfo,
+            subtitle: l10n.aquariumInfoSubtitle,
             icon: FontAwesomeIcons.circleInfo,
             color: const Color(0xFF34d399),
             onTap: () {
               _showAquariumInfoDialog(context, ref);
             },
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // THEME TOGGLE
           _buildThemeToggle(context, ref),
-          
+
           const SizedBox(height: 12),
-          
+
+          // LANGUAGE SELECTOR
+          _buildLanguageSelector(context, ref),
+
+          const SizedBox(height: 12),
+
           _buildMenuCard(
             context,
-            title: 'Informazioni App',
-            subtitle: 'Versione, crediti',
+            title: l10n.appInfo,
+            subtitle: l10n.appInfoSubtitle,
             icon: FontAwesomeIcons.gear,
             color: const Color(0xFFa855f7),
             onTap: () {
@@ -109,13 +111,16 @@ class ProfilePage extends ConsumerWidget {
   Widget _buildThemeToggle(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(appThemeModeProvider);
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       child: Row(
         children: [
@@ -136,13 +141,13 @@ class ProfilePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Tema',
-                  style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                Text(l10n.theme,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  isDarkMode ? 'Modalità scura' : 'Modalità chiara',
+                Text(isDarkMode ? l10n.darkMode : l10n.lightMode,
                   style: theme.textTheme.bodySmall,
                 ),
               ],
@@ -158,6 +163,102 @@ class ProfilePage extends ConsumerWidget {
     );
   }
 
+  Widget _buildLanguageSelector(BuildContext context, WidgetRef ref) {
+    final currentLocale = ref.watch(localeProvider);
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    // Determina la lingua corrente
+    final currentLanguageCode =
+        currentLocale?.languageCode ??
+        Localizations.localeOf(context).languageCode;
+    final currentLanguageName = getLanguageName(currentLanguageCode);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF3b82f6).withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              FontAwesomeIcons.language,
+              color: Color(0xFF3b82f6),
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.language,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(currentLanguageName, style: theme.textTheme.bodySmall),
+              ],
+            ),
+          ),
+          PopupMenuButton<Locale>(
+            icon: Icon(
+              Icons.arrow_drop_down,
+              color: theme.colorScheme.onSurface,
+            ),
+            onSelected: (Locale locale) {
+              ref.read(localeProvider.notifier).setLocale(locale);
+            },
+            itemBuilder: (BuildContext context) {
+              final supportedLocales = ref.read(supportedLocalesProvider);
+
+              return supportedLocales.map((Locale locale) {
+                final isSelected = currentLanguageCode == locale.languageCode;
+
+                return PopupMenuItem<Locale>(
+                  value: locale,
+                  child: Row(
+                    children: [
+                      Icon(
+                        isSelected ? Icons.check_circle : Icons.circle_outlined,
+                        color: isSelected
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.onSurface.withValues(
+                                alpha: 0.5,
+                              ),
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(getLanguageName(locale.languageCode),
+                        style: TextStyle(
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected ? theme.colorScheme.primary : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMenuCard(
     BuildContext context, {
     required String title,
@@ -167,7 +268,7 @@ class ProfilePage extends ConsumerWidget {
     required VoidCallback onTap,
   }) {
     final theme = Theme.of(context);
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -176,7 +277,9 @@ class ProfilePage extends ConsumerWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+          ),
         ),
         child: Row(
           children: [
@@ -193,19 +296,20 @@ class ProfilePage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                  Text(title,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: theme.textTheme.bodySmall,
-                  ),
+                  Text(subtitle, style: theme.textTheme.bodySmall),
                 ],
               ),
             ),
-            FaIcon(FontAwesomeIcons.chevronRight, color: theme.colorScheme.onSurfaceVariant),
+            FaIcon(
+              FontAwesomeIcons.chevronRight,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ],
         ),
       ),
@@ -214,7 +318,8 @@ class ProfilePage extends ConsumerWidget {
 
   void _showAboutDialog(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -225,9 +330,12 @@ class ProfilePage extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('ReefLife', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
-                Text(
-                  'Sistema di Gestione Acquari',
+                Text(l10n.appTitle,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(l10n.appSubtitle,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     letterSpacing: 0.5,
@@ -245,15 +353,14 @@ class ProfilePage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Description
-                Text(
-                  'Piattaforma avanzata per il monitoraggio e la gestione degli acquari marini, progettata per gli appassionati di acquariofilia.',
+                Text(l10n.appDescription,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     height: 1.5,
                   ),
                 ),
                 const SizedBox(height: 24),
-                
+
                 // Legal & Copyright
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -272,8 +379,7 @@ class ProfilePage extends ConsumerWidget {
                             color: theme.colorScheme.primary,
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            'MIT License',
+                          Text(l10n.mitLicense,
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: theme.colorScheme.primary,
@@ -282,15 +388,13 @@ class ProfilePage extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        '© 2024-2025 ReefLife Project. Tutti i diritti riservati.',
+                      Text(l10n.copyright,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        'Software open source per la comunità acquariofila.',
+                      Text(l10n.openSourceMessage,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontStyle: FontStyle.italic,
@@ -307,7 +411,7 @@ class ProfilePage extends ConsumerWidget {
           TextButton.icon(
             onPressed: () => Navigator.pop(context),
             icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
-            label: const Text('Chiudi'),
+            label: Text(l10n.close),
             style: TextButton.styleFrom(
               foregroundColor: theme.colorScheme.primary,
             ),
@@ -316,7 +420,7 @@ class ProfilePage extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildSection({
     required String title,
     required IconData icon,
@@ -330,8 +434,7 @@ class ProfilePage extends ConsumerWidget {
           children: [
             FaIcon(icon, size: 16, color: theme.colorScheme.primary),
             const SizedBox(width: 8),
-            Text(
-              title,
+            Text(title,
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
@@ -344,8 +447,13 @@ class ProfilePage extends ConsumerWidget {
       ],
     );
   }
-  
-  Widget _buildTechItem(String name, String description, IconData icon, ThemeData theme) {
+
+  Widget _buildTechItem(
+    String name,
+    String description,
+    IconData icon,
+    ThemeData theme,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -366,14 +474,12 @@ class ProfilePage extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
+                Text(name,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Text(
-                  description,
+                Text(description,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -385,11 +491,12 @@ class ProfilePage extends ConsumerWidget {
       ),
     );
   }
-  
+
   void _showAquariumInfoDialog(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final aquariumsAsync = ref.read(aquariumsProvider);
-    
+
     aquariumsAsync.when(
       data: (aquariumsWithParams) {
         if (aquariumsWithParams.isEmpty) {
@@ -397,7 +504,9 @@ class ProfilePage extends ConsumerWidget {
             context: context,
             builder: (context) => AlertDialog(
               backgroundColor: theme.colorScheme.surface,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               title: Row(
                 children: [
                   Container(
@@ -413,11 +522,12 @@ class ProfilePage extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text('Nessun Acquario', style: theme.textTheme.titleLarge),
+                  Text(l10n.noAquariumSelected,
+                    style: theme.textTheme.titleLarge,
+                  ),
                 ],
               ),
-              content: Text(
-                'Non hai ancora creato un acquario. Crea il tuo primo acquario per visualizzare le informazioni.',
+              content: Text(l10n.noAquariumCreated,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -425,30 +535,33 @@ class ProfilePage extends ConsumerWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
+                  child: Text(l10n.ok),
                 ),
               ],
             ),
           );
           return;
         }
-        
+
         // Se c'è un acquario corrente, mostralo, altrimenti il primo
-        final currentAquariumId = aquariumId ?? ref.read(currentAquariumProvider);
+        final currentAquariumId =
+            aquariumId ?? ref.read(currentAquariumProvider);
         final aquariumData = currentAquariumId != null
             ? aquariumsWithParams.firstWhere(
                 (a) => a.aquarium.id == currentAquariumId,
                 orElse: () => aquariumsWithParams.first,
               )
             : aquariumsWithParams.first;
-        
+
         final aquarium = aquariumData.aquarium;
-        
+
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: theme.colorScheme.surface,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             title: Row(
               children: [
                 Container(
@@ -461,8 +574,8 @@ class ProfilePage extends ConsumerWidget {
                     aquarium.type == 'Marino'
                         ? FontAwesomeIcons.droplet
                         : aquarium.type == 'Reef'
-                            ? FontAwesomeIcons.atom
-                            : FontAwesomeIcons.water,
+                        ? FontAwesomeIcons.atom
+                        : FontAwesomeIcons.water,
                     color: const Color(0xFF34d399),
                     size: 24,
                   ),
@@ -472,13 +585,13 @@ class ProfilePage extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        aquarium.name,
-                        style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                      Text(aquarium.name,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Text(
-                        'Dettagli Acquario',
+                      Text(l10n.aquariumDetails,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -496,35 +609,36 @@ class ProfilePage extends ConsumerWidget {
                 children: [
                   // Tipo
                   _buildInfoRow(
-                    'Tipo',
+                    l10n.typeLabel,
                     aquarium.type,
                     FontAwesomeIcons.tag,
                     theme,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Volume
                   _buildInfoRow(
-                    'Volume',
-                    '${aquarium.volume.toInt()} Litri',
+                    l10n.volumeLabel,
+                    '${aquarium.volume.toInt()} ${l10n.litersUnit}',
                     FontAwesomeIcons.ruler,
                     theme,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Data creazione
                   if (aquarium.createdAt != null)
                     _buildInfoRow(
-                      'Creato il',
+                      l10n.createdOn,
                       '${aquarium.createdAt!.day}/${aquarium.createdAt!.month}/${aquarium.createdAt!.year}',
                       FontAwesomeIcons.calendar,
                       theme,
                     ),
-                  
+
                   if (aquarium.createdAt != null) const SizedBox(height: 16),
-                  
+
                   // Descrizione
-                  if (aquarium.description != null && aquarium.description!.isNotEmpty) ...[
+                  if (aquarium.description != null &&
+                      aquarium.description!.isNotEmpty) ...[
                     Row(
                       children: [
                         FaIcon(
@@ -533,8 +647,7 @@ class ProfilePage extends ConsumerWidget {
                           color: theme.colorScheme.primary,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          'Descrizione',
+                        Text(l10n.description,
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: theme.colorScheme.primary,
@@ -549,8 +662,7 @@ class ProfilePage extends ConsumerWidget {
                         color: theme.colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Text(
-                        aquarium.description!,
+                      child: Text(aquarium.description!,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -564,7 +676,7 @@ class ProfilePage extends ConsumerWidget {
               TextButton.icon(
                 onPressed: () => Navigator.pop(context),
                 icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
-                label: const Text('Chiudi'),
+                label: Text(l10n.close),
                 style: TextButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
                 ),
@@ -578,9 +690,7 @@ class ProfilePage extends ConsumerWidget {
           context: context,
           barrierDismissible: false,
           builder: (context) => Center(
-            child: CircularProgressIndicator(
-              color: theme.colorScheme.primary,
-            ),
+            child: CircularProgressIndicator(color: theme.colorScheme.primary),
           ),
         );
       },
@@ -589,12 +699,14 @@ class ProfilePage extends ConsumerWidget {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: theme.colorScheme.surface,
-            title: Text('Errore', style: TextStyle(color: theme.colorScheme.error)),
-            content: Text('Impossibile caricare le informazioni: $error'),
+            title: Text(l10n.errorTitle,
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
+            content: Text(l10n.unableToLoadInfo(error.toString())),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
+                child: Text(l10n.ok),
               ),
             ],
           ),
@@ -602,8 +714,13 @@ class ProfilePage extends ConsumerWidget {
       },
     );
   }
-  
-  Widget _buildInfoRow(String label, String value, IconData icon, ThemeData theme) {
+
+  Widget _buildInfoRow(
+    String label,
+    String value,
+    IconData icon,
+    ThemeData theme,
+  ) {
     return Row(
       children: [
         Container(
@@ -622,16 +739,14 @@ class ProfilePage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
+              Text(label,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 11,
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
-                value,
+              Text(value,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -642,7 +757,7 @@ class ProfilePage extends ConsumerWidget {
       ],
     );
   }
-  
+
   Widget _buildFeatureItem(String text, ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -658,12 +773,7 @@ class ProfilePage extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: theme.textTheme.bodySmall,
-            ),
-          ),
+          Expanded(child: Text(text, style: theme.textTheme.bodySmall)),
         ],
       ),
     );

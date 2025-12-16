@@ -25,7 +25,7 @@ class RetryPolicy {
 
     while (true) {
       attempt++;
-      
+
       try {
         return await fn();
       } catch (e) {
@@ -41,7 +41,7 @@ class RetryPolicy {
 
         // Attendi prima di riprovare (backoff esponenziale)
         await Future.delayed(delay);
-        
+
         // Calcola il prossimo delay con backoff esponenziale
         delay = Duration(
           milliseconds: min(

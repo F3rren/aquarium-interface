@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class CalculatorsPage extends StatefulWidget {
   const CalculatorsPage({super.key});
@@ -19,12 +20,13 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
   final TextEditingController _tankVolumeController = TextEditingController();
   final TextEditingController _currentValueController = TextEditingController();
   final TextEditingController _targetValueController = TextEditingController();
-  String _selectedAdditive = 'Calcio';
+  String? _selectedAdditive;
   double? _additiveResult;
   String _resultUnit = 'g';
 
   // Calcolo Cambio Acqua
-  final TextEditingController _tankVolumeWaterController = TextEditingController();
+  final TextEditingController _tankVolumeWaterController =
+      TextEditingController();
   final TextEditingController _percentageController = TextEditingController();
   double? _waterChangeResult;
   double? _saltNeeded;
@@ -35,14 +37,24 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
   double? _salinityPPT;
   double? _salinityPPM;
   double? _specificGravity;
-  String _conversionMode = 'density_to_salinity'; // density_to_salinity | salinity_to_density
+  String _conversionMode =
+      'density_to_salinity'; // density_to_salinity | salinity_to_density
 
   // Calcolo Illuminazione
   final TextEditingController _lightVolumeController = TextEditingController();
   final TextEditingController _wattsController = TextEditingController();
-  String _tankType = 'Solo Pesci';
+  String? _tankType;
   double? _wattsPerLiter;
   String? _lightRecommendation;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context)!;
+    // Inizializza solo la prima volta
+    _selectedAdditive ??= l10n.calcium;
+    _tankType ??= l10n.fishOnly;
+  }
 
   @override
   void dispose() {
@@ -82,25 +94,26 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     if (volume != null && current != null && target != null) {
       setState(() {
         final difference = (current - target).abs();
-        final isReduction = _selectedAdditive.contains('NO3') || 
-                           _selectedAdditive.contains('PO4') || 
-                           _selectedAdditive.contains('Carbonio');
-        
+        final isReduction =
+            _selectedAdditive?.contains('NO3') == true ||
+            _selectedAdditive?.contains('PO4') == true ||
+            _selectedAdditive?.contains('Carbonio') == true;
+
         // Se è riduzione e target >= current, non calcolare
         if (isReduction && target >= current) {
           _additiveResult = null;
           return;
         }
-        
+
         // Se è dosaggio e target <= current, non calcolare
         if (!isReduction && target <= current) {
           _additiveResult = null;
           return;
         }
-        
+
         // Formula semplificata: dipende dal prodotto, qui uso coefficienti medi
         double coefficient;
-        
+
         switch (_selectedAdditive) {
           case 'Calcio':
             coefficient = 0.05; // grammi per litro per 1 mg/L di aumento
@@ -140,7 +153,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
             coefficient = 0.05;
             _resultUnit = 'g';
         }
-        
+
         if (coefficient > 0) {
           _additiveResult = difference * coefficient;
         } else {
@@ -154,7 +167,10 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     final volume = double.tryParse(_tankVolumeWaterController.text);
     final percentage = double.tryParse(_percentageController.text);
 
-    if (volume != null && percentage != null && percentage > 0 && percentage <= 100) {
+    if (volume != null &&
+        percentage != null &&
+        percentage > 0 &&
+        percentage <= 100) {
       setState(() {
         _waterChangeResult = (volume * percentage) / 100;
         // Sale necessario: ~35g/L per salinità 1.025
@@ -195,32 +211,33 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     if (volume != null && watts != null && volume > 0) {
       setState(() {
         _wattsPerLiter = watts / volume;
-        
+        final l10n = AppLocalizations.of(context)!;
+
         // Raccomandazioni basate sul tipo di vasca
-        if (_tankType == 'Solo Pesci') {
+        if (_tankType == l10n.fishOnly) {
           if (_wattsPerLiter! < 0.25) {
-            _lightRecommendation = 'Insufficiente - Minimo 0.25 W/L per pesci';
+            _lightRecommendation = l10n.lightInsufficientFishOnly;
           } else if (_wattsPerLiter! <= 0.5) {
-            _lightRecommendation = 'Ottimale per vasca di soli pesci';
+            _lightRecommendation = l10n.lightOptimalFishOnly;
           } else {
-            _lightRecommendation = 'Eccessivo - Rischio alghe';
+            _lightRecommendation = l10n.lightExcessiveAlgaeRisk;
           }
-        } else if (_tankType == 'Pesci + Coralli Molli') {
+        } else if (_tankType == l10n.fishAndSoftCorals) {
           if (_wattsPerLiter! < 0.5) {
-            _lightRecommendation = 'Insufficiente - Minimo 0.5 W/L';
+            _lightRecommendation = l10n.lightInsufficientSoftCorals;
           } else if (_wattsPerLiter! <= 1.0) {
-            _lightRecommendation = 'Ottimale per coralli molli (LPS)';
+            _lightRecommendation = l10n.lightOptimalSoftCorals;
           } else {
-            _lightRecommendation = 'Molto buono - Adatto anche SPS';
+            _lightRecommendation = l10n.lightVeryGoodSPS;
           }
         } else {
           // Coralli SPS
           if (_wattsPerLiter! < 1.0) {
-            _lightRecommendation = 'Insufficiente - Minimo 1.0 W/L per SPS';
+            _lightRecommendation = l10n.lightInsufficientSPS;
           } else if (_wattsPerLiter! <= 1.5) {
-            _lightRecommendation = 'Ottimale per coralli SPS';
+            _lightRecommendation = l10n.lightOptimalSPS;
           } else {
-            _lightRecommendation = 'Molto potente - Ottimo per SPS esigenti';
+            _lightRecommendation = l10n.lightVeryPowerfulSPS;
           }
         }
       });
@@ -230,11 +247,14 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Calcolatori', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        title: Text(l10n.calculators,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
@@ -244,52 +264,83 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
         padding: const EdgeInsets.all(20),
         children: [
           const SizedBox(height: 10),
-          
+
           // CALCOLO VOLUME
           _buildCalculatorCard(
-            title: 'Calcolo Volume Acquario',
+            title: l10n.volumeCalculation,
             icon: FontAwesomeIcons.rulerCombined,
             color: theme.colorScheme.primary,
             child: Column(
               children: [
-                Text(
-                  'Inserisci le dimensioni dell\'acquario in centimetri',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                Text(l10n.enterAquariumDimensions,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                _buildInputField('Lunghezza (cm)', _lengthController, FontAwesomeIcons.ruler),
+                _buildInputField(
+                  l10n.length,
+                  _lengthController,
+                  FontAwesomeIcons.ruler,
+                ),
                 const SizedBox(height: 12),
-                _buildInputField('Larghezza (cm)', _widthController, FontAwesomeIcons.ruler),
+                _buildInputField(
+                  l10n.width,
+                  _widthController,
+                  FontAwesomeIcons.ruler,
+                ),
                 const SizedBox(height: 12),
-                _buildInputField('Altezza (cm)', _heightController, FontAwesomeIcons.rulerVertical),
+                _buildInputField(
+                  l10n.height,
+                  _heightController,
+                  FontAwesomeIcons.rulerVertical,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateVolume,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Calcola Volume', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  child: Text(l10n.calculateVolume,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
                 if (_volumeResult != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    'Volume Totale',
+                    l10n.totalVolume,
                     '${_volumeResult!.toStringAsFixed(1)} L',
                     theme.colorScheme.primary,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Volume netto stimato: ${(_volumeResult! * 0.85).toStringAsFixed(1)} L',
-                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                  Text(l10n.estimatedNetVolume(
+                      (_volumeResult! * 0.85).toStringAsFixed(1),
+                    ),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    '(considerando rocce e substrato)',
-                    style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.4), fontSize: 11, fontStyle: FontStyle.italic),
+                  Text(l10n.consideringRocksAndSubstrate,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ],
               ],
@@ -300,36 +351,57 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
           // CALCOLO DOSAGGIO ADDITIVI
           _buildCalculatorCard(
-            title: 'Calcolo Dosaggio Additivi',
+            title: l10n.additivesDosageCalculation,
             icon: FontAwesomeIcons.flask,
             color: theme.colorScheme.tertiary,
             child: Column(
               children: [
-                Text(
-                  'Calcola la quantità di additivo da dosare',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                Text(l10n.calculateAdditiveDosage,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+                    border: Border.all(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                    ),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: _selectedAdditive,
                       isExpanded: true,
                       dropdownColor: theme.colorScheme.surfaceContainerHighest,
-                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15),
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                        fontSize: 15,
+                      ),
                       items: [
                         DropdownMenuItem(
                           enabled: false,
-                          child: Text('── DOSAGGIO ──', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
+                          child: Text(l10n.dosageSection,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
-                        ...['Calcio', 'Magnesio', 'KH', 'Iodio', 'Stronzio'].map((String value) {
+                        ...[
+                          l10n.calcium,
+                          l10n.magnesium,
+                          l10n.kh,
+                          l10n.iodine,
+                          l10n.strontium,
+                        ].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Padding(
@@ -340,14 +412,26 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                         }),
                         DropdownMenuItem(
                           enabled: false,
-                          child: Text('── RIDUZIONE ──', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
+                          child: Text(l10n.reductionSection,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
-                        ...['Nitrati (NO3)', 'Fosfati (PO4)', 'NO3:PO4-X (Red Sea)', 'Carbonio Attivo'].map((String value) {
+                        ...[
+                          l10n.nitrates,
+                          l10n.phosphates,
+                          l10n.no3po4xRedSea,
+                          l10n.activeCarbon,
+                        ].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 12),
-                              child: Text(value, style: const TextStyle(fontSize: 14)),
+                              child: Text(value,
+                                style: const TextStyle(fontSize: 14),
+                              ),
                             ),
                           );
                         }),
@@ -361,16 +445,20 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                _buildInputField('Volume acquario (L)', _tankVolumeController, FontAwesomeIcons.water),
+                _buildInputField(
+                  l10n.aquariumVolume,
+                  _tankVolumeController,
+                  FontAwesomeIcons.water,
+                ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Valore attuale (${_getUnit()})',
+                  l10n.currentValue(_getUnit()),
                   _currentValueController,
                   FontAwesomeIcons.chartLine,
                 ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Valore target (${_getUnit()})',
+                  l10n.targetValue(_getUnit()),
                   _targetValueController,
                   FontAwesomeIcons.flag,
                 ),
@@ -380,44 +468,63 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.tertiary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Calcola Dosaggio', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  child: Text(l10n.calculateDosage,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
                 if (_additiveResult != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    _selectedAdditive.contains('NO3:PO4-X') || _selectedAdditive.contains('Carbonio')
-                        ? 'Quantità da dosare (riduzione)'
-                        : 'Quantità da dosare',
+                    _selectedAdditive?.contains('NO3:PO4-X') == true ||
+                            _selectedAdditive?.contains('Carbonio') == true
+                        ? l10n.quantityToDoseReduction
+                        : l10n.quantityToDose,
                     '${_additiveResult!.toStringAsFixed(2)} $_resultUnit',
                     theme.colorScheme.tertiary,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    '⚠️ Valori indicativi: verifica le istruzioni del produttore',
+                  Text(l10n.warningIndicativeValues,
                     style: TextStyle(color: Colors.orange, fontSize: 11),
                     textAlign: TextAlign.center,
                   ),
-                ] else if (_selectedAdditive == 'Nitrati (NO3)' || _selectedAdditive == 'Fosfati (PO4)') ...[
+                ] else if (_selectedAdditive == l10n.nitrates ||
+                    _selectedAdditive == l10n.phosphates) ...[
                   const SizedBox(height: 20),
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.orange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.orange.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Column(
                       children: [
-                        const FaIcon(FontAwesomeIcons.circleInfo, color: Colors.orange, size: 32),
+                        const FaIcon(
+                          FontAwesomeIcons.circleInfo,
+                          color: Colors.orange,
+                          size: 32,
+                        ),
                         const SizedBox(height: 8),
-                        Text(
-                          _selectedAdditive == 'Nitrati (NO3)' 
-                            ? 'Per ridurre i Nitrati:\n• Cambio acqua regolare (20% settimanale)\n• Skimmer efficiente\n• Refill osmosi\n• Carbonio attivo liquido\n• NO3:PO4-X (Red Sea)'
-                            : 'Per ridurre i Fosfati:\n• Resine anti-fosfati (GFO)\n• Skimmer efficiente\n• Cambio acqua regolare\n• NO3:PO4-X (Red Sea)\n• Evitare sovralimentazione',
-                          style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                        Text(_selectedAdditive == l10n.nitrates
+                              ? l10n.nitratesReductionAdvice
+                              : l10n.phosphatesReductionAdvice,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -430,50 +537,69 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
           const SizedBox(height: 20),
 
-          // CALCOLO CAMBIO ACQUA
+          //CALCOLO CAMBIO ACQUA
           _buildCalculatorCard(
-            title: 'Calcolo Cambio Acqua',
+            title: l10n.waterChangeCalculation,
             icon: FontAwesomeIcons.droplet,
             color: theme.colorScheme.secondary,
             child: Column(
               children: [
-                Text(
-                  'Calcola litri e sale necessario per il cambio acqua',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                Text(l10n.calculateWaterAndSalt,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                _buildInputField('Volume acquario (L)', _tankVolumeWaterController, FontAwesomeIcons.water),
+                _buildInputField(
+                  l10n.aquariumVolumeL,
+                  _tankVolumeWaterController,
+                  FontAwesomeIcons.water,
+                ),
                 const SizedBox(height: 12),
-                _buildInputField('Percentuale cambio (%)', _percentageController, FontAwesomeIcons.percent),
+                _buildInputField(
+                  l10n.changePercentage,
+                  _percentageController,
+                  FontAwesomeIcons.percent,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateWaterChange,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.secondary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Calcola', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  child: Text(l10n.calculate,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
                 ),
                 if (_waterChangeResult != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    'Acqua da cambiare',
+                    l10n.waterToChange,
                     '${_waterChangeResult!.toStringAsFixed(1)} L',
                     theme.colorScheme.secondary,
                   ),
                   const SizedBox(height: 12),
                   _buildResult(
-                    'Sale necessario',
+                    l10n.saltNeeded,
                     '${_saltNeeded!.toStringAsFixed(0)} g',
                     theme.colorScheme.secondary,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Calcolato per salinità 1.025 (35g/L)',
-                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                  Text(l10n.calculatedForSalinity,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ],
@@ -484,40 +610,50 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
           // CALCOLO DENSITÀ/SALINITÀ
           _buildCalculatorCard(
-            title: 'Conversione Densità/Salinità',
+            title: l10n.densitySalinityConversion,
             icon: FontAwesomeIcons.flask,
             color: theme.colorScheme.tertiary,
             child: Column(
               children: [
-                Text(
-                  'Converti tra densità e salinità',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                Text(l10n.convertBetweenDensityAndSalinity,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Selettore modalità
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: theme.colorScheme.tertiary.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: DropdownButton<String>(
                     value: _conversionMode,
                     isExpanded: true,
                     dropdownColor: theme.colorScheme.surfaceContainerHighest,
                     underline: const SizedBox(),
-                    style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15),
-                    items: const [
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface,
+                      fontSize: 15,
+                    ),
+                    items: [
                       DropdownMenuItem(
                         value: 'density_to_salinity',
-                        child: Text('Da Densità (g/cm³) a Salinità (ppt)'),
+                        child: Text(l10n.fromDensityToSalinity),
                       ),
                       DropdownMenuItem(
                         value: 'salinity_to_density',
-                        child: Text('Da Salinità (ppt) a Densità (g/cm³)'),
+                        child: Text(l10n.fromSalinityToDensity),
                       ),
                     ],
                     onChanged: (value) {
@@ -531,51 +667,67 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     },
                   ),
                 ),
-                
+
                 const SizedBox(height: 12),
                 _buildInputField(
-                  _conversionMode == 'density_to_salinity' 
-                    ? 'Densità (es: 1.025)' 
-                    : 'Salinità (ppt, es: 35)',
+                  _conversionMode == 'density_to_salinity'
+                      ? l10n.densityExample
+                      : l10n.salinityExample,
                   _densityController,
                   FontAwesomeIcons.water,
                 ),
                 const SizedBox(height: 12),
-                _buildInputField('Temperatura (°C)', _temperatureController, FontAwesomeIcons.temperatureHalf),
+                _buildInputField(
+                  l10n.temperatureCelsius,
+                  _temperatureController,
+                  FontAwesomeIcons.temperatureHalf,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateDensitySalinity,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.tertiary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Converti', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  child: Text(l10n.convert,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
                 if (_salinityPPT != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    'Salinità',
+                    l10n.salinityLabel,
                     '${_salinityPPT!.toStringAsFixed(2)} ppt',
                     theme.colorScheme.tertiary,
                   ),
                   const SizedBox(height: 12),
                   _buildResult(
-                    'Salinità (ppm)',
+                    l10n.salinityPPM,
                     '${_salinityPPM!.toStringAsFixed(0)} ppm',
                     theme.colorScheme.tertiary,
                   ),
                   const SizedBox(height: 12),
                   _buildResult(
-                    'Densità',
+                    l10n.densityLabel,
                     '${_specificGravity!.toStringAsFixed(4)} g/cm³',
                     theme.colorScheme.tertiary,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Valori indicativi - Usare rifrattometro per misure precise',
-                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                  Text(l10n.indicativeValuesRefractometer,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ],
@@ -586,36 +738,55 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
           // CALCOLO ILLUMINAZIONE
           _buildCalculatorCard(
-            title: 'Calcolo Illuminazione',
+            title: l10n.lightingCalculation,
             icon: FontAwesomeIcons.sun,
             color: Colors.amber,
             child: Column(
               children: [
-                Text(
-                  'Calcola il rapporto watt/litro ottimale',
-                  style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13),
+                Text(l10n.calculateWattsPerLiter,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Selettore tipo vasca
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: Colors.amber.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: DropdownButton<String>(
                     value: _tankType,
                     isExpanded: true,
                     dropdownColor: theme.colorScheme.surfaceContainerHighest,
                     underline: const SizedBox(),
-                    style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15),
-                    items: const [
-                      DropdownMenuItem(value: 'Solo Pesci', child: Text('Solo Pesci')),
-                      DropdownMenuItem(value: 'Pesci + Coralli Molli', child: Text('Pesci + Coralli Molli (LPS)')),
-                      DropdownMenuItem(value: 'Coralli SPS', child: Text('Coralli SPS')),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface,
+                      fontSize: 15,
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: l10n.fishOnly,
+                        child: Text(l10n.fishOnly),
+                      ),
+                      DropdownMenuItem(
+                        value: l10n.fishAndSoftCorals,
+                        child: Text(l10n.fishAndSoftCorals),
+                      ),
+                      DropdownMenuItem(
+                        value: l10n.spsCorals,
+                        child: Text(l10n.spsCorals),
+                      ),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -626,26 +797,41 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     },
                   ),
                 ),
-                
+
                 const SizedBox(height: 12),
-                _buildInputField('Volume acquario (L)', _lightVolumeController, FontAwesomeIcons.water),
+                _buildInputField(
+                  l10n.aquariumVolumeL,
+                  _lightVolumeController,
+                  FontAwesomeIcons.water,
+                ),
                 const SizedBox(height: 12),
-                _buildInputField('Potenza luci (W)', _wattsController, FontAwesomeIcons.bolt),
+                _buildInputField(
+                  l10n.lightPowerW,
+                  _wattsController,
+                  FontAwesomeIcons.bolt,
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _calculateLighting,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,
                     foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Calcola', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                  child: Text(l10n.calculate,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
                 ),
                 if (_wattsPerLiter != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    'Watt per Litro',
+                    l10n.wattsPerLiter,
                     '${_wattsPerLiter!.toStringAsFixed(2)} W/L',
                     Colors.amber,
                   ),
@@ -655,25 +841,29 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: Colors.amber.withValues(alpha: 0.3),
+                      ),
                     ),
-                    child: Text(
-                      _lightRecommendation!,
-                      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14),
+                    child: Text(_lightRecommendation!,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                        fontSize: 14,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Fotoperiodo consigliato: 8-10 ore/giorno',
-                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12),
+                  Text(l10n.recommendedPhotoperiod,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ],
             ),
           ),
-
-
         ],
       ),
     );
@@ -707,13 +897,15 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     required Widget child,
   }) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -730,8 +922,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  title,
+                child: Text(title,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: 17,
@@ -748,9 +939,13 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     );
   }
 
-  Widget _buildInputField(String label, TextEditingController controller, IconData icon) {
+  Widget _buildInputField(
+    String label,
+    TextEditingController controller,
+    IconData icon,
+  ) {
     final theme = Theme.of(context);
-    
+
     return TextField(
       controller: controller,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -758,11 +953,17 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
-        prefixIcon: Icon(icon, color: theme.colorScheme.onSurfaceVariant, size: 20),
+        prefixIcon: Icon(
+          icon,
+          color: theme.colorScheme.onSurfaceVariant,
+          size: 20,
+        ),
         filled: true,
         fillColor: theme.colorScheme.surfaceContainerHighest,
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
+          borderSide: BorderSide(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         focusedBorder: OutlineInputBorder(
@@ -775,7 +976,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
   Widget _buildResult(String label, String value, Color color) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -786,12 +987,13 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
+          Text(label,
+            style: TextStyle(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
           ),
-          Text(
-            value,
+          Text(value,
             style: TextStyle(
               color: color,
               fontSize: 20,
@@ -803,4 +1005,3 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
     );
   }
 }
-

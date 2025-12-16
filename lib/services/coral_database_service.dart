@@ -3,7 +3,8 @@ import 'api_service.dart';
 
 /// Servizio per gestire il database delle specie di coralli disponibili
 class CoralDatabaseService {
-  static final CoralDatabaseService _instance = CoralDatabaseService._internal();
+  static final CoralDatabaseService _instance =
+      CoralDatabaseService._internal();
   factory CoralDatabaseService() => _instance;
   CoralDatabaseService._internal();
 
@@ -18,7 +19,7 @@ class CoralDatabaseService {
 
     try {
       final response = await _apiService.get('/species/corals');
-      
+
       // Gestisci sia formato array diretto che con wrapper
       List<dynamic> coralList;
       if (response is List) {
@@ -34,8 +35,10 @@ class CoralDatabaseService {
       } else {
         coralList = [];
       }
-      
-      _cachedCorals = coralList.map((json) => CoralSpecies.fromJson(json as Map<String, dynamic>)).toList();
+
+      _cachedCorals = coralList
+          .map((json) => CoralSpecies.fromJson(json as Map<String, dynamic>))
+          .toList();
       return _cachedCorals!;
     } catch (e) {
       return [];
@@ -64,19 +67,27 @@ class CoralDatabaseService {
   /// Filtra coralli per tipo (SPS, LPS, soft, etc.)
   Future<List<CoralSpecies>> getCoralsByType(String type) async {
     final allCorals = await getAllCorals();
-    return allCorals.where((coral) => coral.type.toLowerCase() == type.toLowerCase()).toList();
+    return allCorals
+        .where((coral) => coral.type.toLowerCase() == type.toLowerCase())
+        .toList();
   }
 
   /// Filtra coralli per requisiti di luce
-  Future<List<CoralSpecies>> getCoralsByLightRequirement(String lightRequirement) async {
+  Future<List<CoralSpecies>> getCoralsByLightRequirement(
+    String lightRequirement,
+  ) async {
     final allCorals = await getAllCorals();
-    return allCorals.where((coral) => coral.lightRequirement == lightRequirement).toList();
+    return allCorals
+        .where((coral) => coral.lightRequirement == lightRequirement)
+        .toList();
   }
 
   /// Filtra coralli per dimensione vasca minima
   Future<List<CoralSpecies>> getCoralsByTankSize(int tankSizeInLiters) async {
     final allCorals = await getAllCorals();
-    return allCorals.where((coral) => coral.minTankSize <= tankSizeInLiters).toList();
+    return allCorals
+        .where((coral) => coral.minTankSize <= tankSizeInLiters)
+        .toList();
   }
 
   /// Ottieni un corallo per ID

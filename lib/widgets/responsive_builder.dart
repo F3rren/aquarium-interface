@@ -16,7 +16,7 @@ class ResponsiveBuilder extends StatelessWidget {
       isDesktop: ResponsiveBreakpoints.isDesktop(width),
       screenWidth: width,
     );
-    
+
     return builder(context, info);
   }
 }
@@ -34,13 +34,9 @@ class ResponsiveInfo {
     required this.isDesktop,
     required this.screenWidth,
   });
-  
+
   /// Ritorna valore in base al device type
-  T value<T>({
-    required T mobile,
-    T? tablet,
-    T? desktop,
-  }) {
+  T value<T>({required T mobile, T? tablet, T? desktop}) {
     if (isDesktop) return desktop ?? tablet ?? mobile;
     if (isTablet) return tablet ?? mobile;
     return mobile;
@@ -71,10 +67,7 @@ class ResponsiveContainer extends StatelessWidget {
     return Center(
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: maxWidth ?? defaultMaxWidth),
-        child: Padding(
-          padding: padding ?? defaultPadding,
-          child: child,
-        ),
+        child: Padding(padding: padding ?? defaultPadding, child: child),
       ),
     );
   }

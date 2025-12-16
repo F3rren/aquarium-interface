@@ -4,7 +4,8 @@ import '../models/notification_settings.dart';
 
 /// Servizio singleton per gestire la persistenza delle impostazioni notifiche
 class NotificationPreferencesService {
-  static final NotificationPreferencesService _instance = NotificationPreferencesService._internal();
+  static final NotificationPreferencesService _instance =
+      NotificationPreferencesService._internal();
   factory NotificationPreferencesService() => _instance;
   NotificationPreferencesService._internal();
 
@@ -15,7 +16,7 @@ class NotificationPreferencesService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = prefs.getString(_keySettings);
-      
+
       if (jsonString != null && jsonString.isNotEmpty) {
         // Carica impostazioni salvate
         final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
@@ -26,7 +27,7 @@ class NotificationPreferencesService {
       // In caso di errore, restituisci impostazioni di default
       return NotificationSettings();
     }
-    
+
     // Restituisce impostazioni di default se non trovate
     return NotificationSettings();
   }
@@ -38,7 +39,7 @@ class NotificationPreferencesService {
       final jsonMap = settings.toJson();
       final jsonString = jsonEncode(jsonMap);
       final success = await prefs.setString(_keySettings, jsonString);
-      
+
       return success;
     } catch (e) {
       return false;
@@ -50,7 +51,7 @@ class NotificationPreferencesService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final success = await prefs.remove(_keySettings);
-      
+
       return success;
     } catch (e) {
       return false;
@@ -74,7 +75,7 @@ class NotificationPreferencesService {
     ParameterThresholds newThreshold,
   ) async {
     NotificationSettings updatedSettings;
-    
+
     switch (parameterName) {
       case 'Temperatura':
         updatedSettings = currentSettings.copyWith(temperature: newThreshold);
@@ -106,7 +107,7 @@ class NotificationPreferencesService {
       default:
         return false;
     }
-    
+
     return await saveSettings(updatedSettings);
   }
 
@@ -115,7 +116,7 @@ class NotificationPreferencesService {
     try {
       final settings = await loadSettings();
       final hasCustom = await hasCustomSettings();
-      
+
       int enabledParameters = 0;
       if (settings.temperature.enabled) enabledParameters++;
       if (settings.ph.enabled) enabledParameters++;
@@ -126,13 +127,16 @@ class NotificationPreferencesService {
       if (settings.kh.enabled) enabledParameters++;
       if (settings.nitrate.enabled) enabledParameters++;
       if (settings.phosphate.enabled) enabledParameters++;
-      
+
       int enabledReminders = 0;
       if (settings.maintenanceReminders.waterChange.enabled) enabledReminders++;
-      if (settings.maintenanceReminders.filterCleaning.enabled) enabledReminders++;
-      if (settings.maintenanceReminders.parameterTesting.enabled) enabledReminders++;
-      if (settings.maintenanceReminders.lightMaintenance.enabled) enabledReminders++;
-      
+      if (settings.maintenanceReminders.filterCleaning.enabled)
+        enabledReminders++;
+      if (settings.maintenanceReminders.parameterTesting.enabled)
+        enabledReminders++;
+      if (settings.maintenanceReminders.lightMaintenance.enabled)
+        enabledReminders++;
+
       return {
         'hasCustomSettings': hasCustom,
         'enabledAlerts': settings.enabledAlerts,

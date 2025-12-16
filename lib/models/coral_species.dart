@@ -72,7 +72,6 @@ class CoralSpecies {
     };
   }
 
-
   // Helper per colore basato su difficoltà
   Color get difficultyColor {
     switch (difficulty.toLowerCase()) {
