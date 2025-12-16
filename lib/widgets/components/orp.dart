@@ -4,6 +4,7 @@ import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/widgets/animated_number.dart';
 import 'package:acquariumfe/widgets/tap_effect_card.dart';
 import 'package:acquariumfe/widgets/components/target_progress_bar.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class OrpMeter extends StatelessWidget {
   final double currentOrp;
@@ -23,17 +24,18 @@ class OrpMeter extends StatelessWidget {
     return const Color(0xFFef4444);
   }
 
-  String _getStatus() {
-    if (currentOrp < 300) return 'Basso';
-    if (currentOrp >= 300 && currentOrp <= 400) return 'Ottimale';
-    return 'Alto';
+  String _getStatus(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (currentOrp < 300) return l10n.low;
+    if (currentOrp >= 300 && currentOrp <= 400) return l10n.optimal;
+    return l10n.high;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = _getOrpColor();
-    final status = _getStatus();
+    final status = _getStatus(context);
 
     return TapEffectCard(
       onTap: () => _showEditTargetDialog(context),
@@ -141,6 +143,7 @@ class OrpMeter extends StatelessWidget {
 
   void _showEditTargetDialog(BuildContext context) async {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(
       text:
           targetOrp?.toStringAsFixed(0) ??
@@ -157,7 +160,7 @@ class OrpMeter extends StatelessWidget {
             const FaIcon(FontAwesomeIcons.flask, color: Color(0xFF60a5fa)),
             const SizedBox(width: 12),
             Text(
-              'Target ORP',
+              l10n.targetOrp,
               style: TextStyle(color: theme.colorScheme.onSurface),
             ),
           ],
@@ -167,7 +170,7 @@ class OrpMeter extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Imposta il valore ORP desiderato:',
+              l10n.setDesiredOrp,
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -201,7 +204,7 @@ class OrpMeter extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Range tipico: 300-400 mV',
+              l10n.typicalRangeOrp,
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
                 fontSize: 12,
@@ -213,7 +216,7 @@ class OrpMeter extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Annulla',
+              l10n.cancel,
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
@@ -230,7 +233,7 @@ class OrpMeter extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Salva', style: TextStyle(color: Colors.white)),
+            child: Text(l10n.save, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),

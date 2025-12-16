@@ -538,7 +538,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 case 'difficile':
                   return const Color(0xFFef4444);
                 default:
-                  return const Color(0xFF6b7280);
+                  return const Color.fromARGB(255, 0, 0, 0);
               }
             }
 

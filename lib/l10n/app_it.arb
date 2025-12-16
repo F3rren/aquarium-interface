@@ -1,0 +1,528 @@
+{
+  "@@locale": "it",
+  "appTitle": "ReefLife",
+  "@appTitle": {
+    "description": "Il titolo dell'applicazione"
+  },
+  
+  "aquariums": "Acquari",
+  "aquarium": "Acquario",
+  "parameters": "Parametri",
+  "fish": "Pesci",
+  "fishes": "Pesci",
+  "corals": "Coralli",
+  "coral": "Corallo",
+  "maintenance": "Manutenzione",
+  "alerts": "Alert",
+  "settings": "Impostazioni",
+  "dashboard": "Dashboard",
+  "charts": "Grafici",
+  "profile": "Profilo",
+  "myAquarium": "La Mia Vasca",
+  
+  "noAquarium": "Nessun Acquario",
+  "noAquariumDescription": "Inizia creando il tuo primo acquario per monitorare i parametri dell'acqua e la salute dei tuoi pesci.",
+  "createAquarium": "Crea Acquario",
+  
+  "noFish": "Nessun Pesce",
+  "noFishDescription": "Aggiungi i tuoi pesci per tenere traccia della popolazione del tuo acquario.",
+  "addFish": "Aggiungi Pesce",
+  
+  "noCoral": "Nessun Corallo",
+  "noCoralDescription": "Documenta i coralli presenti nel tuo acquario marino.",
+  "addCoral": "Aggiungi Corallo",
+  
+  "noHistory": "Nessuno Storico",
+  "noHistoryDescription": "Non ci sono ancora dati storici disponibili. I parametri verranno registrati automaticamente.",
+  
+  "noTasks": "Nessun Task",
+  "noTasksDescription": "Crea promemoria per le attività di manutenzione del tuo acquario.",
+  "createTask": "Crea Task",
+  
+  "allOk": "Tutto OK!",
+  "allOkDescription": "Non ci sono alert attivi. Tutti i parametri sono nella norma.",
+  
+  "noResults": "Nessun Risultato",
+  "noResultsDescription": "Non abbiamo trovato risultati per \"{query}\".\nProva con parole chiave diverse.",
+  "@noResultsDescription": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "errorTitle": "Ops!",
+  "errorDescription": "Si è verificato un errore",
+  "retry": "Riprova",
+  
+  "offline": "Sei Offline",
+  "offlineDescription": "Verifica la tua connessione internet e riprova.",
+  
+  "save": "Salva",
+  "cancel": "Annulla",
+  "delete": "Elimina",
+  "edit": "Modifica",
+  "close": "Chiudi",
+  "ok": "OK",
+  
+  "name": "Nome",
+  "species": "Specie",
+  "size": "Dimensione",
+  "notes": "Note",
+  "date": "Data",
+  "quantity": "Quantità",
+  
+  "addFishTitle": "Aggiungi Pesce",
+  "editFishTitle": "Modifica Pesce",
+  "fishNameLabel": "Nome *",
+  "fishNameHint": "es: Nemo",
+  "fishSpeciesLabel": "Specie *",
+  "fishSpeciesHint": "es: Amphiprion ocellaris",
+  "fishSizeLabel": "Dimensione (cm) *",
+  "fishSizeHint": "es: 8.5",
+  "quantityLabel": "Quantità",
+  "quantityHint": "Numero di esemplari da aggiungere",
+  "quantityInfo": "Se aggiungi più esemplari, verranno numerati automaticamente",
+  "notesLabel": "Note",
+  "notesHint": "Aggiungi note opzionali",
+  "selectFromList": "Seleziona dalla lista",
+  "orEnterManually": "oppure inserisci manualmente",
+  "noCompatibleFish": "Nessun pesce compatibile con acquario {waterType}",
+  "@noCompatibleFish": {
+    "placeholders": {
+      "waterType": {
+        "type": "String"
+      }
+    }
+  },
+  "noDatabaseFish": "Nessun pesce disponibile nel database",
+  
+  "addCoralTitle": "Aggiungi Corallo",
+  "editCoralTitle": "Modifica Corallo",
+  "coralNameLabel": "Nome *",
+  "coralNameHint": "es: Montipora arancione",
+  "coralSpeciesLabel": "Specie *",
+  "coralSpeciesHint": "es: Montipora digitata",
+  "coralTypeLabel": "Tipo *",
+  "coralSizeLabel": "Dimensione (cm) *",
+  "coralSizeHint": "es: 5.0",
+  "coralPlacementLabel": "Posizionamento *",
+  
+  "coralTypeSPS": "SPS",
+  "coralTypeLPS": "LPS",
+  "coralTypeSoft": "Molle",
+  
+  "placementTop": "Alto",
+  "placementMiddle": "Medio",
+  "placementBottom": "Basso",
+  
+  "difficultyEasy": "Facile",
+  "difficultyIntermediate": "Intermedio",
+  "difficultyHard": "Difficile",
+  
+  "difficultyBeginner": "Principiante",
+  "difficultyExpert": "Esperto",
+  
+  "temperamentPeaceful": "Pacifico",
+  "temperamentSemiAggressive": "Semi-aggressivo",
+  "temperamentAggressive": "Aggressivo",
+  
+  "dietHerbivore": "Erbivoro",
+  "dietCarnivore": "Carnivoro",
+  "dietOmnivore": "Onnivoro",
+  
+  "reefSafe": "Reef-safe",
+  "yes": "Sì",
+  "no": "No",
+  
+  "difficulty": "Difficoltà",
+  "minTankSize": "Vasca minima",
+  "temperament": "Temperamento",
+  "diet": "Dieta",
+  
+  "filtersAndSearch": "Filtri e Ricerca",
+  "clearAll": "Cancella tutto",
+  "searchByName": "Ricerca per nome",
+  "searchPlaceholder": "Cerca per nome...",
+  "insertionDate": "Data inserimento in vasca",
+  "selectType": "Seleziona tipo",
+  "selectDate": "Seleziona data",
+  "removeDateFilter": "Rimuovi filtro data",
+  "sorting": "Ordinamento",
+  "ascendingOrder": "Ordine crescente",
+  
+  "fillAllFields": "Compila tutti i campi obbligatori",
+  "invalidSize": "Dimensione non valida",
+  "invalidQuantity": "Quantità non valida",
+  "databaseLoadError": "Errore caricamento database: {error}",
+  "@databaseLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "language": "Lingua",
+  "selectLanguage": "Seleziona lingua",
+  
+  "settings": "Impostazioni",
+  "ok": "OK",
+  "close": "Chiudi",
+  
+  "tools": "Strumenti",
+  "calculators": "Calcolatori",
+  "calculatorsSubtitle": "Volume, dosaggio additivi, cambio acqua",
+  "myInhabitants": "I Miei Abitanti",
+  "myInhabitantsSubtitle": "Gestisci pesci e coralli",
+  "aquariumInfo": "Info Acquario",
+  "aquariumInfoSubtitle": "Nome, volume, tipo",
+  "theme": "Tema",
+  "darkMode": "Modalità scura",
+  "lightMode": "Modalità chiara",
+  "appInfo": "Informazioni App",
+  "appInfoSubtitle": "Versione, crediti",
+  "noAquariumSelected": "Nessun Acquario",
+  "unableToLoadInfo": "Impossibile caricare le informazioni: {error}",
+  "@unableToLoadInfo": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "errorLoadingParameters": "Errore nel caricamento parametri",
+  "retry": "Riprova",
+  "allOk": "TUTTO OK",
+  "warning": "ATTENZIONE",
+  "critical": "CRITICO",
+  "aquariumStatus": "Stato Acquario",
+  "updatedNow": "Aggiornato ora • {okParams}/{totalParams} parametri OK",
+  "@updatedNow": {
+    "placeholders": {
+      "okParams": {
+        "type": "int"
+      },
+      "totalParams": {
+        "type": "int"
+      }
+    }
+  },
+  "temperature": "Temperatura",
+  "ph": "pH",
+  "salinity": "Salinità",
+  "orp": "ORP",
+  "excellent": "Eccellente",
+  "good": "Buono",
+  "parametersOk": "Parametri OK",
+  "parametersNeedAttention": "{count} parametri necessitano attenzione",
+  "@parametersNeedAttention": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waterChange": "Cambio Acqua",
+  
+  "healthScore": "Health Score",
+  "parametersInOptimalRange": "{okParams}/{totalParams} parametri nel range ottimale",
+  "@parametersInOptimalRange": {
+    "placeholders": {
+      "okParams": {
+        "type": "int"
+      },
+      "totalParams": {
+        "type": "int"
+      }
+    }
+  },
+  "upcomingReminders": "Prossimi Promemoria",
+  "filterCleaning": "Pulizia Filtro",
+  "parameterTesting": "Test Parametri",
+  "days": "gg",
+  "recommendations": "Raccomandazioni",
+  "checkOutOfRangeParameters": "Controllare parametri fuori range",
+  "checkSkimmer": "Controllare skimmer",
+  "weeklyCleaningRecommended": "Pulizia settimanale consigliata",
+  "khTest": "Test KH",
+  "lastTest3DaysAgo": "Ultimo test: 3 giorni fa",
+  
+  "parametersUpdated": "Parametri aggiornati",
+  "error": "Errore",
+  "noParametersAvailable": "Nessun parametro disponibile",
+  "chemicalParameters": "Parametri Chimici",
+  "calciumCa": "Calcio (Ca)",
+  "magnesiumMg": "Magnesio (Mg)",
+  "nitratesNO3": "Nitrati (NO3)",
+  "phosphatesPO4": "Fosfati (PO4)",
+  "edit": "Modifica {name}",
+  "@edit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "value": "Valore ({unit})",
+  "@value": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "cancel": "Annulla",
+  "save": "Salva",
+  
+  "low": "Bassa",
+  "high": "Alta",
+  "optimal": "Ottimale",
+  "attention": "Attenzione",
+  "monitoring": "Monitoraggio",
+  "targetValue": "Valore Target",
+  "current": "Attuale",
+  "target": "Target",
+  
+  "volumeCalculation": "Calcolo Volume Acquario",
+  "additivesDosageCalculation": "Calcolo Dosaggio Additivi",
+  "waterChangeCalculation": "Calcolo Cambio Acqua",
+  "densitySalinityConversion": "Conversione Densità/Salinità",
+  "lightingCalculation": "Calcolo Illuminazione",
+  
+  "enterAquariumDimensions": "Inserisci le dimensioni dell'acquario in centimetri",
+  "length": "Lunghezza (cm)",
+  "width": "Larghezza (cm)",
+  "height": "Altezza (cm)",
+  "calculateVolume": "Calcola Volume",
+  "totalVolume": "Volume Totale",
+  "estimatedNetVolume": "Volume netto stimato: {volume} L",
+  "@estimatedNetVolume": {
+    "placeholders": {
+      "volume": {
+        "type": "String"
+      }
+    }
+  },
+  "consideringRocksAndSubstrate": "(considerando rocce e substrato)",
+  
+  "calculateAdditiveDosage": "Calcola la quantità di additivo da dosare",
+  "dosageSection": "── DOSAGGIO ──",
+  "reductionSection": "── RIDUZIONE ──",
+  "calcium": "Calcio",
+  "magnesium": "Magnesio",
+  "kh": "KH",
+  "iodine": "Iodio",
+  "strontium": "Stronzio",
+  "nitrates": "Nitrati (NO3)",
+  "phosphates": "Fosfati (PO4)",
+  "no3po4xRedSea": "NO3:PO4-X (Red Sea)",
+  "activeCarbon": "Carbonio Attivo",
+  "aquariumVolume": "Volume acquario (L)",
+  "currentValue": "Valore attuale ({unit})",
+  "@currentValue": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "targetValue": "Valore target ({unit})",
+  "@targetValue": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "calculateDosage": "Calcola Dosaggio",
+  "quantityToDose": "Quantità da dosare",
+  "quantityToDoseReduction": "Quantità da dosare (riduzione)",
+  "indicativeValuesCheckManufacturer": "⚠️ Valori indicativi: verifica le istruzioni del produttore",
+  "toReduceNitrates": "Per ridurre i Nitrati:\\n• Cambio acqua regolare (20% settimanale)\\n• Skimmer efficiente\\n• Refill osmosi\\n• Carbonio attivo liquido\\n• NO3:PO4-X (Red Sea)",
+  "toReducePhosphates": "Per ridurre i Fosfati:\\n• Resine anti-fosfati (GFO)\\n• Skimmer efficiente\\n• Cambio acqua regolare\\n• NO3:PO4-X (Red Sea)\\n• Evitare sovralimentazione",
+  
+  "calculateLitersAndSalt": "Calcola litri e sale necessario per il cambio acqua",
+  "percentageToChange": "Percentuale da cambiare (%)",
+  "calculateWaterChange": "Calcola Cambio Acqua",
+  "waterToChange": "Acqua da cambiare",
+  "saltNeeded": "Sale necessario",
+  "calculatedForSalinity": "Calcolato per salinità 1.025 (35g/L)",
+  
+  "convertBetweenDensityAndSalinity": "Converti tra densità e salinità",
+  "fromDensityToSalinity": "Da Densità (g/cm³) a Salinità (ppt)",
+  "fromSalinityToDensity": "Da Salinità (ppt) a Densità (g/cm³)",
+  "densityExample": "Densità (es: 1.025)",
+  "salinityExample": "Salinità (ppt, es: 35)",
+  "temperatureCelsius": "Temperatura (°C)",
+  "salinityPPT": "Salinità",
+  "salinityPPM": "Salinità (ppm)",
+  "density": "Densità",
+  "convert": "Converti",
+  
+  "calculateLightingRequirements": "Calcola il fabbisogno di illuminazione per il tuo acquario",
+  "tankType": "Tipo di vasca",
+  "fishOnly": "Solo Pesci",
+  "fishAndSoftCorals": "Pesci + Coralli Molli",
+  "spsCorals": "Coralli SPS",
+  "totalWatts": "Watt totali illuminazione",
+  "calculateLighting": "Calcola Illuminazione",
+  "wattsPerLiter": "Watt per litro",
+  "recommendation": "Raccomandazione",
+  "insufficientMinimumFish": "Insufficiente - Minimo 0.25 W/L per pesci",
+  "optimalForFishOnly": "Ottimale per vasca di soli pesci",
+  "excessiveAlgaeRisk": "Eccessivo - Rischio alghe",
+  "insufficientMinimumSoft": "Insufficiente - Minimo 0.5 W/L",
+  "optimalForSoftCorals": "Ottimale per coralli molli (LPS)",
+  "veryGoodAlsoSPS": "Molto buono - Adatto anche SPS",
+  "insufficientMinimumSPS": "Insufficiente - Minimo 1.0 W/L per SPS",
+  "optimalForSPS": "Ottimale per coralli SPS",
+  "veryPowerfulExcellentSPS": "Molto potente - Ottimo per SPS esigenti",
+  
+  "acceptable": "Accettabile",
+  "toCorrect": "Da correggere",
+  
+  "targetTemperature": "Target Temperatura",
+  "setDesiredTemperature": "Imposta la temperatura desiderata:",
+  "typicalRangeTemperature": "Range tipico: 24-26 °C",
+  "targetSalinity": "Target Salinità",
+  "setDesiredSalinity": "Imposta il valore di salinità desiderato:",
+  "typicalRangeSalinity": "Range tipico: 1020-1028",
+  "targetPh": "Target pH",
+  "setDesiredPh": "Imposta il valore pH desiderato:",
+  "typicalRangePh": "Range tipico: 8.0-8.4",
+  "targetOrp": "Target ORP",
+  "setDesiredOrp": "Imposta il valore ORP desiderato:",
+  "typicalRangeOrp": "Range tipico: 300-400 mV",
+  
+  "newAquarium": "Nuovo Acquario",
+  "createNewAquarium": "Crea Nuovo Acquario",
+  "fillTankDetails": "Compila i dettagli della vasca",
+  "aquariumName": "Nome Acquario",
+  "aquariumNameHint": "es. La Mia Vasca",
+  "enterName": "Inserisci un nome",
+  "aquariumType": "Tipo Acquario",
+  "marine": "Marino",
+  "freshwater": "Dolce",
+  "reef": "Reef",
+  "volumeLiters": "Volume (Litri)",
+  "volumeHint": "es. 200",
+  "enterVolume": "Inserisci il volume",
+  "saveAquarium": "Salva Acquario",
+  "aquariumCreatedSuccess": "Acquario \"{name}\" creato con successo!",
+  "@aquariumCreatedSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "error": "Errore",
+  
+  "deleteAquarium": "Elimina Acquario",
+  "errorLoading": "Errore nel caricamento: {error}",
+  "@errorLoading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotDeleteMissingId": "Impossibile eliminare: ID acquario mancante",
+  "confirmDeleteAquarium": "Sei sicuro di voler eliminare \"{name}\"?",
+  "@confirmDeleteAquarium": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actionCannotBeUndone": "Questa azione non può essere annullata.",
+  "aquariumDeletedSuccess": "Acquario eliminato con successo",
+  "errorWithMessage": "Errore: {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noAquariumsToDelete": "Non ci sono acquari da eliminare",
+  "aquariumManagement": "Gestione Acquari",
+  "selectToDelete": "Seleziona per eliminare",
+  
+  "editAquarium": "Modifica Acquario",
+  "selectAquarium": "Seleziona Acquario",
+  "chooseAquariumToEdit": "Scegli quale vasca modificare",
+  "noAquariumsFound": "Nessuna vasca trovata",
+  "editDetails": "Modifica Dettagli",
+  "updateAquarium": "Aggiorna {name}",
+  "@updateAquarium": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "saveChanges": "Salva Modifiche",
+  "changesSavedFor": "Modifiche salvate per \"{name}\"",
+  "@changesSavedFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSavingChanges": "Errore nel salvare le modifiche: {error}",
+  "@errorSavingChanges": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "chartHistoryTitle": "Storico {parameter}",
+  "@chartHistoryTitle": {
+    "placeholders": {
+      "parameter": {
+        "type": "String"
+      }
+    }
+  },
+  "chartNoData": "Nessun dato disponibile",
+  "chartStatMin": "Min",
+  "chartStatAvg": "Avg",
+  "chartStatMax": "Max",
+  "chartStatNow": "Now",
+  "chartLegendIdeal": "Ideale",
+  "chartLegendWarning": "Avviso",
+  "chartAdvancedAnalysis": "Analisi Avanzata",
+  "chartTrendLabel": "Trend",
+  "chartStabilityLabel": "Stabilità",
+  "chartTrendStable": "Stabile",
+  "chartTrendRising": "In aumento",
+  "chartTrendFalling": "In calo",
+  "chartStabilityExcellent": "Ottima",
+  "chartStabilityGood": "Buona",
+  "chartStabilityMedium": "Media",
+  "chartStabilityLow": "Bassa",
+  "chartAdviceOutOfRange": "Attenzione: {parameter} fuori range. Controlla subito e correggi.",
+  "@chartAdviceOutOfRange": {
+    "placeholders": {
+      "parameter": {
+        "type": "String"
+      }
+    }
+  },
+  "chartAdviceNotIdeal": "Parametro accettabile ma non ideale. Monitora attentamente.",
+  "chartAdviceUnstable": "Parametro instabile. Verifica cambio acqua e dosaggi additivi.",
+  "chartAdviceTempRising": "Temperatura in aumento. Verifica raffreddamento e ventilazione.",
+  "chartAdviceOptimal": "Parametro ottimale e stabile.",
+  "paramTemperature": "Temperatura",
+  "paramPH": "pH",
+  "paramSalinity": "Salinità",
+  "paramORP": "ORP"
+}

@@ -4,6 +4,7 @@ import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/widgets/animated_number.dart';
 import 'package:acquariumfe/widgets/tap_effect_card.dart';
 import 'package:acquariumfe/widgets/components/target_progress_bar.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class Thermometer extends StatelessWidget {
   final double currentTemperature;
@@ -24,17 +25,20 @@ class Thermometer extends StatelessWidget {
     return const Color(0xFFef4444);
   }
 
-  String _getStatus() {
-    if (currentTemperature < 24) return 'Bassa';
-    if (currentTemperature >= 24 && currentTemperature <= 26) return 'Ottimale';
-    return 'Alta';
+  String _getStatus(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (currentTemperature < 24) return l10n.low;
+    if (currentTemperature >= 24 && currentTemperature <= 26)
+      return l10n.optimal;
+    return l10n.high;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final color = _getTemperatureColor();
-    final status = _getStatus();
+    final status = _getStatus(context);
 
     return TapEffectCard(
       onTap: () => _showEditTargetDialog(context),
@@ -73,7 +77,7 @@ class Thermometer extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            'Temperatura',
+                            l10n.temperature,
                             style: TextStyle(
                               color: theme.colorScheme.onSurface,
                               fontSize: 14,
@@ -148,6 +152,7 @@ class Thermometer extends StatelessWidget {
 
   void _showEditTargetDialog(BuildContext context) async {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(
       text:
           targetTemperature?.toStringAsFixed(1) ??
@@ -167,7 +172,7 @@ class Thermometer extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              'Target Temperatura',
+              l10n.targetTemperature,
               style: TextStyle(color: theme.colorScheme.onSurface),
             ),
           ],
@@ -177,7 +182,7 @@ class Thermometer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Imposta la temperatura desiderata:',
+              l10n.setDesiredTemperature,
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -213,7 +218,7 @@ class Thermometer extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Range tipico: 24-26 °C',
+              l10n.typicalRangeTemperature,
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
                 fontSize: 12,
@@ -225,7 +230,7 @@ class Thermometer extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Annulla',
+              l10n.cancel,
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
@@ -242,7 +247,7 @@ class Thermometer extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Salva', style: TextStyle(color: Colors.white)),
+            child: Text(l10n.save, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),

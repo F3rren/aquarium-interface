@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
+import 'package:acquariumfe/generated/l10n/app_localizations.dart';
 
 class DeleteAquarium extends ConsumerStatefulWidget {
   const DeleteAquarium({super.key});
@@ -62,9 +63,10 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
       error: (error, stack) {
         setState(() => _isLoading = false);
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Errore nel caricamento: $error'),
+              content: Text(l10n.errorLoading(error.toString())),
               backgroundColor: const Color(0xFFef4444),
             ),
           );
@@ -80,11 +82,13 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
   }
 
   void _deleteAquarium(Aquarium aquarium) async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (aquarium.id == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Impossibile eliminare: ID acquario mancante'),
-          backgroundColor: Color(0xFFef4444),
+        SnackBar(
+          content: Text(l10n.cannotDeleteMissingId),
+          backgroundColor: const Color(0xFFef4444),
         ),
       );
       return;
@@ -115,7 +119,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
               ),
               const SizedBox(height: 20),
               Text(
-                'Elimina Acquario',
+                l10n.deleteAquarium,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 22,
@@ -124,7 +128,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
               ),
               const SizedBox(height: 12),
               Text(
-                'Sei sicuro di voler eliminare "${aquarium.name}"?',
+                l10n.confirmDeleteAquarium(aquarium.name),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
@@ -133,7 +137,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
               ),
               const SizedBox(height: 8),
               Text(
-                'Questa azione non può essere annullata.',
+                l10n.actionCannotBeUndone,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: theme.colorScheme.error,
@@ -160,9 +164,9 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Annulla',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                        child: Text(
+                          l10n.cancel,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -182,14 +186,16 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                           ),
                           elevation: 0,
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            FaIcon(FontAwesomeIcons.trashCan, size: 20),
-                            SizedBox(width: 8),
+                            const FaIcon(FontAwesomeIcons.trashCan, size: 20),
+                            const SizedBox(width: 8),
                             Text(
-                              'Elimina',
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                              l10n.delete,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
@@ -219,7 +225,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                     color: theme.colorScheme.onSurface,
                   ),
                   const SizedBox(width: 12),
-                  Text('Aquario eliminato con successo'),
+                  Text(l10n.aquariumDeletedSuccess),
                 ],
               ),
               backgroundColor: theme.colorScheme.error,
@@ -241,7 +247,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                     color: Colors.white,
                   ),
                   const SizedBox(width: 12),
-                  Expanded(child: Text('Errore: ${e.toString()}')),
+                  Expanded(child: Text(l10n.errorWithMessage(e.toString()))),
                 ],
               ),
               backgroundColor: const Color(0xFFef4444),
@@ -263,9 +269,9 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Elimina Acquario',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        title: Text(
+          AppLocalizations.of(context)!.deleteAquarium,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
@@ -298,7 +304,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                             ),
                             const SizedBox(height: 20),
                             Text(
-                              'Nessun Acquario',
+                              AppLocalizations.of(context)!.noAquarium,
                               style: TextStyle(
                                 color: theme.colorScheme.onSurface,
                                 fontSize: 20,
@@ -307,7 +313,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Non ci sono acquari da eliminare',
+                              AppLocalizations.of(context)!.noAquariumsToDelete,
                               style: TextStyle(
                                 color: theme.colorScheme.onSurfaceVariant,
                                 fontSize: 14,
@@ -348,7 +354,9 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Gestione Acquari',
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.aquariumManagement,
                                         style: TextStyle(
                                           color: theme.colorScheme.onSurface,
                                           fontSize: 20,
@@ -357,7 +365,9 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        'Seleziona per eliminare',
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.selectToDelete,
                                         style: TextStyle(
                                           color: theme
                                               .colorScheme

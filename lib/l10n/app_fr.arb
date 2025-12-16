@@ -1,0 +1,393 @@
+{
+  "@@locale": "fr",
+  "appTitle": "ReefLife",
+  
+  "aquariums": "Aquariums",
+  "aquarium": "Aquarium",
+  "parameters": "Paramètres",
+  "fish": "Poissons",
+  "fishes": "Poissons",
+  "corals": "Coraux",
+  "coral": "Corail",
+  "maintenance": "Entretien",
+  "alerts": "Alertes",
+  "settings": "Paramètres",
+  "dashboard": "Tableau de bord",
+  "charts": "Graphiques",
+  "profile": "Profil",
+  "myAquarium": "Mon Aquarium",
+  
+  "noAquarium": "Aucun Aquarium",
+  "noAquariumDescription": "Commencez par créer votre premier aquarium pour surveiller les paramètres de l'eau et la santé de vos poissons.",
+  "createAquarium": "Créer Aquarium",
+  
+  "noFish": "Aucun Poisson",
+  "noFishDescription": "Ajoutez vos poissons pour suivre la population de votre aquarium.",
+  "addFish": "Ajouter Poisson",
+  
+  "noCoral": "Aucun Corail",
+  "noCoralDescription": "Documentez les coraux présents dans votre aquarium marin.",
+  "addCoral": "Ajouter Corail",
+  
+  "noHistory": "Aucun Historique",
+  "noHistoryDescription": "Aucune donnée historique disponible pour le moment. Les paramètres seront enregistrés automatiquement.",
+  
+  "noTasks": "Aucune Tâche",
+  "noTasksDescription": "Créez des rappels pour les activités d'entretien de votre aquarium.",
+  "createTask": "Créer Tâche",
+  
+  "allOk": "Tout va bien!",
+  "allOkDescription": "Aucune alerte active. Tous les paramètres sont dans la plage normale.",
+  
+  "noResults": "Aucun Résultat",
+  "noResultsDescription": "Nous n'avons trouvé aucun résultat pour \"{query}\".\nEssayez avec des mots-clés différents.",
+  
+  "errorTitle": "Oups!",
+  "errorDescription": "Une erreur s'est produite",
+  "retry": "Réessayer",
+  
+  "offline": "Vous êtes hors ligne",
+  "offlineDescription": "Vérifiez votre connexion Internet et réessayez.",
+  
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "delete": "Supprimer",
+  "edit": "Modifier",
+  "close": "Fermer",
+  "ok": "OK",
+  
+  "name": "Nom",
+  "species": "Espèce",
+  "size": "Taille",
+  "notes": "Notes",
+  "date": "Date",
+  "quantity": "Quantité",
+  
+  "addFishTitle": "Ajouter Poisson",
+  "editFishTitle": "Modifier Poisson",
+  "fishNameLabel": "Nom *",
+  "fishNameHint": "ex: Nemo",
+  "fishSpeciesLabel": "Espèce *",
+  "fishSpeciesHint": "ex: Amphiprion ocellaris",
+  "fishSizeLabel": "Taille (cm) *",
+  "fishSizeHint": "ex: 8.5",
+  "quantityLabel": "Quantité",
+  "quantityHint": "Nombre de spécimens à ajouter",
+  "quantityInfo": "Si vous ajoutez plusieurs spécimens, ils seront automatiquement numérotés",
+  "notesLabel": "Notes",
+  "notesHint": "Ajouter des notes facultatives",
+  "selectFromList": "Sélectionner dans la liste",
+  "orEnterManually": "ou saisir manuellement",
+  "noCompatibleFish": "Aucun poisson compatible avec aquarium {waterType}",
+  "noDatabaseFish": "Aucun poisson disponible dans la base de données",
+  
+  "addCoralTitle": "Ajouter Corail",
+  "editCoralTitle": "Modifier Corail",
+  "coralNameLabel": "Nom *",
+  "coralNameHint": "ex: Montipora orange",
+  "coralSpeciesLabel": "Espèce *",
+  "coralSpeciesHint": "ex: Montipora digitata",
+  "coralTypeLabel": "Type *",
+  "coralSizeLabel": "Taille (cm) *",
+  "coralSizeHint": "ex: 5.0",
+  "coralPlacementLabel": "Placement *",
+  
+  "coralTypeSPS": "SPS",
+  "coralTypeLPS": "LPS",
+  "coralTypeSoft": "Mous",
+  
+  "placementTop": "Haut",
+  "placementMiddle": "Milieu",
+  "placementBottom": "Bas",
+  
+  "difficultyEasy": "Facile",
+  "difficultyIntermediate": "Intermédiaire",
+  "difficultyHard": "Difficile",
+  
+  "difficultyBeginner": "Débutant",
+  "difficultyExpert": "Expert",
+  
+  "temperamentPeaceful": "Pacifique",
+  "temperamentSemiAggressive": "Semi-agressif",
+  "temperamentAggressive": "Agressif",
+  
+  "dietHerbivore": "Herbivore",
+  "dietCarnivore": "Carnivore",
+  "dietOmnivore": "Omnivore",
+  
+  "reefSafe": "Sûr pour récif",
+  "yes": "Oui",
+  "no": "Non",
+  
+  "difficulty": "Difficulté",
+  "minTankSize": "Taille min. aquarium",
+  "temperament": "Tempérament",
+  "diet": "Régime",
+  
+  "filtersAndSearch": "Filtres et Recherche",
+  "clearAll": "Tout effacer",
+  "searchByName": "Rechercher par nom",
+  "searchPlaceholder": "Rechercher par nom...",
+  "insertionDate": "Date d'introduction dans l'aquarium",
+  "selectType": "Sélectionner type",
+  "selectDate": "Sélectionner date",
+  "removeDateFilter": "Retirer filtre de date",
+  "sorting": "Tri",
+  "ascendingOrder": "Ordre croissant",
+  
+  "fillAllFields": "Remplissez tous les champs obligatoires",
+  "invalidSize": "Taille invalide",
+  "invalidQuantity": "Quantité invalide",
+  "databaseLoadError": "Erreur de chargement de la base de données: {error}",
+  
+  "language": "Langue",
+  "selectLanguage": "Sélectionner la langue",
+  
+  "settings": "Paramètres",
+  "ok": "OK",
+  "close": "Fermer",
+  
+  "tools": "Outils",
+  "calculators": "Calculatrices",
+  "calculatorsSubtitle": "Volume, dosage d'additifs, changement d'eau",
+  "myInhabitants": "Mes Habitants",
+  "myInhabitantsSubtitle": "Gérer poissons et coraux",
+  "aquariumInfo": "Info Aquarium",
+  "aquariumInfoSubtitle": "Nom, volume, type",
+  "theme": "Thème",
+  "darkMode": "Mode sombre",
+  "lightMode": "Mode clair",
+  "appInfo": "Informations App",
+  "appInfoSubtitle": "Version, crédits",
+  "noAquariumSelected": "Aucun Aquarium",
+  "unableToLoadInfo": "Impossible de charger les informations: {error}",
+  
+  "errorLoadingParameters": "Erreur lors du chargement des paramètres",
+  "retry": "Réessayer",
+  "allOk": "TOUT OK",
+  "warning": "ATTENTION",
+  "critical": "CRITIQUE",
+  "aquariumStatus": "État de l'Aquarium",
+  "updatedNow": "Mis à jour maintenant • {okParams}/{totalParams} paramètres OK",
+  "temperature": "Température",
+  "ph": "pH",
+  "salinity": "Salinité",
+  "orp": "ORP",
+  "excellent": "Excellent",
+  "good": "Bon",
+  "parametersOk": "Paramètres OK",
+  "parametersNeedAttention": "{count} paramètres nécessitent attention",
+  "waterChange": "Changement d'Eau",
+  
+  "healthScore": "Score de Santé",
+  "parametersInOptimalRange": "{okParams}/{totalParams} paramètres dans la plage optimale",
+  "upcomingReminders": "Rappels à Venir",
+  "filterCleaning": "Nettoyage du Filtre",
+  "parameterTesting": "Test des Paramètres",
+  "days": "jours",
+  "recommendations": "Recommandations",
+  "checkOutOfRangeParameters": "Vérifier les paramètres hors plage",
+  "checkSkimmer": "Vérifier l'écumeur",
+  "weeklyCleaningRecommended": "Nettoyage hebdomadaire recommandé",
+  "khTest": "Test KH",
+  "lastTest3DaysAgo": "Dernier test: il y a 3 jours",
+  
+  "parametersUpdated": "Paramètres mis à jour",
+  "error": "Erreur",
+  "noParametersAvailable": "Aucun paramètre disponible",
+  "chemicalParameters": "Paramètres Chimiques",
+  "calciumCa": "Calcium (Ca)",
+  "magnesiumMg": "Magnésium (Mg)",
+  "nitratesNO3": "Nitrates (NO3)",
+  "phosphatesPO4": "Phosphates (PO4)",
+  "edit": "Modifier {name}",
+  "value": "Valeur ({unit})",
+  "cancel": "Annuler",
+  "save": "Enregistrer",
+  
+  "low": "Bas",
+  "high": "Élevé",
+  "optimal": "Optimal",
+  "attention": "Attention",
+  "monitoring": "Surveillance",
+  "targetValue": "Valeur Cible",
+  "current": "Actuel",
+  "target": "Cible",
+  
+  "volumeCalculation": "Calcul du Volume de l'Aquarium",
+  "additivesDosageCalculation": "Calcul du Dosage d'Additifs",
+  "waterChangeCalculation": "Calcul du Changement d'Eau",
+  "densitySalinityConversion": "Conversion Densité/Salinité",
+  "lightingCalculation": "Calcul de l'Éclairage",
+  
+  "enterAquariumDimensions": "Entrez les dimensions de l'aquarium en centimètres",
+  "length": "Longueur (cm)",
+  "width": "Largeur (cm)",
+  "height": "Hauteur (cm)",
+  "calculateVolume": "Calculer le Volume",
+  "totalVolume": "Volume Total",
+  "estimatedNetVolume": "Volume net estimé: {volume} L",
+  "consideringRocksAndSubstrate": "(en tenant compte des roches et du substrat)",
+  
+  "calculateAdditiveDosage": "Calculer la quantité d'additif à doser",
+  "dosageSection": "── DOSAGE ──",
+  "reductionSection": "── RÉDUCTION ──",
+  "calcium": "Calcium",
+  "magnesium": "Magnésium",
+  "kh": "KH",
+  "iodine": "Iode",
+  "strontium": "Strontium",
+  "nitrates": "Nitrates (NO3)",
+  "phosphates": "Phosphates (PO4)",
+  "no3po4xRedSea": "NO3:PO4-X (Red Sea)",
+  "activeCarbon": "Charbon Actif",
+  "aquariumVolume": "Volume de l'aquarium (L)",
+  "currentValue": "Valeur actuelle ({unit})",
+  "targetValue": "Valeur cible ({unit})",
+  "calculateDosage": "Calculer le Dosage",
+  "quantityToDose": "Quantité à doser",
+  "quantityToDoseReduction": "Quantité à doser (réduction)",
+  "indicativeValuesCheckManufacturer": "⚠️ Valeurs indicatives: vérifier les instructions du fabricant",
+  "toReduceNitrates": "Pour réduire les Nitrates:\\n• Changement d'eau régulier (20% hebdomadaire)\\n• Écumeur efficace\\n• Recharge osmosée\\n• Charbon actif liquide\\n• NO3:PO4-X (Red Sea)",
+  "toReducePhosphates": "Pour réduire les Phosphates:\\n• Résines anti-phosphates (GFO)\\n• Écumeur efficace\\n• Changement d'eau régulier\\n• NO3:PO4-X (Red Sea)\\n• Éviter la suralimentation",
+  
+  "calculateLitersAndSalt": "Calculer les litres et le sel nécessaires pour le changement d'eau",
+  "percentageToChange": "Pourcentage à changer (%)",
+  "calculateWaterChange": "Calculer le Changement d'Eau",
+  "waterToChange": "Eau à changer",
+  "saltNeeded": "Sel nécessaire",
+  "calculatedForSalinity": "Calculé pour salinité 1.025 (35g/L)",
+  
+  "convertBetweenDensityAndSalinity": "Convertir entre densité et salinité",
+  "fromDensityToSalinity": "De Densité (g/cm³) à Salinité (ppt)",
+  "fromSalinityToDensity": "De Salinité (ppt) à Densité (g/cm³)",
+  "densityExample": "Densité (ex: 1.025)",
+  "salinityExample": "Salinité (ppt, ex: 35)",
+  "temperatureCelsius": "Température (°C)",
+  "salinityPPT": "Salinité",
+  "salinityPPM": "Salinité (ppm)",
+  "density": "Densité",
+  "convert": "Convertir",
+  
+  "calculateLightingRequirements": "Calculer les besoins en éclairage pour votre aquarium",
+  "tankType": "Type de bac",
+  "fishOnly": "Poissons Seulement",
+  "fishAndSoftCorals": "Poissons + Coraux Mous",
+  "spsCorals": "Coraux SPS",
+  "totalWatts": "Watts totaux d'éclairage",
+  "calculateLighting": "Calculer l'Éclairage",
+  "wattsPerLiter": "Watts par litre",
+  "recommendation": "Recommandation",
+  "insufficientMinimumFish": "Insuffisant - Minimum 0,25 W/L pour poissons",
+  "optimalForFishOnly": "Optimal pour bac de poissons uniquement",
+  "excessiveAlgaeRisk": "Excessif - Risque d'algues",
+  "insufficientMinimumSoft": "Insuffisant - Minimum 0,5 W/L",
+  "optimalForSoftCorals": "Optimal pour coraux mous (LPS)",
+  "veryGoodAlsoSPS": "Très bon - Convient aussi pour SPS",
+  "insufficientMinimumSPS": "Insuffisant - Minimum 1,0 W/L pour SPS",
+  "optimalForSPS": "Optimal pour coraux SPS",
+  "veryPowerfulExcellentSPS": "Très puissant - Excellent pour les SPS exigeants",
+  
+  "acceptable": "Acceptable",
+  "toCorrect": "À corriger",
+  
+  "targetTemperature": "Température Cible",
+  "setDesiredTemperature": "Définir la température souhaitée:",
+  "typicalRangeTemperature": "Plage typique: 24-26 °C",
+  "targetSalinity": "Salinité Cible",
+  "setDesiredSalinity": "Définir la valeur de salinité souhaitée:",
+  "typicalRangeSalinity": "Plage typique: 1020-1028",
+  "targetPh": "pH Cible",
+  "setDesiredPh": "Définir la valeur de pH souhaitée:",
+  "typicalRangePh": "Plage typique: 8.0-8.4",
+  "targetOrp": "ORP Cible",
+  "setDesiredOrp": "Définir la valeur ORP souhaitée:",
+  "typicalRangeOrp": "Plage typique: 300-400 mV",
+  
+  "newAquarium": "Nouvel Aquarium",
+  "createNewAquarium": "Créer un Nouvel Aquarium",
+  "fillTankDetails": "Remplissez les détails du réservoir",
+  "aquariumName": "Nom de l'Aquarium",
+  "aquariumNameHint": "ex. Mon Aquarium",
+  "enterName": "Entrez un nom",
+  "aquariumType": "Type d'Aquarium",
+  "marine": "Marin",
+  "freshwater": "Eau Douce",
+  "reef": "Récifal",
+  "volumeLiters": "Volume (Litres)",
+  "volumeHint": "ex. 200",
+  "enterVolume": "Entrez le volume",
+  "saveAquarium": "Enregistrer l'Aquarium",
+  "aquariumCreatedSuccess": "Aquarium \"{name}\" créé avec succès!",
+  "@aquariumCreatedSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "error": "Erreur",
+  
+  "deleteAquarium": "Supprimer Aquarium",
+  "errorLoading": "Erreur de chargement: {error}",
+  "@errorLoading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotDeleteMissingId": "Impossible de supprimer: ID de l'aquarium manquant",
+  "confirmDeleteAquarium": "Êtes-vous sûr de vouloir supprimer \"{name}\"?",
+  "@confirmDeleteAquarium": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actionCannotBeUndone": "Cette action ne peut pas être annulée.",
+  "aquariumDeletedSuccess": "Aquarium supprimé avec succès",
+  "errorWithMessage": "Erreur: {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noAquariumsToDelete": "Aucun aquarium à supprimer",
+  "aquariumManagement": "Gestion des Aquariums",
+  "selectToDelete": "Sélectionner pour supprimer",
+  
+  "editAquarium": "Modifier l'Aquarium",
+  "selectAquarium": "Sélectionner Aquarium",
+  "chooseAquariumToEdit": "Choisissez quel réservoir modifier",
+  "noAquariumsFound": "Aucun réservoir trouvé",
+  "editDetails": "Modifier les Détails",
+  "updateAquarium": "Mettre à jour {name}",
+  "@updateAquarium": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "saveChanges": "Enregistrer les Modifications",
+  "changesSavedFor": "Modifications enregistrées pour \"{name}\"",
+  "@changesSavedFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSavingChanges": "Erreur lors de l'enregistrement des modifications: {error}",
+  "@errorSavingChanges": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -8,6 +8,7 @@ import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AquariumDetails extends StatefulWidget {
   final int? aquariumId;
@@ -138,7 +139,7 @@ class _AquariumDetailsState extends State<AquariumDetails>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'La Mia Vasca',
+                          AppLocalizations.of(context)!.myAquarium,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 18,
@@ -224,11 +225,11 @@ class _AquariumDetailsState extends State<AquariumDetails>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(FontAwesomeIcons.chartPie, 'Dashboard', 0),
-              _buildNavItem(FontAwesomeIcons.flask, 'Parametri', 1),
-              _buildNavItem(FontAwesomeIcons.chartLine, 'Grafici', 2),
-              _buildNavItem(FontAwesomeIcons.wrench, 'Manutenzione', 3),
-              _buildNavItem(FontAwesomeIcons.user, 'Profilo', 4),
+              _buildNavItem(FontAwesomeIcons.chartPie, AppLocalizations.of(context)!.dashboard, 0),
+              _buildNavItem(FontAwesomeIcons.flask, AppLocalizations.of(context)!.parameters, 1),
+              _buildNavItem(FontAwesomeIcons.chartLine, AppLocalizations.of(context)!.charts, 2),
+              _buildNavItem(FontAwesomeIcons.wrench, AppLocalizations.of(context)!.maintenance, 3),
+              _buildNavItem(FontAwesomeIcons.user, AppLocalizations.of(context)!.profile, 4),
             ],
           ),
         ),

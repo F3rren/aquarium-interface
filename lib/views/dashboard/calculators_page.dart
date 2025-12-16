@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class CalculatorsPage extends StatefulWidget {
   const CalculatorsPage({super.key});
@@ -236,13 +237,14 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Calcolatori',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        title: Text(
+          l10n.calculators,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
@@ -256,13 +258,13 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
           // CALCOLO VOLUME
           _buildCalculatorCard(
-            title: 'Calcolo Volume Acquario',
+            title: l10n.volumeCalculation,
             icon: FontAwesomeIcons.rulerCombined,
             color: theme.colorScheme.primary,
             child: Column(
               children: [
                 Text(
-                  'Inserisci le dimensioni dell\'acquario in centimetri',
+                  l10n.enterAquariumDimensions,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13,
@@ -271,19 +273,19 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                 ),
                 const SizedBox(height: 16),
                 _buildInputField(
-                  'Lunghezza (cm)',
+                  l10n.length,
                   _lengthController,
                   FontAwesomeIcons.ruler,
                 ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Larghezza (cm)',
+                  l10n.width,
                   _widthController,
                   FontAwesomeIcons.ruler,
                 ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Altezza (cm)',
+                  l10n.height,
                   _heightController,
                   FontAwesomeIcons.rulerVertical,
                 ),
@@ -301,21 +303,26 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Calcola Volume',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  child: Text(
+                    l10n.calculateVolume,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 if (_volumeResult != null) ...[
                   const SizedBox(height: 20),
                   _buildResult(
-                    'Volume Totale',
+                    l10n.totalVolume,
                     '${_volumeResult!.toStringAsFixed(1)} L',
                     theme.colorScheme.primary,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Volume netto stimato: ${(_volumeResult! * 0.85).toStringAsFixed(1)} L',
+                    l10n.estimatedNetVolume(
+                      (_volumeResult! * 0.85).toStringAsFixed(1),
+                    ),
                     style: TextStyle(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 12,
@@ -323,7 +330,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '(considerando rocce e substrato)',
+                    l10n.consideringRocksAndSubstrate,
                     style: TextStyle(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                       fontSize: 11,
@@ -339,13 +346,13 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
           // CALCOLO DOSAGGIO ADDITIVI
           _buildCalculatorCard(
-            title: 'Calcolo Dosaggio Additivi',
+            title: l10n.additivesDosageCalculation,
             icon: FontAwesomeIcons.flask,
             color: theme.colorScheme.tertiary,
             child: Column(
               children: [
                 Text(
-                  'Calcola la quantità di additivo da dosare',
+                  l10n.calculateAdditiveDosage,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13,
@@ -378,7 +385,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                         DropdownMenuItem(
                           enabled: false,
                           child: Text(
-                            '── DOSAGGIO ──',
+                            l10n.dosageSection,
                             style: TextStyle(
                               color: theme.colorScheme.onSurfaceVariant,
                               fontSize: 13,
@@ -386,11 +393,11 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                           ),
                         ),
                         ...[
-                          'Calcio',
-                          'Magnesio',
-                          'KH',
-                          'Iodio',
-                          'Stronzio',
+                          l10n.calcium,
+                          l10n.magnesium,
+                          l10n.kh,
+                          l10n.iodine,
+                          l10n.strontium,
                         ].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -403,7 +410,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                         DropdownMenuItem(
                           enabled: false,
                           child: Text(
-                            '── RIDUZIONE ──',
+                            l10n.reductionSection,
                             style: TextStyle(
                               color: theme.colorScheme.onSurfaceVariant,
                               fontSize: 13,
@@ -411,10 +418,10 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                           ),
                         ),
                         ...[
-                          'Nitrati (NO3)',
-                          'Fosfati (PO4)',
-                          'NO3:PO4-X (Red Sea)',
-                          'Carbonio Attivo',
+                          l10n.nitrates,
+                          l10n.phosphates,
+                          l10n.no3po4xRedSea,
+                          l10n.activeCarbon,
                         ].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -438,19 +445,19 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                 ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Volume acquario (L)',
+                  l10n.aquariumVolume,
                   _tankVolumeController,
                   FontAwesomeIcons.water,
                 ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Valore attuale (${_getUnit()})',
+                  l10n.currentValue(_getUnit()),
                   _currentValueController,
                   FontAwesomeIcons.chartLine,
                 ),
                 const SizedBox(height: 12),
                 _buildInputField(
-                  'Valore target (${_getUnit()})',
+                  l10n.targetValue(_getUnit()),
                   _targetValueController,
                   FontAwesomeIcons.flag,
                 ),
@@ -468,9 +475,12 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Calcola Dosaggio',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  child: Text(
+                    l10n.calculateDosage,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 if (_additiveResult != null) ...[
@@ -529,9 +539,9 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
           const SizedBox(height: 20),
 
-          // CALCOLO CAMBIO ACQUA
+          //CALCOLO CAMBIO ACQUA
           _buildCalculatorCard(
-            title: 'Calcolo Cambio Acqua',
+            title: l10n.waterChangeCalculation,
             icon: FontAwesomeIcons.droplet,
             color: theme.colorScheme.secondary,
             child: Column(
@@ -605,13 +615,13 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
           // CALCOLO DENSITÀ/SALINITÀ
           _buildCalculatorCard(
-            title: 'Conversione Densità/Salinità',
+            title: l10n.densitySalinityConversion,
             icon: FontAwesomeIcons.flask,
             color: theme.colorScheme.tertiary,
             child: Column(
               children: [
                 Text(
-                  'Converti tra densità e salinità',
+                  l10n.convertBetweenDensityAndSalinity,
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 13,
@@ -692,9 +702,12 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Converti',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  child: Text(
+                    l10n.convert,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 if (_salinityPPT != null) ...[
@@ -733,7 +746,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
 
           // CALCOLO ILLUMINAZIONE
           _buildCalculatorCard(
-            title: 'Calcolo Illuminazione',
+            title: l10n.lightingCalculation,
             icon: FontAwesomeIcons.sun,
             color: Colors.amber,
             child: Column(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class AddAquarium extends ConsumerStatefulWidget {
   const AddAquarium({super.key});
@@ -17,7 +18,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _volumeController = TextEditingController();
-  String _selectedType = 'Marino';
+  String _selectedType = 'marine'; // Usa chiavi invece di valori tradotti
   bool _isLoading = false;
 
   late AnimationController _animationController;
@@ -60,6 +61,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
       setState(() => _isLoading = true);
 
       try {
+        final l10n = AppLocalizations.of(context)!;
         // Validazione manuale del volume
         final volumeText = _volumeController.text.trim();
         final volume = double.tryParse(volumeText);
@@ -68,11 +70,18 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
           throw Exception('Il volume deve essere un numero positivo');
         }
 
+        // Mappa la chiave al valore tradotto
+        final typeMap = {
+          'marine': l10n.marine,
+          'freshwater': l10n.freshwater,
+          'reef': l10n.reef,
+        };
+
         // Crea l'oggetto Aquarium con i dati del form
         final newAquarium = Aquarium(
           name: _nameController.text.trim(),
           volume: volume,
-          type: _selectedType,
+          type: typeMap[_selectedType] ?? l10n.marine,
         );
 
         // Chiamata al provider per creare l'acquario
@@ -81,6 +90,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
         setState(() => _isLoading = false);
 
         if (context.mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
@@ -91,9 +101,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
-                      'Acquario "${newAquarium.name}" creato con successo!',
-                    ),
+                    child: Text(l10n.aquariumCreatedSuccess(newAquarium.name)),
                   ),
                 ],
               ),
@@ -137,6 +145,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
         setState(() => _isLoading = false);
 
         if (context.mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
@@ -146,7 +155,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                     color: Colors.white,
                   ),
                   const SizedBox(width: 12),
-                  Expanded(child: Text('Errore: ${e.toString()}')),
+                  Expanded(child: Text('${l10n.error}: ${e.toString()}')),
                 ],
               ),
               backgroundColor: const Color(0xFFef4444),
@@ -165,13 +174,14 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Nuovo Acquario',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        title: Text(
+          l10n.newAquarium,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
@@ -218,7 +228,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Crea Nuovo Acquario',
+                                l10n.createNewAquarium,
                                 style: TextStyle(
                                   color: theme.colorScheme.onSurface,
                                   fontSize: 20,
@@ -227,7 +237,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Compila i dettagli della vasca',
+                                l10n.fillTankDetails,
                                 style: TextStyle(
                                   color: theme.colorScheme.onSurfaceVariant,
                                   fontSize: 13,
@@ -242,22 +252,22 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                   const SizedBox(height: 24),
 
                   // Nome
-                  _buildLabel('Nome Acquario'),
+                  _buildLabel(l10n.aquariumName),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _nameController,
                     style: TextStyle(color: theme.colorScheme.onSurface),
                     decoration: _buildInputDecoration(
-                      'es. La Mia Vasca',
+                      l10n.aquariumNameHint,
                       FontAwesomeIcons.textHeight,
                     ),
                     validator: (value) =>
-                        value?.isEmpty ?? true ? 'Inserisci un nome' : null,
+                        value?.isEmpty ?? true ? l10n.enterName : null,
                   ),
                   const SizedBox(height: 20),
 
                   // Tipo
-                  _buildLabel('Tipo Acquario'),
+                  _buildLabel(l10n.aquariumType),
                   const SizedBox(height: 8),
                   Container(
                     decoration: BoxDecoration(
@@ -273,19 +283,22 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                       children: [
                         Expanded(
                           child: _buildTypeButton(
-                            'Marino',
+                            'marine',
+                            l10n.marine,
                             FontAwesomeIcons.droplet,
                           ),
                         ),
                         Expanded(
                           child: _buildTypeButton(
-                            'Dolce',
+                            'freshwater',
+                            l10n.freshwater,
                             FontAwesomeIcons.water,
                           ),
                         ),
                         Expanded(
                           child: _buildTypeButton(
-                            'Reef',
+                            'reef',
+                            l10n.reef,
                             FontAwesomeIcons.atom,
                           ),
                         ),
@@ -295,18 +308,18 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                   const SizedBox(height: 20),
 
                   // Volume
-                  _buildLabel('Volume (Litri)'),
+                  _buildLabel(l10n.volumeLiters),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _volumeController,
                     style: TextStyle(color: theme.colorScheme.onSurface),
                     keyboardType: TextInputType.number,
                     decoration: _buildInputDecoration(
-                      'es. 200',
+                      l10n.volumeHint,
                       FontAwesomeIcons.ruler,
                     ),
                     validator: (value) =>
-                        value?.isEmpty ?? true ? 'Inserisci il volume' : null,
+                        value?.isEmpty ?? true ? l10n.enterVolume : null,
                   ),
                   const SizedBox(height: 32),
 
@@ -337,13 +350,16 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                                 ),
                               ),
                             )
-                          : const Row(
+                          : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                FaIcon(FontAwesomeIcons.circleCheck, size: 24),
-                                SizedBox(width: 12),
+                                const FaIcon(
+                                  FontAwesomeIcons.circleCheck,
+                                  size: 24,
+                                ),
+                                const SizedBox(width: 12),
                                 Text(
-                                  'Salva Acquario',
+                                  l10n.saveAquarium,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -409,11 +425,11 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
     );
   }
 
-  Widget _buildTypeButton(String type, IconData icon) {
+  Widget _buildTypeButton(String typeKey, String label, IconData icon) {
     final theme = Theme.of(context);
-    final isSelected = _selectedType == type;
+    final isSelected = _selectedType == typeKey;
     return GestureDetector(
-      onTap: () => setState(() => _selectedType = type),
+      onTap: () => setState(() => _selectedType = typeKey),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
@@ -433,7 +449,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
             ),
             const SizedBox(height: 8),
             Text(
-              type,
+              label,
               style: TextStyle(
                 color: isSelected
                     ? theme.colorScheme.primary

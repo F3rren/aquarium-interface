@@ -5,7 +5,9 @@ import 'package:acquariumfe/views/dashboard/calculators_page.dart';
 import 'package:acquariumfe/views/profile/inhabitants_page.dart';
 import 'package:acquariumfe/providers/theme_provider.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
+import 'package:acquariumfe/providers/locale_provider.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class ProfilePage extends ConsumerWidget {
   final int? aquariumId;
@@ -15,6 +17,7 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -22,13 +25,13 @@ class ProfilePage extends ConsumerWidget {
         padding: const EdgeInsets.all(20),
         children: [
           // SEZIONE STRUMENTI
-          Text('Strumenti', style: theme.textTheme.headlineSmall),
+          Text(l10n.tools, style: theme.textTheme.headlineSmall),
           const SizedBox(height: 12),
 
           _buildMenuCard(
             context,
-            title: 'Calcolatori',
-            subtitle: 'Volume, dosaggio additivi, cambio acqua',
+            title: l10n.calculators,
+            subtitle: l10n.calculatorsSubtitle,
             icon: FontAwesomeIcons.calculator,
             color: const Color(0xFF60a5fa),
             onTap: () {
@@ -46,8 +49,8 @@ class ProfilePage extends ConsumerWidget {
 
           _buildMenuCard(
             context,
-            title: 'I Miei Abitanti',
-            subtitle: 'Gestisci pesci e coralli',
+            title: l10n.myInhabitants,
+            subtitle: l10n.myInhabitantsSubtitle,
             icon: FontAwesomeIcons.fish,
             color: const Color(0xFFf472b6),
             onTap: () {
@@ -64,13 +67,13 @@ class ProfilePage extends ConsumerWidget {
           const SizedBox(height: 32),
 
           // SEZIONE IMPOSTAZIONI
-          Text('Impostazioni', style: theme.textTheme.headlineSmall),
+          Text(l10n.settings, style: theme.textTheme.headlineSmall),
           const SizedBox(height: 12),
 
           _buildMenuCard(
             context,
-            title: 'Info Acquario',
-            subtitle: 'Nome, volume, tipo',
+            title: l10n.aquariumInfo,
+            subtitle: l10n.aquariumInfoSubtitle,
             icon: FontAwesomeIcons.circleInfo,
             color: const Color(0xFF34d399),
             onTap: () {
@@ -85,10 +88,15 @@ class ProfilePage extends ConsumerWidget {
 
           const SizedBox(height: 12),
 
+          // LANGUAGE SELECTOR
+          _buildLanguageSelector(context, ref),
+
+          const SizedBox(height: 12),
+
           _buildMenuCard(
             context,
-            title: 'Informazioni App',
-            subtitle: 'Versione, crediti',
+            title: l10n.appInfo,
+            subtitle: l10n.appInfoSubtitle,
             icon: FontAwesomeIcons.gear,
             color: const Color(0xFFa855f7),
             onTap: () {
@@ -103,6 +111,7 @@ class ProfilePage extends ConsumerWidget {
   Widget _buildThemeToggle(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(appThemeModeProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -133,14 +142,14 @@ class ProfilePage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Tema',
+                  l10n.theme,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  isDarkMode ? 'Modalità scura' : 'Modalità chiara',
+                  isDarkMode ? l10n.darkMode : l10n.lightMode,
                   style: theme.textTheme.bodySmall,
                 ),
               ],
@@ -150,6 +159,104 @@ class ProfilePage extends ConsumerWidget {
             value: isDarkMode,
             onChanged: (_) => ref.read(appThemeModeProvider.notifier).toggle(),
             activeThumbColor: theme.colorScheme.primary,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageSelector(BuildContext context, WidgetRef ref) {
+    final currentLocale = ref.watch(localeProvider);
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    // Determina la lingua corrente
+    final currentLanguageCode =
+        currentLocale?.languageCode ??
+        Localizations.localeOf(context).languageCode;
+    final currentLanguageName = getLanguageName(currentLanguageCode);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF3b82f6).withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              FontAwesomeIcons.language,
+              color: Color(0xFF3b82f6),
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.language,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(currentLanguageName, style: theme.textTheme.bodySmall),
+              ],
+            ),
+          ),
+          PopupMenuButton<Locale>(
+            icon: Icon(
+              Icons.arrow_drop_down,
+              color: theme.colorScheme.onSurface,
+            ),
+            onSelected: (Locale locale) {
+              ref.read(localeProvider.notifier).setLocale(locale);
+            },
+            itemBuilder: (BuildContext context) {
+              final supportedLocales = ref.read(supportedLocalesProvider);
+
+              return supportedLocales.map((Locale locale) {
+                final isSelected = currentLanguageCode == locale.languageCode;
+
+                return PopupMenuItem<Locale>(
+                  value: locale,
+                  child: Row(
+                    children: [
+                      Icon(
+                        isSelected ? Icons.check_circle : Icons.circle_outlined,
+                        color: isSelected
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.onSurface.withValues(
+                                alpha: 0.5,
+                              ),
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        getLanguageName(locale.languageCode),
+                        style: TextStyle(
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected ? theme.colorScheme.primary : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList();
+            },
           ),
         ],
       ),
@@ -216,6 +323,7 @@ class ProfilePage extends ConsumerWidget {
 
   void _showAboutDialog(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     showDialog(
       context: context,
@@ -314,7 +422,7 @@ class ProfilePage extends ConsumerWidget {
           TextButton.icon(
             onPressed: () => Navigator.pop(context),
             icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
-            label: const Text('Chiudi'),
+            label: Text(l10n.close),
             style: TextButton.styleFrom(
               foregroundColor: theme.colorScheme.primary,
             ),
@@ -400,6 +508,7 @@ class ProfilePage extends ConsumerWidget {
 
   void _showAquariumInfoDialog(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final aquariumsAsync = ref.read(aquariumsProvider);
 
     aquariumsAsync.when(
@@ -427,7 +536,10 @@ class ProfilePage extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text('Nessun Acquario', style: theme.textTheme.titleLarge),
+                  Text(
+                    l10n.noAquariumSelected,
+                    style: theme.textTheme.titleLarge,
+                  ),
                 ],
               ),
               content: Text(
@@ -439,7 +551,7 @@ class ProfilePage extends ConsumerWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
+                  child: Text(l10n.ok),
                 ),
               ],
             ),
@@ -584,7 +696,7 @@ class ProfilePage extends ConsumerWidget {
               TextButton.icon(
                 onPressed: () => Navigator.pop(context),
                 icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
-                label: const Text('Chiudi'),
+                label: Text(l10n.close),
                 style: TextButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
                 ),
@@ -611,11 +723,11 @@ class ProfilePage extends ConsumerWidget {
               'Errore',
               style: TextStyle(color: theme.colorScheme.error),
             ),
-            content: Text('Impossibile caricare le informazioni: $error'),
+            content: Text(l10n.unableToLoadInfo(error.toString())),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
+                child: Text(l10n.ok),
               ),
             ],
           ),

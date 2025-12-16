@@ -8,6 +8,7 @@ import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/providers/parameters_provider.dart';
 import 'package:acquariumfe/widgets/responsive_builder.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class HealthDashboard extends ConsumerStatefulWidget {
   const HealthDashboard({super.key});
@@ -58,6 +59,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final parametersAsync = ref.watch(currentParametersProvider);
 
     return parametersAsync.when(
@@ -73,7 +75,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Errore nel caricamento parametri',
+              l10n.errorLoadingParameters,
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
@@ -81,7 +83,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
               onPressed: () =>
                   ref.read(currentParametersProvider.notifier).refresh(),
               icon: const FaIcon(FontAwesomeIcons.arrowsRotate, size: 16),
-              label: const Text('Riprova'),
+              label: Text(l10n.retry),
             ),
           ],
         ),
@@ -121,10 +123,10 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         final healthScore = ((parametersInRange / totalParameters) * 100)
             .round();
         final statusMessage = healthScore >= 80
-            ? "TUTTO OK"
+            ? l10n.allOk
             : healthScore >= 60
-            ? "ATTENZIONE"
-            : "CRITICO";
+            ? l10n.warning
+            : l10n.critical;
         final statusColor = healthScore >= 80
             ? const Color(0xFF34d399)
             : healthScore >= 60
@@ -173,7 +175,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            'Stato Acquario',
+                            l10n.aquariumStatus,
                             style: TextStyle(
                               color: theme.colorScheme.onSurface,
                               fontSize: 12,
@@ -191,7 +193,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Aggiornato ora • $parametersInRange/$totalParameters parametri OK',
+                          l10n.updatedNow(parametersInRange, totalParameters),
                           style: TextStyle(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 11,
@@ -220,28 +222,28 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                     ),
                     children: [
                       _buildParamCard(
-                        'Temperatura',
+                        l10n.temperature,
                         '$currentTemperature °C',
                         FontAwesomeIcons.temperatureHalf,
                         const Color(0xFFef4444),
                         settings.temperature.isOutOfRange(currentTemperature),
                       ),
                       _buildParamCard(
-                        'pH',
+                        l10n.ph,
                         currentPh.toString(),
                         FontAwesomeIcons.flask,
                         const Color(0xFF60a5fa),
                         settings.ph.isOutOfRange(currentPh),
                       ),
                       _buildParamCard(
-                        'Salinità',
+                        l10n.salinity,
                         '${currentSalinity.toInt()} PPT',
                         FontAwesomeIcons.water,
                         const Color(0xFF2dd4bf),
                         settings.salinity.isOutOfRange(currentSalinity),
                       ),
                       _buildParamCard(
-                        'ORP',
+                        l10n.orp,
                         '${currentOrp.toInt()} mV',
                         FontAwesomeIcons.bolt,
                         const Color(0xFFfbbf24),
@@ -343,16 +345,17 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
 
   Widget _buildHealthScore(int score, int okParams, int totalParams) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final color = score >= 80
         ? const Color(0xFF34d399)
         : score >= 60
         ? const Color(0xFFfbbf24)
         : theme.colorScheme.error;
     final label = score >= 80
-        ? 'Eccellente'
+        ? l10n.excellent
         : score >= 60
-        ? 'Buono'
-        : 'Critico';
+        ? l10n.good
+        : l10n.critical;
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -403,7 +406,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Health Score',
+                  l10n.healthScore,
                   style: TextStyle(
                     color: theme.colorScheme.onSurface,
                     fontSize: 20,
@@ -421,7 +424,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '$okParams/$totalParams parametri nel range ottimale',
+                  l10n.parametersInOptimalRange(okParams, totalParams),
                   style: TextStyle(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 12,
@@ -436,11 +439,12 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
   }
 
   Widget _buildQuickStats(int okParams, int criticalParams, int alerts) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: _buildStatCard(
-            'Parametri OK',
+            l10n.parametersOk,
             '$okParams',
             FontAwesomeIcons.circleCheck,
             const Color(0xFF34d399),
@@ -449,7 +453,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
-            'Critici',
+            l10n.critical,
             '$criticalParams',
             FontAwesomeIcons.triangleExclamation,
             const Color(0xFFef4444),
@@ -458,7 +462,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
-            'Alert',
+            l10n.alerts,
             '$alerts',
             FontAwesomeIcons.bell,
             const Color(0xFFfbbf24),
@@ -548,19 +552,20 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
 
   Widget _buildMaintenanceReminders() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final reminders = [
       {
-        'title': 'Cambio Acqua',
+        'title': l10n.waterChange,
         'days': _settings.maintenanceReminders.waterChange.frequencyDays,
         'icon': FontAwesomeIcons.droplet,
       },
       {
-        'title': 'Pulizia Filtro',
+        'title': l10n.filterCleaning,
         'days': _settings.maintenanceReminders.filterCleaning.frequencyDays,
         'icon': FontAwesomeIcons.filter,
       },
       {
-        'title': 'Test Parametri',
+        'title': l10n.parameterTesting,
         'days': _settings.maintenanceReminders.parameterTesting.frequencyDays,
         'icon': FontAwesomeIcons.flask,
       },
@@ -587,7 +592,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
               ),
               const SizedBox(width: 8),
               Text(
-                'Prossimi Promemoria',
+                l10n.upcomingReminders,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 16,
@@ -634,7 +639,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      '${reminder['days']} gg',
+                      '${reminder['days']} ${l10n.days}',
                       style: const TextStyle(
                         color: Color(0xFF60a5fa),
                         fontSize: 11,
@@ -695,12 +700,13 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
 
   Widget _buildRecommendations(int healthScore, int parametersInRange) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final recommendations = <Map<String, dynamic>>[];
 
     if (healthScore < 80) {
       recommendations.add({
-        'title': 'Controllare parametri fuori range',
-        'desc': '${9 - parametersInRange} parametri necessitano attenzione',
+        'title': l10n.checkOutOfRangeParameters,
+        'desc': l10n.parametersNeedAttention(9 - parametersInRange),
         'icon': FontAwesomeIcons.triangleExclamation,
         'urgent': true,
       });
@@ -708,14 +714,14 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
 
     recommendations.addAll([
       {
-        'title': 'Controllare skimmer',
-        'desc': 'Pulizia settimanale consigliata',
+        'title': l10n.checkSkimmer,
+        'desc': l10n.weeklyCleaningRecommended,
         'icon': FontAwesomeIcons.broom,
         'urgent': false,
       },
       {
-        'title': 'Test KH',
-        'desc': 'Ultimo test: 3 giorni fa',
+        'title': l10n.khTest,
+        'desc': l10n.lastTest3DaysAgo,
         'icon': FontAwesomeIcons.flask,
         'urgent': false,
       },
@@ -734,7 +740,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Raccomandazioni',
+            l10n.recommendations,
             style: TextStyle(
               color: theme.colorScheme.onSurface,
               fontSize: 16,

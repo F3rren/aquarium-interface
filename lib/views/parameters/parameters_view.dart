@@ -9,12 +9,14 @@ import 'package:acquariumfe/widgets/components/manual_parameters.dart';
 import 'package:acquariumfe/providers/parameters_provider.dart';
 import 'package:acquariumfe/widgets/responsive_builder.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class ParametersView extends ConsumerWidget {
   const ParametersView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final parametersAsync = ref.watch(currentParametersProvider);
     final targetsAsync = ref.watch(targetParametersProvider);
 
@@ -25,8 +27,8 @@ class ParametersView extends ConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Parametri aggiornati'),
+            SnackBar(
+              content: Text(l10n.parametersUpdated),
               duration: Duration(seconds: 2),
               backgroundColor: Color(0xFF34d399),
             ),
@@ -45,19 +47,19 @@ class ParametersView extends ConsumerWidget {
                 color: Colors.red,
               ),
               const SizedBox(height: 16),
-              Text('Errore: $error'),
+              Text('${l10n.error}: $error'),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () =>
                     ref.read(currentParametersProvider.notifier).refresh(),
-                child: const Text('Riprova'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
         ),
         data: (currentParams) {
           if (currentParams == null) {
-            return const Center(child: Text('Nessun parametro disponibile'));
+            return Center(child: Text(l10n.noParametersAvailable));
           }
 
           final targetParams = targetsAsync.when(

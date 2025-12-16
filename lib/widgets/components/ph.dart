@@ -4,6 +4,7 @@ import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/widgets/animated_number.dart';
 import 'package:acquariumfe/widgets/tap_effect_card.dart';
 import 'package:acquariumfe/widgets/components/target_progress_bar.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class PhMeter extends StatelessWidget {
   final double currentPh;
@@ -23,17 +24,18 @@ class PhMeter extends StatelessWidget {
     return const Color(0xFFef4444);
   }
 
-  String _getStatus() {
-    if (currentPh < 7.8) return 'Basso';
-    if (currentPh >= 7.8 && currentPh <= 8.4) return 'Ottimale';
-    return 'Alto';
+  String _getStatus(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (currentPh < 7.8) return l10n.low;
+    if (currentPh >= 7.8 && currentPh <= 8.4) return l10n.optimal;
+    return l10n.high;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = _getPhColor();
-    final status = _getStatus();
+    final status = _getStatus(context);
 
     return TapEffectCard(
       onTap: () => _showEditTargetDialog(context),
@@ -143,6 +145,8 @@ class PhMeter extends StatelessWidget {
   }
 
   void _showEditTargetDialog(BuildContext context) async {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(
       text:
           targetPh?.toStringAsFixed(2) ??
@@ -152,22 +156,28 @@ class PhMeter extends StatelessWidget {
     final result = await showDialog<double>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2d2d2d),
+        backgroundColor: theme.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            FaIcon(FontAwesomeIcons.droplet, color: Color(0xFF60a5fa)),
-            SizedBox(width: 12),
-            Text('Target pH', style: TextStyle(color: Colors.white)),
+            const FaIcon(FontAwesomeIcons.droplet, color: Color(0xFF60a5fa)),
+            const SizedBox(width: 12),
+            Text(
+              l10n.targetPh,
+              style: TextStyle(color: theme.colorScheme.onSurface),
+            ),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Imposta il valore pH desiderato:',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+            Text(
+              l10n.setDesiredPh,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -176,31 +186,39 @@ class PhMeter extends StatelessWidget {
                 decimal: true,
               ),
               autofocus: true,
-              style: const TextStyle(color: Colors.white, fontSize: 18),
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+                fontSize: 18,
+              ),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: const Color(0xFF3a3a3a),
+                fillColor: theme.colorScheme.surfaceContainerHighest,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
                 hintText: '8.2',
-                hintStyle: const TextStyle(color: Colors.white30),
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                ),
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'Range tipico: 8.0-8.4',
-              style: TextStyle(color: Colors.white38, fontSize: 12),
+            Text(
+              l10n.typicalRangePh,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
+                fontSize: 12,
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Annulla',
-              style: TextStyle(color: Colors.white60),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
           ElevatedButton(
@@ -216,7 +234,7 @@ class PhMeter extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Salva', style: TextStyle(color: Colors.white)),
+            child: Text(l10n.save, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),

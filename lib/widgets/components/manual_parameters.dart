@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/manual_parameters_service.dart';
 import 'package:acquariumfe/providers/parameters_provider.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class ManualParametersWidget extends ConsumerStatefulWidget {
   const ManualParametersWidget({super.key});
@@ -43,30 +44,7 @@ class _ManualParametersWidgetState
     });
   }
 
-  Future<void> _saveParameter(String name, double value) async {
-    String key = '';
-
-    // Estrai il nome base (rimuovi le parti tra parentesi)
-    final baseName = name.split('(').first.trim();
-
-    switch (baseName) {
-      case 'Calcio':
-        key = 'calcium';
-        break;
-      case 'Magnesio':
-        key = 'magnesium';
-        break;
-      case 'KH':
-        key = 'kh';
-        break;
-      case 'Nitrati':
-        key = 'nitrate';
-        break;
-      case 'Fosfati':
-        key = 'phosphate';
-        break;
-    }
-
+  Future<void> _saveParameter(String key, double value) async {
     if (key.isNotEmpty) {
       await _manualService.updateParameter(key, value);
       await _loadParameters(); // Ricarica per aggiornare lastUpdate
@@ -81,6 +59,7 @@ class _ManualParametersWidgetState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -109,7 +88,7 @@ class _ManualParametersWidgetState
               ),
               const SizedBox(width: 12),
               Text(
-                'Parametri Chimici',
+                l10n.chemicalParameters,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 16,
@@ -120,7 +99,8 @@ class _ManualParametersWidgetState
           ),
           const SizedBox(height: 20),
           _buildParameter(
-            'Calcio (Ca)',
+            l10n.calciumCa,
+            'calcium',
             calcium,
             'mg/L',
             400,
@@ -130,7 +110,8 @@ class _ManualParametersWidgetState
           ),
           const SizedBox(height: 12),
           _buildParameter(
-            'Magnesio (Mg)',
+            l10n.magnesiumMg,
+            'magnesium',
             magnesium,
             'mg/L',
             1250,
@@ -140,7 +121,8 @@ class _ManualParametersWidgetState
           ),
           const SizedBox(height: 12),
           _buildParameter(
-            'KH',
+            l10n.kh,
+            'kh',
             kh,
             'dKH',
             7,
@@ -150,7 +132,8 @@ class _ManualParametersWidgetState
           ),
           const SizedBox(height: 12),
           _buildParameter(
-            'Nitrati (NO3)',
+            l10n.nitratesNO3,
+            'nitrate',
             nitrates,
             'mg/L',
             0.5,
@@ -160,7 +143,8 @@ class _ManualParametersWidgetState
           ),
           const SizedBox(height: 12),
           _buildParameter(
-            'Fosfati (PO4)',
+            l10n.phosphatesPO4,
+            'phosphate',
             phosphates,
             'mg/L',
             0.0,
@@ -175,6 +159,7 @@ class _ManualParametersWidgetState
 
   Widget _buildParameter(
     String name,
+    String key,
     double value,
     String unit,
     double min,
@@ -229,7 +214,7 @@ class _ManualParametersWidgetState
           GestureDetector(
             onTap: () => _showEditDialog(name, value, unit, (newValue) async {
               // Salva in SharedPreferences
-              await _saveParameter(name, newValue);
+              await _saveParameter(key, newValue);
               onChanged(newValue);
             }),
             child: Container(
@@ -270,6 +255,7 @@ class _ManualParametersWidgetState
     Function(double) onChanged,
   ) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(text: currentValue.toString());
     showDialog(
       context: context,
@@ -277,7 +263,7 @@ class _ManualParametersWidgetState
         backgroundColor: theme.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Modifica $name',
+          l10n.edit(name),
           style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 18),
         ),
         content: TextField(
@@ -285,7 +271,7 @@ class _ManualParametersWidgetState
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           style: TextStyle(color: theme.colorScheme.onSurface),
           decoration: InputDecoration(
-            labelText: 'Valore ($unit)',
+            labelText: l10n.value(unit),
             labelStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
@@ -301,7 +287,7 @@ class _ManualParametersWidgetState
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Annulla',
+              l10n.cancel,
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
@@ -320,7 +306,7 @@ class _ManualParametersWidgetState
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Salva'),
+            child: Text(l10n.save),
           ),
         ],
       ),
