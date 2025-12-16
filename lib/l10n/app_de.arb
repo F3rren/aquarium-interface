@@ -389,5 +389,128 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "chartHistoryTitle": "Historie {parameter}",
+  "@chartHistoryTitle": {
+    "placeholders": {
+      "parameter": {
+        "type": "String"
+      }
+    }
+  },
+  "chartNoData": "Keine Daten verfügbar",
+  "chartStatMin": "Min",
+  "chartStatAvg": "Durchschn.",
+  "chartStatMax": "Max",
+  "chartStatNow": "Jetzt",
+  "chartLegendIdeal": "Ideal",
+  "chartLegendWarning": "Warnung",
+  "chartAdvancedAnalysis": "Erweiterte Analyse",
+  "chartTrendLabel": "Trend",
+  "chartStabilityLabel": "Stabilität",
+  "chartTrendStable": "Stabil",
+  "chartTrendRising": "Steigend",
+  "chartTrendFalling": "Fallend",
+  "chartStabilityExcellent": "Ausgezeichnet",
+  "chartStabilityGood": "Gut",
+  "chartStabilityMedium": "Mittel",
+  "chartStabilityLow": "Niedrig",
+  "chartAdviceOutOfRange": "Achtung: {parameter} außerhalb des Bereichs. Sofort überprüfen und korrigieren.",
+  "@chartAdviceOutOfRange": {
+    "placeholders": {
+      "parameter": {
+        "type": "String"
+      }
+    }
+  },
+  "chartAdviceNotIdeal": "Parameter akzeptabel, aber nicht ideal. Sorgfältig überwachen.",
+  "chartAdviceUnstable": "Parameter instabil. Wasserwechsel und Zusatzdosierung überprüfen.",
+  "chartAdviceTempRising": "Temperatur steigt. Kühlung und Belüftung überprüfen.",
+  "chartAdviceOptimal": "Optimaler und stabiler Parameter.",
+  "paramTemperature": "Temperatur",
+  "paramPH": "pH",
+  "paramSalinity": "Salzgehalt",
+  "paramORP": "ORP",
+  
+  "errorLoadingTasks": "Fehler beim Laden von Aufgaben: {error}",
+  "@errorLoadingTasks": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addTask": "Aufgabe Hinzufügen",
+  "inProgress": "In Bearbeitung ({count})",
+  "@inProgress": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "completed": "Abgeschlossen ({count})",
+  "@completed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "overdue": "Überfällig",
+  "today": "Heute",
+  "week": "Woche",
+  "all": "Alle",
+  "noCompletedTasks": "Keine abgeschlossenen Aufgaben",
+  "noTasksInProgress": "Keine Aufgaben in Bearbeitung",
+  "overdueDays": "Überfällig um {days} Tage",
+  "@overdueDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "dueToday": "Heute fällig",
+  "inDays": "In {days} Tagen",
+  "@inDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "completedOn": "Abgeschlossen: {date}",
+  "@completedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "newTask": "Neue Aufgabe",
+  "taskTitle": "Aufgabentitel",
+  "taskDescription": "Beschreibung (optional)",
+  "category": "Kategorie",
+  "frequency": "Häufigkeit",
+  "everyDays": "Alle {days} Tage",
+  "@everyDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "reminder": "Erinnerung",
+  "enabled": "Aktiviert",
+  "disabled": "Deaktiviert",
+  "time": "Zeit",
+  "enterTaskTitle": "Geben Sie einen Titel ein",
+  "water": "Wasser",
+  "cleaning": "Reinigung",
+  "testing": "Testen",
+  "feeding": "Fütterung",
+  "equipment": "Ausrüstung",
+  "other": "Andere"
 }

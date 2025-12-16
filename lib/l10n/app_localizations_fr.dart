@@ -42,6 +42,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settings => 'Paramètres';
 
   @override
+  String get dashboard => 'Tableau de bord';
+
+  @override
+  String get charts => 'Graphiques';
+
+  @override
+  String get profile => 'Profil';
+
+  @override
+  String get myAquarium => 'Mon Aquarium';
+
+  @override
   String get noAquarium => 'Aucun Aquarium';
 
   @override
@@ -853,4 +865,269 @@ class AppLocalizationsFr extends AppLocalizations {
   String aquariumCreatedSuccess(String name) {
     return 'Aquarium \"$name\" créé avec succès!';
   }
+
+  @override
+  String get deleteAquarium => 'Supprimer Aquarium';
+
+  @override
+  String errorLoading(String error) {
+    return 'Erreur de chargement: $error';
+  }
+
+  @override
+  String get cannotDeleteMissingId =>
+      'Impossible de supprimer: ID de l\'aquarium manquant';
+
+  @override
+  String confirmDeleteAquarium(String name) {
+    return 'Êtes-vous sûr de vouloir supprimer \"$name\"?';
+  }
+
+  @override
+  String get actionCannotBeUndone => 'Cette action ne peut pas être annulée.';
+
+  @override
+  String get aquariumDeletedSuccess => 'Aquarium supprimé avec succès';
+
+  @override
+  String errorWithMessage(String error) {
+    return 'Erreur: $error';
+  }
+
+  @override
+  String get noAquariumsToDelete => 'Aucun aquarium à supprimer';
+
+  @override
+  String get aquariumManagement => 'Gestion des Aquariums';
+
+  @override
+  String get selectToDelete => 'Sélectionner pour supprimer';
+
+  @override
+  String get editAquarium => 'Modifier l\'Aquarium';
+
+  @override
+  String get selectAquarium => 'Sélectionner Aquarium';
+
+  @override
+  String get chooseAquariumToEdit => 'Choisissez quel réservoir modifier';
+
+  @override
+  String get noAquariumsFound => 'Aucun réservoir trouvé';
+
+  @override
+  String get editDetails => 'Modifier les Détails';
+
+  @override
+  String updateAquarium(String name) {
+    return 'Mettre à jour $name';
+  }
+
+  @override
+  String get saveChanges => 'Enregistrer les Modifications';
+
+  @override
+  String changesSavedFor(String name) {
+    return 'Modifications enregistrées pour \"$name\"';
+  }
+
+  @override
+  String errorSavingChanges(String error) {
+    return 'Erreur lors de l\'enregistrement des modifications: $error';
+  }
+
+  @override
+  String chartHistoryTitle(String parameter) {
+    return 'Historique $parameter';
+  }
+
+  @override
+  String get chartNoData => 'Aucune donnée disponible';
+
+  @override
+  String get chartStatMin => 'Min';
+
+  @override
+  String get chartStatAvg => 'Moy';
+
+  @override
+  String get chartStatMax => 'Max';
+
+  @override
+  String get chartStatNow => 'Maint.';
+
+  @override
+  String get chartLegendIdeal => 'Idéal';
+
+  @override
+  String get chartLegendWarning => 'Avertissement';
+
+  @override
+  String get chartAdvancedAnalysis => 'Analyse Avancée';
+
+  @override
+  String get chartTrendLabel => 'Tendance';
+
+  @override
+  String get chartStabilityLabel => 'Stabilité';
+
+  @override
+  String get chartTrendStable => 'Stable';
+
+  @override
+  String get chartTrendRising => 'En hausse';
+
+  @override
+  String get chartTrendFalling => 'En baisse';
+
+  @override
+  String get chartStabilityExcellent => 'Excellente';
+
+  @override
+  String get chartStabilityGood => 'Bonne';
+
+  @override
+  String get chartStabilityMedium => 'Moyenne';
+
+  @override
+  String get chartStabilityLow => 'Basse';
+
+  @override
+  String chartAdviceOutOfRange(String parameter) {
+    return 'Attention: $parameter hors plage. Vérifiez immédiatement et corrigez.';
+  }
+
+  @override
+  String get chartAdviceNotIdeal =>
+      'Paramètre acceptable mais pas idéal. Surveillez attentivement.';
+
+  @override
+  String get chartAdviceUnstable =>
+      'Paramètre instable. Vérifiez le changement d\'eau et le dosage des additifs.';
+
+  @override
+  String get chartAdviceTempRising =>
+      'Température en hausse. Vérifiez le refroidissement et la ventilation.';
+
+  @override
+  String get chartAdviceOptimal => 'Paramètre optimal et stable.';
+
+  @override
+  String get paramTemperature => 'Température';
+
+  @override
+  String get paramPH => 'pH';
+
+  @override
+  String get paramSalinity => 'Salinité';
+
+  @override
+  String get paramORP => 'ORP';
+
+  @override
+  String errorLoadingTasks(String error) {
+    return 'Erreur de chargement des tâches: $error';
+  }
+
+  @override
+  String get addTask => 'Ajouter une Tâche';
+
+  @override
+  String inProgress(int count) {
+    return 'En Cours ($count)';
+  }
+
+  @override
+  String completed(int count) {
+    return 'Terminés ($count)';
+  }
+
+  @override
+  String get overdue => 'En Retard';
+
+  @override
+  String get today => 'Aujourd\'hui';
+
+  @override
+  String get week => 'Semaine';
+
+  @override
+  String get all => 'Tous';
+
+  @override
+  String get noCompletedTasks => 'Aucune tâche terminée';
+
+  @override
+  String get noTasksInProgress => 'Aucune tâche en cours';
+
+  @override
+  String overdueDays(int days) {
+    return 'En retard de $days jours';
+  }
+
+  @override
+  String get dueToday => 'Échéance aujourd\'hui';
+
+  @override
+  String inDays(int days) {
+    return 'Dans $days jours';
+  }
+
+  @override
+  String completedOn(String date) {
+    return 'Terminé: $date';
+  }
+
+  @override
+  String get newTask => 'Nouvelle Tâche';
+
+  @override
+  String get taskTitle => 'Titre de la Tâche';
+
+  @override
+  String get taskDescription => 'Description (optionnelle)';
+
+  @override
+  String get category => 'Catégorie';
+
+  @override
+  String get frequency => 'Fréquence';
+
+  @override
+  String everyDays(int days) {
+    return 'Tous les $days jours';
+  }
+
+  @override
+  String get reminder => 'Rappel';
+
+  @override
+  String get enabled => 'Activé';
+
+  @override
+  String get disabled => 'Désactivé';
+
+  @override
+  String get time => 'Heure';
+
+  @override
+  String get enterTaskTitle => 'Entrez un titre';
+
+  @override
+  String get water => 'Eau';
+
+  @override
+  String get cleaning => 'Nettoyage';
+
+  @override
+  String get testing => 'Tests';
+
+  @override
+  String get feeding => 'Alimentation';
+
+  @override
+  String get equipment => 'Équipement';
+
+  @override
+  String get other => 'Autre';
 }

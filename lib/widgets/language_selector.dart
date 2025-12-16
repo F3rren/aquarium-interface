@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:acquariumfe/providers/locale_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 /// Widget per selezionare la lingua dell'applicazione
 class LanguageSelector extends ConsumerWidget {
@@ -9,13 +10,14 @@ class LanguageSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final currentLocale = ref.watch(localeProvider);
     final supportedLocales = ref.watch(supportedLocalesProvider);
     final theme = Theme.of(context);
 
     return PopupMenuButton<Locale>(
       icon: const FaIcon(FontAwesomeIcons.language, size: 20),
-      tooltip: 'Seleziona lingua',
+      tooltip: l10n.selectLanguage,
       onSelected: (Locale locale) {
         ref.read(localeProvider.notifier).setLocale(locale);
       },
@@ -57,16 +59,17 @@ class LanguageDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final currentLocale = ref.watch(localeProvider);
     final supportedLocales = ref.watch(supportedLocalesProvider);
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: const Row(
+      title: Row(
         children: [
-          FaIcon(FontAwesomeIcons.language, size: 20),
-          SizedBox(width: 12),
-          Text('Seleziona Lingua'),
+          const FaIcon(FontAwesomeIcons.language, size: 20),
+          const SizedBox(width: 12),
+          Text(l10n.selectLanguage),
         ],
       ),
       content: SizedBox(

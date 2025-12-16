@@ -42,6 +42,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get charts => 'Charts';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get myAquarium => 'My Aquarium';
+
+  @override
   String get noAquarium => 'No Aquarium';
 
   @override
@@ -850,4 +862,268 @@ class AppLocalizationsEn extends AppLocalizations {
   String aquariumCreatedSuccess(String name) {
     return 'Aquarium \"$name\" created successfully!';
   }
+
+  @override
+  String get deleteAquarium => 'Delete Aquarium';
+
+  @override
+  String errorLoading(String error) {
+    return 'Error loading: $error';
+  }
+
+  @override
+  String get cannotDeleteMissingId => 'Cannot delete: Aquarium ID missing';
+
+  @override
+  String confirmDeleteAquarium(String name) {
+    return 'Are you sure you want to delete \"$name\"?';
+  }
+
+  @override
+  String get actionCannotBeUndone => 'This action cannot be undone.';
+
+  @override
+  String get aquariumDeletedSuccess => 'Aquarium deleted successfully';
+
+  @override
+  String errorWithMessage(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get noAquariumsToDelete => 'No aquariums to delete';
+
+  @override
+  String get aquariumManagement => 'Aquarium Management';
+
+  @override
+  String get selectToDelete => 'Select to delete';
+
+  @override
+  String get editAquarium => 'Edit Aquarium';
+
+  @override
+  String get selectAquarium => 'Select Aquarium';
+
+  @override
+  String get chooseAquariumToEdit => 'Choose which tank to edit';
+
+  @override
+  String get noAquariumsFound => 'No tanks found';
+
+  @override
+  String get editDetails => 'Edit Details';
+
+  @override
+  String updateAquarium(String name) {
+    return 'Update $name';
+  }
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String changesSavedFor(String name) {
+    return 'Changes saved for \"$name\"';
+  }
+
+  @override
+  String errorSavingChanges(String error) {
+    return 'Error saving changes: $error';
+  }
+
+  @override
+  String chartHistoryTitle(String parameter) {
+    return 'History $parameter';
+  }
+
+  @override
+  String get chartNoData => 'No data available';
+
+  @override
+  String get chartStatMin => 'Min';
+
+  @override
+  String get chartStatAvg => 'Avg';
+
+  @override
+  String get chartStatMax => 'Max';
+
+  @override
+  String get chartStatNow => 'Now';
+
+  @override
+  String get chartLegendIdeal => 'Ideal';
+
+  @override
+  String get chartLegendWarning => 'Warning';
+
+  @override
+  String get chartAdvancedAnalysis => 'Advanced Analysis';
+
+  @override
+  String get chartTrendLabel => 'Trend';
+
+  @override
+  String get chartStabilityLabel => 'Stability';
+
+  @override
+  String get chartTrendStable => 'Stable';
+
+  @override
+  String get chartTrendRising => 'Rising';
+
+  @override
+  String get chartTrendFalling => 'Falling';
+
+  @override
+  String get chartStabilityExcellent => 'Excellent';
+
+  @override
+  String get chartStabilityGood => 'Good';
+
+  @override
+  String get chartStabilityMedium => 'Medium';
+
+  @override
+  String get chartStabilityLow => 'Low';
+
+  @override
+  String chartAdviceOutOfRange(String parameter) {
+    return 'Warning: $parameter out of range. Check immediately and correct.';
+  }
+
+  @override
+  String get chartAdviceNotIdeal =>
+      'Parameter acceptable but not ideal. Monitor carefully.';
+
+  @override
+  String get chartAdviceUnstable =>
+      'Unstable parameter. Check water change and additive dosing.';
+
+  @override
+  String get chartAdviceTempRising =>
+      'Temperature rising. Check cooling and ventilation.';
+
+  @override
+  String get chartAdviceOptimal => 'Optimal and stable parameter.';
+
+  @override
+  String get paramTemperature => 'Temperature';
+
+  @override
+  String get paramPH => 'pH';
+
+  @override
+  String get paramSalinity => 'Salinity';
+
+  @override
+  String get paramORP => 'ORP';
+
+  @override
+  String errorLoadingTasks(String error) {
+    return 'Error loading tasks: $error';
+  }
+
+  @override
+  String get addTask => 'Add Task';
+
+  @override
+  String inProgress(int count) {
+    return 'In Progress ($count)';
+  }
+
+  @override
+  String completed(int count) {
+    return 'Completed ($count)';
+  }
+
+  @override
+  String get overdue => 'Overdue';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get week => 'Week';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get noCompletedTasks => 'No completed tasks';
+
+  @override
+  String get noTasksInProgress => 'No tasks in progress';
+
+  @override
+  String overdueDays(int days) {
+    return 'Overdue by $days days';
+  }
+
+  @override
+  String get dueToday => 'Due today';
+
+  @override
+  String inDays(int days) {
+    return 'In $days days';
+  }
+
+  @override
+  String completedOn(String date) {
+    return 'Completed: $date';
+  }
+
+  @override
+  String get newTask => 'New Task';
+
+  @override
+  String get taskTitle => 'Task Title';
+
+  @override
+  String get taskDescription => 'Description (optional)';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get frequency => 'Frequency';
+
+  @override
+  String everyDays(int days) {
+    return 'Every $days days';
+  }
+
+  @override
+  String get reminder => 'Reminder';
+
+  @override
+  String get enabled => 'Enabled';
+
+  @override
+  String get disabled => 'Disabled';
+
+  @override
+  String get time => 'Time';
+
+  @override
+  String get enterTaskTitle => 'Enter a title';
+
+  @override
+  String get water => 'Water';
+
+  @override
+  String get cleaning => 'Cleaning';
+
+  @override
+  String get testing => 'Testing';
+
+  @override
+  String get feeding => 'Feeding';
+
+  @override
+  String get equipment => 'Equipment';
+
+  @override
+  String get other => 'Other';
 }

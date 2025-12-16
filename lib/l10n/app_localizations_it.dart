@@ -42,6 +42,18 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settings => 'Impostazioni';
 
   @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get charts => 'Grafici';
+
+  @override
+  String get profile => 'Profilo';
+
+  @override
+  String get myAquarium => 'La Mia Vasca';
+
+  @override
   String get noAquarium => 'Nessun Acquario';
 
   @override
@@ -849,4 +861,269 @@ class AppLocalizationsIt extends AppLocalizations {
   String aquariumCreatedSuccess(String name) {
     return 'Acquario \"$name\" creato con successo!';
   }
+
+  @override
+  String get deleteAquarium => 'Elimina Acquario';
+
+  @override
+  String errorLoading(String error) {
+    return 'Errore nel caricamento: $error';
+  }
+
+  @override
+  String get cannotDeleteMissingId =>
+      'Impossibile eliminare: ID acquario mancante';
+
+  @override
+  String confirmDeleteAquarium(String name) {
+    return 'Sei sicuro di voler eliminare \"$name\"?';
+  }
+
+  @override
+  String get actionCannotBeUndone => 'Questa azione non può essere annullata.';
+
+  @override
+  String get aquariumDeletedSuccess => 'Acquario eliminato con successo';
+
+  @override
+  String errorWithMessage(String error) {
+    return 'Errore: $error';
+  }
+
+  @override
+  String get noAquariumsToDelete => 'Non ci sono acquari da eliminare';
+
+  @override
+  String get aquariumManagement => 'Gestione Acquari';
+
+  @override
+  String get selectToDelete => 'Seleziona per eliminare';
+
+  @override
+  String get editAquarium => 'Modifica Acquario';
+
+  @override
+  String get selectAquarium => 'Seleziona Acquario';
+
+  @override
+  String get chooseAquariumToEdit => 'Scegli quale vasca modificare';
+
+  @override
+  String get noAquariumsFound => 'Nessuna vasca trovata';
+
+  @override
+  String get editDetails => 'Modifica Dettagli';
+
+  @override
+  String updateAquarium(String name) {
+    return 'Aggiorna $name';
+  }
+
+  @override
+  String get saveChanges => 'Salva Modifiche';
+
+  @override
+  String changesSavedFor(String name) {
+    return 'Modifiche salvate per \"$name\"';
+  }
+
+  @override
+  String errorSavingChanges(String error) {
+    return 'Errore nel salvare le modifiche: $error';
+  }
+
+  @override
+  String chartHistoryTitle(String parameter) {
+    return 'Storico $parameter';
+  }
+
+  @override
+  String get chartNoData => 'Nessun dato disponibile';
+
+  @override
+  String get chartStatMin => 'Min';
+
+  @override
+  String get chartStatAvg => 'Avg';
+
+  @override
+  String get chartStatMax => 'Max';
+
+  @override
+  String get chartStatNow => 'Now';
+
+  @override
+  String get chartLegendIdeal => 'Ideale';
+
+  @override
+  String get chartLegendWarning => 'Avviso';
+
+  @override
+  String get chartAdvancedAnalysis => 'Analisi Avanzata';
+
+  @override
+  String get chartTrendLabel => 'Trend';
+
+  @override
+  String get chartStabilityLabel => 'Stabilità';
+
+  @override
+  String get chartTrendStable => 'Stabile';
+
+  @override
+  String get chartTrendRising => 'In aumento';
+
+  @override
+  String get chartTrendFalling => 'In calo';
+
+  @override
+  String get chartStabilityExcellent => 'Ottima';
+
+  @override
+  String get chartStabilityGood => 'Buona';
+
+  @override
+  String get chartStabilityMedium => 'Media';
+
+  @override
+  String get chartStabilityLow => 'Bassa';
+
+  @override
+  String chartAdviceOutOfRange(String parameter) {
+    return 'Attenzione: $parameter fuori range. Controlla subito e correggi.';
+  }
+
+  @override
+  String get chartAdviceNotIdeal =>
+      'Parametro accettabile ma non ideale. Monitora attentamente.';
+
+  @override
+  String get chartAdviceUnstable =>
+      'Parametro instabile. Verifica cambio acqua e dosaggi additivi.';
+
+  @override
+  String get chartAdviceTempRising =>
+      'Temperatura in aumento. Verifica raffreddamento e ventilazione.';
+
+  @override
+  String get chartAdviceOptimal => 'Parametro ottimale e stabile.';
+
+  @override
+  String get paramTemperature => 'Temperatura';
+
+  @override
+  String get paramPH => 'pH';
+
+  @override
+  String get paramSalinity => 'Salinità';
+
+  @override
+  String get paramORP => 'ORP';
+
+  @override
+  String errorLoadingTasks(String error) {
+    return 'Errore caricamento task: $error';
+  }
+
+  @override
+  String get addTask => 'Aggiungi Task';
+
+  @override
+  String inProgress(int count) {
+    return 'In Corso ($count)';
+  }
+
+  @override
+  String completed(int count) {
+    return 'Completati ($count)';
+  }
+
+  @override
+  String get overdue => 'In Ritardo';
+
+  @override
+  String get today => 'Oggi';
+
+  @override
+  String get week => 'Settimana';
+
+  @override
+  String get all => 'Tutti';
+
+  @override
+  String get noCompletedTasks => 'Nessun task completato';
+
+  @override
+  String get noTasksInProgress => 'Nessun task in corso';
+
+  @override
+  String overdueDays(int days) {
+    return 'In ritardo di $days giorni';
+  }
+
+  @override
+  String get dueToday => 'Scade oggi';
+
+  @override
+  String inDays(int days) {
+    return 'Tra $days giorni';
+  }
+
+  @override
+  String completedOn(String date) {
+    return 'Completato: $date';
+  }
+
+  @override
+  String get newTask => 'Nuovo Task';
+
+  @override
+  String get taskTitle => 'Titolo Task';
+
+  @override
+  String get taskDescription => 'Descrizione (opzionale)';
+
+  @override
+  String get category => 'Categoria';
+
+  @override
+  String get frequency => 'Frequenza';
+
+  @override
+  String everyDays(int days) {
+    return 'Ogni $days giorni';
+  }
+
+  @override
+  String get reminder => 'Promemoria';
+
+  @override
+  String get enabled => 'Abilitato';
+
+  @override
+  String get disabled => 'Disabilitato';
+
+  @override
+  String get time => 'Orario';
+
+  @override
+  String get enterTaskTitle => 'Inserisci un titolo';
+
+  @override
+  String get water => 'Acqua';
+
+  @override
+  String get cleaning => 'Pulizia';
+
+  @override
+  String get testing => 'Test';
+
+  @override
+  String get feeding => 'Alimentazione';
+
+  @override
+  String get equipment => 'Attrezzatura';
+
+  @override
+  String get other => 'Altro';
 }
