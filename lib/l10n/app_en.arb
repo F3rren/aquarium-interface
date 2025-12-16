@@ -908,5 +908,62 @@
   "orEnterManually": "or enter manually",
   "multipleSpecimensNote": "If you add multiple specimens, they will be automatically numbered",
   "calculate": "Calculate",
-  "recentAlerts": "Recent Alerts"
+  "recentAlerts": "Recent Alerts",
+  "frequencyDays": "{days}d",
+  "@frequencyDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "minMaxRange": "{min} - {max}{unit}",
+  "@minMaxRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "minValueUnit": "{min}{unit}",
+  "@minValueUnit": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "maxValueUnit": "{max}{unit}",
+  "@maxValueUnit": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsActiveLabel": "Notifications Active",
+  "notificationsDisabled": "Notifications Disabled",
+  "alertHistoryCount": "Alert History",
+  "alertHistorySubtitle": "{count} recent notifications",
+  "@alertHistorySubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "minimumValue": "Minimum Value",
+  "maximumValue": "Maximum Value"
 }

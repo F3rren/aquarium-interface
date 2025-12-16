@@ -824,7 +824,7 @@ class _CalculatorsPageState extends State<CalculatorsPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text('Calcola',
+                  child: Text(l10n.calculate,
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),

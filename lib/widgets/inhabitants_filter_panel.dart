@@ -105,7 +105,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text('Filtri e Ricerca',
+                  child: Text(l10n.filtersAndSearch,
                     style: TextStyle(
                       color: theme.colorScheme.onSurface,
                       fontSize: 18,
@@ -257,7 +257,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                               vertical: 12,
                             ),
                           ),
-                          hint: Text('Seleziona tipo',
+                          hint: Text(l10n.selectType,
                             style: TextStyle(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),

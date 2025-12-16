@@ -994,5 +994,62 @@
   "orEnterManually": "oppure inserisci manualmente",
   "multipleSpecimensNote": "Se aggiungi più esemplari, verranno numerati automaticamente",
   "calculate": "Calcola",
-  "recentAlerts": "Alert Recenti"
+  "recentAlerts": "Alert Recenti",
+  "frequencyDays": "{days}d",
+  "@frequencyDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "minMaxRange": "{min} - {max}{unit}",
+  "@minMaxRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "minValueUnit": "{min}{unit}",
+  "@minValueUnit": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "maxValueUnit": "{max}{unit}",
+  "@maxValueUnit": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsActiveLabel": "Notifiche Attive",
+  "notificationsDisabled": "Notifiche Disattivate",
+  "alertHistoryCount": "Storico Alert",
+  "alertHistorySubtitle": "{count} notifiche recenti",
+  "@alertHistorySubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "minimumValue": "Valore Minimo",
+  "maximumValue": "Valore Massimo"
 }

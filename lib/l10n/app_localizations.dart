@@ -3415,6 +3415,66 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Alert Recenti'**
   String get recentAlerts;
+
+  /// No description provided for @frequencyDays.
+  ///
+  /// In it, this message translates to:
+  /// **'{days}d'**
+  String frequencyDays(String days);
+
+  /// No description provided for @minMaxRange.
+  ///
+  /// In it, this message translates to:
+  /// **'{min} - {max}{unit}'**
+  String minMaxRange(String min, String max, String unit);
+
+  /// No description provided for @minValueUnit.
+  ///
+  /// In it, this message translates to:
+  /// **'{min}{unit}'**
+  String minValueUnit(String min, String unit);
+
+  /// No description provided for @maxValueUnit.
+  ///
+  /// In it, this message translates to:
+  /// **'{max}{unit}'**
+  String maxValueUnit(String max, String unit);
+
+  /// No description provided for @notificationsActiveLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Notifiche Attive'**
+  String get notificationsActiveLabel;
+
+  /// No description provided for @notificationsDisabled.
+  ///
+  /// In it, this message translates to:
+  /// **'Notifiche Disattivate'**
+  String get notificationsDisabled;
+
+  /// No description provided for @alertHistoryCount.
+  ///
+  /// In it, this message translates to:
+  /// **'Storico Alert'**
+  String get alertHistoryCount;
+
+  /// No description provided for @alertHistorySubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} notifiche recenti'**
+  String alertHistorySubtitle(String count);
+
+  /// No description provided for @minimumValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Valore Minimo'**
+  String get minimumValue;
+
+  /// No description provided for @maximumValue.
+  ///
+  /// In it, this message translates to:
+  /// **'Valore Massimo'**
+  String get maximumValue;
 }
 
 class _AppLocalizationsDelegate

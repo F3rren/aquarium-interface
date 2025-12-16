@@ -464,6 +464,8 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
 
   Widget _buildCriticalAlerts(List alerts) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -484,7 +486,8 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                 size: 20,
               ),
               const SizedBox(width: 8),
-              Text('Alert Recenti',
+              Text(
+                l10n.recentAlerts,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 16,

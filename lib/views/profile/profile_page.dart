@@ -330,12 +330,12 @@ class ProfilePage extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('ReefLife',
+                Text(l10n.appTitle,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text('Sistema di Gestione Acquari',
+                Text(l10n.appSubtitle,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     letterSpacing: 0.5,
@@ -353,7 +353,7 @@ class ProfilePage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Description
-                Text('Piattaforma avanzata per il monitoraggio e la gestione degli acquari marini, progettata per gli appassionati di acquariofilia.',
+                Text(l10n.appDescription,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     height: 1.5,
@@ -379,7 +379,7 @@ class ProfilePage extends ConsumerWidget {
                             color: theme.colorScheme.primary,
                           ),
                           const SizedBox(width: 8),
-                          Text('MIT License',
+                          Text(l10n.mitLicense,
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: theme.colorScheme.primary,
@@ -388,13 +388,13 @@ class ProfilePage extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text('© 2024-2025 ReefLife Project. Tutti i diritti riservati.',
+                      Text(l10n.copyright,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text('Software open source per la comunità acquariofila.',
+                      Text(l10n.openSourceMessage,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontStyle: FontStyle.italic,
@@ -527,7 +527,7 @@ class ProfilePage extends ConsumerWidget {
                   ),
                 ],
               ),
-              content: Text('Non hai ancora creato un acquario. Crea il tuo primo acquario per visualizzare le informazioni.',
+              content: Text(l10n.noAquariumCreated,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -591,7 +591,7 @@ class ProfilePage extends ConsumerWidget {
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Text('Dettagli Acquario',
+                      Text(l10n.aquariumDetails,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -647,7 +647,7 @@ class ProfilePage extends ConsumerWidget {
                           color: theme.colorScheme.primary,
                         ),
                         const SizedBox(width: 8),
-                        Text('Descrizione',
+                        Text(l10n.description,
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: theme.colorScheme.primary,
@@ -699,7 +699,7 @@ class ProfilePage extends ConsumerWidget {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: theme.colorScheme.surface,
-            title: Text('Errore',
+            title: Text(l10n.errorTitle,
               style: TextStyle(color: theme.colorScheme.error),
             ),
             content: Text(l10n.unableToLoadInfo(error.toString())),
