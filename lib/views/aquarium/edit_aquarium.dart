@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/models/aquarium.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class EditAquarium extends ConsumerStatefulWidget {
   const EditAquarium({super.key});
@@ -17,7 +18,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
   final _nameController = TextEditingController();
   final _volumeController = TextEditingController();
 
-  String _selectedType = 'Marino';
+  String _selectedType = 'marine';
   List<Aquarium> _aquariums = [];
   Aquarium? _selectedAquarium;
   bool _isEditing = false;
@@ -70,9 +71,10 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
       error: (error, stack) {
         setState(() => _isLoading = false);
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Errore nel caricamento: $error'),
+              content: Text(l10n.errorLoading(error.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -90,12 +92,21 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
   }
 
   void _selectAquarium(Aquarium aquarium) {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Mappa inversa: dal tipo tradotto alla chiave
+    final typeToKey = {
+      l10n.marine: 'marine',
+      l10n.freshwater: 'freshwater',
+      l10n.reef: 'reef',
+    };
+
     setState(() {
       _selectedAquarium = aquarium;
       _isEditing = true;
       _nameController.text = aquarium.name;
       _volumeController.text = aquarium.volume.toString();
-      _selectedType = aquarium.type;
+      _selectedType = typeToKey[aquarium.type] ?? 'marine';
     });
     _animationController.reset();
     _animationController.forward();
@@ -104,11 +115,20 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
   Future<void> _saveChanges() async {
     if (_formKey.currentState!.validate() && _selectedAquarium != null) {
       try {
+        final l10n = AppLocalizations.of(context)!;
+
+        // Mappa la chiave al valore tradotto
+        final typeMap = {
+          'marine': l10n.marine,
+          'freshwater': l10n.freshwater,
+          'reef': l10n.reef,
+        };
+
         // Crea l'oggetto Aquarium aggiornato
         final updatedAquarium = _selectedAquarium!.copyWith(
           name: _nameController.text,
           volume: double.parse(_volumeController.text),
-          type: _selectedType,
+          type: typeMap[_selectedType] ?? l10n.marine,
         );
 
         // Chiama il provider per aggiornare la vasca
@@ -120,6 +140,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
         await _loadAquariums();
 
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
@@ -129,7 +150,9 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                     color: Colors.white,
                   ),
                   const SizedBox(width: 12),
-                  Text('Modifiche salvate per "${_nameController.text}"'),
+                  Expanded(
+                    child: Text(l10n.changesSavedFor(_nameController.text)),
+                  ),
                 ],
               ),
               backgroundColor: const Color(0xFF60a5fa),
@@ -149,6 +172,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
         }
       } catch (e) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
@@ -158,7 +182,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                     color: Colors.white,
                   ),
                   const SizedBox(width: 12),
-                  Expanded(child: Text('Errore nel salvare le modifiche: $e')),
+                  Expanded(child: Text(l10n.errorSavingChanges(e.toString()))),
                 ],
               ),
               backgroundColor: Colors.red,
@@ -176,13 +200,14 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Modifica Acquario',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        title: Text(
+          l10n.editAquarium,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
@@ -212,6 +237,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
     }
 
     if (_aquariums.isEmpty) {
+      final l10n = AppLocalizations.of(context)!;
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(40.0),
@@ -225,7 +251,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
               ),
               const SizedBox(height: 16),
               Text(
-                'Nessuna vasca trovata',
+                l10n.noAquariumsFound,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 16,
@@ -266,7 +292,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Seleziona Acquario',
+                      l10n.selectAquarium,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: 20,
@@ -275,7 +301,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Scegli quale vasca modificare',
+                      l10n.chooseAquariumToEdit,
                       style: TextStyle(
                         color: theme.colorScheme.onSurfaceVariant,
                         fontSize: 13,
@@ -295,6 +321,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
 
   Widget _buildAquariumCard(Aquarium aquarium) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -366,6 +393,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
 
   Widget _buildEditForm() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -400,7 +428,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Modifica Dettagli',
+                          l10n.editDetails,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 20,
@@ -409,7 +437,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Aggiorna ${_selectedAquarium!.name}',
+                          l10n.updateAquarium(_selectedAquarium!.name),
                           style: TextStyle(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 13,
@@ -423,21 +451,21 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
             ),
             const SizedBox(height: 24),
 
-            _buildLabel('Nome Acquario'),
+            _buildLabel(l10n.aquariumName),
             const SizedBox(height: 8),
             TextFormField(
               controller: _nameController,
               style: TextStyle(color: theme.colorScheme.onSurface),
               decoration: _buildInputDecoration(
-                'es. La Mia Vasca',
+                l10n.aquariumNameHint,
                 FontAwesomeIcons.textHeight,
               ),
               validator: (value) =>
-                  value?.isEmpty ?? true ? 'Inserisci un nome' : null,
+                  value?.isEmpty ?? true ? l10n.enterName : null,
             ),
             const SizedBox(height: 20),
 
-            _buildLabel('Tipo Acquario'),
+            _buildLabel(l10n.aquariumType),
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
@@ -450,31 +478,34 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
               child: Row(
                 children: [
                   Expanded(
-                    child: _buildTypeButton('Marino', FontAwesomeIcons.droplet),
+                    child: _buildTypeButton('marine', FontAwesomeIcons.droplet),
                   ),
                   Expanded(
-                    child: _buildTypeButton('Dolce', FontAwesomeIcons.water),
+                    child: _buildTypeButton(
+                      'freshwater',
+                      FontAwesomeIcons.water,
+                    ),
                   ),
                   Expanded(
-                    child: _buildTypeButton('Reef', FontAwesomeIcons.atom),
+                    child: _buildTypeButton('reef', FontAwesomeIcons.atom),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
 
-            _buildLabel('Volume (Litri)'),
+            _buildLabel(l10n.volumeLiters),
             const SizedBox(height: 8),
             TextFormField(
               controller: _volumeController,
               style: TextStyle(color: theme.colorScheme.onSurface),
               keyboardType: TextInputType.number,
               decoration: _buildInputDecoration(
-                'es. 200',
+                l10n.volumeHint,
                 FontAwesomeIcons.ruler,
               ),
               validator: (value) =>
-                  value?.isEmpty ?? true ? 'Inserisci il volume' : null,
+                  value?.isEmpty ?? true ? l10n.enterVolume : null,
             ),
             const SizedBox(height: 32),
 
@@ -503,9 +534,9 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: const Text(
-                        'Annulla',
-                        style: TextStyle(
+                      child: Text(
+                        l10n.cancel,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -528,14 +559,14 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                         ),
                         elevation: 0,
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          FaIcon(FontAwesomeIcons.floppyDisk, size: 24),
-                          SizedBox(width: 12),
+                          const FaIcon(FontAwesomeIcons.floppyDisk, size: 24),
+                          const SizedBox(width: 12),
                           Text(
-                            'Salva Modifiche',
-                            style: TextStyle(
+                            l10n.saveChanges,
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -602,6 +633,14 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
 
   Widget _buildTypeButton(String type, IconData icon) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    final typeMap = {
+      'marine': l10n.marine,
+      'freshwater': l10n.freshwater,
+      'reef': l10n.reef,
+    };
+
     final isSelected = _selectedType == type;
     return GestureDetector(
       onTap: () => setState(() => _selectedType = type),
@@ -624,7 +663,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
             ),
             const SizedBox(height: 8),
             Text(
-              type,
+              typeMap[type] ?? '',
               style: TextStyle(
                 color: isSelected
                     ? theme.colorScheme.primary

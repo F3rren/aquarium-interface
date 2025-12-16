@@ -145,12 +145,12 @@ class _AddFishDialogState extends State<AddFishDialog> {
     switch (difficulty.toLowerCase()) {
       case 'facile':
         return const Color(0xFF34d399);
-      case 'intermedio':
+      case 'medio':
         return const Color(0xFFfbbf24);
       case 'difficile':
         return const Color(0xFFef4444);
       default:
-        return const Color(0xFF6b7280);
+        return const Color.fromARGB(255, 0, 0, 0);
     }
   }
 

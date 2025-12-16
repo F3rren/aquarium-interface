@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 /// Barra di progresso che mostra la distanza dal valore target
 class TargetProgressBar extends StatefulWidget {
@@ -103,25 +104,27 @@ class _TargetProgressBarState extends State<TargetProgressBar>
     }
   }
 
-  String _getStatusText() {
+  String _getStatusText(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final distance = _getDistanceFromTarget();
 
     if (distance <= 5) {
-      return 'Ottimale';
+      return l10n.optimal;
     } else if (distance <= 15) {
-      return 'Accettabile';
+      return l10n.acceptable;
     } else {
-      return 'Da correggere';
+      return l10n.toCorrect;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isDark = theme.brightness == Brightness.dark;
     final color = _getProgressColor();
     final targetNormalized = _normalizeValue(widget.targetValue);
-    final status = _getStatusText();
+    final status = _getStatusText(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,7 +141,7 @@ class _TargetProgressBarState extends State<TargetProgressBar>
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  'Target: ${widget.targetValue.toStringAsFixed(1)}${widget.unit}',
+                  '${l10n.target}: ${widget.targetValue.toStringAsFixed(1)}${widget.unit}',
                   style: TextStyle(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     fontSize: 12,

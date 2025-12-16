@@ -5,8 +5,11 @@ import 'package:acquariumfe/services/notification_service.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/providers/theme_provider.dart';
+import 'package:acquariumfe/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +38,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(appThemeModeProvider);
+    final locale = ref.watch(localeProvider);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -42,6 +46,23 @@ class MyApp extends ConsumerWidget {
       theme: ref.watch(lightThemeProvider),
       darkTheme: ref.watch(darkThemeProvider),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+
+      // Localizzazione
+      locale: locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('it'), // Italiano
+        Locale('en'), // Inglese
+        Locale('es'), // Spagnolo
+        Locale('de'), // Tedesco
+        Locale('fr'), // Francese
+      ],
+
       home: const HomePage(),
       onGenerateRoute: AppRouter.generateRoute,
     );
