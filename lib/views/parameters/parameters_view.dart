@@ -9,24 +9,26 @@ import 'package:acquariumfe/widgets/components/manual_parameters.dart';
 import 'package:acquariumfe/providers/parameters_provider.dart';
 import 'package:acquariumfe/widgets/responsive_builder.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class ParametersView extends ConsumerWidget {
   const ParametersView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final parametersAsync = ref.watch(currentParametersProvider);
     final targetsAsync = ref.watch(targetParametersProvider);
-    
+
     return RefreshIndicator(
       onRefresh: () async {
         await ref.read(currentParametersProvider.notifier).refresh();
         ref.invalidate(targetParametersProvider);
-        
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Parametri aggiornati'),
+            SnackBar(
+              content: Text(l10n.parametersUpdated),
               duration: Duration(seconds: 2),
               backgroundColor: Color(0xFF34d399),
             ),
@@ -45,32 +47,33 @@ class ParametersView extends ConsumerWidget {
                 color: Colors.red,
               ),
               const SizedBox(height: 16),
-              Text('Errore: $error'),
+              Text('${l10n.error}: $error'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => ref.read(currentParametersProvider.notifier).refresh(),
-                child: const Text('Riprova'),
+                onPressed: () =>
+                    ref.read(currentParametersProvider.notifier).refresh(),
+                child: Text(l10n.retry),
               ),
             ],
           ),
         ),
         data: (currentParams) {
           if (currentParams == null) {
-            return const Center(
-              child: Text('Nessun parametro disponibile'),
-            );
+            return Center(child: Text(l10n.noParametersAvailable));
           }
-          
+
           final targetParams = targetsAsync.when(
             data: (targets) => targets,
             loading: () => <String, double>{},
             error: (_, __) => <String, double>{},
           );
-          
+
           return ResponsiveBuilder(
             builder: (context, info) {
-              final padding = ResponsiveBreakpoints.horizontalPadding(info.screenWidth);
-              
+              final padding = ResponsiveBreakpoints.horizontalPadding(
+                info.screenWidth,
+              );
+
               // Widget list
               final parameterWidgets = [
                 Thermometer(
@@ -90,23 +93,25 @@ class ParametersView extends ConsumerWidget {
                   targetOrp: targetParams['orp'] ?? 350.0,
                 ),
               ];
-              
+
               // Mobile: layout verticale
               if (info.isMobile) {
                 return SingleChildScrollView(
                   padding: EdgeInsets.all(padding),
                   child: Column(
                     children: [
-                      ...parameterWidgets.map((w) => Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: w,
-                      )),
+                      ...parameterWidgets.map(
+                        (w) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: w,
+                        ),
+                      ),
                       const ManualParametersWidget(),
                     ],
                   ),
                 );
               }
-              
+
               // Tablet/Desktop: layout a griglia 2 colonne
               return SingleChildScrollView(
                 padding: EdgeInsets.all(padding),
@@ -118,7 +123,11 @@ class ParametersView extends ConsumerWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: info.value(mobile: 1.0, tablet: 1.5, desktop: 2.0),
+                      childAspectRatio: info.value(
+                        mobile: 1.0,
+                        tablet: 1.5,
+                        desktop: 2.0,
+                      ),
                       children: parameterWidgets,
                     ),
                     const SizedBox(height: 16),

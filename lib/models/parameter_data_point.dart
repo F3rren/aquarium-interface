@@ -1,4 +1,7 @@
 /// Rappresenta un singolo punto dati per un parametro dell'acquario
+import 'package:flutter/material.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
+
 class ParameterDataPoint {
   final DateTime timestamp;
   final double value;
@@ -29,7 +32,8 @@ class ParameterDataPoint {
   }
 
   @override
-  String toString() => 'ParameterDataPoint($parameterName: $value @ ${timestamp.toLocal()})';
+  String toString() =>
+      'ParameterDataPoint($parameterName: $value @ ${timestamp.toLocal()})';
 }
 
 /// Statistiche per un set di dati storici
@@ -59,9 +63,9 @@ class ParameterStats {
 
 /// Direzione del trend di un parametro
 enum TrendDirection {
-  rising,   // ↗️ In aumento
-  falling,  // ↘️ In diminuzione
-  stable,   // ➡️ Stabile
+  rising, // ↗️ In aumento
+  falling, // ↘️ In diminuzione
+  stable, // ➡️ Stabile
 }
 
 extension TrendDirectionExtension on TrendDirection {
@@ -79,11 +83,24 @@ extension TrendDirectionExtension on TrendDirection {
   String get label {
     switch (this) {
       case TrendDirection.rising:
-        return 'In Aumento';
+        return 'In Aumento'; // Fallback, usa getLocalizedLabel(context)
       case TrendDirection.falling:
-        return 'In Diminuzione';
+        return 'In Diminuzione'; // Fallback, usa getLocalizedLabel(context)
       case TrendDirection.stable:
-        return 'Stabile';
+        return 'Stabile'; // Fallback, usa getLocalizedLabel(context)
+    }
+  }
+
+  /// Ottiene l'etichetta localizzata per il trend
+  String getLocalizedLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (this) {
+      case TrendDirection.rising:
+        return l10n.chartTrendRising;
+      case TrendDirection.falling:
+        return l10n.chartTrendFalling;
+      case TrendDirection.stable:
+        return l10n.chartTrendStable;
     }
   }
 }

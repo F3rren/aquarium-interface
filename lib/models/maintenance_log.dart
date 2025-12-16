@@ -4,7 +4,8 @@ class MaintenanceLog {
   final String taskId; // ID del task completato
   final DateTime completedAt;
   final String? notes; // Note facoltative dell'utente
-  final Map<String, dynamic>? metadata; // Dati extra (es. litri cambiati, valori test)
+  final Map<String, dynamic>?
+  metadata; // Dati extra (es. litri cambiati, valori test)
 
   MaintenanceLog({
     required this.id,
@@ -46,7 +47,7 @@ class MaintenanceLog {
       taskId: json['taskId'].toString(),
       completedAt: DateTime.parse(json['completedAt']),
       notes: json['notes']?.toString(),
-      metadata: json['metadata'] != null 
+      metadata: json['metadata'] != null
           ? Map<String, dynamic>.from(json['metadata'])
           : null,
     );

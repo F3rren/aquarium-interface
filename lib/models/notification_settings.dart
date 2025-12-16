@@ -2,7 +2,7 @@ class NotificationSettings {
   final bool enabledAlerts;
   final bool enabledMaintenance;
   final bool enabledDaily;
-  
+
   // Soglie parametri
   final ParameterThresholds temperature;
   final ParameterThresholds ph;
@@ -13,7 +13,7 @@ class NotificationSettings {
   final ParameterThresholds kh;
   final ParameterThresholds nitrate;
   final ParameterThresholds phosphate;
-  
+
   // Notifiche ricorrenti
   final MaintenanceReminders maintenanceReminders;
 
@@ -31,16 +31,16 @@ class NotificationSettings {
     ParameterThresholds? nitrate,
     ParameterThresholds? phosphate,
     MaintenanceReminders? maintenanceReminders,
-  })  : temperature = temperature ?? ParameterThresholds(min: 24.0, max: 26.0),
-        ph = ph ?? ParameterThresholds(min: 8.0, max: 8.4),
-        salinity = salinity ?? ParameterThresholds(min: 1020.0, max: 1028.0),
-        orp = orp ?? ParameterThresholds(min: 300.0, max: 400.0),
-        calcium = calcium ?? ParameterThresholds(min: 400.0, max: 450.0),
-        magnesium = magnesium ?? ParameterThresholds(min: 1250.0, max: 1350.0),
-        kh = kh ?? ParameterThresholds(min: 7.0, max: 9.0),
-        nitrate = nitrate ?? ParameterThresholds(min: 0.0, max: 10.0),
-        phosphate = phosphate ?? ParameterThresholds(min: 0.0, max: 0.1),
-        maintenanceReminders = maintenanceReminders ?? MaintenanceReminders();
+  }) : temperature = temperature ?? ParameterThresholds(min: 24.0, max: 26.0),
+       ph = ph ?? ParameterThresholds(min: 8.0, max: 8.4),
+       salinity = salinity ?? ParameterThresholds(min: 1020.0, max: 1028.0),
+       orp = orp ?? ParameterThresholds(min: 300.0, max: 400.0),
+       calcium = calcium ?? ParameterThresholds(min: 400.0, max: 450.0),
+       magnesium = magnesium ?? ParameterThresholds(min: 1250.0, max: 1350.0),
+       kh = kh ?? ParameterThresholds(min: 7.0, max: 9.0),
+       nitrate = nitrate ?? ParameterThresholds(min: 0.0, max: 10.0),
+       phosphate = phosphate ?? ParameterThresholds(min: 0.0, max: 0.1),
+       maintenanceReminders = maintenanceReminders ?? MaintenanceReminders();
 
   NotificationSettings copyWith({
     bool? enabledAlerts,
@@ -97,32 +97,28 @@ class NotificationSettings {
       enabledAlerts: json['enabledAlerts'] ?? true,
       enabledMaintenance: json['enabledMaintenance'] ?? true,
       enabledDaily: json['enabledDaily'] ?? false,
-      temperature: json['temperature'] != null 
-          ? ParameterThresholds.fromJson(json['temperature']) 
+      temperature: json['temperature'] != null
+          ? ParameterThresholds.fromJson(json['temperature'])
           : null,
-      ph: json['ph'] != null 
-          ? ParameterThresholds.fromJson(json['ph']) 
+      ph: json['ph'] != null ? ParameterThresholds.fromJson(json['ph']) : null,
+      salinity: json['salinity'] != null
+          ? ParameterThresholds.fromJson(json['salinity'])
           : null,
-      salinity: json['salinity'] != null 
-          ? ParameterThresholds.fromJson(json['salinity']) 
+      orp: json['orp'] != null
+          ? ParameterThresholds.fromJson(json['orp'])
           : null,
-      orp: json['orp'] != null 
-          ? ParameterThresholds.fromJson(json['orp']) 
+      calcium: json['calcium'] != null
+          ? ParameterThresholds.fromJson(json['calcium'])
           : null,
-      calcium: json['calcium'] != null 
-          ? ParameterThresholds.fromJson(json['calcium']) 
+      magnesium: json['magnesium'] != null
+          ? ParameterThresholds.fromJson(json['magnesium'])
           : null,
-      magnesium: json['magnesium'] != null 
-          ? ParameterThresholds.fromJson(json['magnesium']) 
+      kh: json['kh'] != null ? ParameterThresholds.fromJson(json['kh']) : null,
+      nitrate: json['nitrate'] != null
+          ? ParameterThresholds.fromJson(json['nitrate'])
           : null,
-      kh: json['kh'] != null 
-          ? ParameterThresholds.fromJson(json['kh']) 
-          : null,
-      nitrate: json['nitrate'] != null 
-          ? ParameterThresholds.fromJson(json['nitrate']) 
-          : null,
-      phosphate: json['phosphate'] != null 
-          ? ParameterThresholds.fromJson(json['phosphate']) 
+      phosphate: json['phosphate'] != null
+          ? ParameterThresholds.fromJson(json['phosphate'])
           : null,
       maintenanceReminders: json['maintenanceReminders'] != null
           ? MaintenanceReminders.fromJson(json['maintenanceReminders'])
@@ -146,11 +142,7 @@ class ParameterThresholds {
     return enabled && (value < min || value > max);
   }
 
-  ParameterThresholds copyWith({
-    double? min,
-    double? max,
-    bool? enabled,
-  }) {
+  ParameterThresholds copyWith({double? min, double? max, bool? enabled}) {
     return ParameterThresholds(
       min: min ?? this.min,
       max: max ?? this.max,
@@ -159,11 +151,7 @@ class ParameterThresholds {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'min': min,
-      'max': max,
-      'enabled': enabled,
-    };
+    return {'min': min, 'max': max, 'enabled': enabled};
   }
 
   factory ParameterThresholds.fromJson(Map<String, dynamic> json) {
@@ -186,10 +174,16 @@ class MaintenanceReminders {
     ReminderSchedule? filterCleaning,
     ReminderSchedule? parameterTesting,
     ReminderSchedule? lightMaintenance,
-  })  : waterChange = waterChange ?? ReminderSchedule(enabled: true, frequencyDays: 7),
-        filterCleaning = filterCleaning ?? ReminderSchedule(enabled: true, frequencyDays: 30),
-        parameterTesting = parameterTesting ?? ReminderSchedule(enabled: true, frequencyDays: 3),
-        lightMaintenance = lightMaintenance ?? ReminderSchedule(enabled: false, frequencyDays: 180);
+  }) : waterChange =
+           waterChange ?? ReminderSchedule(enabled: true, frequencyDays: 7),
+       filterCleaning =
+           filterCleaning ?? ReminderSchedule(enabled: true, frequencyDays: 30),
+       parameterTesting =
+           parameterTesting ??
+           ReminderSchedule(enabled: true, frequencyDays: 3),
+       lightMaintenance =
+           lightMaintenance ??
+           ReminderSchedule(enabled: false, frequencyDays: 180);
 
   MaintenanceReminders copyWith({
     ReminderSchedule? waterChange,

@@ -5,12 +5,7 @@ class SkeletonLoader extends StatefulWidget {
   final double? height;
   final BorderRadius? borderRadius;
 
-  const SkeletonLoader({
-    super.key,
-    this.width,
-    this.height,
-    this.borderRadius,
-  });
+  const SkeletonLoader({super.key, this.width, this.height, this.borderRadius});
 
   @override
   State<SkeletonLoader> createState() => _SkeletonLoaderState();
@@ -44,7 +39,7 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
@@ -94,12 +89,16 @@ class AquariumCardSkeleton extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha:0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
         children: [
-          SkeletonLoader(width: 70, height: 70, borderRadius: BorderRadius.circular(12)),
+          SkeletonLoader(
+            width: 70,
+            height: 70,
+            borderRadius: BorderRadius.circular(12),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -137,7 +136,7 @@ class ParameterCardSkeleton extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha:0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -145,7 +144,11 @@ class ParameterCardSkeleton extends StatelessWidget {
         children: [
           Row(
             children: [
-              SkeletonLoader(width: 40, height: 40, borderRadius: BorderRadius.circular(12)),
+              SkeletonLoader(
+                width: 40,
+                height: 40,
+                borderRadius: BorderRadius.circular(12),
+              ),
               const SizedBox(width: 12),
               const Expanded(
                 child: Column(
@@ -160,7 +163,11 @@ class ParameterCardSkeleton extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          SkeletonLoader(width: double.infinity, height: 8, borderRadius: BorderRadius.circular(4)),
+          SkeletonLoader(
+            width: double.infinity,
+            height: 8,
+            borderRadius: BorderRadius.circular(4),
+          ),
         ],
       ),
     );
@@ -180,12 +187,16 @@ class ListItemSkeleton extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha:0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Row(
         children: [
-          SkeletonLoader(width: 50, height: 50, borderRadius: BorderRadius.circular(25)),
+          SkeletonLoader(
+            width: 50,
+            height: 50,
+            borderRadius: BorderRadius.circular(25),
+          ),
           const SizedBox(width: 12),
           const Expanded(
             child: Column(

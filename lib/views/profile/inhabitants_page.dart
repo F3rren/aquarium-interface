@@ -3,30 +3,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/fish.dart';
 import '../../models/coral.dart';
+import '../../models/inhabitants_filter.dart';
 import '../../services/inhabitants_service.dart';
 import '../../widgets/components/skeleton_loader.dart';
 import '../../widgets/animated_number.dart';
+import '../../widgets/inhabitants_filter_panel.dart';
 import '../../providers/aquarium_providers.dart';
 import 'add_fish_dialog.dart';
 import 'add_coral_dialog.dart';
+import 'coral_details_dialog.dart';
+import 'fish_details_dialog.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class InhabitantsPage extends ConsumerStatefulWidget {
   final int? aquariumId;
-  
+
   const InhabitantsPage({super.key, this.aquariumId});
 
   @override
   ConsumerState<InhabitantsPage> createState() => _InhabitantsPageState();
 }
 
-class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerProviderStateMixin {
+class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   final InhabitantsService _service = InhabitantsService();
-  
+
   List<Fish> _fishList = [];
   List<Coral> _coralsList = [];
   bool _isLoading = true;
   String? _aquariumWaterType;
+  InhabitantsFilter _filter = InhabitantsFilter();
 
   @override
   void initState() {
@@ -47,7 +54,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
 
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
-    
+
     // Recupera il waterType dell'acquario se disponibile
     String? previousWaterType = _aquariumWaterType;
     if (widget.aquariumId != null) {
@@ -76,7 +83,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       // Se non c'è aquariumId, default marino
       _aquariumWaterType = 'Marino';
     }
-    
+
     // Ricrea TabController se il tipo d'acqua è cambiato o è la prima volta
     if (_aquariumWaterType != previousWaterType || previousWaterType == null) {
       final currentIndex = _tabController.index;
@@ -84,12 +91,12 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       // Solo 1 tab (pesci) per acquari dolci, 2 tab (pesci + coralli) per marini/reef
       final isDolce = _aquariumWaterType?.toLowerCase() == 'dolce';
       _tabController = TabController(
-        length: isDolce ? 1 : 2, 
+        length: isDolce ? 1 : 2,
         vsync: this,
         initialIndex: isDolce ? 0 : (currentIndex < 2 ? currentIndex : 0),
       );
     }
-    
+
     _fishList = await _service.getFish();
     _coralsList = await _service.getCorals();
     setState(() => _isLoading = false);
@@ -105,24 +112,174 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
   }
 
   Future<void> _refreshData() async {
+    final l10n = AppLocalizations.of(context)!;
     await _loadData();
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Row(
+          content: Row(
             children: [
-              FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
-              SizedBox(width: 12),
-              Text('Abitanti aggiornati!'),
+              const FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
+              const SizedBox(width: 12),
+              Text(l10n.inhabitantsUpdated),
             ],
           ),
           backgroundColor: const Color(0xFF34d399),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 1),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
     }
+  }
+
+  List<Fish> _getFilteredAndSortedFish() {
+    List<Fish> filtered = _fishList;
+
+    // Filtra per nome
+    if (_filter.searchText.isNotEmpty) {
+      filtered = filtered.where((fish) {
+        final searchLower = _filter.searchText.toLowerCase();
+        return fish.name.toLowerCase().contains(searchLower) ||
+            fish.species.toLowerCase().contains(searchLower);
+      }).toList();
+    }
+
+    // Filtra per difficoltà
+    if (_filter.difficultyFilter != null) {
+      filtered = filtered.where((fish) {
+        return fish.difficulty == _filter.difficultyFilter;
+      }).toList();
+    }
+
+    // Filtra per data
+    if (_filter.dateFilter != null && _filter.dateValue != null) {
+      filtered = filtered.where((fish) {
+        if (_filter.dateFilter == DateFilterType.before) {
+          return fish.addedDate.isBefore(_filter.dateValue!);
+        } else {
+          return fish.addedDate.isAfter(_filter.dateValue!);
+        }
+      }).toList();
+    }
+
+    // Ordina
+    filtered.sort((a, b) {
+      int comparison = 0;
+      switch (_filter.sortBy) {
+        case SortType.name:
+          comparison = a.name.compareTo(b.name);
+          break;
+        case SortType.dateAdded:
+          comparison = a.addedDate.compareTo(b.addedDate);
+          break;
+        case SortType.size:
+          comparison = a.size.compareTo(b.size);
+          break;
+        case SortType.difficulty:
+          final difficultyOrder = {
+            'Facile': 1,
+            'Intermedio': 2,
+            'Difficile': 3,
+          };
+          final aVal = difficultyOrder[a.difficulty] ?? 0;
+          final bVal = difficultyOrder[b.difficulty] ?? 0;
+          comparison = aVal.compareTo(bVal);
+          break;
+      }
+      return _filter.sortAscending ? comparison : -comparison;
+    });
+
+    return filtered;
+  }
+
+  List<Coral> _getFilteredAndSortedCorals() {
+    List<Coral> filtered = _coralsList;
+
+    // Filtra per nome
+    if (_filter.searchText.isNotEmpty) {
+      filtered = filtered.where((coral) {
+        final searchLower = _filter.searchText.toLowerCase();
+        return coral.name.toLowerCase().contains(searchLower) ||
+            coral.species.toLowerCase().contains(searchLower);
+      }).toList();
+    }
+
+    // Filtra per difficoltà
+    if (_filter.difficultyFilter != null) {
+      filtered = filtered.where((coral) {
+        return coral.difficulty == _filter.difficultyFilter;
+      }).toList();
+    }
+
+    // Filtra per data
+    if (_filter.dateFilter != null && _filter.dateValue != null) {
+      filtered = filtered.where((coral) {
+        if (_filter.dateFilter == DateFilterType.before) {
+          return coral.addedDate.isBefore(_filter.dateValue!);
+        } else {
+          return coral.addedDate.isAfter(_filter.dateValue!);
+        }
+      }).toList();
+    }
+
+    // Ordina
+    filtered.sort((a, b) {
+      int comparison = 0;
+      switch (_filter.sortBy) {
+        case SortType.name:
+          comparison = a.name.compareTo(b.name);
+          break;
+        case SortType.dateAdded:
+          comparison = a.addedDate.compareTo(b.addedDate);
+          break;
+        case SortType.size:
+          comparison = a.size.compareTo(b.size);
+          break;
+        case SortType.difficulty:
+          final difficultyOrder = {
+            'Facile': 1,
+            'Intermedio': 2,
+            'Difficile': 3,
+          };
+          final aVal = difficultyOrder[a.difficulty] ?? 0;
+          final bVal = difficultyOrder[b.difficulty] ?? 0;
+          comparison = aVal.compareTo(bVal);
+          break;
+      }
+      return _filter.sortAscending ? comparison : -comparison;
+    });
+
+    return filtered;
+  }
+
+  void _showFilterPanel() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: DraggableScrollableSheet(
+          initialChildSize: 0.75,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (context, scrollController) => InhabitantsFilterPanel(
+            currentFilter: _filter,
+            onFilterChanged: (newFilter) {
+              setState(() {
+                _filter = newFilter;
+              });
+            },
+            onClose: () => Navigator.pop(context),
+          ),
+        ),
+      ),
+    );
   }
 
   void _showAddFishDialog() {
@@ -133,7 +290,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
         onSave: (fish, speciesId) async {
           // Salva sul server
           await _service.addFish(fish, speciesId);
-          
+
           // Ricarica i dati dall'API senza loading
           await _reloadDataSilently();
         },
@@ -168,7 +325,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
         onSave: (coral, speciesId) async {
           // Salva sul server
           await _service.addCoral(coral, speciesId);
-          
+
           // Ricarica i dati dall'API senza loading
           await _reloadDataSilently();
         },
@@ -195,26 +352,44 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
     );
   }
 
+  void _showCoralDetailsDialog(Coral coral) {
+    showDialog(
+      context: context,
+      builder: (context) => CoralDetailsDialog(coral: coral),
+    );
+  }
+
+  void _showFishDetailsDialog(Fish fish) {
+    showDialog(
+      context: context,
+      builder: (context) => FishDetailsDialog(fish: fish),
+    );
+  }
+
   Future<void> _deleteFish(Fish fish) async {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
-        title: Text('Conferma eliminazione', style: TextStyle(color: theme.colorScheme.onSurface)),
-        content: Text(
-          'Vuoi eliminare "${fish.name}"?',
+        title: Text(l10n.confirmDeletion,
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
+        content: Text(l10n.confirmDeleteFish(fish.name),
           style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
-            child: const Text('Elimina'),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.error,
+            ),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -225,13 +400,13 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       setState(() {
         _fishList.removeWhere((f) => f.id == fish.id);
       });
-      
+
       // Attendi un attimo per le animazioni
       await Future.delayed(const Duration(milliseconds: 100));
-      
+
       // Elimina dal server
       await _service.deleteFish(fish.id);
-      
+
       // Ricarica silenziosamente per sincronizzare
       _reloadDataSilently();
     }
@@ -239,24 +414,28 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
 
   Future<void> _deleteCoral(Coral coral) async {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
-        title: Text('Conferma eliminazione', style: TextStyle(color: theme.colorScheme.onSurface)),
-        content: Text(
-          'Vuoi eliminare "${coral.name}"?',
+        title: Text(l10n.confirmDeletion,
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
+        content: Text(l10n.confirmDeleteCoral(coral.name),
           style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
-            child: const Text('Elimina'),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.error,
+            ),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -267,13 +446,13 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       setState(() {
         _coralsList.removeWhere((c) => c.id == coral.id);
       });
-      
+
       // Attendi un attimo per le animazioni
       await Future.delayed(const Duration(milliseconds: 100));
-      
+
       // Elimina dal server
       await _service.deleteCoral(coral.id);
-      
+
       // Ricarica silenziosamente per sincronizzare
       _reloadDataSilently();
     }
@@ -282,37 +461,91 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     // Determina il numero di tab in base al tipo d'acqua
     // Marino e Reef hanno 2 tab (pesci + coralli), Dolce ha solo 1 tab (pesci)
     final isDolce = (_aquariumWaterType ?? 'Marino').toLowerCase() == 'dolce';
     final tabCount = isDolce ? 1 : 2;
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('I Miei Abitanti', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        title: Text(l10n.myInhabitants,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
         centerTitle: true,
-        bottom: _tabController.length == tabCount ? TabBar(
-          controller: _tabController,
-          indicatorColor: theme.colorScheme.primary,
-          labelColor: theme.colorScheme.primary,
-          unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
-          tabs: isDolce
-              ? const [
-                  Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
-                ]
-              : const [
-                  Tab(text: 'Pesci', icon: FaIcon(FontAwesomeIcons.fish)),
-                  Tab(text: 'Coralli', icon: FaIcon(FontAwesomeIcons.seedling)),
-                ],
-        ) : null,
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const FaIcon(FontAwesomeIcons.filter, size: 20),
+                onPressed: _showFilterPanel,
+                tooltip: l10n.filtersAndSearch,
+              ),
+              if (_filter.hasActiveFilters)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.error,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text('${_filter.activeFilterCount}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+        bottom: _tabController.length == tabCount
+            ? TabBar(
+                controller: _tabController,
+                indicatorColor: theme.colorScheme.primary,
+                labelColor: theme.colorScheme.primary,
+                unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+                tabs: isDolce
+                    ? [
+                        Tab(
+                          text: l10n.fish,
+                          icon: FaIcon(FontAwesomeIcons.fish),
+                        ),
+                      ]
+                    : [
+                        Tab(
+                          text: l10n.fish,
+                          icon: FaIcon(FontAwesomeIcons.fish),
+                        ),
+                        Tab(
+                          text: l10n.corals,
+                          icon: FaIcon(FontAwesomeIcons.seedling),
+                        ),
+                      ],
+              )
+            : null,
       ),
       body: _isLoading || _tabController.length != tabCount
-          ? Center(child: CircularProgressIndicator(color: theme.colorScheme.primary))
+          ? Center(
+              child: CircularProgressIndicator(
+                color: theme.colorScheme.primary,
+              ),
+            )
           : RefreshIndicator(
               onRefresh: _refreshData,
               color: theme.colorScheme.primary,
@@ -328,12 +561,10 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                     child: TabBarView(
                       controller: _tabController,
                       children: isDolce
-                          ? [
-                              _buildFishTab(),
-                            ]
+                          ? [_buildFishTab(bottomPadding)]
                           : [
-                              _buildFishTab(),
-                              _buildCoralsTab(),
+                              _buildFishTab(bottomPadding),
+                              _buildCoralsTab(bottomPadding),
                             ],
                     ),
                   ),
@@ -343,7 +574,8 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Se acquario dolce, mostra sempre dialog pesci (no coralli)
-          final isDolce = (_aquariumWaterType ?? 'Marino').toLowerCase() == 'dolce';
+          final isDolce =
+              (_aquariumWaterType ?? 'Marino').toLowerCase() == 'dolce';
           if (isDolce || _tabController.index == 0) {
             _showAddFishDialog();
           } else {
@@ -356,32 +588,93 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
     );
   }
 
-  Widget _buildFishTab() {
+  Widget _buildFishTab(double bottomPadding) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     if (_isLoading) {
       return ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: 16 + bottomPadding,
+        ),
         children: List.generate(5, (index) => const ListItemSkeleton()),
       );
     }
-    
+
     if (_fishList.isEmpty) {
       return Center(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FaIcon(FontAwesomeIcons.fish, size: 64, color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+              FaIcon(
+                FontAwesomeIcons.fish,
+                size: 64,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              ),
               const SizedBox(height: 16),
-              Text(
-                'Nessun pesce aggiunto',
-                style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 16),
+              Text(l10n.noFishAdded,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Tocca + per aggiungere il tuo primo pesce',
-                style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
+              Text(l10n.tapToAddFirstFish,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final filteredFish = _getFilteredAndSortedFish();
+
+    if (filteredFish.isEmpty) {
+      return Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FaIcon(
+                FontAwesomeIcons.magnifyingGlass,
+                size: 64,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              ),
+              const SizedBox(height: 16),
+              Text(l10n.noResultsFound,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(l10n.tryModifyingFilters,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _filter = _filter.clearAll();
+                  });
+                },
+                icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
+                label: Text(l10n.clearFilters),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                ),
               ),
             ],
           ),
@@ -390,19 +683,25 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _fishList.length,
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: 16 + bottomPadding,
+      ),
+      itemCount: filteredFish.length,
       itemBuilder: (context, index) {
-        final fish = _fishList[index];
-        final daysInTank = DateTime.now().difference(fish.addedDate).inDays;
+        final fish = filteredFish[index];
         final theme = Theme.of(context);
-        
+
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           color: theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: InkWell(
-            onTap: () => _showEditFishDialog(fish),
+            onTap: () => _showFishDetailsDialog(fish),
             borderRadius: BorderRadius.circular(12),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -414,11 +713,15 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(
-                        child: FaIcon(FontAwesomeIcons.fish, color: theme.colorScheme.primary, size: 32),
+                        child: FaIcon(
+                          FontAwesomeIcons.fish,
+                          color: theme.colorScheme.primary,
+                          size: 32,
+                        ),
                       ),
                     ),
                   ),
@@ -427,8 +730,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          fish.name,
+                        Text(fish.name,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 16,
@@ -436,34 +738,65 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          fish.species,
-                          style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            FaIcon(FontAwesomeIcons.ruler, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${fish.size.toStringAsFixed(1)} cm',
-                              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 12),
-                            ),
-                            const SizedBox(width: 16),
-                            FaIcon(FontAwesomeIcons.calendar, size: 14, color: Colors.white.withValues(alpha: 0.5)),
-                            const SizedBox(width: 4),
-                            Text(
-                              '$daysInTank giorni in vasca',
-                              style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
-                            ),
-                          ],
+                        Text(fish.species,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.trash, color: Colors.red),
-                    onPressed: () => _deleteFish(fish),
+                  PopupMenuButton<String>(
+                    icon: FaIcon(
+                      FontAwesomeIcons.ellipsisVertical,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        _showEditFishDialog(fish);
+                      } else if (value == 'delete') {
+                        _deleteFish(fish);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.pen,
+                              color: const Color(0xFF60a5fa),
+                              size: 16,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(l10n.edit,
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            const FaIcon(
+                              FontAwesomeIcons.trash,
+                              color: Colors.red,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(l10n.delete,
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -474,32 +807,93 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
     );
   }
 
-  Widget _buildCoralsTab() {
+  Widget _buildCoralsTab(double bottomPadding) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     if (_isLoading) {
       return ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: 16 + bottomPadding,
+        ),
         children: List.generate(5, (index) => const ListItemSkeleton()),
       );
     }
-    
+
     if (_coralsList.isEmpty) {
       return Center(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FaIcon(FontAwesomeIcons.seedling, size: 64, color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+              FaIcon(
+                FontAwesomeIcons.seedling,
+                size: 64,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              ),
               const SizedBox(height: 16),
-              Text(
-                'Nessun corallo aggiunto',
-                style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 16),
+              Text(l10n.noCoralAdded,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Tocca + per aggiungere il tuo primo corallo',
-                style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
+              Text(l10n.tapToAddFirstCoral,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final filteredCorals = _getFilteredAndSortedCorals();
+
+    if (filteredCorals.isEmpty) {
+      return Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FaIcon(
+                FontAwesomeIcons.magnifyingGlass,
+                size: 64,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              ),
+              const SizedBox(height: 16),
+              Text(l10n.noResultsFound,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(l10n.tryModifyingFilters,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _filter = _filter.clearAll();
+                  });
+                },
+                icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
+                label: Text(l10n.clearFilters),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                ),
               ),
             ],
           ),
@@ -508,13 +902,17 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _coralsList.length,
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: 16 + bottomPadding,
+      ),
+      itemCount: filteredCorals.length,
       itemBuilder: (context, index) {
-        final coral = _coralsList[index];
-        final daysInTank = DateTime.now().difference(coral.addedDate).inDays;
+        final coral = filteredCorals[index];
         final theme = Theme.of(context);
-        
+
         Color typeColor;
         switch (coral.type) {
           case 'SPS':
@@ -526,29 +924,35 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
           default:
             typeColor = theme.colorScheme.secondary;
         }
-        
+
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           color: theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: InkWell(
-            onTap: () => _showEditCoralDialog(coral),
+            onTap: () => _showCoralDetailsDialog(coral),
             borderRadius: BorderRadius.circular(12),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                    Hero(
-                      tag: 'coral_${coral.id}',
-                      child: Container(
-                        width: 60,
-                        height: 60,
+                  Hero(
+                    tag: 'coral_${coral.id}',
+                    child: Container(
+                      width: 60,
+                      height: 60,
                       decoration: BoxDecoration(
                         color: typeColor.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(
-                        child: FaIcon(FontAwesomeIcons.seedling, color: typeColor, size: 32),
+                        child: FaIcon(
+                          FontAwesomeIcons.seedling,
+                          color: typeColor,
+                          size: 32,
+                        ),
                       ),
                     ),
                   ),
@@ -560,8 +964,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                         Row(
                           children: [
                             Expanded(
-                              child: Text(
-                                coral.name,
+                              child: Text(coral.name,
                                 style: TextStyle(
                                   color: theme.colorScheme.onSurface,
                                   fontSize: 16,
@@ -570,47 +973,84 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage> with TickerPr
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: typeColor.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: Text(
-                                coral.type,
-                                style: TextStyle(color: typeColor, fontSize: 11, fontWeight: FontWeight.w600),
+                              child: Text(coral.type,
+                                style: TextStyle(
+                                  color: typeColor,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          coral.species,
-                          style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            FaIcon(FontAwesomeIcons.locationDot, size: 14, color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
-                            const SizedBox(width: 4),
-                            Text(
-                              coral.placement,
-                              style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
-                            ),
-                            const SizedBox(width: 16),
-                            FaIcon(FontAwesomeIcons.calendar, size: 14, color: Colors.white.withValues(alpha: 0.5)),
-                            const SizedBox(width: 4),
-                            Text(
-                              '$daysInTank giorni in vasca',
-                              style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
-                            ),
-                          ],
+                        Text(coral.species,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.trash, color: Colors.red),
-                    onPressed: () => _deleteCoral(coral),
+                  PopupMenuButton<String>(
+                    icon: FaIcon(
+                      FontAwesomeIcons.ellipsisVertical,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        _showEditCoralDialog(coral);
+                      } else if (value == 'delete') {
+                        _deleteCoral(coral);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.pen,
+                              color: const Color(0xFF60a5fa),
+                              size: 16,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(l10n.edit,
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            const FaIcon(
+                              FontAwesomeIcons.trash,
+                              color: Colors.red,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(l10n.delete,
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -641,21 +1081,28 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     // Calcolo statistiche
     final totalFish = widget.fishList.length;
     final totalCorals = widget.coralsList.length;
-    final avgFishSize = widget.fishList.isEmpty 
-        ? 0.0 
-        : widget.fishList.map((f) => f.size).reduce((a, b) => a + b) / widget.fishList.length;
-    final totalBioLoad = widget.fishList.fold<double>(0, (sum, f) => sum + f.size) + (totalCorals * 2.0);
-    
+    final avgFishSize = widget.fishList.isEmpty
+        ? 0.0
+        : widget.fishList.map((f) => f.size).reduce((a, b) => a + b) /
+              widget.fishList.length;
+    final totalBioLoad =
+        widget.fishList.fold<double>(0, (sum, f) => sum + f.size) +
+        (totalCorals * 2.0);
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)],
+          colors: [
+            theme.colorScheme.primary,
+            theme.colorScheme.primary.withValues(alpha: 0.8),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -672,10 +1119,13 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
         children: [
           Row(
             children: [
-              const FaIcon(FontAwesomeIcons.chartLine, color: Colors.white, size: 24),
+              const FaIcon(
+                FontAwesomeIcons.chartLine,
+                color: Colors.white,
+                size: 24,
+              ),
               const SizedBox(width: 12),
-              Text(
-                'Riepilogo Abitanti',
+              Text(l10n.inhabitantsSummary,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -690,7 +1140,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
               Expanded(
                 child: _buildStatItem(
                   icon: FontAwesomeIcons.fish,
-                  label: 'Pesci',
+                  label: l10n.fish,
                   value: totalFish.toDouble(),
                 ),
               ),
@@ -702,7 +1152,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
               Expanded(
                 child: _buildStatItem(
                   icon: FontAwesomeIcons.seedling,
-                  label: 'Coralli',
+                  label: l10n.corals,
                   value: totalCorals.toDouble(),
                 ),
               ),
@@ -714,7 +1164,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
               Expanded(
                 child: _buildStatItem(
                   icon: FontAwesomeIcons.ruler,
-                  label: 'Dim. media',
+                  label: l10n.averageSize,
                   value: avgFishSize,
                   suffix: avgFishSize > 0 ? ' cm' : '',
                   showZero: false,
@@ -733,10 +1183,13 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
               children: [
                 Row(
                   children: [
-                    const FaIcon(FontAwesomeIcons.scaleBalanced, color: Colors.white, size: 20),
+                    const FaIcon(
+                      FontAwesomeIcons.scaleBalanced,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
-                    Text(
-                      'Carico Biotico Totale',
+                    Text(l10n.totalBioLoad,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15,
@@ -759,8 +1212,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            'Formula: (Σ dimensioni pesci) + (n° coralli × 2)',
+          Text(l10n.bioLoadFormula,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.7),
               fontSize: 12,
@@ -768,8 +1220,12 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
           ),
           if (totalBioLoad > 0) ...[
             const SizedBox(height: 12),
-            Text(
-              _getBioLoadRecommendation(totalBioLoad, totalFish, totalCorals),
+            Text(_getBioLoadRecommendation(
+                totalBioLoad,
+                totalFish,
+                totalCorals,
+                l10n,
+              ),
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.9),
                 fontSize: 13,
@@ -805,8 +1261,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(
-          label,
+        Text(label,
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.8),
             fontSize: 12,
@@ -816,15 +1271,18 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
     );
   }
 
-  String _getBioLoadRecommendation(double bioLoad, int fish, int corals) {
+  String _getBioLoadRecommendation(
+    double bioLoad,
+    int fish,
+    int corals,
+    AppLocalizations l10n,
+  ) {
     if (bioLoad < 20) {
-      return 'Carico biotico ottimale - acquario ben bilanciato';
+      return l10n.bioLoadOptimal;
     } else if (bioLoad < 35) {
-      return 'Carico biotico moderato - monitora i parametri dell\'acqua';
+      return l10n.bioLoadModerate;
     } else {
-      return 'Carico biotico elevato - considera un acquario più grande o riduci gli abitanti';
+      return l10n.bioLoadHigh;
     }
   }
 }
-
-

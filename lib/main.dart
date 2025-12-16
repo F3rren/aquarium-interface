@@ -3,30 +3,33 @@ import 'package:acquariumfe/views/home/acquariums_view.dart';
 import 'package:acquariumfe/views/shared/navbar/navbar.dart';
 import 'package:acquariumfe/services/notification_service.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
+import 'package:acquariumfe/services/app_locale_service.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/providers/theme_provider.dart';
+import 'package:acquariumfe/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Inizializza il servizio notifiche
   await NotificationService().initialize();
-  
+
   // Inizializza l'alert manager con impostazioni di default
-  AlertManager().initialize(NotificationSettings(
-    enabledAlerts: true,
-    enabledMaintenance: true,
-    enabledDaily: false,
-  ));
-  
+  AlertManager().initialize(
+    NotificationSettings(
+      enabledAlerts: true,
+      enabledMaintenance: true,
+      enabledDaily: false,
+    ),
+  );
+
   runApp(
     // ProviderScope è il root di Riverpod
-    const ProviderScope(
-      child: MyApp(),
-      
-    ),
+    const ProviderScope(child: MyApp()),
   );
 }
 
@@ -36,13 +39,36 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(appThemeModeProvider);
-    
+    final locale = ref.watch(localeProvider);
+
+    // Sincronizza la locale con AppLocaleService ogni volta che cambia
+    if (locale != null) {
+      AppLocaleService().setLocale(locale);
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'ReefLife',
       theme: ref.watch(lightThemeProvider),
       darkTheme: ref.watch(darkThemeProvider),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+
+      // Localizzazione
+      locale: locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('it'), // Italiano
+        Locale('en'), // Inglese
+        Locale('es'), // Spagnolo
+        Locale('de'), // Tedesco
+        Locale('fr'), // Francese
+      ],
+
       home: const HomePage(),
       onGenerateRoute: AppRouter.generateRoute,
     );
@@ -56,7 +82,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(

@@ -26,25 +26,20 @@ class TapEffectCard extends StatefulWidget {
   State<TapEffectCard> createState() => _TapEffectCardState();
 }
 
-class _TapEffectCardState extends State<TapEffectCard> with SingleTickerProviderStateMixin {
+class _TapEffectCardState extends State<TapEffectCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: widget.scaleAmount,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -74,15 +69,12 @@ class _TapEffectCardState extends State<TapEffectCard> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     Widget content = widget.child;
 
     // Applica scale animation se abilitato
     if (widget.enableScale) {
-      content = ScaleTransition(
-        scale: _scaleAnimation,
-        child: content,
-      );
+      content = ScaleTransition(scale: _scaleAnimation, child: content);
     }
 
     // Applica ripple effect se abilitato
@@ -94,8 +86,12 @@ class _TapEffectCardState extends State<TapEffectCard> with SingleTickerProvider
           onTapDown: _onTapDown,
           onTapUp: _onTapUp,
           onTapCancel: _onTapCancel,
-          splashColor: widget.rippleColor ?? theme.colorScheme.primary.withValues(alpha:0.2),
-          highlightColor: widget.rippleColor?.withValues(alpha:0.1) ?? theme.colorScheme.primary.withValues(alpha:0.1),
+          splashColor:
+              widget.rippleColor ??
+              theme.colorScheme.primary.withValues(alpha: 0.2),
+          highlightColor:
+              widget.rippleColor?.withValues(alpha: 0.1) ??
+              theme.colorScheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
           child: widget.child,
         ),
@@ -179,17 +175,15 @@ class BounceCard extends StatefulWidget {
   State<BounceCard> createState() => _BounceCardState();
 }
 
-class _BounceCardState extends State<BounceCard> with SingleTickerProviderStateMixin {
+class _BounceCardState extends State<BounceCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
     _animation = TweenSequence<double>([
       TweenSequenceItem(
@@ -204,10 +198,7 @@ class _BounceCardState extends State<BounceCard> with SingleTickerProviderStateM
         tween: Tween<double>(begin: 1.02, end: 1.0),
         weight: 20,
       ),
-    ]).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -225,10 +216,7 @@ class _BounceCardState extends State<BounceCard> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _onTap,
-      child: ScaleTransition(
-        scale: _animation,
-        child: widget.child,
-      ),
+      child: ScaleTransition(scale: _animation, child: widget.child),
     );
   }
 }
