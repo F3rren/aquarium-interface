@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/fish.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class FishDetailsDialog extends StatelessWidget {
   final Fish fish;
@@ -10,6 +11,7 @@ class FishDetailsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Dialog(
       backgroundColor: theme.colorScheme.surface,
@@ -148,7 +150,7 @@ class FishDetailsDialog extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Descrizione',
+                                  Text(l10n.description,
                                     style: TextStyle(
                                       color: theme.colorScheme.onSurfaceVariant,
                                       fontSize: 11,
@@ -217,7 +219,7 @@ class FishDetailsDialog extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                Text('Requisiti',
+                                Text(l10n.requirements,
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurface,
                                     fontSize: 14,

@@ -199,6 +199,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
     AquariumWithParams aquariumData,
   ) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isDark = theme.brightness == Brightness.dark;
     final aquarium = aquariumData.aquarium;
     final params = aquariumData.parameters;
@@ -352,7 +353,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                     ),
                     const SizedBox(width: 4),
-                    Text('Aggiornato ${_formatRelativeTime(aquariumData.lastUpdate!)}',
+                    Text(l10n.updated(_formatRelativeTime(aquariumData.lastUpdate!)),
                       style: TextStyle(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.4,

@@ -1794,4 +1794,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recentAlerts => 'Recent Alerts';
+
+  @override
+  String frequencyDays(String days) {
+    return '${days}d';
+  }
+
+  @override
+  String minMaxRange(String min, String max, String unit) {
+    return '$min - $max$unit';
+  }
+
+  @override
+  String minValueUnit(String min, String unit) {
+    return '$min$unit';
+  }
+
+  @override
+  String maxValueUnit(String max, String unit) {
+    return '$max$unit';
+  }
+
+  @override
+  String get notificationsActiveLabel => 'Notifications Active';
+
+  @override
+  String get notificationsDisabled => 'Notifications Disabled';
+
+  @override
+  String get alertHistoryCount => 'Alert History';
+
+  @override
+  String alertHistorySubtitle(String count) {
+    return '$count recent notifications';
+  }
+
+  @override
+  String get minimumValue => 'Minimum Value';
+
+  @override
+  String get maximumValue => 'Maximum Value';
 }

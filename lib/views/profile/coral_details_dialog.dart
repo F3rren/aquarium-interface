@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/coral.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class CoralDetailsDialog extends StatelessWidget {
   final Coral coral;
@@ -10,6 +11,7 @@ class CoralDetailsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     Color typeColor;
     switch (coral.type) {
@@ -129,7 +131,7 @@ class CoralDetailsDialog extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Nome Scientifico',
+                                Text(l10n.scientificName,
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurfaceVariant,
                                     fontSize: 10,
@@ -185,7 +187,7 @@ class CoralDetailsDialog extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Descrizione',
+                                  Text(l10n.description,
                                     style: TextStyle(
                                       color: theme.colorScheme.onSurfaceVariant,
                                       fontSize: 10,
@@ -248,7 +250,7 @@ class CoralDetailsDialog extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                Text('Requisiti',
+                                Text(l10n.requirements,
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurface,
                                     fontSize: 14,

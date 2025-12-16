@@ -2,6 +2,7 @@ import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/views/aquarium/add_aquarium.dart';
 import 'package:acquariumfe/views/aquarium/edit_aquarium.dart';
 import 'package:acquariumfe/views/aquarium/delete_aquarium.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -37,6 +38,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return AppBar(
       // title: Text(//   'Aquarium App',
@@ -121,7 +123,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Text('Aggiungi Vasca',
+                    Text(l10n.addAquarium,
                       style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   ],
@@ -147,7 +149,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Text('Modifica Vasca',
+                    Text(l10n.editAquariumTitle,
                       style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   ],
@@ -173,7 +175,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Text('Elimina Vasca',
+                    Text(l10n.deleteAquariumTitle,
                       style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   ],

@@ -908,5 +908,62 @@
   "orEnterManually": "oder manuell eingeben",
   "multipleSpecimensNote": "Wenn Sie mehrere Exemplare hinzuf\u00fcgen, werden diese automatisch nummeriert",
   "calculate": "Berechnen",
-  "recentAlerts": "Aktuelle Alarme"
+  "recentAlerts": "Aktuelle Alarme",
+  "frequencyDays": "{days}d",
+  "@frequencyDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "minMaxRange": "{min} - {max}{unit}",
+  "@minMaxRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "minValueUnit": "{min}{unit}",
+  "@minValueUnit": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "maxValueUnit": "{max}{unit}",
+  "@maxValueUnit": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsActiveLabel": "Benachrichtigungen Aktiv",
+  "notificationsDisabled": "Benachrichtigungen Deaktiviert",
+  "alertHistoryCount": "Warnungsverlauf",
+  "alertHistorySubtitle": "{count} aktuelle Benachrichtigungen",
+  "@alertHistorySubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "minimumValue": "Minimalwert",
+  "maximumValue": "Maximalwert"
 }

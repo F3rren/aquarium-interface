@@ -789,5 +789,62 @@
   "orEnterManually": "ou entrer manuellement",
   "multipleSpecimensNote": "Si vous ajoutez plusieurs sp\u00e9cimens, ils seront automatiquement num\u00e9rot\u00e9s",
   "calculate": "Calculer",
-  "recentAlerts": "Alertes R\u00e9centes"
+  "recentAlerts": "Alertes R\u00e9centes",
+  "frequencyDays": "{days}d",
+  "@frequencyDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "minMaxRange": "{min} - {max}{unit}",
+  "@minMaxRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "minValueUnit": "{min}{unit}",
+  "@minValueUnit": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "maxValueUnit": "{max}{unit}",
+  "@maxValueUnit": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationsActiveLabel": "Notifications Actives",
+  "notificationsDisabled": "Notifications D\u00e9sactiv\u00e9es",
+  "alertHistoryCount": "Historique des Alertes",
+  "alertHistorySubtitle": "{count} notifications r\u00e9centes",
+  "@alertHistorySubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "minimumValue": "Valeur Minimale",
+  "maximumValue": "Valeur Maximale"
 }

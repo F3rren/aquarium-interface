@@ -217,6 +217,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final heroTag = widget.coral != null
         ? 'coral_${widget.coral!.id}'
         : 'coral_new';
@@ -271,7 +272,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 _buildCoralDatabaseDropdown(theme),
                 const SizedBox(height: 16),
                 Center(
-                  child: Text('oppure inserisci manualmente',
+                  child: Text(l10n.orEnterManually,
                     style: TextStyle(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 12,
@@ -335,7 +336,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 8),
-                Text('Se aggiungi più esemplari, verranno numerati automaticamente',
+                Text(l10n.multipleSpecimensNote,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 12,
@@ -359,7 +360,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('Annulla',
+                    child: Text(l10n.cancel,
                       style: TextStyle(color: Colors.white60),
                     ),
                   ),
@@ -377,7 +378,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text('Salva',
+                    child: Text(l10n.save,
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -491,6 +492,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
   }
 
   Widget _buildCoralDatabaseDropdown(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
@@ -511,7 +513,7 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                 size: 20,
               ),
               const SizedBox(width: 12),
-              Text('Seleziona dalla lista',
+              Text(l10n.selectFromList,
                 style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
               ),
             ],

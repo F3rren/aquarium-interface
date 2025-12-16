@@ -102,7 +102,7 @@ class LanguageDialog extends ConsumerWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('Chiudi'),
+          child: Text(l10n.close),
         ),
       ],
     );
