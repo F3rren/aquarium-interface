@@ -86,8 +86,7 @@ class _AnimatedValueState extends State<AnimatedValue>
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeOutCubic,
               builder: (context, value, child) {
-                return Text(
-                  value.toStringAsFixed(widget.decimals),
+                return Text(value.toStringAsFixed(widget.decimals),
                   style: widget.style,
                 );
               },

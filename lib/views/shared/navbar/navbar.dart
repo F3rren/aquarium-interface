@@ -39,8 +39,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
     final theme = Theme.of(context);
 
     return AppBar(
-      // title: const Text(
-      //   'Aquarium App',
+      // title: Text(//   'Aquarium App',
       //   style: TextStyle(
       //     fontSize: 18,
       //     fontWeight: FontWeight.w500,
@@ -122,8 +121,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Text(
-                      'Aggiungi Vasca',
+                    Text('Aggiungi Vasca',
                       style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   ],
@@ -149,8 +147,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Text(
-                      'Modifica Vasca',
+                    Text('Modifica Vasca',
                       style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   ],
@@ -176,8 +173,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Text(
-                      'Elimina Vasca',
+                    Text('Elimina Vasca',
                       style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   ],

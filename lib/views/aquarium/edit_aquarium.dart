@@ -205,8 +205,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(
-          l10n.editAquarium,
+        title: Text(l10n.editAquarium,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
         ),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -250,8 +249,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                 color: theme.colorScheme.onSurfaceVariant,
               ),
               const SizedBox(height: 16),
-              Text(
-                l10n.noAquariumsFound,
+              Text(l10n.noAquariumsFound,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 16,
@@ -291,8 +289,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      AppLocalizations.of(context)!.selectAquarium,
+                    Text(AppLocalizations.of(context)!.selectAquarium,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: 20,
@@ -300,8 +297,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      AppLocalizations.of(context)!.chooseAquariumToEdit,
+                    Text(AppLocalizations.of(context)!.chooseAquariumToEdit,
                       style: TextStyle(
                         color: theme.colorScheme.onSurfaceVariant,
                         fontSize: 13,
@@ -359,8 +355,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        aquarium.name,
+                      Text(aquarium.name,
                         style: TextStyle(
                           color: theme.colorScheme.onSurface,
                           fontSize: 16,
@@ -368,8 +363,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        '${aquarium.volume} L  ${aquarium.type}',
+                      Text('${aquarium.volume} L  ${aquarium.type}',
                         style: TextStyle(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 13,
@@ -426,8 +420,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          l10n.editDetails,
+                        Text(l10n.editDetails,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 20,
@@ -435,8 +428,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          l10n.updateAquarium(_selectedAquarium!.name),
+                        Text(l10n.updateAquarium(_selectedAquarium!.name),
                           style: TextStyle(
                             color: theme.colorScheme.onSurfaceVariant,
                             fontSize: 13,
@@ -533,8 +525,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: Text(
-                        l10n.cancel,
+                      child: Text(l10n.cancel,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -563,8 +554,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                         children: [
                           const FaIcon(FontAwesomeIcons.floppyDisk, size: 24),
                           const SizedBox(width: 12),
-                          Text(
-                            l10n.saveChanges,
+                          Text(l10n.saveChanges,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -586,8 +576,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
   Widget _buildLabel(String text) {
     final theme = Theme.of(context);
 
-    return Text(
-      text,
+    return Text(text,
       style: TextStyle(
         color: theme.colorScheme.onSurface,
         fontSize: 14,
@@ -661,8 +650,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
               size: 28,
             ),
             const SizedBox(height: 8),
-            Text(
-              typeMap[type] ?? '',
+            Text(typeMap[type] ?? '',
               style: TextStyle(
                 color: isSelected
                     ? theme.colorScheme.primary

@@ -76,8 +76,7 @@ class Thermometer extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            l10n.temperature,
+                          Text(  l10n.temperature,
                             style: TextStyle(
                               color: theme.colorScheme.onSurface,
                               fontSize: 14,
@@ -95,8 +94,7 @@ class Thermometer extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        status,
+                      Text(status,
                         style: TextStyle(
                           color: color,
                           fontSize: 12,
@@ -171,8 +169,7 @@ class Thermometer extends StatelessWidget {
               color: Color(0xFFef4444),
             ),
             const SizedBox(width: 12),
-            Text(
-              l10n.targetTemperature,
+            Text(l10n.targetTemperature,
               style: TextStyle(color: theme.colorScheme.onSurface),
             ),
           ],
@@ -181,8 +178,7 @@ class Thermometer extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              l10n.setDesiredTemperature,
+            Text(l10n.setDesiredTemperature,
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -217,8 +213,7 @@ class Thermometer extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            Text(
-              l10n.typicalRangeTemperature,
+            Text(l10n.typicalRangeTemperature,
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
                 fontSize: 12,
@@ -229,8 +224,7 @@ class Thermometer extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              l10n.cancel,
+            child: Text(l10n.cancel,
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),

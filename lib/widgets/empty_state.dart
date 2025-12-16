@@ -74,8 +74,7 @@ class EmptyState extends StatelessWidget {
                   ),
                 );
               },
-              child: Text(
-                title,
+              child: Text(title,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -99,8 +98,7 @@ class EmptyState extends StatelessWidget {
                   ),
                 );
               },
-              child: Text(
-                message,
+              child: Text(message,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.textTheme.bodySmall?.color,
                 ),

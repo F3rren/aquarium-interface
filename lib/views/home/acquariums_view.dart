@@ -93,8 +93,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                     style: theme.textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    error.toString(),
+                  Text(error.toString(),
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -302,8 +301,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  aquarium.name,
+                                Text(aquarium.name,
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurface,
                                     fontSize: 16,
@@ -322,8 +320,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                                           .withValues(alpha: 0.5),
                                     ),
                                     const SizedBox(width: 4),
-                                    Text(
-                                      "${aquarium.volume.toInt()} L • ${aquarium.type}",
+                                    Text("${aquarium.volume.toInt()} L • ${aquarium.type}",
                                       style: TextStyle(
                                         color: theme.colorScheme.onSurface
                                             .withValues(alpha: 0.5),
@@ -355,8 +352,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      'Aggiornato ${_formatRelativeTime(aquariumData.lastUpdate!)}',
+                    Text('Aggiornato ${_formatRelativeTime(aquariumData.lastUpdate!)}',
                       style: TextStyle(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.4,
@@ -463,8 +459,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                 : theme.colorScheme.onSurface.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 6),
-          Text(
-            label,
+          Text(label,
             style: TextStyle(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               fontSize: 10,
@@ -479,8 +474,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
             mainAxisSize: MainAxisSize.min,
             children: [
               Flexible(
-                child: Text(
-                  value,
+                child: Text(value,
                   style: TextStyle(
                     color: hasData
                         ? theme.colorScheme.onSurface
@@ -495,8 +489,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
               ),
               if (unit.isNotEmpty) ...[
                 const SizedBox(width: 2),
-                Text(
-                  unit,
+                Text(unit,
                   style: TextStyle(
                     color: hasData
                         ? theme.colorScheme.onSurface.withValues(alpha: 0.6)

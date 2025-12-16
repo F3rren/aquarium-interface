@@ -141,9 +141,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
-  String edit(String name) {
-    return 'Edit $name';
-  }
+  String get edit => 'Edit';
 
   @override
   String get close => 'Close';
@@ -391,6 +389,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myInhabitantsSubtitle => 'Manage fish and corals';
 
   @override
+  String get inhabitantsSummary => 'Inhabitants Summary';
+
+  @override
   String get aquariumInfo => 'Aquarium Info';
 
   @override
@@ -526,6 +527,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phosphatesPO4 => 'Phosphates (PO4)';
+
+  @override
+  String editParameter(String name) {
+    return 'Edit $name';
+  }
 
   @override
   String value(String unit) {
@@ -740,7 +746,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calculateLighting => 'Calculate Lighting';
 
   @override
-  String get wattsPerLiter => 'Watts per liter';
+  String get wattsPerLiter => 'Watts per Liter';
 
   @override
   String get recommendation => 'Recommendation';
@@ -1021,6 +1027,80 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paramORP => 'ORP';
 
   @override
+  String get warningIndicativeValues =>
+      '⚠️ Indicative values: verify manufacturer\'s instructions';
+
+  @override
+  String get nitratesReductionAdvice =>
+      'To reduce Nitrates:\n• Regular water change (20% weekly)\n• Efficient skimmer\n• RO refill\n• Liquid active carbon\n• NO3:PO4-X (Red Sea)';
+
+  @override
+  String get phosphatesReductionAdvice =>
+      'To reduce Phosphates:\n• Anti-phosphate resins (GFO)\n• Efficient skimmer\n• Regular water change\n• NO3:PO4-X (Red Sea)\n• Avoid overfeeding';
+
+  @override
+  String get calculateWaterAndSalt =>
+      'Calculate liters and salt needed for water change';
+
+  @override
+  String get aquariumVolumeL => 'Aquarium volume (L)';
+
+  @override
+  String get changePercentage => 'Change percentage (%)';
+
+  @override
+  String get calculate => 'Calculate';
+
+  @override
+  String get salinityLabel => 'Salinity';
+
+  @override
+  String get densityLabel => 'Density';
+
+  @override
+  String get indicativeValuesRefractometer =>
+      'Indicative values - Use refractometer for precise measurements';
+
+  @override
+  String get calculateWattsPerLiter => 'Calculate optimal watts/liter ratio';
+
+  @override
+  String get lightPowerW => 'Light power (W)';
+
+  @override
+  String get recommendedPhotoperiod =>
+      'Recommended photoperiod: 8-10 hours/day';
+
+  @override
+  String get lightInsufficientFishOnly =>
+      'Insufficient - Minimum 0.25 W/L for fish';
+
+  @override
+  String get lightOptimalFishOnly => 'Optimal for fish-only tank';
+
+  @override
+  String get lightExcessiveAlgaeRisk => 'Excessive - Algae risk';
+
+  @override
+  String get lightInsufficientSoftCorals => 'Insufficient - Minimum 0.5 W/L';
+
+  @override
+  String get lightOptimalSoftCorals => 'Optimal for soft corals (LPS)';
+
+  @override
+  String get lightVeryGoodSPS => 'Very good - Suitable for SPS too';
+
+  @override
+  String get lightInsufficientSPS => 'Insufficient - Minimum 1.0 W/L for SPS';
+
+  @override
+  String get lightOptimalSPS => 'Optimal for SPS corals';
+
+  @override
+  String get lightVeryPowerfulSPS =>
+      'Very powerful - Excellent for demanding SPS';
+
+  @override
   String errorLoadingTasks(String error) {
     return 'Error loading tasks: $error';
   }
@@ -1228,6 +1308,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearFilters => 'Clear filters';
 
   @override
+  String get confirmDeletion => 'Confirm deletion';
+
+  @override
+  String confirmDeleteFish(String name) {
+    return 'Do you want to delete \"$name\"?';
+  }
+
+  @override
+  String confirmDeleteCoral(String name) {
+    return 'Do you want to delete \"$name\"?';
+  }
+
+  @override
+  String get noFishAdded => 'No fish added';
+
+  @override
+  String get tapToAddFirstFish => 'Tap + to add your first fish';
+
+  @override
+  String get noResultsFound => 'No results found';
+
+  @override
+  String get tryModifyingFilters => 'Try modifying the filters';
+
+  @override
+  String get noCoralAdded => 'No coral added';
+
+  @override
+  String get tapToAddFirstCoral => 'Tap + to add your first coral';
+
+  @override
+  String get averageSize => 'Avg. size';
+
+  @override
+  String get totalBioLoad => 'Total Bio Load';
+
+  @override
+  String get bioLoadFormula => 'Formula: (Σ fish sizes) + (# corals × 2)';
+
+  @override
+  String get bioLoadOptimal => 'Optimal bio load - well-balanced aquarium';
+
+  @override
+  String get bioLoadModerate => 'Moderate bio load - monitor water parameters';
+
+  @override
+  String get bioLoadHigh =>
+      'High bio load - consider a larger aquarium or reduce inhabitants';
+
+  @override
   String get aquariumIdNotAvailable => 'Error: Aquarium ID not available';
 
   @override
@@ -1286,4 +1416,382 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taskDeleted => 'Task deleted';
+
+  @override
+  String get notSet => 'Not set';
+
+  @override
+  String taskCompletedSuccess(String title) {
+    return '$title completed!';
+  }
+
+  @override
+  String confirmCompleteTask(String title) {
+    return 'Do you want to mark \"$title\" as completed?';
+  }
+
+  @override
+  String get temperatureAnomaly => 'Temperature Anomaly';
+
+  @override
+  String get phOutOfRange => 'pH Out of Range';
+
+  @override
+  String get salinityAnomaly => 'Salinity Anomaly';
+
+  @override
+  String get orpOutOfRange => 'ORP Out of Range';
+
+  @override
+  String get calciumAnomaly => 'Calcium Anomaly';
+
+  @override
+  String get magnesiumAnomaly => 'Magnesium Anomaly';
+
+  @override
+  String get khOutOfRange => 'KH Out of Range';
+
+  @override
+  String get nitratesHigh => 'High Nitrates';
+
+  @override
+  String get phosphatesHigh => 'High Phosphates';
+
+  @override
+  String get temperatureTooHigh => 'Temperature is too high.';
+
+  @override
+  String get phTooHigh => 'pH is too high.';
+
+  @override
+  String get salinityTooHigh => 'Salinity is too high.';
+
+  @override
+  String get orpTooHigh => 'ORP is too high.';
+
+  @override
+  String get calciumTooHigh => 'Calcium is too high.';
+
+  @override
+  String get magnesiumTooHigh => 'Magnesium is too high.';
+
+  @override
+  String get khTooHigh => 'KH is too high.';
+
+  @override
+  String get nitratesTooHigh => 'Nitrates are too high.';
+
+  @override
+  String get phosphatesTooHigh => 'Phosphates are too high.';
+
+  @override
+  String get temperatureTooLow => 'Temperature is too low.';
+
+  @override
+  String get phTooLow => 'pH is too low.';
+
+  @override
+  String get salinityTooLow => 'Salinity is too low.';
+
+  @override
+  String get orpTooLow => 'ORP is too low.';
+
+  @override
+  String get calciumTooLow => 'Calcium is too low.';
+
+  @override
+  String get magnesiumTooLow => 'Magnesium is too low.';
+
+  @override
+  String get khTooLow => 'KH is too low.';
+
+  @override
+  String get nitratesTooLow => 'Nitrates are too low.';
+
+  @override
+  String get phosphatesTooLow => 'Phosphates are too low.';
+
+  @override
+  String get suggestionTemperatureHigh =>
+      'Check the heater and room temperature.';
+
+  @override
+  String get suggestionPhHigh => 'Check aeration and reduce lighting.';
+
+  @override
+  String get suggestionSalinityHigh => 'Add RO water to dilute.';
+
+  @override
+  String get suggestionOrpHigh => 'Reduce oxygenation or check the ozonizer.';
+
+  @override
+  String get suggestionCalciumHigh => 'Reduce calcium supplement dosage.';
+
+  @override
+  String get suggestionMagnesiumHigh => 'Reduce magnesium supplement dosage.';
+
+  @override
+  String get suggestionKhHigh => 'Reduce alkaline buffer dosage.';
+
+  @override
+  String get suggestionNitratesHigh =>
+      'Perform a water change and check the filter.';
+
+  @override
+  String get suggestionPhosphatesHigh =>
+      'Perform a water change and use phosphate resins.';
+
+  @override
+  String get suggestionTemperatureLow => 'Check heater operation.';
+
+  @override
+  String get suggestionPhLow => 'Increase aeration and check KH.';
+
+  @override
+  String get suggestionSalinityLow => 'Add quality marine salt.';
+
+  @override
+  String get suggestionOrpLow => 'Increase oxygenation or check the skimmer.';
+
+  @override
+  String get suggestionCalciumLow => 'Add calcium solutions.';
+
+  @override
+  String get suggestionMagnesiumLow => 'Add magnesium solutions.';
+
+  @override
+  String get suggestionKhLow => 'Gradually add alkaline buffers';
+
+  @override
+  String get suggestionNitratesLow => 'Normal for well-balanced aquariums';
+
+  @override
+  String get suggestionPhosphatesLow => 'Normal for well-balanced aquariums';
+
+  @override
+  String get maintenanceReminder => 'Maintenance Reminder';
+
+  @override
+  String get weeklyMaintenance => 'Weekly maintenance scheduled';
+
+  @override
+  String get monthlyMaintenance => 'Monthly maintenance scheduled';
+
+  @override
+  String get waterChangeReminder => 'Reminder: Water Change';
+
+  @override
+  String get waterChangeReminderBody => 'Time to change the aquarium water';
+
+  @override
+  String get filterCleaningReminder => 'Reminder: Filter Cleaning';
+
+  @override
+  String get filterCleaningReminderBody =>
+      'Check and clean the aquarium filter';
+
+  @override
+  String get parameterTestingReminder => 'Reminder: Parameter Testing';
+
+  @override
+  String get parameterTestingReminderBody => 'Perform water parameter tests';
+
+  @override
+  String get lightMaintenanceReminder => 'Reminder: Light Maintenance';
+
+  @override
+  String get lightMaintenanceReminderBody => 'Check and clean aquarium lights';
+
+  @override
+  String get weeklyMaintenanceDetails =>
+      'Time for weekly maintenance:\n• 10-15% water change\n• Glass cleaning\n• Parameter testing\n• Equipment check';
+
+  @override
+  String get monthlyMaintenanceDetails =>
+      'Time for monthly maintenance:\n• 20-25% water change\n• Filter cleaning\n• Pump and heater check\n• Lights and timer check\n• Complete parameter testing';
+
+  @override
+  String get severityCritical => 'CRITICAL';
+
+  @override
+  String get severityHigh => 'HIGH';
+
+  @override
+  String get severityMedium => 'MEDIUM';
+
+  @override
+  String get severityLow => 'LOW';
+
+  @override
+  String get severityCriticalDesc => 'Requires immediate action';
+
+  @override
+  String get severityHighDesc => 'Requires priority attention';
+
+  @override
+  String get severityMediumDesc => 'Monitor carefully';
+
+  @override
+  String get severityLowDesc => 'Situation under control';
+
+  @override
+  String parameterOutOfRange(String parameter) {
+    return 'Parameter $parameter is out of range';
+  }
+
+  @override
+  String get parameterAnomaly => 'Parameter Anomaly';
+
+  @override
+  String get checkParameterSettings =>
+      'Check the parameter and verify settings';
+
+  @override
+  String get alertsWillAppearHere => 'Alerts will appear here';
+
+  @override
+  String get changesWillBeSavedImmediately =>
+      'Changes will be saved immediately.';
+
+  @override
+  String get networkError =>
+      'Connection error. Check your internet connection.';
+
+  @override
+  String get serverError =>
+      'The server encountered a problem. Please try again later.';
+
+  @override
+  String get sessionExpired => 'Session expired. Please log in again.';
+
+  @override
+  String get requestTimeout => 'The request took too long. Please try again.';
+
+  @override
+  String get invalidDataFormat =>
+      'The received data is not in the expected format.';
+
+  @override
+  String get volumeMustBePositive => 'Volume must be a positive number';
+
+  @override
+  String get sortAscending => 'A → Z / 0 → 9';
+
+  @override
+  String get sortDescending => 'Z → A / 9 → 0';
+
+  @override
+  String get trendRising => 'Rising';
+
+  @override
+  String get trendFalling => 'Falling';
+
+  @override
+  String get trendStable => 'Stable';
+
+  @override
+  String get appSubtitle => 'Aquarium Management System';
+
+  @override
+  String get appDescription =>
+      'Advanced platform for monitoring and managing marine aquariums, designed for aquarium enthusiasts.';
+
+  @override
+  String get mitLicense => 'MIT License';
+
+  @override
+  String get copyright => '© 2024-2025 ReefLife Project. All rights reserved.';
+
+  @override
+  String get openSourceMessage =>
+      'Open source software for the aquarium community.';
+
+  @override
+  String get noAquariumCreated =>
+      'You haven\'t created an aquarium yet. Create your first aquarium to view information.';
+
+  @override
+  String get aquariumDetails => 'Aquarium Details';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get saveSettings => 'Save Settings';
+
+  @override
+  String get restoreDefaults => 'Restore Default Values';
+
+  @override
+  String get noAlerts => 'No Alerts';
+
+  @override
+  String get every => 'Every';
+
+  @override
+  String get lowLabel => 'LOW';
+
+  @override
+  String get highLabel => 'HIGH';
+
+  @override
+  String editThresholds(String name) {
+    return 'Edit Thresholds - $name';
+  }
+
+  @override
+  String get notificationWhenOutOfRange =>
+      'You will receive notifications when the value is out of this range';
+
+  @override
+  String get restoreDefaultsConfirm => 'Restore Defaults?';
+
+  @override
+  String get restoreDefaultsMessage =>
+      'This action will reset all custom thresholds to default values:';
+
+  @override
+  String get temperatureDefault => '• Temperature: 24-26°C';
+
+  @override
+  String get phDefault => '• pH: 8.0-8.4';
+
+  @override
+  String get salinityDefault => '• Salinity: 1020-1028';
+
+  @override
+  String get andOtherParameters => '• And all other parameters...';
+
+  @override
+  String updated(String time) {
+    return 'Updated $time';
+  }
+
+  @override
+  String get sortAscendingLabel => 'Ascending order';
+
+  @override
+  String get orpRedox => 'ORP/Redox';
+
+  @override
+  String get addAquarium => 'Add Aquarium';
+
+  @override
+  String get editAquariumTitle => 'Edit Aquarium';
+
+  @override
+  String get deleteAquariumTitle => 'Delete Aquarium';
+
+  @override
+  String get scientificName => 'Scientific Name';
+
+  @override
+  String get requirements => 'Requirements';
+
+  @override
+  String get multipleSpecimensNote =>
+      'If you add multiple specimens, they will be automatically numbered';
+
+  @override
+  String get recentAlerts => 'Recent Alerts';
 }

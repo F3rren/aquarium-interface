@@ -140,8 +140,7 @@ class _TargetProgressBarState extends State<TargetProgressBar>
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  '${l10n.target}: ${widget.targetValue.toStringAsFixed(1)}${widget.unit}',
+                Text('${l10n.target}: ${widget.targetValue.toStringAsFixed(1)}${widget.unit}',
                   style: TextStyle(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     fontSize: 12,
@@ -156,8 +155,7 @@ class _TargetProgressBarState extends State<TargetProgressBar>
                 color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                status,
+              child: Text(status,
                 style: TextStyle(
                   color: color,
                   fontSize: 11,
@@ -223,15 +221,13 @@ class _TargetProgressBarState extends State<TargetProgressBar>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              '${widget.minValue.toStringAsFixed(0)}${widget.unit}',
+            Text('${widget.minValue.toStringAsFixed(0)}${widget.unit}',
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 10,
               ),
             ),
-            Text(
-              '${widget.maxValue.toStringAsFixed(0)}${widget.unit}',
+            Text('${widget.maxValue.toStringAsFixed(0)}${widget.unit}',
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 10,
@@ -328,8 +324,7 @@ class _CircularTargetProgressState extends State<CircularTargetProgress>
               color: color,
             ),
             child: Center(
-              child: Text(
-                '${(progress * 100).toInt()}%',
+              child: Text('${(progress * 100).toInt()}%',
                 style: TextStyle(
                   color: color,
                   fontSize: widget.size * 0.25,

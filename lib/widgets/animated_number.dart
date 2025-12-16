@@ -74,8 +74,7 @@ class _AnimatedNumberState extends State<AnimatedNumber>
         final currentValue = _animation.value;
         final formattedValue = currentValue.toStringAsFixed(widget.decimals);
 
-        return Text(
-          '${widget.prefix ?? ''}$formattedValue${widget.suffix ?? ''}',
+        return Text('${widget.prefix ?? ''}$formattedValue${widget.suffix ?? ''}',
           style: widget.style,
         );
       },
@@ -157,8 +156,7 @@ class _AnimatedIntNumberState extends State<AnimatedIntNumber>
       builder: (context, child) {
         final currentValue = _animation.value.round();
 
-        return Text(
-          '${widget.prefix ?? ''}$currentValue${widget.suffix ?? ''}',
+        return Text('${widget.prefix ?? ''}$currentValue${widget.suffix ?? ''}',
           style: widget.style,
         );
       },
@@ -291,8 +289,7 @@ class _AnimatedNumberWithIndicatorState
               widget.decimals,
             );
 
-            return Text(
-              '${widget.prefix ?? ''}$formattedValue${widget.suffix ?? ''}',
+            return Text('${widget.prefix ?? ''}$formattedValue${widget.suffix ?? ''}',
               style: widget.style,
             );
           },

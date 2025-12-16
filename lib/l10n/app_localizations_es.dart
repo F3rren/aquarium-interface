@@ -141,9 +141,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get delete => 'Eliminar';
 
   @override
-  String edit(String name) {
-    return 'Editar $name';
-  }
+  String get edit => 'Editar';
 
   @override
   String get close => 'Cerrar';
@@ -213,7 +211,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectFromList => 'Seleccionar de la lista';
 
   @override
-  String get orEnterManually => 'o introducir manualmente';
+  String get orEnterManually => 'o ingresar manualmente';
 
   @override
   String noCompatibleFish(String waterType) {
@@ -392,6 +390,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myInhabitantsSubtitle => 'Gestionar peces y corales';
 
   @override
+  String get inhabitantsSummary => 'Resumen de Habitantes';
+
+  @override
   String get aquariumInfo => 'Info Acuario';
 
   @override
@@ -527,6 +528,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get phosphatesPO4 => 'Fosfatos (PO4)';
+
+  @override
+  String editParameter(String name) {
+    return 'Editar $name';
+  }
 
   @override
   String value(String unit) {
@@ -741,7 +747,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get calculateLighting => 'Calcular Iluminación';
 
   @override
-  String get wattsPerLiter => 'Vatios por litro';
+  String get wattsPerLiter => 'Vatios por Litro';
 
   @override
   String get recommendation => 'Recomendación';
@@ -1023,6 +1029,81 @@ class AppLocalizationsEs extends AppLocalizations {
   String get paramORP => 'ORP';
 
   @override
+  String get warningIndicativeValues =>
+      '⚠️ Valores indicativos: verifica las instrucciones del fabricante';
+
+  @override
+  String get nitratesReductionAdvice =>
+      'Para reducir los Nitratos:\n• Cambio de agua regular (20% semanal)\n• Skimmer eficiente\n• Recarga de ósmosis\n• Carbono activo líquido\n• NO3:PO4-X (Red Sea)';
+
+  @override
+  String get phosphatesReductionAdvice =>
+      'Para reducir los Fosfatos:\n• Resinas anti-fosfatos (GFO)\n• Skimmer eficiente\n• Cambio de agua regular\n• NO3:PO4-X (Red Sea)\n• Evitar sobrealimentación';
+
+  @override
+  String get calculateWaterAndSalt =>
+      'Calcula litros y sal necesaria para el cambio de agua';
+
+  @override
+  String get aquariumVolumeL => 'Volumen del acuario (L)';
+
+  @override
+  String get changePercentage => 'Porcentaje de cambio (%)';
+
+  @override
+  String get calculate => 'Calcular';
+
+  @override
+  String get salinityLabel => 'Salinidad';
+
+  @override
+  String get densityLabel => 'Densidad';
+
+  @override
+  String get indicativeValuesRefractometer =>
+      'Valores indicativos - Usar refractómetro para medidas precisas';
+
+  @override
+  String get calculateWattsPerLiter =>
+      'Calcula la relación vatios/litro óptima';
+
+  @override
+  String get lightPowerW => 'Potencia de luces (W)';
+
+  @override
+  String get recommendedPhotoperiod =>
+      'Fotoperíodo recomendado: 8-10 horas/día';
+
+  @override
+  String get lightInsufficientFishOnly =>
+      'Insuficiente - Mínimo 0.25 W/L para peces';
+
+  @override
+  String get lightOptimalFishOnly => 'Óptimo para acuario solo de peces';
+
+  @override
+  String get lightExcessiveAlgaeRisk => 'Excesivo - Riesgo de algas';
+
+  @override
+  String get lightInsufficientSoftCorals => 'Insuficiente - Mínimo 0.5 W/L';
+
+  @override
+  String get lightOptimalSoftCorals => 'Óptimo para corales blandos (LPS)';
+
+  @override
+  String get lightVeryGoodSPS => 'Muy bueno - Apto también para SPS';
+
+  @override
+  String get lightInsufficientSPS => 'Insuficiente - Mínimo 1.0 W/L para SPS';
+
+  @override
+  String get lightOptimalSPS => 'Óptimo para corales SPS';
+
+  @override
+  String get lightVeryPowerfulSPS =>
+      'Muy potente - Excelente para SPS exigentes';
+
+  @override
   String errorLoadingTasks(String error) {
     return 'Error al cargar tareas: $error';
   }
@@ -1231,6 +1312,58 @@ class AppLocalizationsEs extends AppLocalizations {
   String get clearFilters => 'Borrar filtros';
 
   @override
+  String get confirmDeletion => 'Confirmar eliminación';
+
+  @override
+  String confirmDeleteFish(String name) {
+    return '¿Quieres eliminar \"$name\"?';
+  }
+
+  @override
+  String confirmDeleteCoral(String name) {
+    return '¿Quieres eliminar \"$name\"?';
+  }
+
+  @override
+  String get noFishAdded => 'No hay peces añadidos';
+
+  @override
+  String get tapToAddFirstFish => 'Toca + para añadir tu primer pez';
+
+  @override
+  String get noResultsFound => 'No se encontraron resultados';
+
+  @override
+  String get tryModifyingFilters => 'Intenta modificar los filtros';
+
+  @override
+  String get noCoralAdded => 'No hay corales añadidos';
+
+  @override
+  String get tapToAddFirstCoral => 'Toca + para añadir tu primer coral';
+
+  @override
+  String get averageSize => 'Tam. medio';
+
+  @override
+  String get totalBioLoad => 'Carga Biótica Total';
+
+  @override
+  String get bioLoadFormula => 'Fórmula: (Σ tamaños peces) + (n° corales × 2)';
+
+  @override
+  String get bioLoadOptimal =>
+      'Carga biótica óptima - acuario bien equilibrado';
+
+  @override
+  String get bioLoadModerate =>
+      'Carga biótica moderada - monitorea los parámetros del agua';
+
+  @override
+  String get bioLoadHigh =>
+      'Carga biótica alta - considera un acuario más grande o reduce habitantes';
+
+  @override
   String get aquariumIdNotAvailable => 'Error: ID del acuario no disponible';
 
   @override
@@ -1289,4 +1422,394 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get taskDeleted => 'Tarea eliminada';
+
+  @override
+  String get notSet => 'No establecida';
+
+  @override
+  String taskCompletedSuccess(String title) {
+    return '¡$title completada!';
+  }
+
+  @override
+  String confirmCompleteTask(String title) {
+    return '¿Quieres marcar \"$title\" como completada?';
+  }
+
+  @override
+  String get temperatureAnomaly => 'Temperatura Anómala';
+
+  @override
+  String get phOutOfRange => 'pH Fuera de Rango';
+
+  @override
+  String get salinityAnomaly => 'Salinidad Anómala';
+
+  @override
+  String get orpOutOfRange => 'ORP Fuera de Rango';
+
+  @override
+  String get calciumAnomaly => 'Calcio Anómalo';
+
+  @override
+  String get magnesiumAnomaly => 'Magnesio Anómalo';
+
+  @override
+  String get khOutOfRange => 'KH Fuera de Rango';
+
+  @override
+  String get nitratesHigh => 'Nitratos Elevados';
+
+  @override
+  String get phosphatesHigh => 'Fosfatos Elevados';
+
+  @override
+  String get temperatureTooHigh => 'La temperatura está demasiado alta.';
+
+  @override
+  String get phTooHigh => 'El pH está demasiado alto.';
+
+  @override
+  String get salinityTooHigh => 'La salinidad está demasiado alta.';
+
+  @override
+  String get orpTooHigh => 'El ORP está demasiado alto.';
+
+  @override
+  String get calciumTooHigh => 'El calcio está demasiado alto.';
+
+  @override
+  String get magnesiumTooHigh => 'El magnesio está demasiado alto.';
+
+  @override
+  String get khTooHigh => 'El KH está demasiado alto.';
+
+  @override
+  String get nitratesTooHigh => 'Los nitratos están demasiado altos.';
+
+  @override
+  String get phosphatesTooHigh => 'Los fosfatos están demasiado altos.';
+
+  @override
+  String get temperatureTooLow => 'La temperatura está demasiado baja.';
+
+  @override
+  String get phTooLow => 'El pH está demasiado bajo.';
+
+  @override
+  String get salinityTooLow => 'La salinidad está demasiado baja.';
+
+  @override
+  String get orpTooLow => 'El ORP está demasiado bajo.';
+
+  @override
+  String get calciumTooLow => 'El calcio está demasiado bajo.';
+
+  @override
+  String get magnesiumTooLow => 'El magnesio está demasiado bajo.';
+
+  @override
+  String get khTooLow => 'El KH está demasiado bajo.';
+
+  @override
+  String get nitratesTooLow => 'Los nitratos están demasiado bajos.';
+
+  @override
+  String get phosphatesTooLow => 'Los fosfatos están demasiado bajos.';
+
+  @override
+  String get suggestionTemperatureHigh =>
+      'Verifica el calentador y la temperatura ambiente.';
+
+  @override
+  String get suggestionPhHigh =>
+      'Controla la aireación y reduce la iluminación.';
+
+  @override
+  String get suggestionSalinityHigh => 'Añade agua osmótica para diluir.';
+
+  @override
+  String get suggestionOrpHigh =>
+      'Reduce la oxigenación o verifica el ozonizador.';
+
+  @override
+  String get suggestionCalciumHigh =>
+      'Reduce la dosis de suplementos de calcio.';
+
+  @override
+  String get suggestionMagnesiumHigh =>
+      'Reduce la dosis de suplementos de magnesio.';
+
+  @override
+  String get suggestionKhHigh => 'Reduce la dosis de tampones alcalinos.';
+
+  @override
+  String get suggestionNitratesHigh =>
+      'Realiza un cambio de agua y verifica el filtro.';
+
+  @override
+  String get suggestionPhosphatesHigh =>
+      'Realiza un cambio de agua y usa resinas anti-fosfatos.';
+
+  @override
+  String get suggestionTemperatureLow =>
+      'Verifica el funcionamiento del calentador.';
+
+  @override
+  String get suggestionPhLow => 'Aumenta la aireación y controla el KH.';
+
+  @override
+  String get suggestionSalinityLow => 'Añade sal marina de calidad.';
+
+  @override
+  String get suggestionOrpLow =>
+      'Aumenta la oxigenación o verifica el skimmer.';
+
+  @override
+  String get suggestionCalciumLow => 'Añade soluciones de calcio.';
+
+  @override
+  String get suggestionMagnesiumLow => 'Añade soluciones de magnesio.';
+
+  @override
+  String get suggestionKhLow => 'Añade tampones alcalinos gradualmente';
+
+  @override
+  String get suggestionNitratesLow => 'Normal para acuarios bien equilibrados';
+
+  @override
+  String get suggestionPhosphatesLow =>
+      'Normal para acuarios bien equilibrados';
+
+  @override
+  String get maintenanceReminder => 'Recordatorio de Mantenimiento';
+
+  @override
+  String get weeklyMaintenance => 'Mantenimiento semanal programado';
+
+  @override
+  String get monthlyMaintenance => 'Mantenimiento mensual programado';
+
+  @override
+  String get waterChangeReminder => 'Recordatorio: Cambio de Agua';
+
+  @override
+  String get waterChangeReminderBody =>
+      'Es hora de cambiar el agua del acuario';
+
+  @override
+  String get filterCleaningReminder => 'Recordatorio: Limpieza del Filtro';
+
+  @override
+  String get filterCleaningReminderBody =>
+      'Verifica y limpia el filtro del acuario';
+
+  @override
+  String get parameterTestingReminder => 'Recordatorio: Prueba de Parámetros';
+
+  @override
+  String get parameterTestingReminderBody =>
+      'Realiza pruebas de parámetros del agua';
+
+  @override
+  String get lightMaintenanceReminder => 'Recordatorio: Mantenimiento de Luces';
+
+  @override
+  String get lightMaintenanceReminderBody =>
+      'Verifica y limpia las luces del acuario';
+
+  @override
+  String get weeklyMaintenanceDetails =>
+      'Es hora del mantenimiento semanal:\n• Cambio de agua 10-15%\n• Limpieza de cristales\n• Prueba de parámetros\n• Verificación de equipos';
+
+  @override
+  String get monthlyMaintenanceDetails =>
+      'Es hora del mantenimiento mensual:\n• Cambio de agua 20-25%\n• Limpieza del filtro\n• Verificación de bombas y calentador\n• Verificación de luces y temporizador\n• Prueba completa de parámetros';
+
+  @override
+  String get severityCritical => 'CRÍTICO';
+
+  @override
+  String get severityHigh => 'ALTO';
+
+  @override
+  String get severityMedium => 'MEDIO';
+
+  @override
+  String get severityLow => 'BAJO';
+
+  @override
+  String get severityCriticalDesc => 'Requiere acción inmediata';
+
+  @override
+  String get severityHighDesc => 'Requiere atención prioritaria';
+
+  @override
+  String get severityMediumDesc => 'Monitorear cuidadosamente';
+
+  @override
+  String get severityLowDesc => 'Situación bajo control';
+
+  @override
+  String parameterOutOfRange(String parameter) {
+    return 'El parámetro $parameter está fuera de rango';
+  }
+
+  @override
+  String get parameterAnomaly => 'Anomalía de Parámetro';
+
+  @override
+  String get checkParameterSettings =>
+      'Verifica el parámetro y las configuraciones';
+
+  @override
+  String get alertsWillAppearHere => 'Las alertas aparecerán aquí';
+
+  @override
+  String get changesWillBeSavedImmediately =>
+      'Los cambios se guardarán inmediatamente.';
+
+  @override
+  String get networkError =>
+      'Error de conexión. Verifica tu conexión a internet.';
+
+  @override
+  String get serverError =>
+      'El servidor encontró un problema. Inténtalo de nuevo más tarde.';
+
+  @override
+  String get sessionExpired => 'Sesión expirada. Inicia sesión nuevamente.';
+
+  @override
+  String get requestTimeout =>
+      'La solicitud tardó demasiado. Inténtalo de nuevo.';
+
+  @override
+  String get invalidDataFormat =>
+      'Los datos recibidos no están en el formato esperado.';
+
+  @override
+  String get volumeMustBePositive => 'El volumen debe ser un número positivo';
+
+  @override
+  String get sortAscending => 'A → Z / 0 → 9';
+
+  @override
+  String get sortDescending => 'Z → A / 9 → 0';
+
+  @override
+  String get trendRising => 'En Aumento';
+
+  @override
+  String get trendFalling => 'En Descenso';
+
+  @override
+  String get trendStable => 'Estable';
+
+  @override
+  String get appSubtitle => 'Sistema de Gestión de Acuarios';
+
+  @override
+  String get appDescription =>
+      'Plataforma avanzada para el monitoreo y gestión de acuarios marinos, diseñada para entusiastas de la acuariofilia.';
+
+  @override
+  String get mitLicense => 'MIT License';
+
+  @override
+  String get copyright =>
+      '© 2024-2025 ReefLife Project. Todos los derechos reservados.';
+
+  @override
+  String get openSourceMessage =>
+      'Software de código abierto para la comunidad acuarista.';
+
+  @override
+  String get noAquariumCreated =>
+      'Aún no has creado un acuario. Crea tu primer acuario para ver la información.';
+
+  @override
+  String get aquariumDetails => 'Detalles del Acuario';
+
+  @override
+  String get description => 'Descripción';
+
+  @override
+  String get saveSettings => 'Guardar Configuración';
+
+  @override
+  String get restoreDefaults => 'Restaurar Valores Predeterminados';
+
+  @override
+  String get noAlerts => 'Sin Alertas';
+
+  @override
+  String get every => 'Cada';
+
+  @override
+  String get lowLabel => 'BAJO';
+
+  @override
+  String get highLabel => 'ALTO';
+
+  @override
+  String editThresholds(String name) {
+    return 'Editar Umbrales - $name';
+  }
+
+  @override
+  String get notificationWhenOutOfRange =>
+      'Recibirás notificaciones cuando el valor esté fuera de este rango';
+
+  @override
+  String get restoreDefaultsConfirm => '¿Restaurar Predeterminados?';
+
+  @override
+  String get restoreDefaultsMessage =>
+      'Esta acción restablecerá todos los umbrales personalizados a los valores predeterminados:';
+
+  @override
+  String get temperatureDefault => '• Temperatura: 24-26°C';
+
+  @override
+  String get phDefault => '• pH: 8.0-8.4';
+
+  @override
+  String get salinityDefault => '• Salinidad: 1020-1028';
+
+  @override
+  String get andOtherParameters => '• Y todos los demás parámetros...';
+
+  @override
+  String updated(String time) {
+    return 'Actualizado $time';
+  }
+
+  @override
+  String get sortAscendingLabel => 'Orden ascendente';
+
+  @override
+  String get orpRedox => 'ORP/Redox';
+
+  @override
+  String get addAquarium => 'Agregar Acuario';
+
+  @override
+  String get editAquariumTitle => 'Editar Acuario';
+
+  @override
+  String get deleteAquariumTitle => 'Eliminar Acuario';
+
+  @override
+  String get scientificName => 'Nombre Científico';
+
+  @override
+  String get requirements => 'Requisitos';
+
+  @override
+  String get multipleSpecimensNote =>
+      'Si agregas múltiples ejemplares, se numerarán automáticamente';
+
+  @override
+  String get recentAlerts => 'Alertas Recientes';
 }

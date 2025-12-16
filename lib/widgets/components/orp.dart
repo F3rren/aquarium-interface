@@ -34,6 +34,7 @@ class OrpMeter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final color = _getOrpColor();
     final status = _getStatus(context);
 
@@ -69,8 +70,7 @@ class OrpMeter extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            'ORP/Redox',
+                          Text(l10n.orpRedox,
                             style: TextStyle(
                               color: theme.colorScheme.onSurface,
                               fontSize: 14,
@@ -88,8 +88,7 @@ class OrpMeter extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        status,
+                      Text(status,
                         style: TextStyle(
                           color: color,
                           fontSize: 12,
@@ -159,8 +158,7 @@ class OrpMeter extends StatelessWidget {
           children: [
             const FaIcon(FontAwesomeIcons.flask, color: Color(0xFF60a5fa)),
             const SizedBox(width: 12),
-            Text(
-              l10n.targetOrp,
+            Text(l10n.targetOrp,
               style: TextStyle(color: theme.colorScheme.onSurface),
             ),
           ],
@@ -169,8 +167,7 @@ class OrpMeter extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              l10n.setDesiredOrp,
+            Text(l10n.setDesiredOrp,
               style: TextStyle(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -203,8 +200,7 @@ class OrpMeter extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            Text(
-              l10n.typicalRangeOrp,
+            Text(l10n.typicalRangeOrp,
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
                 fontSize: 12,
@@ -215,8 +211,7 @@ class OrpMeter extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              l10n.cancel,
+            child: Text(l10n.cancel,
               style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),

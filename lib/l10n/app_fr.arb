@@ -152,6 +152,7 @@
   "calculatorsSubtitle": "Volume, dosage d'additifs, changement d'eau",
   "myInhabitants": "Mes Habitants",
   "myInhabitantsSubtitle": "Gérer poissons et coraux",
+  "inhabitantsSummary": "Résumé des Habitants",
   "aquariumInfo": "Info Aquarium",
   "aquariumInfoSubtitle": "Nom, volume, type",
   "theme": "Thème",
@@ -200,7 +201,14 @@
   "magnesiumMg": "Magnésium (Mg)",
   "nitratesNO3": "Nitrates (NO3)",
   "phosphatesPO4": "Phosphates (PO4)",
-  "edit": "Modifier {name}",
+  "editParameter": "Modifier {name}",
+  "@editParameter": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "value": "Valeur ({unit})",
   "cancel": "Annuler",
   "save": "Enregistrer",
@@ -433,6 +441,40 @@
   "paramSalinity": "Salinité",
   "paramORP": "ORP",
   
+  "warningIndicativeValues": "⚠️ Valeurs indicatives: vérifier les instructions du fabricant",
+  "nitratesReductionAdvice": "Pour réduire les Nitrates:\n• Changement d'eau régulier (20% hebdomadaire)\n• Écumeur efficace\n• Remplissage osmose\n• Carbone actif liquide\n• NO3:PO4-X (Red Sea)",
+  "phosphatesReductionAdvice": "Pour réduire les Phosphates:\n• Résines anti-phosphates (GFO)\n• Écumeur efficace\n• Changement d'eau régulier\n• NO3:PO4-X (Red Sea)\n• Éviter la suralimentation",
+  "calculateWaterAndSalt": "Calculer les litres et le sel nécessaires pour le changement d'eau",
+  "aquariumVolumeL": "Volume de l'aquarium (L)",
+  "changePercentage": "Pourcentage de changement (%)",
+  "calculate": "Calculer",
+  "waterToChange": "Eau à changer",
+  "saltNeeded": "Sel nécessaire",
+  "calculatedForSalinity": "Calculé pour salinité 1.025 (35g/L)",
+  "densityExample": "Densité (ex: 1.025)",
+  "salinityExample": "Salinité (ppt, ex: 35)",
+  "temperatureCelsius": "Température (°C)",
+  "salinityLabel": "Salinité",
+  "salinityPPM": "Salinité (ppm)",
+  "densityLabel": "Densité",
+  "indicativeValuesRefractometer": "Valeurs indicatives - Utiliser un réfractomètre pour des mesures précises",
+  "calculateWattsPerLiter": "Calculer le rapport watts/litre optimal",
+  "lightPowerW": "Puissance des lumières (W)",
+  "wattsPerLiter": "Watts par Litre",
+  "recommendedPhotoperiod": "Photopériode recommandée: 8-10 heures/jour",
+  "quantityToDose": "Quantité à doser",
+  "quantityToDoseReduction": "Quantité à doser (réduction)",
+  
+  "lightInsufficientFishOnly": "Insuffisant - Minimum 0.25 W/L pour poissons",
+  "lightOptimalFishOnly": "Optimal pour aquarium de poissons uniquement",
+  "lightExcessiveAlgaeRisk": "Excessif - Risque d'algues",
+  "lightInsufficientSoftCorals": "Insuffisant - Minimum 0.5 W/L",
+  "lightOptimalSoftCorals": "Optimal pour coraux mous (LPS)",
+  "lightVeryGoodSPS": "Très bon - Convient aussi aux SPS",
+  "lightInsufficientSPS": "Insuffisant - Minimum 1.0 W/L pour SPS",
+  "lightOptimalSPS": "Optimal pour coraux SPS",
+  "lightVeryPowerfulSPS": "Très puissant - Excellent pour SPS exigeants",
+  
   "errorLoadingTasks": "Erreur de chargement des tâches: {error}",
   "@errorLoadingTasks": {
     "placeholders": {
@@ -620,6 +662,36 @@
   "inhabitantsUpdated": "Habitants mis \u00e0 jour!",
   "delete": "Supprimer",
   "clearFilters": "Effacer les filtres",
+  "confirmDeletion": "Confirmer la suppression",
+  "confirmDeleteFish": "Voulez-vous supprimer \"{name}\"?",
+  "@confirmDeleteFish": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteCoral": "Voulez-vous supprimer \"{name}\"?",
+  "@confirmDeleteCoral": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "filtersAndSearch": "Filtres et recherche",
+  "noFishAdded": "Aucun poisson ajouté",
+  "tapToAddFirstFish": "Appuyez sur + pour ajouter votre premier poisson",
+  "noResultsFound": "Aucun résultat trouvé",
+  "tryModifyingFilters": "Essayez de modifier les filtres",
+  "noCoralAdded": "Aucun corail ajouté",
+  "tapToAddFirstCoral": "Appuyez sur + pour ajouter votre premier corail",
+  "averageSize": "Taille moy.",
+  "totalBioLoad": "Charge Biotique Totale",
+  "bioLoadFormula": "Formule: (Σ tailles poissons) + (n° coraux × 2)",
+  "bioLoadOptimal": "Charge biotique optimale - aquarium bien équilibré",
+  "bioLoadModerate": "Charge biotique modérée - surveillez les paramètres de l'eau",
+  "bioLoadHigh": "Charge biotique élevée - envisagez un aquarium plus grand ou réduisez les habitants",
   "aquariumIdNotAvailable": "Erreur: ID de l'aquarium non disponible",
   "newTask": "Nouvelle T\u00e2che",
   "daily": "Quotidien",
@@ -662,5 +734,60 @@
     }
   },
   "taskDeleted": "T\u00e2che supprim\u00e9e",
-  "language": "Langue"
+  "language": "Langue",
+  "appTitle": "ReefLife",
+  "appSubtitle": "Syst\u00e8me de Gestion d'Aquarium",
+  "appDescription": "Plateforme avanc\u00e9e pour le suivi et la gestion des aquariums marins, con\u00e7ue pour les passionn\u00e9s d'aquariophilie.",
+  "mitLicense": "Licence MIT",
+  "copyright": "\u00a9 2024-2025 ReefLife Project. Tous droits r\u00e9serv\u00e9s.",
+  "openSourceMessage": "Logiciel open source pour la communaut\u00e9 aquariophile.",
+  "noAquariumCreated": "Vous n'avez pas encore cr\u00e9\u00e9 d'aquarium. Cr\u00e9ez votre premier aquarium pour voir les informations.",
+  "aquariumDetails": "D\u00e9tails de l'Aquarium",
+  "description": "Description",
+  "notifications": "Notifications",
+  "saveSettings": "Enregistrer les Param\u00e8tres",
+  "restoreDefaults": "Restaurer les Valeurs par D\u00e9faut",
+  "noAlerts": "Aucune Alerte",
+  "every": "Chaque",
+  "min": "Min",
+  "max": "Max",
+  "lowLabel": "BAS",
+  "highLabel": "HAUT",
+  "editThresholds": "Modifier les Seuils - {name}",
+  "@editThresholds": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationWhenOutOfRange": "Vous recevrez des notifications lorsque la valeur est hors de cette plage",
+  "restoreDefaultsConfirm": "Restaurer les D\u00e9fauts?",
+  "restoreDefaultsMessage": "Cette action r\u00e9initialisera tous les seuils personnalis\u00e9s aux valeurs par d\u00e9faut:",
+  "temperatureDefault": "\u2022 Temp\u00e9rature: 24-26\u00b0C",
+  "phDefault": "\u2022 pH: 8.0-8.4",
+  "salinityDefault": "\u2022 Salinit\u00e9: 1020-1028",
+  "andOtherParameters": "\u2022 Et tous les autres param\u00e8tres...",
+  "updated": "Mis \u00e0 jour {time}",
+  "@updated": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "filtersAndSearch": "Filtres et Recherche",
+  "selectType": "S\u00e9lectionner le type",
+  "sortAscendingLabel": "Ordre croissant",
+  "orpRedox": "ORP/Redox",
+  "addAquarium": "Ajouter un Aquarium",
+  "editAquariumTitle": "Modifier l'Aquarium",
+  "deleteAquariumTitle": "Supprimer l'Aquarium",
+  "scientificName": "Nom Scientifique",
+  "requirements": "Exigences",
+  "selectFromList": "S\u00e9lectionner dans la liste",
+  "orEnterManually": "ou entrer manuellement",
+  "multipleSpecimensNote": "Si vous ajoutez plusieurs sp\u00e9cimens, ils seront automatiquement num\u00e9rot\u00e9s",
+  "calculate": "Calculer",
+  "recentAlerts": "Alertes R\u00e9centes"
 }

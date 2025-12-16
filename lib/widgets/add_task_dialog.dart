@@ -91,15 +91,13 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              l10n.newTask,
+                            Text(    l10n.newTask,
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
-                              l10n.createCustomMaintenance,
+                            Text(l10n.createCustomMaintenance,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: theme.colorScheme.onSurfaceVariant,
@@ -185,8 +183,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                         children: [
                           const FaIcon(FontAwesomeIcons.arrowsRotate, size: 20),
                           const SizedBox(width: 8),
-                          Text(
-                            l10n.frequency,
+                          Text(l10n.frequency,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -204,7 +201,8 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                               min: 1,
                               max: 90,
                               divisions: 89,
-                              label: '$_frequencyDays ${_frequencyDays == 1 ? l10n.day : l10n.days}',
+                              label:
+                                  '$_frequencyDays ${_frequencyDays == 1 ? l10n.day : l10n.days}',
                               onChanged: (value) {
                                 setState(() => _frequencyDays = value.toInt());
                               },
@@ -222,8 +220,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                               ).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text(
-                              '$_frequencyDays ${_frequencyDays == 1 ? l10n.day : l10n.days}',
+                            child: Text('$_frequencyDays ${_frequencyDays == 1 ? l10n.day : l10n.days}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFF8b5cf6),
@@ -283,8 +280,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                           }
                         },
                         icon: const FaIcon(FontAwesomeIcons.clock),
-                        label: Text(
-                          l10n.changeTime(_reminderTime.format(context)),
+                        label: Text(l10n.changeTime(_reminderTime.format(context)),
                         ),
                       ),
                     ),
@@ -296,7 +292,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                   Row(
                     children: [
                       Expanded(
-                          child: OutlinedButton(
+                        child: OutlinedButton(
                           onPressed: () => Navigator.pop(context),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 14),
@@ -325,9 +321,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                             children: [
                               const FaIcon(FontAwesomeIcons.check, size: 20),
                               const SizedBox(width: 8),
-                              Text(
-                                l10n.createTask,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              Text(l10n.createTask,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
