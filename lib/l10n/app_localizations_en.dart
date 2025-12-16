@@ -183,13 +183,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fishSpeciesLabel => 'Species *';
 
   @override
-  String get fishSpeciesHint => 'e.g.: Amphiprion ocellaris';
+  String get fishSpeciesHint => 'e.g: Amphiprion ocellaris';
 
   @override
   String get fishSizeLabel => 'Size (cm) *';
 
   @override
-  String get fishSizeHint => 'e.g.: 8.5';
+  String get fishSizeHint => 'e.g: 8.5';
 
   @override
   String get quantityLabel => 'Quantity';
@@ -231,13 +231,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coralNameLabel => 'Name *';
 
   @override
-  String get coralNameHint => 'e.g.: Orange Montipora';
+  String get coralNameHint => 'e.g: Orange Montipora';
 
   @override
   String get coralSpeciesLabel => 'Species *';
 
   @override
-  String get coralSpeciesHint => 'e.g.: Montipora digitata';
+  String get coralSpeciesHint => 'e.g: Montipora digitata';
 
   @override
   String get coralTypeLabel => 'Type *';
@@ -246,7 +246,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coralSizeLabel => 'Size (cm) *';
 
   @override
-  String get coralSizeHint => 'e.g.: 5.0';
+  String get coralSizeHint => 'e.g: 5.0';
 
   @override
   String get coralPlacementLabel => 'Placement *';
@@ -1834,4 +1834,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get maximumValue => 'Maximum Value';
+
+  @override
+  String get difficultyLabel => 'Difficulty';
+
+  @override
+  String get minTankSizeLabel => 'Min tank size';
+
+  @override
+  String get temperamentLabel => 'Temperament';
+
+  @override
+  String get dietLabel => 'Diet';
+
+  @override
+  String get reefSafeLabel => 'Reef-safe';
+
+  @override
+  String get loadingError => 'Loading error';
+
+  @override
+  String get temperatureShort => 'Temp';
+
+  @override
+  String get salinityShort => 'Salinity';
+
+  @override
+  String get pptUnit => 'PPT';
+
+  @override
+  String get typeLabel => 'Type';
+
+  @override
+  String get volumeLabel => 'Volume';
+
+  @override
+  String get litersUnit => 'Liters';
+
+  @override
+  String get createdOn => 'Created on';
 }

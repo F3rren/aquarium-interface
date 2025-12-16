@@ -1856,8 +1856,47 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get minimumValue => 'Valeur Minimale';
+  String get minimumValue => 'Valeur minimale';
 
   @override
-  String get maximumValue => 'Valeur Maximale';
+  String get maximumValue => 'Valeur maximale';
+
+  @override
+  String get difficultyLabel => 'Difficulté';
+
+  @override
+  String get minTankSizeLabel => 'Taille min. aquarium';
+
+  @override
+  String get temperamentLabel => 'Tempérament';
+
+  @override
+  String get dietLabel => 'Régime';
+
+  @override
+  String get reefSafeLabel => 'Sûr pour récif';
+
+  @override
+  String get loadingError => 'Erreur de chargement';
+
+  @override
+  String get temperatureShort => 'Temp';
+
+  @override
+  String get salinityShort => 'Salinité';
+
+  @override
+  String get pptUnit => 'PPT';
+
+  @override
+  String get typeLabel => 'Type';
+
+  @override
+  String get volumeLabel => 'Volume';
+
+  @override
+  String get litersUnit => 'Litres';
+
+  @override
+  String get createdOn => 'Créé le';
 }

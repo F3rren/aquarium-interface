@@ -80,6 +80,8 @@ class _AddFishDialogState extends State<AddFishDialog> {
   void _onFishSpeciesSelected(FishSpecies? species) {
     if (species == null) return;
 
+    final l10n = AppLocalizations.of(context)!;
+
     setState(() {
       _selectedFishSpecies = species;
       _nameController.text = species.commonName;
@@ -88,13 +90,13 @@ class _AddFishDialogState extends State<AddFishDialog> {
 
       // Aggiungi info utili nelle note
       final info = StringBuffer();
-      info.writeln('Difficoltà: ${_getDifficultyLabel(species.difficulty)}');
-      info.writeln('Vasca minima: ${species.minTankSize}L');
+      info.writeln('${l10n.difficultyLabel}: ${_getDifficultyLabel(species.difficulty)}');
+      info.writeln('${l10n.minTankSizeLabel}: ${species.minTankSize}L');
       info.writeln(
-        'Temperamento: ${_getTemperamentLabel(species.temperament)}',
+        '${l10n.temperamentLabel}: ${_getTemperamentLabel(species.temperament)}',
       );
-      info.writeln('Dieta: ${_getDietLabel(species.diet)}');
-      info.writeln('Reef-safe: ${species.reefSafe ? "Sì" : "No"}');
+      info.writeln('${l10n.dietLabel}: ${_getDietLabel(species.diet)}');
+      info.writeln('${l10n.reefSafeLabel}: ${species.reefSafe ? l10n.yes : l10n.no}');
       if (species.description != null) {
         info.writeln('\n${species.description}');
       }
@@ -291,7 +293,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Text( widget.fish == null ? 'Aggiungi Pesce' : 'Modifica Pesce',
+                  Text( widget.fish == null ? l10n.addFishTitle : l10n.editFishTitle,
                     style: TextStyle(
                       color: theme.colorScheme.onSurface,
                       fontSize: 20,
@@ -324,8 +326,8 @@ class _AddFishDialogState extends State<AddFishDialog> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(widget.aquariumWaterType != null
-                                ? 'Nessun pesce compatibile con acquario ${widget.aquariumWaterType}'
-                                : 'Nessun pesce disponibile nel database',
+                                ? l10n.noCompatibleFish(widget.aquariumWaterType!)
+                                : l10n.noDatabaseFish,
                             style: TextStyle(
                               color: theme.colorScheme.onErrorContainer,
                             ),
@@ -444,24 +446,24 @@ class _AddFishDialogState extends State<AddFishDialog> {
 
               _buildTextField(
                 controller: _nameController,
-                label: 'Nome *',
-                hint: 'es: Nemo',
+                label: l10n.fishNameLabel,
+                hint: l10n.fishNameHint,
                 icon: FontAwesomeIcons.tag,
               ),
               const SizedBox(height: 16),
 
               _buildTextField(
                 controller: _speciesController,
-                label: 'Specie *',
-                hint: 'es: Amphiprion ocellaris',
+                label: l10n.fishSpeciesLabel,
+                hint: l10n.fishSpeciesHint,
                 icon: FontAwesomeIcons.circleInfo,
               ),
               const SizedBox(height: 16),
 
               _buildTextField(
                 controller: _sizeController,
-                label: 'Dimensione (cm) *',
-                hint: 'es: 8.5',
+                label: l10n.fishSizeLabel,
+                hint: l10n.fishSizeHint,
                 icon: FontAwesomeIcons.ruler,
                 keyboardType: TextInputType.number,
               ),
@@ -470,8 +472,8 @@ class _AddFishDialogState extends State<AddFishDialog> {
               if (widget.fish == null) ...[
                 _buildTextField(
                   controller: _quantityController,
-                  label: 'Quantità',
-                  hint: 'Numero di esemplari da aggiungere',
+                  label: l10n.quantityLabel,
+                  hint: l10n.quantityHint,
                   icon: FontAwesomeIcons.circlePlus,
                   keyboardType: TextInputType.number,
                 ),
@@ -488,8 +490,8 @@ class _AddFishDialogState extends State<AddFishDialog> {
 
               _buildTextField(
                 controller: _notesController,
-                label: 'Note',
-                hint: 'Aggiungi note opzionali',
+                label: l10n.notesLabel,
+                hint: l10n.notesHint,
                 icon: FontAwesomeIcons.noteSticky,
                 maxLines: 3,
               ),

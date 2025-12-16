@@ -59,6 +59,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final aquariumsAsync = ref.watch(aquariumsProvider);
 
     return RefreshIndicator(
@@ -89,7 +90,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Errore nel caricamento',
+                    l10n.loadingError,
                     style: theme.textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
@@ -342,29 +343,29 @@ class _AquariumViewState extends ConsumerState<AquariumView>
             ),
             const SizedBox(height: 8),
             // Timestamp ultimo aggiornamento
-            if (aquariumData.lastUpdate != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Row(
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.arrowsRotate,
-                      size: 12,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(l10n.updated(_formatRelativeTime(aquariumData.lastUpdate!)),
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.4,
-                        ),
-                        fontSize: 10,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            // if (aquariumData.lastUpdate != null)
+            //   Padding(
+            //     padding: const EdgeInsets.symmetric(horizontal: 4),
+            //     child: Row(
+            //       children: [
+            //         Icon(
+            //           FontAwesomeIcons.arrowsRotate,
+            //           size: 12,
+            //           color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+            //         ),
+            //         const SizedBox(width: 4),
+            //         Text(l10n.updated(_formatRelativeTime(aquariumData.lastUpdate!)),
+            //           style: TextStyle(
+            //             color: theme.colorScheme.onSurface.withValues(
+            //               alpha: 0.4,
+            //             ),
+            //             fontSize: 10,
+            //             fontStyle: FontStyle.italic,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
             const SizedBox(height: 16),
             // Parametri principali con card separate
             Row(
@@ -373,7 +374,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                   child: _buildParameterCard(
                     theme,
                     FontAwesomeIcons.temperatureHalf,
-                    'Temp',
+                    l10n.temperatureShort,
                     hasData ? temp.toStringAsFixed(1) : '--',
                     '°C',
                     const Color(0xFFef4444),
@@ -397,9 +398,9 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                   child: _buildParameterCard(
                     theme,
                     FontAwesomeIcons.water,
-                    'Salinità',
+                    l10n.salinityShort,
                     hasData ? salinity.toStringAsFixed(0) : '--',
-                    'PPT',
+                    l10n.pptUnit,
                     const Color(0xFF2dd4bf),
                     hasData,
                   ),

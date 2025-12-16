@@ -965,5 +965,24 @@
     }
   },
   "minimumValue": "Minimum Value",
-  "maximumValue": "Maximum Value"
+  "maximumValue": "Maximum Value",
+  "difficultyLabel": "Difficulty",
+  "minTankSizeLabel": "Min tank size",
+  "temperamentLabel": "Temperament",
+  "dietLabel": "Diet",
+  "reefSafeLabel": "Reef-safe",
+  "loadingError": "Loading error",
+  "temperatureShort": "Temp",
+  "salinityShort": "Salinity",
+  "pptUnit": "PPT",
+  "fishSpeciesHint": "e.g: Amphiprion ocellaris",
+  "fishSizeHint": "e.g: 8.5",
+  "quantityHint": "Number of specimens to add",
+  "coralNameHint": "e.g: Orange Montipora",
+  "coralSpeciesHint": "e.g: Montipora digitata",
+  "coralSizeHint": "e.g: 5.0",
+  "typeLabel": "Type",
+  "volumeLabel": "Volume",
+  "litersUnit": "Liters",
+  "createdOn": "Created on"
 }

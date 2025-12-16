@@ -255,8 +255,8 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
                   ),
                   const SizedBox(width: 16),
                   Text( widget.coral == null
-                        ? 'Aggiungi Corallo'
-                        : 'Modifica Corallo',
+                        ? l10n.addCoralTitle
+                        : l10n.editCoralTitle,
                     style: TextStyle(
                       color: theme.colorScheme.onSurface,
                       fontSize: 20,
@@ -285,22 +285,22 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
 
               _buildTextField(
                 controller: _nameController,
-                label: 'Nome *',
-                hint: 'es: Montipora arancione',
+                label: l10n.coralNameLabel,
+                hint: l10n.coralNameHint,
                 icon: FontAwesomeIcons.tag,
               ),
               const SizedBox(height: 16),
 
               _buildTextField(
                 controller: _speciesController,
-                label: 'Specie *',
-                hint: 'es: Montipora digitata',
+                label: l10n.coralSpeciesLabel,
+                hint: l10n.coralSpeciesHint,
                 icon: FontAwesomeIcons.circleInfo,
               ),
               const SizedBox(height: 16),
 
               _buildDropdown(
-                label: 'Tipo *',
+                label: l10n.coralTypeLabel,
                 value: _selectedType,
                 items: ['SPS', 'LPS', 'Molle'],
                 icon: FontAwesomeIcons.tag,
@@ -310,15 +310,15 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
 
               _buildTextField(
                 controller: _sizeController,
-                label: 'Dimensione (cm) *',
-                hint: 'es: 5.0',
+                label: l10n.coralSizeLabel,
+                hint: l10n.coralSizeHint,
                 icon: FontAwesomeIcons.ruler,
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
 
               _buildDropdown(
-                label: 'Posizionamento *',
+                label: l10n.coralPlacementLabel,
                 value: _selectedPlacement,
                 items: ['Alto', 'Medio', 'Basso'],
                 icon: FontAwesomeIcons.locationDot,
@@ -330,8 +330,8 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
               if (widget.coral == null) ...[
                 _buildTextField(
                   controller: _quantityController,
-                  label: 'Quantità',
-                  hint: 'Numero di esemplari da aggiungere',
+                  label: l10n.quantityLabel,
+                  hint: l10n.quantityHint,
                   icon: FontAwesomeIcons.circlePlus,
                   keyboardType: TextInputType.number,
                 ),
@@ -348,8 +348,8 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
 
               _buildTextField(
                 controller: _notesController,
-                label: 'Note',
-                hint: 'Aggiungi note opzionali',
+                label: l10n.notesLabel,
+                hint: l10n.notesHint,
                 icon: FontAwesomeIcons.noteSticky,
                 maxLines: 3,
               ),

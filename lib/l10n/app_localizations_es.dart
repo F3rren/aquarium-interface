@@ -1852,4 +1852,43 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get maximumValue => 'Valor Máximo';
+
+  @override
+  String get difficultyLabel => 'Dificultad';
+
+  @override
+  String get minTankSizeLabel => 'Tanque mínimo';
+
+  @override
+  String get temperamentLabel => 'Temperamento';
+
+  @override
+  String get dietLabel => 'Dieta';
+
+  @override
+  String get reefSafeLabel => 'Seguro para arrecife';
+
+  @override
+  String get loadingError => 'Error de carga';
+
+  @override
+  String get temperatureShort => 'Temp';
+
+  @override
+  String get salinityShort => 'Salinidad';
+
+  @override
+  String get pptUnit => 'PPT';
+
+  @override
+  String get typeLabel => 'Tipo';
+
+  @override
+  String get volumeLabel => 'Volumen';
+
+  @override
+  String get litersUnit => 'Litros';
+
+  @override
+  String get createdOn => 'Creado el';
 }

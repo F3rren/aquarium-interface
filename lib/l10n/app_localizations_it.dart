@@ -1850,4 +1850,43 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get maximumValue => 'Valore Massimo';
+
+  @override
+  String get difficultyLabel => 'Difficoltà';
+
+  @override
+  String get minTankSizeLabel => 'Vasca minima';
+
+  @override
+  String get temperamentLabel => 'Temperamento';
+
+  @override
+  String get dietLabel => 'Dieta';
+
+  @override
+  String get reefSafeLabel => 'Reef-safe';
+
+  @override
+  String get loadingError => 'Errore nel caricamento';
+
+  @override
+  String get temperatureShort => 'Temp';
+
+  @override
+  String get salinityShort => 'Salinità';
+
+  @override
+  String get pptUnit => 'PPT';
+
+  @override
+  String get typeLabel => 'Tipo';
+
+  @override
+  String get volumeLabel => 'Volume';
+
+  @override
+  String get litersUnit => 'Litri';
+
+  @override
+  String get createdOn => 'Creato il';
 }
