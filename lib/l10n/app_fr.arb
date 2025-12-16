@@ -865,5 +865,67 @@
   "typeLabel": "Type",
   "volumeLabel": "Volume",
   "litersUnit": "Litres",
-  "createdOn": "Créé le"
+  "createdOn": "Créé le",
+  "daysLabel": "jours",
+  "temperatureParam": "Température",
+  "phParam": "pH",
+  "salinityParam": "Salinité",
+  "orpParam": "ORP",
+  "calciumParam": "Calcium",
+  "magnesiumParam": "Magnésium",
+  "khParam": "KH",
+  "nitrateParam": "Nitrates",
+  "phosphateParam": "Phosphates",
+  "nowLabel": "Maintenant",
+  "minutesAgo": "Il y a {minutes}m",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursAgo": "Il y a {hours}h",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "daysAgo": "Il y a {days}j",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "temperatureAnomalous": "Température Anormale",
+  "phOutOfRange": "pH Hors Limites",
+  "salinityAnomalous": "Salinité Anormale",
+  "orpOutOfRange": "ORP Hors Limites",
+  "calciumAnomalous": "Calcium Anormal",
+  "magnesiumAnomalous": "Magnésium Anormal",
+  "khOutOfRange": "KH Hors Limites",
+  "nitrateHigh": "Nitrates Élevés",
+  "phosphateHigh": "Phosphates Élevés",
+  "temperatureTooHigh": "La température est trop élevée.",
+  "temperatureTooLow": "La température est trop basse.",
+  "phTooHigh": "Le pH est trop élevé.",
+  "phTooLow": "Le pH est trop bas.",
+  "salinityTooHigh": "La salinité est trop élevée.",
+  "salinityTooLow": "La salinité est trop basse.",
+  "orpTooHigh": "L'ORP est trop élevé.",
+  "orpTooLow": "L'ORP est trop bas.",
+  "calciumTooHigh": "Le calcium est trop élevé.",
+  "calciumTooLow": "Le calcium est trop bas.",
+  "magnesiumTooHigh": "Le magnésium est trop élevé.",
+  "magnesiumTooLow": "Le magnésium est trop bas.",
+  "khTooHigh": "Le KH est trop élevé.",
+  "khTooLow": "Le KH est trop bas.",
+  "nitrateTooHigh": "Les nitrates sont trop élevés.",
+  "nitrateTooLow": "Les nitrates sont trop bas.",
+  "phosphateTooHigh": "Les phosphates sont trop élevés.",
+  "phosphateTooLow": "Les phosphates sont trop bas."
 }

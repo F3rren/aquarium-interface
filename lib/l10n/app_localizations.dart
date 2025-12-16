@@ -3553,6 +3553,150 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Creato il'**
   String get createdOn;
+
+  /// No description provided for @daysLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'giorni'**
+  String get daysLabel;
+
+  /// No description provided for @temperatureParam.
+  ///
+  /// In it, this message translates to:
+  /// **'Temperatura'**
+  String get temperatureParam;
+
+  /// No description provided for @phParam.
+  ///
+  /// In it, this message translates to:
+  /// **'pH'**
+  String get phParam;
+
+  /// No description provided for @salinityParam.
+  ///
+  /// In it, this message translates to:
+  /// **'Salinità'**
+  String get salinityParam;
+
+  /// No description provided for @orpParam.
+  ///
+  /// In it, this message translates to:
+  /// **'ORP'**
+  String get orpParam;
+
+  /// No description provided for @calciumParam.
+  ///
+  /// In it, this message translates to:
+  /// **'Calcio'**
+  String get calciumParam;
+
+  /// No description provided for @magnesiumParam.
+  ///
+  /// In it, this message translates to:
+  /// **'Magnesio'**
+  String get magnesiumParam;
+
+  /// No description provided for @khParam.
+  ///
+  /// In it, this message translates to:
+  /// **'KH'**
+  String get khParam;
+
+  /// No description provided for @nitrateParam.
+  ///
+  /// In it, this message translates to:
+  /// **'Nitrati'**
+  String get nitrateParam;
+
+  /// No description provided for @phosphateParam.
+  ///
+  /// In it, this message translates to:
+  /// **'Fosfati'**
+  String get phosphateParam;
+
+  /// No description provided for @nowLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Ora'**
+  String get nowLabel;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In it, this message translates to:
+  /// **'{minutes}m fa'**
+  String minutesAgo(String minutes);
+
+  /// No description provided for @hoursAgo.
+  ///
+  /// In it, this message translates to:
+  /// **'{hours}h fa'**
+  String hoursAgo(String hours);
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In it, this message translates to:
+  /// **'{days}g fa'**
+  String daysAgo(String days);
+
+  /// No description provided for @temperatureAnomalous.
+  ///
+  /// In it, this message translates to:
+  /// **'Temperatura Anomala'**
+  String get temperatureAnomalous;
+
+  /// No description provided for @salinityAnomalous.
+  ///
+  /// In it, this message translates to:
+  /// **'Salinità Anomala'**
+  String get salinityAnomalous;
+
+  /// No description provided for @calciumAnomalous.
+  ///
+  /// In it, this message translates to:
+  /// **'Calcio Anomalo'**
+  String get calciumAnomalous;
+
+  /// No description provided for @magnesiumAnomalous.
+  ///
+  /// In it, this message translates to:
+  /// **'Magnesio Anomalo'**
+  String get magnesiumAnomalous;
+
+  /// No description provided for @nitrateHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Nitrati Elevati'**
+  String get nitrateHigh;
+
+  /// No description provided for @phosphateHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'Fosfati Elevati'**
+  String get phosphateHigh;
+
+  /// No description provided for @nitrateTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'I nitrati sono troppo alti.'**
+  String get nitrateTooHigh;
+
+  /// No description provided for @nitrateTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'I nitrati sono troppo bassi.'**
+  String get nitrateTooLow;
+
+  /// No description provided for @phosphateTooHigh.
+  ///
+  /// In it, this message translates to:
+  /// **'I fosfati sono troppo alti.'**
+  String get phosphateTooHigh;
+
+  /// No description provided for @phosphateTooLow.
+  ///
+  /// In it, this message translates to:
+  /// **'I fosfati sono troppo bassi.'**
+  String get phosphateTooLow;
 }
 
 class _AppLocalizationsDelegate

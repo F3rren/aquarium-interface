@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:acquariumfe/models/aquarium_parameters.dart';
+import 'package:acquariumfe/models/aquarium_parameter.dart';
 import 'package:acquariumfe/services/api_service.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/manual_parameters_service.dart';
 import 'package:acquariumfe/services/notification_settings_service.dart';
 import 'package:acquariumfe/services/maintenance_task_service.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
+import 'package:acquariumfe/services/app_locale_service.dart';
 import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:acquariumfe/utils/retry_policy.dart';
 import 'package:logger/logger.dart';
@@ -410,82 +412,119 @@ class ParameterService {
   /// Controlla tutti i parametri e invia alert se necessario
   Future<void> _checkAllParametersForAlerts(AquariumParameters params) async {
     final settings = await _notificationService.loadSettings();
+    final localeService = AppLocaleService();
 
     // Temperatura (sempre disponibile da sensori)
     await _alertManager.checkParameter(
-      name: 'Temperatura',
+      parameter: AquariumParameter.temperature,
       value: params.temperature,
-      unit: ' °C',
       thresholds: settings.temperature,
+      alertTitle: localeService.getAlertTitle(AquariumParameter.temperature),
+      alertMessage: localeService.getAlertMessage(
+        AquariumParameter.temperature,
+        params.temperature > settings.temperature.max,
+      ),
     );
 
     // pH (sempre disponibile da sensori)
     await _alertManager.checkParameter(
-      name: 'pH',
+      parameter: AquariumParameter.ph,
       value: params.ph,
-      unit: '',
       thresholds: settings.ph,
+      alertTitle: localeService.getAlertTitle(AquariumParameter.ph),
+      alertMessage: localeService.getAlertMessage(
+        AquariumParameter.ph,
+        params.ph > settings.ph.max,
+      ),
     );
 
     // Salinità (sempre disponibile da sensori)
     await _alertManager.checkParameter(
-      name: 'Salinità',
+      parameter: AquariumParameter.salinity,
       value: params.salinity,
-      unit: '',
       thresholds: settings.salinity,
+      alertTitle: localeService.getAlertTitle(AquariumParameter.salinity),
+      alertMessage: localeService.getAlertMessage(
+        AquariumParameter.salinity,
+        params.salinity > settings.salinity.max,
+      ),
     );
 
     // ORP (sempre disponibile da sensori)
     await _alertManager.checkParameter(
-      name: 'ORP',
+      parameter: AquariumParameter.orp,
       value: params.orp,
-      unit: ' mV',
       thresholds: settings.orp,
+      alertTitle: localeService.getAlertTitle(AquariumParameter.orp),
+      alertMessage: localeService.getAlertMessage(
+        AquariumParameter.orp,
+        params.orp > settings.orp.max,
+      ),
     );
 
     // Parametri manuali (solo se disponibili)
     if (params.calcium != null) {
       await _alertManager.checkParameter(
-        name: 'Calcio',
+        parameter: AquariumParameter.calcium,
         value: params.calcium!,
-        unit: ' mg/L',
         thresholds: settings.calcium,
+        alertTitle: localeService.getAlertTitle(AquariumParameter.calcium),
+        alertMessage: localeService.getAlertMessage(
+          AquariumParameter.calcium,
+          params.calcium! > settings.calcium.max,
+        ),
       );
     }
 
     if (params.magnesium != null) {
       await _alertManager.checkParameter(
-        name: 'Magnesio',
+        parameter: AquariumParameter.magnesium,
         value: params.magnesium!,
-        unit: ' mg/L',
         thresholds: settings.magnesium,
+        alertTitle: localeService.getAlertTitle(AquariumParameter.magnesium),
+        alertMessage: localeService.getAlertMessage(
+          AquariumParameter.magnesium,
+          params.magnesium! > settings.magnesium.max,
+        ),
       );
     }
 
     if (params.kh != null) {
       await _alertManager.checkParameter(
-        name: 'KH',
+        parameter: AquariumParameter.kh,
         value: params.kh!,
-        unit: ' dKH',
         thresholds: settings.kh,
+        alertTitle: localeService.getAlertTitle(AquariumParameter.kh),
+        alertMessage: localeService.getAlertMessage(
+          AquariumParameter.kh,
+          params.kh! > settings.kh.max,
+        ),
       );
     }
 
     if (params.nitrate != null) {
       await _alertManager.checkParameter(
-        name: 'Nitrati',
+        parameter: AquariumParameter.nitrate,
         value: params.nitrate!,
-        unit: ' ppm',
         thresholds: settings.nitrate,
+        alertTitle: localeService.getAlertTitle(AquariumParameter.nitrate),
+        alertMessage: localeService.getAlertMessage(
+          AquariumParameter.nitrate,
+          params.nitrate! > settings.nitrate.max,
+        ),
       );
     }
 
     if (params.phosphate != null) {
       await _alertManager.checkParameter(
-        name: 'Fosfati',
+        parameter: AquariumParameter.phosphate,
         value: params.phosphate!,
-        unit: ' ppm',
         thresholds: settings.phosphate,
+        alertTitle: localeService.getAlertTitle(AquariumParameter.phosphate),
+        alertMessage: localeService.getAlertMessage(
+          AquariumParameter.phosphate,
+          params.phosphate! > settings.phosphate.max,
+        ),
       );
     }
   }

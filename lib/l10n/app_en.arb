@@ -984,5 +984,61 @@
   "typeLabel": "Type",
   "volumeLabel": "Volume",
   "litersUnit": "Liters",
-  "createdOn": "Created on"
+  "createdOn": "Created on",
+  "daysLabel": "days",
+  "temperatureParam": "Temperature",
+  "phParam": "pH",
+  "salinityParam": "Salinity",
+  "orpParam": "ORP",
+  "calciumParam": "Calcium",
+  "magnesiumParam": "Magnesium",
+  "khParam": "KH",
+  "nitrateParam": "Nitrate",
+  "phosphateParam": "Phosphate",
+  "nowLabel": "Now",
+  "minutesAgo": "{minutes}m ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {"type": "String"}
+    }
+  },
+  "hoursAgo": "{hours}h ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {"type": "String"}
+    }
+  },
+  "daysAgo": "{days}d ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {"type": "String"}
+    }
+  },
+  "temperatureAnomalous": "Anomalous Temperature",
+  "phOutOfRange": "pH Out of Range",
+  "salinityAnomalous": "Anomalous Salinity",
+  "orpOutOfRange": "ORP Out of Range",
+  "calciumAnomalous": "Anomalous Calcium",
+  "magnesiumAnomalous": "Anomalous Magnesium",
+  "khOutOfRange": "KH Out of Range",
+  "nitrateHigh": "High Nitrates",
+  "phosphateHigh": "High Phosphates",
+  "temperatureTooHigh": "Temperature is too high.",
+  "temperatureTooLow": "Temperature is too low.",
+  "phTooHigh": "pH is too high.",
+  "phTooLow": "pH is too low.",
+  "salinityTooHigh": "Salinity is too high.",
+  "salinityTooLow": "Salinity is too low.",
+  "orpTooHigh": "ORP is too high.",
+  "orpTooLow": "ORP is too low.",
+  "calciumTooHigh": "Calcium is too high.",
+  "calciumTooLow": "Calcium is too low.",
+  "magnesiumTooHigh": "Magnesium is too high.",
+  "magnesiumTooLow": "Magnesium is too low.",
+  "khTooHigh": "KH is too high.",
+  "khTooLow": "KH is too low.",
+  "nitrateTooHigh": "Nitrates are too high.",
+  "nitrateTooLow": "Nitrates are too low.",
+  "phosphateTooHigh": "Phosphates are too high.",
+  "phosphateTooLow": "Phosphates are too low."
 }

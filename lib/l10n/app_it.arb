@@ -1070,5 +1070,61 @@
   "typeLabel": "Tipo",
   "volumeLabel": "Volume",
   "litersUnit": "Litri",
-  "createdOn": "Creato il"
+  "createdOn": "Creato il",
+  "daysLabel": "giorni",
+  "temperatureParam": "Temperatura",
+  "phParam": "pH",
+  "salinityParam": "Salinit\u00e0",
+  "orpParam": "ORP",
+  "calciumParam": "Calcio",
+  "magnesiumParam": "Magnesio",
+  "khParam": "KH",
+  "nitrateParam": "Nitrati",
+  "phosphateParam": "Fosfati",
+  "nowLabel": "Ora",
+  "minutesAgo": "{minutes}m fa",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {"type": "String"}
+    }
+  },
+  "hoursAgo": "{hours}h fa",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {"type": "String"}
+    }
+  },
+  "daysAgo": "{days}g fa",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {"type": "String"}
+    }
+  },
+  "temperatureAnomalous": "Temperatura Anomala",
+  "phOutOfRange": "pH Fuori Range",
+  "salinityAnomalous": "Salinità Anomala",
+  "orpOutOfRange": "ORP Fuori Range",
+  "calciumAnomalous": "Calcio Anomalo",
+  "magnesiumAnomalous": "Magnesio Anomalo",
+  "khOutOfRange": "KH Fuori Range",
+  "nitrateHigh": "Nitrati Elevati",
+  "phosphateHigh": "Fosfati Elevati",
+  "temperatureTooHigh": "La temperatura è troppo alta.",
+  "temperatureTooLow": "La temperatura è troppo bassa.",
+  "phTooHigh": "Il pH è troppo alto.",
+  "phTooLow": "Il pH è troppo basso.",
+  "salinityTooHigh": "La salinità è troppo alta.",
+  "salinityTooLow": "La salinità è troppo bassa.",
+  "orpTooHigh": "L'ORP è troppo alto.",
+  "orpTooLow": "L'ORP è troppo basso.",
+  "calciumTooHigh": "Il calcio è troppo alto.",
+  "calciumTooLow": "Il calcio è troppo basso.",
+  "magnesiumTooHigh": "Il magnesio è troppo alto.",
+  "magnesiumTooLow": "Il magnesio è troppo basso.",
+  "khTooHigh": "Il KH è troppo alto.",
+  "khTooLow": "Il KH è troppo basso.",
+  "nitrateTooHigh": "I nitrati sono troppo alti.",
+  "nitrateTooLow": "I nitrati sono troppo bassi.",
+  "phosphateTooHigh": "I fosfati sono troppo alti.",
+  "phosphateTooLow": "I fosfati sono troppo bassi."
 }
