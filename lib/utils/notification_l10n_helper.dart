@@ -1,4 +1,4 @@
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 import 'package:acquariumfe/models/aquarium_parameter.dart';
 
 /// Helper class per ottenere i testi tradotti delle notifiche
