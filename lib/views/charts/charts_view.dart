@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:acquariumfe/services/chart_data_service.dart';
 import 'package:acquariumfe/models/parameter_data_point.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChartsView extends StatefulWidget {
   const ChartsView({super.key});
@@ -126,7 +127,9 @@ class _ChartsViewState extends State<ChartsView>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Storico $_selectedParameter',
+                      AppLocalizations.of(context)!.chartHistoryTitle(
+                        _getLocalizedParameterName(context, _selectedParameter),
+                      ),
                       style: TextStyle(
                         color: theme.colorScheme.onSurface,
                         fontSize: 18,
@@ -162,7 +165,7 @@ class _ChartsViewState extends State<ChartsView>
               children: [
                 Flexible(
                   child: _buildStatChip(
-                    'Min',
+                    AppLocalizations.of(context)!.chartStatMin,
                     _stats['min']?.toStringAsFixed(1) ?? '-',
                     Colors.blue,
                   ),
@@ -170,7 +173,7 @@ class _ChartsViewState extends State<ChartsView>
                 const SizedBox(width: 4),
                 Flexible(
                   child: _buildStatChip(
-                    'Avg',
+                    AppLocalizations.of(context)!.chartStatAvg,
                     _stats['avg']?.toStringAsFixed(1) ?? '-',
                     Colors.green,
                   ),
@@ -178,7 +181,7 @@ class _ChartsViewState extends State<ChartsView>
                 const SizedBox(width: 4),
                 Flexible(
                   child: _buildStatChip(
-                    'Max',
+                    AppLocalizations.of(context)!.chartStatMax,
                     _stats['max']?.toStringAsFixed(1) ?? '-',
                     Colors.red,
                   ),
@@ -186,7 +189,7 @@ class _ChartsViewState extends State<ChartsView>
                 const SizedBox(width: 4),
                 Flexible(
                   child: _buildStatChip(
-                    'Now',
+                    AppLocalizations.of(context)!.chartStatNow,
                     _stats['current']?.toStringAsFixed(1) ?? '-',
                     _getParameterColor(_selectedParameter),
                   ),
@@ -219,7 +222,7 @@ class _ChartsViewState extends State<ChartsView>
               child: _chartData.isEmpty
                   ? Center(
                       child: Text(
-                        'Nessun dato disponibile',
+                        AppLocalizations.of(context)!.chartNoData,
                         style: TextStyle(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -266,7 +269,7 @@ class _ChartsViewState extends State<ChartsView>
           _buildLegendItem(
             icon: FontAwesomeIcons.circleCheck,
             color: const Color(0xFF10b981),
-            label: 'Ideale',
+            label: AppLocalizations.of(context)!.chartLegendIdeal,
             value:
                 '${ranges['ideal_min']!.toStringAsFixed(1)} - ${ranges['ideal_max']!.toStringAsFixed(1)}',
             theme: theme,
@@ -274,7 +277,7 @@ class _ChartsViewState extends State<ChartsView>
           _buildLegendItem(
             icon: FontAwesomeIcons.triangleExclamation,
             color: const Color(0xFFfbbf24),
-            label: 'Avviso',
+            label: AppLocalizations.of(context)!.chartLegendWarning,
             value:
                 '${ranges['warning_min']!.toStringAsFixed(1)} - ${ranges['warning_max']!.toStringAsFixed(1)}',
             theme: theme,
@@ -357,7 +360,7 @@ class _ChartsViewState extends State<ChartsView>
               ),
               const SizedBox(width: 8),
               Text(
-                'Analisi Avanzata',
+                AppLocalizations.of(context)!.chartAdvancedAnalysis,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface,
                   fontSize: 14,
@@ -372,7 +375,7 @@ class _ChartsViewState extends State<ChartsView>
               Expanded(
                 child: _buildAnalysisItem(
                   icon: trend['icon'] as IconData,
-                  label: 'Trend',
+                  label: AppLocalizations.of(context)!.chartTrendLabel,
                   value: trend['text'] as String,
                   color: trend['color'] as Color,
                   theme: theme,
@@ -382,7 +385,7 @@ class _ChartsViewState extends State<ChartsView>
               Expanded(
                 child: _buildAnalysisItem(
                   icon: FontAwesomeIcons.chartLine,
-                  label: 'Stabilità',
+                  label: AppLocalizations.of(context)!.chartStabilityLabel,
                   value: stability['text'] as String,
                   color: stability['color'] as Color,
                   theme: theme,
@@ -473,7 +476,7 @@ class _ChartsViewState extends State<ChartsView>
     if (_chartData.length < 2) {
       return {
         'icon': FontAwesomeIcons.arrowRight,
-        'text': 'Stabile',
+        'text': AppLocalizations.of(context)!.chartTrendStable,
         'color': const Color(0xFF6b7280),
       };
     }
@@ -499,19 +502,19 @@ class _ChartsViewState extends State<ChartsView>
     if (diffPercent < 1) {
       return {
         'icon': FontAwesomeIcons.arrowRight,
-        'text': 'Stabile',
+        'text': AppLocalizations.of(context)!.chartTrendStable,
         'color': const Color(0xFF10b981),
       };
     } else if (diff > 0) {
       return {
         'icon': FontAwesomeIcons.arrowTrendUp,
-        'text': 'In aumento',
+        'text': AppLocalizations.of(context)!.chartTrendRising,
         'color': const Color(0xFFef4444),
       };
     } else {
       return {
         'icon': FontAwesomeIcons.arrowTrendDown,
-        'text': 'In calo',
+        'text': AppLocalizations.of(context)!.chartTrendFalling,
         'color': const Color(0xFF3b82f6),
       };
     }
@@ -534,13 +537,13 @@ class _ChartsViewState extends State<ChartsView>
     final relativeStdDev = (stdDev / avg * 100).abs();
 
     if (relativeStdDev < 2) {
-      return {'text': 'Ottima', 'color': const Color(0xFF10b981)};
+      return {'text': AppLocalizations.of(context)!.chartStabilityExcellent, 'color': const Color(0xFF10b981)};
     } else if (relativeStdDev < 5) {
-      return {'text': 'Buona', 'color': const Color(0xFF22c55e)};
+      return {'text': AppLocalizations.of(context)!.chartStabilityGood, 'color': const Color(0xFF22c55e)};
     } else if (relativeStdDev < 10) {
-      return {'text': 'Media', 'color': const Color(0xFFfbbf24)};
+      return {'text': AppLocalizations.of(context)!.chartStabilityMedium, 'color': const Color(0xFFfbbf24)};
     } else {
-      return {'text': 'Bassa', 'color': const Color(0xFFef4444)};
+      return {'text': AppLocalizations.of(context)!.chartStabilityLow, 'color': const Color(0xFFef4444)};
     }
   }
 
@@ -555,8 +558,9 @@ class _ChartsViewState extends State<ChartsView>
     if (current < ranges['warning_min']! || current > ranges['warning_max']!) {
       return {
         'icon': FontAwesomeIcons.triangleExclamation,
-        'text':
-            'Attenzione: $_selectedParameter fuori range. Controlla subito e correggi.',
+        'text': AppLocalizations.of(context)!.chartAdviceOutOfRange(
+          _getLocalizedParameterName(context, _selectedParameter),
+        ),
         'color': const Color(0xFFef4444),
       };
     }
@@ -565,18 +569,17 @@ class _ChartsViewState extends State<ChartsView>
     if (current < ranges['ideal_min']! || current > ranges['ideal_max']!) {
       return {
         'icon': FontAwesomeIcons.circleInfo,
-        'text': 'Parametro accettabile ma non ideale. Monitora attentamente.',
+        'text': AppLocalizations.of(context)!.chartAdviceNotIdeal,
         'color': const Color(0xFFfbbf24),
       };
     }
 
     // Controlla stabilità
     final stabilityText = stability['text'] as String;
-    if (stabilityText.contains('Bassa')) {
+    if (stabilityText == AppLocalizations.of(context)!.chartStabilityLow) {
       return {
         'icon': FontAwesomeIcons.lightbulb,
-        'text':
-            'Parametro instabile. Verifica cambio acqua e dosaggi additivi.',
+        'text': AppLocalizations.of(context)!.chartAdviceUnstable,
         'color': const Color(0xFFfbbf24),
       };
     }
@@ -587,8 +590,7 @@ class _ChartsViewState extends State<ChartsView>
         _selectedParameter == 'Temperatura') {
       return {
         'icon': FontAwesomeIcons.snowflake,
-        'text':
-            'Temperatura in aumento. Verifica raffreddamento e ventilazione.',
+        'text': AppLocalizations.of(context)!.chartAdviceTempRising,
         'color': const Color(0xFF3b82f6),
       };
     }
@@ -596,7 +598,7 @@ class _ChartsViewState extends State<ChartsView>
     // Tutto ok
     return {
       'icon': FontAwesomeIcons.circleCheck,
-      'text': 'Parametro ottimale e stabile.',
+      'text': AppLocalizations.of(context)!.chartAdviceOptimal,
       'color': const Color(0xFF10b981),
     };
   }
@@ -900,7 +902,7 @@ class _ChartsViewState extends State<ChartsView>
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
-              labelResolver: (line) => 'Ideale',
+              labelResolver: (line) => AppLocalizations.of(context)!.chartLegendIdeal,
             ),
           ),
           // Linea warning superiore
@@ -1076,6 +1078,21 @@ class _ChartsViewState extends State<ChartsView>
           'critical_min': 0.0,
           'critical_max': 10.0,
         };
+    }
+  }
+
+  String _getLocalizedParameterName(BuildContext context, String parameter) {
+    switch (parameter) {
+      case 'Temperatura':
+        return AppLocalizations.of(context)!.paramTemperature;
+      case 'pH':
+        return AppLocalizations.of(context)!.paramPH;
+      case 'Salinità':
+        return AppLocalizations.of(context)!.paramSalinity;
+      case 'ORP':
+        return AppLocalizations.of(context)!.paramORP;
+      default:
+        return parameter;
     }
   }
 }

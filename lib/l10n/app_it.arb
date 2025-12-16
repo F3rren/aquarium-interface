@@ -524,5 +524,86 @@
   "paramTemperature": "Temperatura",
   "paramPH": "pH",
   "paramSalinity": "Salinità",
-  "paramORP": "ORP"
+  "paramORP": "ORP",
+  
+  "errorLoadingTasks": "Errore caricamento task: {error}",
+  "@errorLoadingTasks": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addTask": "Aggiungi Task",
+  "inProgress": "In Corso ({count})",
+  "@inProgress": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "completed": "Completati ({count})",
+  "@completed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "overdue": "In Ritardo",
+  "today": "Oggi",
+  "week": "Settimana",
+  "all": "Tutti",
+  "noCompletedTasks": "Nessun task completato",
+  "noTasksInProgress": "Nessun task in corso",
+  "overdueDays": "In ritardo di {days} giorni",
+  "@overdueDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "dueToday": "Scade oggi",
+  "inDays": "Tra {days} giorni",
+  "@inDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "completedOn": "Completato: {date}",
+  "@completedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "newTask": "Nuovo Task",
+  "taskTitle": "Titolo Task",
+  "taskDescription": "Descrizione (opzionale)",
+  "category": "Categoria",
+  "frequency": "Frequenza",
+  "everyDays": "Ogni {days} giorni",
+  "@everyDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "reminder": "Promemoria",
+  "enabled": "Abilitato",
+  "disabled": "Disabilitato",
+  "time": "Orario",
+  "enterTaskTitle": "Inserisci un titolo",
+  "water": "Acqua",
+  "cleaning": "Pulizia",
+  "testing": "Test",
+  "feeding": "Alimentazione",
+  "equipment": "Attrezzatura",
+  "other": "Altro"
 }

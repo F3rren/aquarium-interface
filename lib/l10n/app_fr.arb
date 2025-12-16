@@ -389,5 +389,128 @@
         "type": "String"
       }
     }
-  }
+  },
+
+  "chartHistoryTitle": "Historique {parameter}",
+  "@chartHistoryTitle": {
+    "placeholders": {
+      "parameter": {
+        "type": "String"
+      }
+    }
+  },
+  "chartNoData": "Aucune donnée disponible",
+  "chartStatMin": "Min",
+  "chartStatAvg": "Moy",
+  "chartStatMax": "Max",
+  "chartStatNow": "Maint.",
+  "chartLegendIdeal": "Idéal",
+  "chartLegendWarning": "Avertissement",
+  "chartAdvancedAnalysis": "Analyse Avancée",
+  "chartTrendLabel": "Tendance",
+  "chartStabilityLabel": "Stabilité",
+  "chartTrendStable": "Stable",
+  "chartTrendRising": "En hausse",
+  "chartTrendFalling": "En baisse",
+  "chartStabilityExcellent": "Excellente",
+  "chartStabilityGood": "Bonne",
+  "chartStabilityMedium": "Moyenne",
+  "chartStabilityLow": "Basse",
+  "chartAdviceOutOfRange": "Attention: {parameter} hors plage. Vérifiez immédiatement et corrigez.",
+  "@chartAdviceOutOfRange": {
+    "placeholders": {
+      "parameter": {
+        "type": "String"
+      }
+    }
+  },
+  "chartAdviceNotIdeal": "Paramètre acceptable mais pas idéal. Surveillez attentivement.",
+  "chartAdviceUnstable": "Paramètre instable. Vérifiez le changement d'eau et le dosage des additifs.",
+  "chartAdviceTempRising": "Température en hausse. Vérifiez le refroidissement et la ventilation.",
+  "chartAdviceOptimal": "Paramètre optimal et stable.",
+  "paramTemperature": "Température",
+  "paramPH": "pH",
+  "paramSalinity": "Salinité",
+  "paramORP": "ORP",
+  
+  "errorLoadingTasks": "Erreur de chargement des tâches: {error}",
+  "@errorLoadingTasks": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addTask": "Ajouter une Tâche",
+  "inProgress": "En Cours ({count})",
+  "@inProgress": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "completed": "Terminés ({count})",
+  "@completed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "overdue": "En Retard",
+  "today": "Aujourd'hui",
+  "week": "Semaine",
+  "all": "Tous",
+  "noCompletedTasks": "Aucune tâche terminée",
+  "noTasksInProgress": "Aucune tâche en cours",
+  "overdueDays": "En retard de {days} jours",
+  "@overdueDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "dueToday": "Échéance aujourd'hui",
+  "inDays": "Dans {days} jours",
+  "@inDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "completedOn": "Terminé: {date}",
+  "@completedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "newTask": "Nouvelle Tâche",
+  "taskTitle": "Titre de la Tâche",
+  "taskDescription": "Description (optionnelle)",
+  "category": "Catégorie",
+  "frequency": "Fréquence",
+  "everyDays": "Tous les {days} jours",
+  "@everyDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "reminder": "Rappel",
+  "enabled": "Activé",
+  "disabled": "Désactivé",
+  "time": "Heure",
+  "enterTaskTitle": "Entrez un titre",
+  "water": "Eau",
+  "cleaning": "Nettoyage",
+  "testing": "Tests",
+  "feeding": "Alimentation",
+  "equipment": "Équipement",
+  "other": "Autre"
 }

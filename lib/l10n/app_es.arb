@@ -382,12 +382,135 @@
       }
     }
   },
-  "errorSavingChanges": "Error al guardar cambios: {error}",
+  "errorSavingChanges": "Error al guardar los cambios: {error}",
   "@errorSavingChanges": {
     "placeholders": {
       "error": {
         "type": "String"
       }
     }
-  }
+  },
+
+  "chartHistoryTitle": "Historial {parameter}",
+  "@chartHistoryTitle": {
+    "placeholders": {
+      "parameter": {
+        "type": "String"
+      }
+    }
+  },
+  "chartNoData": "No hay datos disponibles",
+  "chartStatMin": "Mín",
+  "chartStatAvg": "Prom",
+  "chartStatMax": "Máx",
+  "chartStatNow": "Ahora",
+  "chartLegendIdeal": "Ideal",
+  "chartLegendWarning": "Aviso",
+  "chartAdvancedAnalysis": "Análisis Avanzado",
+  "chartTrendLabel": "Tendencia",
+  "chartStabilityLabel": "Estabilidad",
+  "chartTrendStable": "Estable",
+  "chartTrendRising": "En aumento",
+  "chartTrendFalling": "En descenso",
+  "chartStabilityExcellent": "Excelente",
+  "chartStabilityGood": "Buena",
+  "chartStabilityMedium": "Media",
+  "chartStabilityLow": "Baja",
+  "chartAdviceOutOfRange": "Atención: {parameter} fuera de rango. Verifica inmediatamente y corrige.",
+  "@chartAdviceOutOfRange": {
+    "placeholders": {
+      "parameter": {
+        "type": "String"
+      }
+    }
+  },
+  "chartAdviceNotIdeal": "Parámetro aceptable pero no ideal. Monitoriza cuidadosamente.",
+  "chartAdviceUnstable": "Parámetro inestable. Verifica cambio de agua y dosificación de aditivos.",
+  "chartAdviceTempRising": "Temperatura en aumento. Verifica refrigeración y ventilación.",
+  "chartAdviceOptimal": "Parámetro óptimo y estable.",
+  "paramTemperature": "Temperatura",
+  "paramPH": "pH",
+  "paramSalinity": "Salinidad",
+  "paramORP": "ORP",
+  
+  "errorLoadingTasks": "Error al cargar tareas: {error}",
+  "@errorLoadingTasks": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addTask": "Agregar Tarea",
+  "inProgress": "En Curso ({count})",
+  "@inProgress": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "completed": "Completados ({count})",
+  "@completed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "overdue": "Atrasado",
+  "today": "Hoy",
+  "week": "Semana",
+  "all": "Todos",
+  "noCompletedTasks": "No hay tareas completadas",
+  "noTasksInProgress": "No hay tareas en curso",
+  "overdueDays": "Atrasado por {days} días",
+  "@overdueDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "dueToday": "Vence hoy",
+  "inDays": "En {days} días",
+  "@inDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "completedOn": "Completado: {date}",
+  "@completedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "newTask": "Nueva Tarea",
+  "taskTitle": "Título de la Tarea",
+  "taskDescription": "Descripción (opcional)",
+  "category": "Categoría",
+  "frequency": "Frecuencia",
+  "everyDays": "Cada {days} días",
+  "@everyDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "reminder": "Recordatorio",
+  "enabled": "Habilitado",
+  "disabled": "Deshabilitado",
+  "time": "Hora",
+  "enterTaskTitle": "Ingresa un título",
+  "water": "Agua",
+  "cleaning": "Limpieza",
+  "testing": "Pruebas",
+  "feeding": "Alimentación",
+  "equipment": "Equipo",
+  "other": "Otro"
 }

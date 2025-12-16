@@ -170,6 +170,30 @@ abstract class AppLocalizations {
   /// **'Impostazioni'**
   String get settings;
 
+  /// No description provided for @dashboard.
+  ///
+  /// In it, this message translates to:
+  /// **'Dashboard'**
+  String get dashboard;
+
+  /// No description provided for @charts.
+  ///
+  /// In it, this message translates to:
+  /// **'Grafici'**
+  String get charts;
+
+  /// No description provided for @profile.
+  ///
+  /// In it, this message translates to:
+  /// **'Profilo'**
+  String get profile;
+
+  /// No description provided for @myAquarium.
+  ///
+  /// In it, this message translates to:
+  /// **'La Mia Vasca'**
+  String get myAquarium;
+
   /// No description provided for @noAquarium.
   ///
   /// In it, this message translates to:
@@ -1699,6 +1723,468 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Acquario \"{name}\" creato con successo!'**
   String aquariumCreatedSuccess(String name);
+
+  /// No description provided for @deleteAquarium.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Acquario'**
+  String get deleteAquarium;
+
+  /// No description provided for @errorLoading.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nel caricamento: {error}'**
+  String errorLoading(String error);
+
+  /// No description provided for @cannotDeleteMissingId.
+  ///
+  /// In it, this message translates to:
+  /// **'Impossibile eliminare: ID acquario mancante'**
+  String get cannotDeleteMissingId;
+
+  /// No description provided for @confirmDeleteAquarium.
+  ///
+  /// In it, this message translates to:
+  /// **'Sei sicuro di voler eliminare \"{name}\"?'**
+  String confirmDeleteAquarium(String name);
+
+  /// No description provided for @actionCannotBeUndone.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa azione non può essere annullata.'**
+  String get actionCannotBeUndone;
+
+  /// No description provided for @aquariumDeletedSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Acquario eliminato con successo'**
+  String get aquariumDeletedSuccess;
+
+  /// No description provided for @errorWithMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore: {error}'**
+  String errorWithMessage(String error);
+
+  /// No description provided for @noAquariumsToDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Non ci sono acquari da eliminare'**
+  String get noAquariumsToDelete;
+
+  /// No description provided for @aquariumManagement.
+  ///
+  /// In it, this message translates to:
+  /// **'Gestione Acquari'**
+  String get aquariumManagement;
+
+  /// No description provided for @selectToDelete.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona per eliminare'**
+  String get selectToDelete;
+
+  /// No description provided for @editAquarium.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica Acquario'**
+  String get editAquarium;
+
+  /// No description provided for @selectAquarium.
+  ///
+  /// In it, this message translates to:
+  /// **'Seleziona Acquario'**
+  String get selectAquarium;
+
+  /// No description provided for @chooseAquariumToEdit.
+  ///
+  /// In it, this message translates to:
+  /// **'Scegli quale vasca modificare'**
+  String get chooseAquariumToEdit;
+
+  /// No description provided for @noAquariumsFound.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna vasca trovata'**
+  String get noAquariumsFound;
+
+  /// No description provided for @editDetails.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica Dettagli'**
+  String get editDetails;
+
+  /// No description provided for @updateAquarium.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiorna {name}'**
+  String updateAquarium(String name);
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In it, this message translates to:
+  /// **'Salva Modifiche'**
+  String get saveChanges;
+
+  /// No description provided for @changesSavedFor.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifiche salvate per \"{name}\"'**
+  String changesSavedFor(String name);
+
+  /// No description provided for @errorSavingChanges.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nel salvare le modifiche: {error}'**
+  String errorSavingChanges(String error);
+
+  /// No description provided for @chartHistoryTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Storico {parameter}'**
+  String chartHistoryTitle(String parameter);
+
+  /// No description provided for @chartNoData.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun dato disponibile'**
+  String get chartNoData;
+
+  /// No description provided for @chartStatMin.
+  ///
+  /// In it, this message translates to:
+  /// **'Min'**
+  String get chartStatMin;
+
+  /// No description provided for @chartStatAvg.
+  ///
+  /// In it, this message translates to:
+  /// **'Avg'**
+  String get chartStatAvg;
+
+  /// No description provided for @chartStatMax.
+  ///
+  /// In it, this message translates to:
+  /// **'Max'**
+  String get chartStatMax;
+
+  /// No description provided for @chartStatNow.
+  ///
+  /// In it, this message translates to:
+  /// **'Now'**
+  String get chartStatNow;
+
+  /// No description provided for @chartLegendIdeal.
+  ///
+  /// In it, this message translates to:
+  /// **'Ideale'**
+  String get chartLegendIdeal;
+
+  /// No description provided for @chartLegendWarning.
+  ///
+  /// In it, this message translates to:
+  /// **'Avviso'**
+  String get chartLegendWarning;
+
+  /// No description provided for @chartAdvancedAnalysis.
+  ///
+  /// In it, this message translates to:
+  /// **'Analisi Avanzata'**
+  String get chartAdvancedAnalysis;
+
+  /// No description provided for @chartTrendLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Trend'**
+  String get chartTrendLabel;
+
+  /// No description provided for @chartStabilityLabel.
+  ///
+  /// In it, this message translates to:
+  /// **'Stabilità'**
+  String get chartStabilityLabel;
+
+  /// No description provided for @chartTrendStable.
+  ///
+  /// In it, this message translates to:
+  /// **'Stabile'**
+  String get chartTrendStable;
+
+  /// No description provided for @chartTrendRising.
+  ///
+  /// In it, this message translates to:
+  /// **'In aumento'**
+  String get chartTrendRising;
+
+  /// No description provided for @chartTrendFalling.
+  ///
+  /// In it, this message translates to:
+  /// **'In calo'**
+  String get chartTrendFalling;
+
+  /// No description provided for @chartStabilityExcellent.
+  ///
+  /// In it, this message translates to:
+  /// **'Ottima'**
+  String get chartStabilityExcellent;
+
+  /// No description provided for @chartStabilityGood.
+  ///
+  /// In it, this message translates to:
+  /// **'Buona'**
+  String get chartStabilityGood;
+
+  /// No description provided for @chartStabilityMedium.
+  ///
+  /// In it, this message translates to:
+  /// **'Media'**
+  String get chartStabilityMedium;
+
+  /// No description provided for @chartStabilityLow.
+  ///
+  /// In it, this message translates to:
+  /// **'Bassa'**
+  String get chartStabilityLow;
+
+  /// No description provided for @chartAdviceOutOfRange.
+  ///
+  /// In it, this message translates to:
+  /// **'Attenzione: {parameter} fuori range. Controlla subito e correggi.'**
+  String chartAdviceOutOfRange(String parameter);
+
+  /// No description provided for @chartAdviceNotIdeal.
+  ///
+  /// In it, this message translates to:
+  /// **'Parametro accettabile ma non ideale. Monitora attentamente.'**
+  String get chartAdviceNotIdeal;
+
+  /// No description provided for @chartAdviceUnstable.
+  ///
+  /// In it, this message translates to:
+  /// **'Parametro instabile. Verifica cambio acqua e dosaggi additivi.'**
+  String get chartAdviceUnstable;
+
+  /// No description provided for @chartAdviceTempRising.
+  ///
+  /// In it, this message translates to:
+  /// **'Temperatura in aumento. Verifica raffreddamento e ventilazione.'**
+  String get chartAdviceTempRising;
+
+  /// No description provided for @chartAdviceOptimal.
+  ///
+  /// In it, this message translates to:
+  /// **'Parametro ottimale e stabile.'**
+  String get chartAdviceOptimal;
+
+  /// No description provided for @paramTemperature.
+  ///
+  /// In it, this message translates to:
+  /// **'Temperatura'**
+  String get paramTemperature;
+
+  /// No description provided for @paramPH.
+  ///
+  /// In it, this message translates to:
+  /// **'pH'**
+  String get paramPH;
+
+  /// No description provided for @paramSalinity.
+  ///
+  /// In it, this message translates to:
+  /// **'Salinità'**
+  String get paramSalinity;
+
+  /// No description provided for @paramORP.
+  ///
+  /// In it, this message translates to:
+  /// **'ORP'**
+  String get paramORP;
+
+  /// No description provided for @errorLoadingTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore caricamento task: {error}'**
+  String errorLoadingTasks(String error);
+
+  /// No description provided for @addTask.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Task'**
+  String get addTask;
+
+  /// No description provided for @inProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'In Corso ({count})'**
+  String inProgress(int count);
+
+  /// No description provided for @completed.
+  ///
+  /// In it, this message translates to:
+  /// **'Completati ({count})'**
+  String completed(int count);
+
+  /// No description provided for @overdue.
+  ///
+  /// In it, this message translates to:
+  /// **'In Ritardo'**
+  String get overdue;
+
+  /// No description provided for @today.
+  ///
+  /// In it, this message translates to:
+  /// **'Oggi'**
+  String get today;
+
+  /// No description provided for @week.
+  ///
+  /// In it, this message translates to:
+  /// **'Settimana'**
+  String get week;
+
+  /// No description provided for @all.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutti'**
+  String get all;
+
+  /// No description provided for @noCompletedTasks.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun task completato'**
+  String get noCompletedTasks;
+
+  /// No description provided for @noTasksInProgress.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun task in corso'**
+  String get noTasksInProgress;
+
+  /// No description provided for @overdueDays.
+  ///
+  /// In it, this message translates to:
+  /// **'In ritardo di {days} giorni'**
+  String overdueDays(int days);
+
+  /// No description provided for @dueToday.
+  ///
+  /// In it, this message translates to:
+  /// **'Scade oggi'**
+  String get dueToday;
+
+  /// No description provided for @inDays.
+  ///
+  /// In it, this message translates to:
+  /// **'Tra {days} giorni'**
+  String inDays(int days);
+
+  /// No description provided for @completedOn.
+  ///
+  /// In it, this message translates to:
+  /// **'Completato: {date}'**
+  String completedOn(String date);
+
+  /// No description provided for @newTask.
+  ///
+  /// In it, this message translates to:
+  /// **'Nuovo Task'**
+  String get newTask;
+
+  /// No description provided for @taskTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Titolo Task'**
+  String get taskTitle;
+
+  /// No description provided for @taskDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Descrizione (opzionale)'**
+  String get taskDescription;
+
+  /// No description provided for @category.
+  ///
+  /// In it, this message translates to:
+  /// **'Categoria'**
+  String get category;
+
+  /// No description provided for @frequency.
+  ///
+  /// In it, this message translates to:
+  /// **'Frequenza'**
+  String get frequency;
+
+  /// No description provided for @everyDays.
+  ///
+  /// In it, this message translates to:
+  /// **'Ogni {days} giorni'**
+  String everyDays(int days);
+
+  /// No description provided for @reminder.
+  ///
+  /// In it, this message translates to:
+  /// **'Promemoria'**
+  String get reminder;
+
+  /// No description provided for @enabled.
+  ///
+  /// In it, this message translates to:
+  /// **'Abilitato'**
+  String get enabled;
+
+  /// No description provided for @disabled.
+  ///
+  /// In it, this message translates to:
+  /// **'Disabilitato'**
+  String get disabled;
+
+  /// No description provided for @time.
+  ///
+  /// In it, this message translates to:
+  /// **'Orario'**
+  String get time;
+
+  /// No description provided for @enterTaskTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Inserisci un titolo'**
+  String get enterTaskTitle;
+
+  /// No description provided for @water.
+  ///
+  /// In it, this message translates to:
+  /// **'Acqua'**
+  String get water;
+
+  /// No description provided for @cleaning.
+  ///
+  /// In it, this message translates to:
+  /// **'Pulizia'**
+  String get cleaning;
+
+  /// No description provided for @testing.
+  ///
+  /// In it, this message translates to:
+  /// **'Test'**
+  String get testing;
+
+  /// No description provided for @feeding.
+  ///
+  /// In it, this message translates to:
+  /// **'Alimentazione'**
+  String get feeding;
+
+  /// No description provided for @equipment.
+  ///
+  /// In it, this message translates to:
+  /// **'Attrezzatura'**
+  String get equipment;
+
+  /// No description provided for @other.
+  ///
+  /// In it, this message translates to:
+  /// **'Altro'**
+  String get other;
 }
 
 class _AppLocalizationsDelegate

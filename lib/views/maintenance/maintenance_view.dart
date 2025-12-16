@@ -3,6 +3,7 @@ import 'package:acquariumfe/services/maintenance_task_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class MaintenanceView extends StatefulWidget {
   final int? aquariumId;
@@ -43,10 +44,11 @@ class _MaintenanceViewState extends State<MaintenanceView> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore caricamento task: $e'),
+            content: Text(l10n.errorLoadingTasks(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -101,13 +103,14 @@ class _MaintenanceViewState extends State<MaintenanceView> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddTaskDialog,
         icon: const FaIcon(FontAwesomeIcons.plus),
-        label: const Text('Aggiungi Task'),
+        label: Text(AppLocalizations.of(context)!.addTask),
         backgroundColor: const Color(0xFF8b5cf6),
       ),
     );
   }
 
   Widget _buildSectionToggle(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
@@ -145,7 +148,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'In Corso (${_pendingTasks.length})',
+                      l10n.inProgress(_pendingTasks.length),
                       style: TextStyle(
                         color: !_showCompleted
                             ? Colors.white
@@ -190,7 +193,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Completati (${_completedTasks.length})',
+                      l10n.completed(_completedTasks.length),
                       style: TextStyle(
                         color: _showCompleted
                             ? Colors.white
@@ -211,11 +214,12 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   }
 
   Widget _buildStats(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: _buildStatCard(
-            'In Ritardo',
+            l10n.overdue,
             _overdueTasks.length.toString(),
             FontAwesomeIcons.triangleExclamation,
             const Color(0xFFef4444),
@@ -225,7 +229,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
-            'Oggi',
+            l10n.today,
             _dueTodayTasks.length.toString(),
             FontAwesomeIcons.calendarDay,
             const Color(0xFFf59e0b),
@@ -235,7 +239,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
-            'Settimana',
+            l10n.week,
             _dueThisWeekTasks.length.toString(),
             FontAwesomeIcons.calendarWeek,
             const Color(0xFF3b82f6),
@@ -281,11 +285,12 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   }
 
   Widget _buildCategoryFilter(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          _buildFilterChip('Tutti', null, theme),
+          _buildFilterChip(l10n.all, null, theme),
           const SizedBox(width: 8),
           ...MaintenanceCategory.values.map((category) {
             return Padding(
@@ -347,8 +352,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
               const SizedBox(height: 16),
               Text(
                 _showCompleted
-                    ? 'Nessun task completato'
-                    : 'Nessun task in corso',
+                    ? l10n.noCompletedTasks
+                    : l10n.noTasksInProgress,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
@@ -367,6 +372,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   }
 
   Widget _buildTaskCard(MaintenanceTask task, ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     final daysUntil = task.daysUntilDue;
     final isOverdue = task.isOverdue;
     final isDueToday = task.isDueToday;
@@ -376,16 +382,16 @@ class _MaintenanceViewState extends State<MaintenanceView> {
 
     if (isOverdue) {
       statusColor = const Color(0xFFef4444);
-      statusText = 'In ritardo di ${-daysUntil} giorni';
+      statusText = l10n.overdueDays(-daysUntil);
     } else if (isDueToday) {
       statusColor = const Color(0xFFf59e0b);
-      statusText = 'Scade oggi';
+      statusText = l10n.dueToday;
     } else if (daysUntil <= 7) {
       statusColor = const Color(0xFF3b82f6);
-      statusText = 'Tra $daysUntil giorni';
+      statusText = l10n.inDays(daysUntil);
     } else {
       statusColor = const Color(0xFF10b981);
-      statusText = 'Tra $daysUntil giorni';
+      statusText = l10n.inDays(daysUntil);
     }
 
     return Card(
@@ -459,8 +465,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                       const SizedBox(width: 6),
                       Text(
                         _showCompleted && task.completedAt != null
-                            ? 'Completato: ${_formatDate(task.completedAt!)}'
-                            : 'Ogni ${task.frequencyDays} giorni',
+                            ? l10n.completedOn(_formatDate(task.completedAt!))
+                            : l10n.everyDays(task.frequencyDays),
                         style: theme.textTheme.bodySmall,
                       ),
                     ],
@@ -1138,21 +1144,22 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   }
 
   String _getCategoryName(MaintenanceCategory category) {
+    final l10n = AppLocalizations.of(context)!;
     switch (category) {
       case MaintenanceCategory.water:
-        return 'Acqua';
+        return l10n.water;
       case MaintenanceCategory.equipment:
-        return 'Attrezzatura';
+        return l10n.equipment;
       case MaintenanceCategory.testing:
-        return 'Test';
+        return l10n.testing;
       case MaintenanceCategory.cleaning:
-        return 'Pulizia';
+        return l10n.cleaning;
       case MaintenanceCategory.dosing:
-        return 'Dosaggio';
+        return 'Dosaggio'; // TODO: add to ARB if needed
       case MaintenanceCategory.feeding:
-        return 'Alimentazione';
+        return l10n.feeding;
       case MaintenanceCategory.other:
-        return 'Altro';
+        return l10n.other;
     }
   }
 

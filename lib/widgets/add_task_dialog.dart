@@ -1,6 +1,7 @@
 import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class AddTaskDialog extends StatefulWidget {
   final String aquariumId;
@@ -53,6 +54,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -89,8 +91,8 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Nuova Task',
+                            Text(
+                              l10n.newTask,
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -115,7 +117,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                   TextFormField(
                     controller: _titleController,
                     decoration: InputDecoration(
-                      labelText: 'Titolo *',
+                      labelText: l10n.taskTitle,
                       hintText: 'es. Pulizia schiumatoio',
                       prefixIcon: const FaIcon(FontAwesomeIcons.heading),
                       border: OutlineInputBorder(
@@ -124,7 +126,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Il titolo è obbligatorio';
+                        return l10n.enterTaskTitle;
                       }
                       return null;
                     },
@@ -137,7 +139,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                   TextFormField(
                     controller: _descriptionController,
                     decoration: InputDecoration(
-                      labelText: 'Descrizione (opzionale)',
+                      labelText: l10n.taskDescription,
                       hintText: 'Aggiungi note o dettagli...',
                       prefixIcon: const FaIcon(FontAwesomeIcons.noteSticky),
                       border: OutlineInputBorder(
@@ -154,7 +156,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                   DropdownButtonFormField<MaintenanceCategory>(
                     value: _selectedCategory,
                     decoration: InputDecoration(
-                      labelText: 'Categoria',
+                      labelText: l10n.category,
                       prefixIcon: const FaIcon(FontAwesomeIcons.tag),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -184,7 +186,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                           const FaIcon(FontAwesomeIcons.arrowsRotate, size: 20),
                           const SizedBox(width: 8),
                           Text(
-                            'Frequenza',
+                            l10n.frequency,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
