@@ -331,6 +331,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   }
 
   Widget _buildTasksList(ThemeData theme) {
+    final l10n = AppLocalizations.of(context)!;
     final tasksToShow = _showCompleted ? _completedTasks : _pendingTasks;
     final filteredTasks = _filterCategory == null
         ? tasksToShow

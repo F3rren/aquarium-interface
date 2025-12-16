@@ -483,7 +483,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get parameterTesting => 'Test Parametri';
 
   @override
-  String get days => 'gg';
+  String get days => 'giorni';
 
   @override
   String get recommendations => 'Raccomandazioni';
@@ -876,7 +876,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String confirmDeleteAquarium(String name) {
-    return 'Sei sicuro di voler eliminare \"$name\"?';
+    return 'Sei sicuro di voler eliminare \'$name\'?';
   }
 
   @override
@@ -886,18 +886,18 @@ class AppLocalizationsIt extends AppLocalizations {
   String get aquariumDeletedSuccess => 'Acquario eliminato con successo';
 
   @override
-  String errorWithMessage(String error) {
-    return 'Errore: $error';
+  String errorWithMessage(String message) {
+    return 'Errore: $message';
   }
 
   @override
-  String get noAquariumsToDelete => 'Non ci sono acquari da eliminare';
+  String get noAquariumsToDelete => 'Nessun acquario da eliminare';
 
   @override
   String get aquariumManagement => 'Gestione Acquari';
 
   @override
-  String get selectToDelete => 'Seleziona per eliminare';
+  String get selectToDelete => 'Seleziona un acquario da eliminare';
 
   @override
   String get editAquarium => 'Modifica Acquario';
@@ -906,7 +906,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get selectAquarium => 'Seleziona Acquario';
 
   @override
-  String get chooseAquariumToEdit => 'Scegli quale vasca modificare';
+  String get chooseAquariumToEdit => 'Scegli un acquario da modificare';
 
   @override
   String get noAquariumsFound => 'Nessuna vasca trovata';
@@ -1126,4 +1126,95 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get other => 'Altro';
+
+  @override
+  String get createCustomMaintenance => 'Crea una manutenzione personalizzata';
+
+  @override
+  String get day => 'giorno';
+
+  @override
+  String get enableReminder => 'Abilita promemoria';
+
+  @override
+  String get at => 'Alle';
+
+  @override
+  String get noReminder => 'Nessun promemoria';
+
+  @override
+  String changeTime(String time) {
+    return 'Cambia orario ($time)';
+  }
+
+  @override
+  String get notifications => 'Notifiche';
+
+  @override
+  String get settingsSaved => 'Impostazioni salvate';
+
+  @override
+  String get settingsTab => 'Impostazioni';
+
+  @override
+  String get thresholdsTab => 'Soglie';
+
+  @override
+  String get historyTab => 'Storico';
+
+  @override
+  String get alertParameters => 'Alert Parametri';
+
+  @override
+  String get alertParametersSubtitle =>
+      'Notifiche quando i parametri sono fuori range';
+
+  @override
+  String get maintenanceReminders => 'Promemoria Manutenzione';
+
+  @override
+  String get maintenanceRemindersSubtitle =>
+      'Notifiche per cambio acqua, pulizia filtro, ecc.';
+
+  @override
+  String get dailySummary => 'Riepilogo Giornaliero';
+
+  @override
+  String get dailySummarySubtitle => 'Notifica giornaliera con stato acquario';
+
+  @override
+  String get maintenanceFrequency => 'Frequenza Manutenzione';
+
+  @override
+  String get resetDefaults => 'Ripristina Valori Predefiniti';
+
+  @override
+  String get parameterThresholds => 'Soglie Parametri';
+
+  @override
+  String get min => 'Min';
+
+  @override
+  String get max => 'Max';
+
+  @override
+  String get alertHistory => 'Storico Alert';
+
+  @override
+  String recentNotifications(int count) {
+    return '$count notifiche recenti';
+  }
+
+  @override
+  String get noNotificationsYet => 'Nessuna notifica ancora';
+
+  @override
+  String get resetDefaultsQuestion => 'Ripristinare Predefiniti?';
+
+  @override
+  String get resetDefaultsMessage =>
+      'Questa azione resetterà tutte le soglie personalizzate ai valori di default:';
+
+  @override
+  String get resetButton => 'Ripristina';
 }

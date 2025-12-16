@@ -1007,7 +1007,7 @@ abstract class AppLocalizations {
   /// No description provided for @days.
   ///
   /// In it, this message translates to:
-  /// **'gg'**
+  /// **'giorni'**
   String get days;
 
   /// No description provided for @recommendations.
@@ -1745,7 +1745,7 @@ abstract class AppLocalizations {
   /// No description provided for @confirmDeleteAquarium.
   ///
   /// In it, this message translates to:
-  /// **'Sei sicuro di voler eliminare \"{name}\"?'**
+  /// **'Sei sicuro di voler eliminare \'{name}\'?'**
   String confirmDeleteAquarium(String name);
 
   /// No description provided for @actionCannotBeUndone.
@@ -1763,13 +1763,13 @@ abstract class AppLocalizations {
   /// No description provided for @errorWithMessage.
   ///
   /// In it, this message translates to:
-  /// **'Errore: {error}'**
-  String errorWithMessage(String error);
+  /// **'Errore: {message}'**
+  String errorWithMessage(String message);
 
   /// No description provided for @noAquariumsToDelete.
   ///
   /// In it, this message translates to:
-  /// **'Non ci sono acquari da eliminare'**
+  /// **'Nessun acquario da eliminare'**
   String get noAquariumsToDelete;
 
   /// No description provided for @aquariumManagement.
@@ -1781,7 +1781,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectToDelete.
   ///
   /// In it, this message translates to:
-  /// **'Seleziona per eliminare'**
+  /// **'Seleziona un acquario da eliminare'**
   String get selectToDelete;
 
   /// No description provided for @editAquarium.
@@ -1799,7 +1799,7 @@ abstract class AppLocalizations {
   /// No description provided for @chooseAquariumToEdit.
   ///
   /// In it, this message translates to:
-  /// **'Scegli quale vasca modificare'**
+  /// **'Scegli un acquario da modificare'**
   String get chooseAquariumToEdit;
 
   /// No description provided for @noAquariumsFound.
@@ -2185,6 +2185,174 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Altro'**
   String get other;
+
+  /// No description provided for @createCustomMaintenance.
+  ///
+  /// In it, this message translates to:
+  /// **'Crea una manutenzione personalizzata'**
+  String get createCustomMaintenance;
+
+  /// No description provided for @day.
+  ///
+  /// In it, this message translates to:
+  /// **'giorno'**
+  String get day;
+
+  /// No description provided for @enableReminder.
+  ///
+  /// In it, this message translates to:
+  /// **'Abilita promemoria'**
+  String get enableReminder;
+
+  /// No description provided for @at.
+  ///
+  /// In it, this message translates to:
+  /// **'Alle'**
+  String get at;
+
+  /// No description provided for @noReminder.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun promemoria'**
+  String get noReminder;
+
+  /// No description provided for @changeTime.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambia orario ({time})'**
+  String changeTime(String time);
+
+  /// No description provided for @notifications.
+  ///
+  /// In it, this message translates to:
+  /// **'Notifiche'**
+  String get notifications;
+
+  /// No description provided for @settingsSaved.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostazioni salvate'**
+  String get settingsSaved;
+
+  /// No description provided for @settingsTab.
+  ///
+  /// In it, this message translates to:
+  /// **'Impostazioni'**
+  String get settingsTab;
+
+  /// No description provided for @thresholdsTab.
+  ///
+  /// In it, this message translates to:
+  /// **'Soglie'**
+  String get thresholdsTab;
+
+  /// No description provided for @historyTab.
+  ///
+  /// In it, this message translates to:
+  /// **'Storico'**
+  String get historyTab;
+
+  /// No description provided for @alertParameters.
+  ///
+  /// In it, this message translates to:
+  /// **'Alert Parametri'**
+  String get alertParameters;
+
+  /// No description provided for @alertParametersSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Notifiche quando i parametri sono fuori range'**
+  String get alertParametersSubtitle;
+
+  /// No description provided for @maintenanceReminders.
+  ///
+  /// In it, this message translates to:
+  /// **'Promemoria Manutenzione'**
+  String get maintenanceReminders;
+
+  /// No description provided for @maintenanceRemindersSubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Notifiche per cambio acqua, pulizia filtro, ecc.'**
+  String get maintenanceRemindersSubtitle;
+
+  /// No description provided for @dailySummary.
+  ///
+  /// In it, this message translates to:
+  /// **'Riepilogo Giornaliero'**
+  String get dailySummary;
+
+  /// No description provided for @dailySummarySubtitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Notifica giornaliera con stato acquario'**
+  String get dailySummarySubtitle;
+
+  /// No description provided for @maintenanceFrequency.
+  ///
+  /// In it, this message translates to:
+  /// **'Frequenza Manutenzione'**
+  String get maintenanceFrequency;
+
+  /// No description provided for @resetDefaults.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristina Valori Predefiniti'**
+  String get resetDefaults;
+
+  /// No description provided for @parameterThresholds.
+  ///
+  /// In it, this message translates to:
+  /// **'Soglie Parametri'**
+  String get parameterThresholds;
+
+  /// No description provided for @min.
+  ///
+  /// In it, this message translates to:
+  /// **'Min'**
+  String get min;
+
+  /// No description provided for @max.
+  ///
+  /// In it, this message translates to:
+  /// **'Max'**
+  String get max;
+
+  /// No description provided for @alertHistory.
+  ///
+  /// In it, this message translates to:
+  /// **'Storico Alert'**
+  String get alertHistory;
+
+  /// No description provided for @recentNotifications.
+  ///
+  /// In it, this message translates to:
+  /// **'{count} notifiche recenti'**
+  String recentNotifications(int count);
+
+  /// No description provided for @noNotificationsYet.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessuna notifica ancora'**
+  String get noNotificationsYet;
+
+  /// No description provided for @resetDefaultsQuestion.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristinare Predefiniti?'**
+  String get resetDefaultsQuestion;
+
+  /// No description provided for @resetDefaultsMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Questa azione resetterà tutte le soglie personalizzate ai valori di default:'**
+  String get resetDefaultsMessage;
+
+  /// No description provided for @resetButton.
+  ///
+  /// In it, this message translates to:
+  /// **'Ripristina'**
+  String get resetButton;
 }
 
 class _AppLocalizationsDelegate

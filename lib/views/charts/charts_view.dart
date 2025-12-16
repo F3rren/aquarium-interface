@@ -5,7 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:acquariumfe/services/chart_data_service.dart';
 import 'package:acquariumfe/models/parameter_data_point.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class ChartsView extends StatefulWidget {
   const ChartsView({super.key});

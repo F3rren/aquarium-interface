@@ -868,15 +868,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String errorLoading(String error) {
-    return 'Error loading: $error';
+    return 'Loading error: $error';
   }
 
   @override
-  String get cannotDeleteMissingId => 'Cannot delete: Aquarium ID missing';
+  String get cannotDeleteMissingId => 'Cannot delete: aquarium ID missing';
 
   @override
   String confirmDeleteAquarium(String name) {
-    return 'Are you sure you want to delete \"$name\"?';
+    return 'Are you sure you want to delete \'$name\'?';
   }
 
   @override
@@ -886,8 +886,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aquariumDeletedSuccess => 'Aquarium deleted successfully';
 
   @override
-  String errorWithMessage(String error) {
-    return 'Error: $error';
+  String errorWithMessage(String message) {
+    return 'Error: $message';
   }
 
   @override
@@ -897,7 +897,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aquariumManagement => 'Aquarium Management';
 
   @override
-  String get selectToDelete => 'Select to delete';
+  String get selectToDelete => 'Select an aquarium to delete';
 
   @override
   String get editAquarium => 'Edit Aquarium';
@@ -906,7 +906,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectAquarium => 'Select Aquarium';
 
   @override
-  String get chooseAquariumToEdit => 'Choose which tank to edit';
+  String get chooseAquariumToEdit => 'Choose an aquarium to edit';
 
   @override
   String get noAquariumsFound => 'No tanks found';
@@ -1126,4 +1126,95 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get other => 'Other';
+
+  @override
+  String get createCustomMaintenance => 'Create a custom maintenance';
+
+  @override
+  String get day => 'day';
+
+  @override
+  String get enableReminder => 'Enable reminder';
+
+  @override
+  String get at => 'At';
+
+  @override
+  String get noReminder => 'No reminder';
+
+  @override
+  String changeTime(String time) {
+    return 'Change time ($time)';
+  }
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get settingsSaved => 'Settings saved';
+
+  @override
+  String get settingsTab => 'Settings';
+
+  @override
+  String get thresholdsTab => 'Thresholds';
+
+  @override
+  String get historyTab => 'History';
+
+  @override
+  String get alertParameters => 'Parameter Alerts';
+
+  @override
+  String get alertParametersSubtitle =>
+      'Notifications when parameters are out of range';
+
+  @override
+  String get maintenanceReminders => 'Maintenance Reminders';
+
+  @override
+  String get maintenanceRemindersSubtitle =>
+      'Notifications for water change, filter cleaning, etc.';
+
+  @override
+  String get dailySummary => 'Daily Summary';
+
+  @override
+  String get dailySummarySubtitle => 'Daily notification with aquarium status';
+
+  @override
+  String get maintenanceFrequency => 'Maintenance Frequency';
+
+  @override
+  String get resetDefaults => 'Reset to Defaults';
+
+  @override
+  String get parameterThresholds => 'Parameter Thresholds';
+
+  @override
+  String get min => 'Min';
+
+  @override
+  String get max => 'Max';
+
+  @override
+  String get alertHistory => 'Alert History';
+
+  @override
+  String recentNotifications(int count) {
+    return '$count recent notifications';
+  }
+
+  @override
+  String get noNotificationsYet => 'No notifications yet';
+
+  @override
+  String get resetDefaultsQuestion => 'Reset to Defaults?';
+
+  @override
+  String get resetDefaultsMessage =>
+      'This action will reset all customized thresholds to default values:';
+
+  @override
+  String get resetButton => 'Reset';
 }

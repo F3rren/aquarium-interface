@@ -512,5 +512,88 @@
   "testing": "Pruebas",
   "feeding": "Alimentación",
   "equipment": "Equipo",
-  "other": "Otro"
+  "other": "Otro",
+  
+  "createCustomMaintenance": "Crear un mantenimiento personalizado",
+  "day": "día",
+  "days": "días",
+  "enableReminder": "Habilitar recordatorio",
+  "at": "A las",
+  "noReminder": "Sin recordatorio",
+  "changeTime": "Cambiar hora ({time})",
+  "@changeTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "createTask": "Crear Tarea",
+  
+  "notifications": "Notificaciones",
+  "settingsSaved": "Configuración guardada",
+  "settingsTab": "Configuración",
+  "thresholdsTab": "Umbrales",
+  "historyTab": "Historial",
+  "alertParameters": "Alertas de Parámetros",
+  "alertParametersSubtitle": "Notificaciones cuando los parámetros están fuera de rango",
+  "maintenanceReminders": "Recordatorios de Mantenimiento",
+  "maintenanceRemindersSubtitle": "Notificaciones para cambio de agua, limpieza de filtro, etc.",
+  "dailySummary": "Resumen Diario",
+  "dailySummarySubtitle": "Notificación diaria con el estado del acuario",
+  "maintenanceFrequency": "Frecuencia de Mantenimiento",
+  "waterChange": "Cambio de Agua",
+  "filterCleaning": "Limpieza de Filtro",
+  "parameterTesting": "Prueba de Parámetros",
+  "resetDefaults": "Restablecer Valores Predeterminados",
+  "parameterThresholds": "Umbrales de Parámetros",
+  "min": "Mín",
+  "max": "Máx",
+  "alertHistory": "Historial de Alertas",
+  "recentNotifications": "{count} notificaciones recientes",
+  "@recentNotifications": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noNotificationsYet": "Aún no hay notificaciones",
+  "resetDefaultsQuestion": "¿Restablecer Predeterminados?",
+  "resetDefaultsMessage": "Esta acción restablecerá todos los umbrales personalizados a los valores predeterminados:",
+  "resetButton": "Restablecer",
+  
+  "errorLoading": "Error al cargar: {error}",
+  "@errorLoading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cannotDeleteMissingId": "No se puede eliminar: falta el ID del acuario",
+  "deleteAquarium": "Eliminar Acuario",
+  "confirmDeleteAquarium": "¿Estás seguro de que quieres eliminar '{name}'?",
+  "@confirmDeleteAquarium": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actionCannotBeUndone": "Esta acción no se puede deshacer.",
+  "aquariumDeletedSuccess": "Acuario eliminado con éxito",
+  "errorWithMessage": "Error: {message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "noAquariumsToDelete": "No hay acuarios para eliminar",
+  "aquariumManagement": "Gestión de Acuarios",
+  "selectToDelete": "Selecciona un acuario para eliminar",
+  "selectAquarium": "Seleccionar Acuario",
+  "chooseAquariumToEdit": "Elige un acuario para editar"
 }
