@@ -1464,25 +1464,25 @@ class AppLocalizationsEs extends AppLocalizations {
   String get phosphatesHigh => 'Fosfatos Elevados';
 
   @override
-  String get temperatureTooHigh => 'La temperatura está demasiado alta.';
+  String get temperatureTooHigh => 'La temperatura es demasiado alta.';
 
   @override
-  String get phTooHigh => 'El pH está demasiado alto.';
+  String get phTooHigh => 'El pH es demasiado alto.';
 
   @override
-  String get salinityTooHigh => 'La salinidad está demasiado alta.';
+  String get salinityTooHigh => 'La salinidad es demasiado alta.';
 
   @override
-  String get orpTooHigh => 'El ORP está demasiado alto.';
+  String get orpTooHigh => 'El ORP es demasiado alto.';
 
   @override
-  String get calciumTooHigh => 'El calcio está demasiado alto.';
+  String get calciumTooHigh => 'El calcio es demasiado alto.';
 
   @override
-  String get magnesiumTooHigh => 'El magnesio está demasiado alto.';
+  String get magnesiumTooHigh => 'El magnesio es demasiado alto.';
 
   @override
-  String get khTooHigh => 'El KH está demasiado alto.';
+  String get khTooHigh => 'El KH es demasiado alto.';
 
   @override
   String get nitratesTooHigh => 'Los nitratos están demasiado altos.';
@@ -1491,25 +1491,25 @@ class AppLocalizationsEs extends AppLocalizations {
   String get phosphatesTooHigh => 'Los fosfatos están demasiado altos.';
 
   @override
-  String get temperatureTooLow => 'La temperatura está demasiado baja.';
+  String get temperatureTooLow => 'La temperatura es demasiado baja.';
 
   @override
-  String get phTooLow => 'El pH está demasiado bajo.';
+  String get phTooLow => 'El pH es demasiado bajo.';
 
   @override
-  String get salinityTooLow => 'La salinidad está demasiado baja.';
+  String get salinityTooLow => 'La salinidad es demasiado baja.';
 
   @override
-  String get orpTooLow => 'El ORP está demasiado bajo.';
+  String get orpTooLow => 'El ORP es demasiado bajo.';
 
   @override
-  String get calciumTooLow => 'El calcio está demasiado bajo.';
+  String get calciumTooLow => 'El calcio es demasiado bajo.';
 
   @override
-  String get magnesiumTooLow => 'El magnesio está demasiado bajo.';
+  String get magnesiumTooLow => 'El magnesio es demasiado bajo.';
 
   @override
-  String get khTooLow => 'El KH está demasiado bajo.';
+  String get khTooLow => 'El KH es demasiado bajo.';
 
   @override
   String get nitratesTooLow => 'Los nitratos están demasiado bajos.';
@@ -1891,4 +1891,82 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get createdOn => 'Creado el';
+
+  @override
+  String get daysLabel => 'días';
+
+  @override
+  String get temperatureParam => 'Temperatura';
+
+  @override
+  String get phParam => 'pH';
+
+  @override
+  String get salinityParam => 'Salinidad';
+
+  @override
+  String get orpParam => 'ORP';
+
+  @override
+  String get calciumParam => 'Calcio';
+
+  @override
+  String get magnesiumParam => 'Magnesio';
+
+  @override
+  String get khParam => 'KH';
+
+  @override
+  String get nitrateParam => 'Nitratos';
+
+  @override
+  String get phosphateParam => 'Fosfatos';
+
+  @override
+  String get nowLabel => 'Ahora';
+
+  @override
+  String minutesAgo(String minutes) {
+    return 'Hace ${minutes}m';
+  }
+
+  @override
+  String hoursAgo(String hours) {
+    return 'Hace ${hours}h';
+  }
+
+  @override
+  String daysAgo(String days) {
+    return 'Hace ${days}d';
+  }
+
+  @override
+  String get temperatureAnomalous => 'Temperatura Anómala';
+
+  @override
+  String get salinityAnomalous => 'Salinidad Anómala';
+
+  @override
+  String get calciumAnomalous => 'Calcio Anómalo';
+
+  @override
+  String get magnesiumAnomalous => 'Magnesio Anómalo';
+
+  @override
+  String get nitrateHigh => 'Nitratos Elevados';
+
+  @override
+  String get phosphateHigh => 'Fosfatos Elevados';
+
+  @override
+  String get nitrateTooHigh => 'Los nitratos son demasiado altos.';
+
+  @override
+  String get nitrateTooLow => 'Los nitratos son demasiado bajos.';
+
+  @override
+  String get phosphateTooHigh => 'Los fosfatos son demasiado altos.';
+
+  @override
+  String get phosphateTooLow => 'Los fosfatos son demasiado bajos.';
 }

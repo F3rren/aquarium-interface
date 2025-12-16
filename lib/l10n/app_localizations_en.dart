@@ -1873,4 +1873,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createdOn => 'Created on';
+
+  @override
+  String get daysLabel => 'days';
+
+  @override
+  String get temperatureParam => 'Temperature';
+
+  @override
+  String get phParam => 'pH';
+
+  @override
+  String get salinityParam => 'Salinity';
+
+  @override
+  String get orpParam => 'ORP';
+
+  @override
+  String get calciumParam => 'Calcium';
+
+  @override
+  String get magnesiumParam => 'Magnesium';
+
+  @override
+  String get khParam => 'KH';
+
+  @override
+  String get nitrateParam => 'Nitrate';
+
+  @override
+  String get phosphateParam => 'Phosphate';
+
+  @override
+  String get nowLabel => 'Now';
+
+  @override
+  String minutesAgo(String minutes) {
+    return '${minutes}m ago';
+  }
+
+  @override
+  String hoursAgo(String hours) {
+    return '${hours}h ago';
+  }
+
+  @override
+  String daysAgo(String days) {
+    return '${days}d ago';
+  }
+
+  @override
+  String get temperatureAnomalous => 'Anomalous Temperature';
+
+  @override
+  String get salinityAnomalous => 'Anomalous Salinity';
+
+  @override
+  String get calciumAnomalous => 'Anomalous Calcium';
+
+  @override
+  String get magnesiumAnomalous => 'Anomalous Magnesium';
+
+  @override
+  String get nitrateHigh => 'High Nitrates';
+
+  @override
+  String get phosphateHigh => 'High Phosphates';
+
+  @override
+  String get nitrateTooHigh => 'Nitrates are too high.';
+
+  @override
+  String get nitrateTooLow => 'Nitrates are too low.';
+
+  @override
+  String get phosphateTooHigh => 'Phosphates are too high.';
+
+  @override
+  String get phosphateTooLow => 'Phosphates are too low.';
 }

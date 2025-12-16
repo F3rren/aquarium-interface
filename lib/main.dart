@@ -3,6 +3,7 @@ import 'package:acquariumfe/views/home/acquariums_view.dart';
 import 'package:acquariumfe/views/shared/navbar/navbar.dart';
 import 'package:acquariumfe/services/notification_service.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
+import 'package:acquariumfe/services/app_locale_service.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/providers/theme_provider.dart';
 import 'package:acquariumfe/providers/locale_provider.dart';
@@ -39,6 +40,11 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(appThemeModeProvider);
     final locale = ref.watch(localeProvider);
+
+    // Sincronizza la locale con AppLocaleService ogni volta che cambia
+    if (locale != null) {
+      AppLocaleService().setLocale(locale);
+    }
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

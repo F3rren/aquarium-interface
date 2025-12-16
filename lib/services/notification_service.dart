@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:acquariumfe/constants/notification_texts.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -108,19 +107,13 @@ class NotificationService {
     required double minValue,
     required double maxValue,
     required String unit,
+    required String alertTitle,
+    required String alertMessage,
   }) async {
-    // Determina se il valore è troppo basso o troppo alto
-    final bool isHigh = currentValue > maxValue;
-
-    // Usa i testi centralizzati
-    final alertTitle = NotificationTexts.getTitle(parameterName);
-    final alertMessage = NotificationTexts.getMessage(parameterName, isHigh);
-    final suggestion = NotificationTexts.getSuggestion(parameterName, isHigh);
-
     await showNotification(
       id: parameterName.hashCode,
       title: alertTitle,
-      body: '$alertMessage\n$suggestion',
+      body: alertMessage,
       payload: 'parameter_$parameterName',
       priority: NotificationPriority.max,
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:acquariumfe/services/app_locale_service.dart';
 
 /// Provider per la gestione del locale dell'app
 final localeProvider = StateNotifierProvider<LocaleNotifier, Locale?>((ref) {
@@ -21,7 +22,15 @@ class LocaleNotifier extends StateNotifier<Locale?> {
     final languageCode = prefs.getString(_localeKey);
 
     if (languageCode != null) {
-      state = Locale(languageCode);
+      final locale = Locale(languageCode);
+      state = locale;
+      // Sincronizza con AppLocaleService
+      AppLocaleService().setLocale(locale);
+    } else {
+      // Se non c'è un locale salvato, usa italiano come default
+      const defaultLocale = Locale('it');
+      state = defaultLocale;
+      AppLocaleService().setLocale(defaultLocale);
     }
   }
 
@@ -30,6 +39,8 @@ class LocaleNotifier extends StateNotifier<Locale?> {
     state = locale;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_localeKey, locale.languageCode);
+    // Sincronizza con AppLocaleService
+    AppLocaleService().setLocale(locale);
   }
 
   /// Reimposta il locale al sistema
@@ -37,6 +48,8 @@ class LocaleNotifier extends StateNotifier<Locale?> {
     state = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_localeKey);
+    // Reimposta AppLocaleService a italiano (default)
+    AppLocaleService().setLocale(const Locale('it'));
   }
 }
 

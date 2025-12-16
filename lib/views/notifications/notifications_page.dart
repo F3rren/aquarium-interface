@@ -326,7 +326,7 @@ class _NotificationsPageState extends State<NotificationsPage>
       ),
       children: [
         _buildThresholdCard(
-          'Temperatura',
+          l10n.temperatureParam,
           '°C',
           _settings.temperature,
           FontAwesomeIcons.temperatureHalf,
@@ -334,7 +334,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
-          'pH',
+          l10n.phParam,
           '',
           _settings.ph,
           FontAwesomeIcons.flask,
@@ -342,7 +342,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
-          'Salinità',
+          l10n.salinityParam,
           '',
           _settings.salinity,
           FontAwesomeIcons.water,
@@ -350,7 +350,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
-          'ORP',
+          l10n.orpParam,
           ' mV',
           _settings.orp,
           FontAwesomeIcons.bolt,
@@ -358,7 +358,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
-          'Calcio',
+          l10n.calciumParam,
           ' mg/L',
           _settings.calcium,
           FontAwesomeIcons.cubesStacked,
@@ -366,7 +366,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
-          'Magnesio',
+          l10n.magnesiumParam,
           ' mg/L',
           _settings.magnesium,
           FontAwesomeIcons.atom,
@@ -374,7 +374,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
-          'KH',
+          l10n.khParam,
           ' dKH',
           _settings.kh,
           FontAwesomeIcons.chartLine,
@@ -382,7 +382,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
-          'Nitrati',
+          l10n.nitrateParam,
           ' mg/L',
           _settings.nitrate,
           FontAwesomeIcons.seedling,
@@ -390,7 +390,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
-          'Fosfati',
+          l10n.phosphateParam,
           ' mg/L',
           _settings.phosphate,
           FontAwesomeIcons.droplet,
@@ -682,7 +682,7 @@ class _NotificationsPageState extends State<NotificationsPage>
                     max: 90,
                     divisions: 89,
                     activeColor: color,
-                    label: '${schedule.frequencyDays} giorni',
+                    label: '${schedule.frequencyDays} ${l10n.daysLabel}',
                     onChanged: (value) => onFrequencyChanged(value.toInt()),
                   ),
                 ),
@@ -994,13 +994,14 @@ class _NotificationsPageState extends State<NotificationsPage>
   }
 
   String _formatTimestamp(DateTime timestamp) {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final difference = now.difference(timestamp);
 
-    if (difference.inMinutes < 1) return 'Ora';
-    if (difference.inMinutes < 60) return '${difference.inMinutes}m fa';
-    if (difference.inHours < 24) return '${difference.inHours}h fa';
-    if (difference.inDays < 7) return '${difference.inDays}g fa';
+    if (difference.inMinutes < 1) return l10n.nowLabel;
+    if (difference.inMinutes < 60) return l10n.minutesAgo('${difference.inMinutes}');
+    if (difference.inHours < 24) return l10n.hoursAgo('${difference.inHours}');
+    if (difference.inDays < 7) return l10n.daysAgo('${difference.inDays}');
 
     return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
   }
@@ -1155,176 +1156,160 @@ class _NotificationsPageState extends State<NotificationsPage>
 
   // Aggiorna le soglie nel modello settings
   void _updateThresholds(String parameterName, double min, double max) {
-    switch (parameterName) {
-      case 'Temperatura':
-        _settings = _settings.copyWith(
-          temperature: ParameterThresholds(
-            min: min,
-            max: max,
-            enabled: _settings.temperature.enabled,
-          ),
-        );
-        break;
-      case 'pH':
-        _settings = _settings.copyWith(
-          ph: ParameterThresholds(
-            min: min,
-            max: max,
-            enabled: _settings.ph.enabled,
-          ),
-        );
-        break;
-      case 'Salinità':
-        _settings = _settings.copyWith(
-          salinity: ParameterThresholds(
-            min: min,
-            max: max,
-            enabled: _settings.salinity.enabled,
-          ),
-        );
-        break;
-      case 'ORP':
-        _settings = _settings.copyWith(
-          orp: ParameterThresholds(
-            min: min,
-            max: max,
-            enabled: _settings.orp.enabled,
-          ),
-        );
-        break;
-      case 'Calcio':
-        _settings = _settings.copyWith(
-          calcium: ParameterThresholds(
-            min: min,
-            max: max,
-            enabled: _settings.calcium.enabled,
-          ),
-        );
-        break;
-      case 'Magnesio':
-        _settings = _settings.copyWith(
-          magnesium: ParameterThresholds(
-            min: min,
-            max: max,
-            enabled: _settings.magnesium.enabled,
-          ),
-        );
-        break;
-      case 'KH':
-        _settings = _settings.copyWith(
-          kh: ParameterThresholds(
-            min: min,
-            max: max,
-            enabled: _settings.kh.enabled,
-          ),
-        );
-        break;
-      case 'Nitrati':
-        _settings = _settings.copyWith(
-          nitrate: ParameterThresholds(
-            min: min,
-            max: max,
-            enabled: _settings.nitrate.enabled,
-          ),
-        );
-        break;
-      case 'Fosfati':
-        _settings = _settings.copyWith(
-          phosphate: ParameterThresholds(
-            min: min,
-            max: max,
-            enabled: _settings.phosphate.enabled,
-          ),
-        );
-        break;
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (parameterName == l10n.temperatureParam) {
+      _settings = _settings.copyWith(
+        temperature: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.temperature.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phParam) {
+      _settings = _settings.copyWith(
+        ph: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.ph.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.salinityParam) {
+      _settings = _settings.copyWith(
+        salinity: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.salinity.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.orpParam) {
+      _settings = _settings.copyWith(
+        orp: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.orp.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.calciumParam) {
+      _settings = _settings.copyWith(
+        calcium: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.calcium.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.magnesiumParam) {
+      _settings = _settings.copyWith(
+        magnesium: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.magnesium.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.khParam) {
+      _settings = _settings.copyWith(
+        kh: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.kh.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.nitrateParam) {
+      _settings = _settings.copyWith(
+        nitrate: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.nitrate.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phosphateParam) {
+      _settings = _settings.copyWith(
+        phosphate: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.phosphate.enabled,
+        ),
+      );
     }
     _alertManager.updateSettings(_settings);
   }
 
   // Abilita/disabilita notifiche per un parametro
   void _updateThresholdEnabled(String parameterName, bool enabled) {
-    switch (parameterName) {
-      case 'Temperatura':
-        _settings = _settings.copyWith(
-          temperature: ParameterThresholds(
-            min: _settings.temperature.min,
-            max: _settings.temperature.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'pH':
-        _settings = _settings.copyWith(
-          ph: ParameterThresholds(
-            min: _settings.ph.min,
-            max: _settings.ph.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'Salinità':
-        _settings = _settings.copyWith(
-          salinity: ParameterThresholds(
-            min: _settings.salinity.min,
-            max: _settings.salinity.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'ORP':
-        _settings = _settings.copyWith(
-          orp: ParameterThresholds(
-            min: _settings.orp.min,
-            max: _settings.orp.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'Calcio':
-        _settings = _settings.copyWith(
-          calcium: ParameterThresholds(
-            min: _settings.calcium.min,
-            max: _settings.calcium.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'Magnesio':
-        _settings = _settings.copyWith(
-          magnesium: ParameterThresholds(
-            min: _settings.magnesium.min,
-            max: _settings.magnesium.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'KH':
-        _settings = _settings.copyWith(
-          kh: ParameterThresholds(
-            min: _settings.kh.min,
-            max: _settings.kh.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'Nitrati':
-        _settings = _settings.copyWith(
-          nitrate: ParameterThresholds(
-            min: _settings.nitrate.min,
-            max: _settings.nitrate.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'Fosfati':
-        _settings = _settings.copyWith(
-          phosphate: ParameterThresholds(
-            min: _settings.phosphate.min,
-            max: _settings.phosphate.max,
-            enabled: enabled,
-          ),
-        );
-        break;
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (parameterName == l10n.temperatureParam) {
+      _settings = _settings.copyWith(
+        temperature: ParameterThresholds(
+          min: _settings.temperature.min,
+          max: _settings.temperature.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phParam) {
+      _settings = _settings.copyWith(
+        ph: ParameterThresholds(
+          min: _settings.ph.min,
+          max: _settings.ph.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.salinityParam) {
+      _settings = _settings.copyWith(
+        salinity: ParameterThresholds(
+          min: _settings.salinity.min,
+          max: _settings.salinity.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.orpParam) {
+      _settings = _settings.copyWith(
+        orp: ParameterThresholds(
+          min: _settings.orp.min,
+          max: _settings.orp.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.calciumParam) {
+      _settings = _settings.copyWith(
+        calcium: ParameterThresholds(
+          min: _settings.calcium.min,
+          max: _settings.calcium.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.magnesiumParam) {
+      _settings = _settings.copyWith(
+        magnesium: ParameterThresholds(
+          min: _settings.magnesium.min,
+          max: _settings.magnesium.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.khParam) {
+      _settings = _settings.copyWith(
+        kh: ParameterThresholds(
+          min: _settings.kh.min,
+          max: _settings.kh.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.nitrateParam) {
+      _settings = _settings.copyWith(
+        nitrate: ParameterThresholds(
+          min: _settings.nitrate.min,
+          max: _settings.nitrate.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phosphateParam) {
+      _settings = _settings.copyWith(
+        phosphate: ParameterThresholds(
+          min: _settings.phosphate.min,
+          max: _settings.phosphate.max,
+          enabled: enabled,
+        ),
+      );
     }
     _alertManager.updateSettings(_settings);
   }

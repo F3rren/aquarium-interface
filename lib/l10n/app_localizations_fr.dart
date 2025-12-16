@@ -1449,13 +1449,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get temperatureAnomaly => 'Temperatura Anomala';
 
   @override
-  String get phOutOfRange => 'pH Fuori Range';
+  String get phOutOfRange => 'pH Hors Limites';
 
   @override
   String get salinityAnomaly => 'Salinità Anomala';
 
   @override
-  String get orpOutOfRange => 'ORP Fuori Range';
+  String get orpOutOfRange => 'ORP Hors Limites';
 
   @override
   String get calciumAnomaly => 'Calcio Anomalo';
@@ -1464,7 +1464,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get magnesiumAnomaly => 'Magnesio Anomalo';
 
   @override
-  String get khOutOfRange => 'KH Fuori Range';
+  String get khOutOfRange => 'KH Hors Limites';
 
   @override
   String get nitratesHigh => 'Nitrati Elevati';
@@ -1473,25 +1473,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get phosphatesHigh => 'Fosfati Elevati';
 
   @override
-  String get temperatureTooHigh => 'La temperatura è troppo alta.';
+  String get temperatureTooHigh => 'La température est trop élevée.';
 
   @override
-  String get phTooHigh => 'Il pH è troppo alto.';
+  String get phTooHigh => 'Le pH est trop élevé.';
 
   @override
-  String get salinityTooHigh => 'La salinità è troppo alta.';
+  String get salinityTooHigh => 'La salinité est trop élevée.';
 
   @override
-  String get orpTooHigh => 'L\'ORP è troppo alto.';
+  String get orpTooHigh => 'L\'ORP est trop élevé.';
 
   @override
-  String get calciumTooHigh => 'Il calcio è troppo alto.';
+  String get calciumTooHigh => 'Le calcium est trop élevé.';
 
   @override
-  String get magnesiumTooHigh => 'Il magnesio è troppo alto.';
+  String get magnesiumTooHigh => 'Le magnésium est trop élevé.';
 
   @override
-  String get khTooHigh => 'Il KH è troppo alto.';
+  String get khTooHigh => 'Le KH est trop élevé.';
 
   @override
   String get nitratesTooHigh => 'I nitrati sono troppo alti.';
@@ -1500,25 +1500,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get phosphatesTooHigh => 'I fosfati sono troppo alti.';
 
   @override
-  String get temperatureTooLow => 'La temperatura è troppo bassa.';
+  String get temperatureTooLow => 'La température est trop basse.';
 
   @override
-  String get phTooLow => 'Il pH è troppo basso.';
+  String get phTooLow => 'Le pH est trop bas.';
 
   @override
-  String get salinityTooLow => 'La salinità è troppo bassa.';
+  String get salinityTooLow => 'La salinité est trop basse.';
 
   @override
-  String get orpTooLow => 'L\'ORP è troppo basso.';
+  String get orpTooLow => 'L\'ORP est trop bas.';
 
   @override
-  String get calciumTooLow => 'Il calcio è troppo basso.';
+  String get calciumTooLow => 'Le calcium est trop bas.';
 
   @override
-  String get magnesiumTooLow => 'Il magnesio è troppo basso.';
+  String get magnesiumTooLow => 'Le magnésium est trop bas.';
 
   @override
-  String get khTooLow => 'Il KH è troppo basso.';
+  String get khTooLow => 'Le KH est trop bas.';
 
   @override
   String get nitratesTooLow => 'I nitrati sono troppo bassi.';
@@ -1899,4 +1899,82 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get createdOn => 'Créé le';
+
+  @override
+  String get daysLabel => 'jours';
+
+  @override
+  String get temperatureParam => 'Température';
+
+  @override
+  String get phParam => 'pH';
+
+  @override
+  String get salinityParam => 'Salinité';
+
+  @override
+  String get orpParam => 'ORP';
+
+  @override
+  String get calciumParam => 'Calcium';
+
+  @override
+  String get magnesiumParam => 'Magnésium';
+
+  @override
+  String get khParam => 'KH';
+
+  @override
+  String get nitrateParam => 'Nitrates';
+
+  @override
+  String get phosphateParam => 'Phosphates';
+
+  @override
+  String get nowLabel => 'Maintenant';
+
+  @override
+  String minutesAgo(String minutes) {
+    return 'Il y a ${minutes}m';
+  }
+
+  @override
+  String hoursAgo(String hours) {
+    return 'Il y a ${hours}h';
+  }
+
+  @override
+  String daysAgo(String days) {
+    return 'Il y a ${days}j';
+  }
+
+  @override
+  String get temperatureAnomalous => 'Température Anormale';
+
+  @override
+  String get salinityAnomalous => 'Salinité Anormale';
+
+  @override
+  String get calciumAnomalous => 'Calcium Anormal';
+
+  @override
+  String get magnesiumAnomalous => 'Magnésium Anormal';
+
+  @override
+  String get nitrateHigh => 'Nitrates Élevés';
+
+  @override
+  String get phosphateHigh => 'Phosphates Élevés';
+
+  @override
+  String get nitrateTooHigh => 'Les nitrates sont trop élevés.';
+
+  @override
+  String get nitrateTooLow => 'Les nitrates sont trop bas.';
+
+  @override
+  String get phosphateTooHigh => 'Les phosphates sont trop élevés.';
+
+  @override
+  String get phosphateTooLow => 'Les phosphates sont trop bas.';
 }
