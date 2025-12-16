@@ -13,6 +13,7 @@ import 'add_fish_dialog.dart';
 import 'add_coral_dialog.dart';
 import 'coral_details_dialog.dart';
 import 'fish_details_dialog.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class InhabitantsPage extends ConsumerStatefulWidget {
   final int? aquariumId;
@@ -111,15 +112,16 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
   }
 
   Future<void> _refreshData() async {
+    final l10n = AppLocalizations.of(context)!;
     await _loadData();
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Row(
+          content: Row(
             children: [
-              FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
-              SizedBox(width: 12),
-              Text('Abitanti aggiornati!'),
+              const FaIcon(FontAwesomeIcons.circleCheck, color: Colors.white),
+              const SizedBox(width: 12),
+              Text(l10n.inhabitantsUpdated),
             ],
           ),
           backgroundColor: const Color(0xFF34d399),

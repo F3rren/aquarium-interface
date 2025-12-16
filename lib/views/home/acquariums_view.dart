@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/widgets/animated_value.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 import 'package:acquariumfe/widgets/skeleton_loader.dart';
 import 'package:acquariumfe/widgets/empty_state.dart';
 import 'package:acquariumfe/services/parameter_service.dart';
@@ -102,7 +103,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                     onPressed: () =>
                         ref.read(aquariumsProvider.notifier).refresh(),
                     icon: const FaIcon(FontAwesomeIcons.arrowsRotate, size: 16),
-                    label: const Text('Riprova'),
+                    label: Text(AppLocalizations.of(context)!.retry),
                   ),
                 ],
               ),

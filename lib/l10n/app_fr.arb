@@ -595,5 +595,72 @@
   "aquariumManagement": "Gestion de l'Aquarium",
   "selectToDelete": "Sélectionnez un aquarium à supprimer",
   "selectAquarium": "Sélectionner un Aquarium",
-  "chooseAquariumToEdit": "Choisissez un aquarium à modifier"
+  "chooseAquariumToEdit": "Choisissez un aquarium \u00e0 modifier",
+  
+  "retry": "R\u00e9essayer",
+  "close": "Fermer",
+  "clearAll": "Tout effacer",
+  "removeDateFilter": "Supprimer le filtre de date",
+  "fromDensityToSalinity": "De la Densit\u00e9 (g/cm\u00b3) \u00e0 la Salinit\u00e9 (ppt)",
+  "fromSalinityToDensity": "De la Salinit\u00e9 (ppt) \u00e0 la Densit\u00e9 (g/cm\u00b3)",
+  "fishOnly": "Poissons Seulement",
+  "fishAndSoftCorals": "Poissons + Coraux Mous (LPS)",
+  "spsCorals": "Coraux SPS",
+  "fillAllRequiredFields": "Remplissez tous les champs obligatoires",
+  "invalidSize": "Taille non valide",
+  "invalidQuantity": "Quantit\u00e9 non valide",
+  "databaseLoadError": "Erreur de chargement de la base de donn\u00e9es: {error}",
+  "@databaseLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "inhabitantsUpdated": "Habitants mis \u00e0 jour!",
+  "delete": "Supprimer",
+  "clearFilters": "Effacer les filtres",
+  "aquariumIdNotAvailable": "Erreur: ID de l'aquarium non disponible",
+  "newTask": "Nouvelle T\u00e2che",
+  "daily": "Quotidien",
+  "weekly": "Hebdomadaire",
+  "monthly": "Mensuel",
+  "custom": "Personnalis\u00e9",
+  "low": "Bas",
+  "medium": "Moyen",
+  "high": "\u00c9lev\u00e9",
+  "dueDate": "Date d'\u00e9ch\u00e9ance",
+  "add": "Ajouter",
+  "taskAddedSuccess": "T\u00e2che ajout\u00e9e avec succ\u00e8s",
+  "editTask": "Modifier la T\u00e2che",
+  "taskEditedSuccess": "T\u00e2che modifi\u00e9e avec succ\u00e8s",
+  "completeTask": "Terminer la T\u00e2che",
+  "markAsCompleted": "Voulez-vous marquer \"{title}\" comme termin\u00e9e?",
+  "@markAsCompleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "complete": "Terminer",
+  "taskCompleted": "{title} termin\u00e9e!",
+  "@taskCompleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteTask": "Supprimer la T\u00e2che",
+  "confirmDeleteTask": "Voulez-vous supprimer \"{title}\"?",
+  "@confirmDeleteTask": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "taskDeleted": "T\u00e2che supprim\u00e9e",
+  "language": "Langue"
 }

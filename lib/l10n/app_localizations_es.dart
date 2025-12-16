@@ -329,7 +329,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filtersAndSearch => 'Filtros y Búsqueda';
 
   @override
-  String get clearAll => 'Limpiar todo';
+  String get clearAll => 'Borrar todo';
 
   @override
   String get searchByName => 'Buscar por nombre';
@@ -729,7 +729,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get fishOnly => 'Solo Peces';
 
   @override
-  String get fishAndSoftCorals => 'Peces + Corales Blandos';
+  String get fishAndSoftCorals => 'Peces + Corales Blandos (LPS)';
 
   @override
   String get spsCorals => 'Corales SPS';
@@ -1220,4 +1220,73 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get resetButton => 'Restablecer';
+
+  @override
+  String get fillAllRequiredFields => 'Completa todos los campos obligatorios';
+
+  @override
+  String get inhabitantsUpdated => '¡Habitantes actualizados!';
+
+  @override
+  String get clearFilters => 'Borrar filtros';
+
+  @override
+  String get aquariumIdNotAvailable => 'Error: ID del acuario no disponible';
+
+  @override
+  String get daily => 'Diario';
+
+  @override
+  String get weekly => 'Semanal';
+
+  @override
+  String get monthly => 'Mensual';
+
+  @override
+  String get custom => 'Personalizado';
+
+  @override
+  String get medium => 'Media';
+
+  @override
+  String get dueDate => 'Fecha de vencimiento';
+
+  @override
+  String get add => 'Agregar';
+
+  @override
+  String get taskAddedSuccess => 'Tarea agregada con éxito';
+
+  @override
+  String get editTask => 'Editar Tarea';
+
+  @override
+  String get taskEditedSuccess => 'Tarea editada con éxito';
+
+  @override
+  String get completeTask => 'Completar Tarea';
+
+  @override
+  String markAsCompleted(String title) {
+    return '¿Quieres marcar \"$title\" como completada?';
+  }
+
+  @override
+  String get complete => 'Completar';
+
+  @override
+  String taskCompleted(String title) {
+    return '¡$title completada!';
+  }
+
+  @override
+  String get deleteTask => 'Eliminar Tarea';
+
+  @override
+  String confirmDeleteTask(String title) {
+    return '¿Quieres eliminar \"$title\"?';
+  }
+
+  @override
+  String get taskDeleted => 'Tarea eliminada';
 }

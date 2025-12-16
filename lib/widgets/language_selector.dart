@@ -132,7 +132,7 @@ class LanguageSettingTile extends ConsumerWidget {
 
     return ListTile(
       leading: const FaIcon(FontAwesomeIcons.language),
-      title: const Text('Lingua'),
+      title: Text(AppLocalizations.of(context)!.language),
       subtitle: Text(languageName),
       trailing: const Icon(Icons.chevron_right),
       onTap: () => LanguageDialog.show(context),

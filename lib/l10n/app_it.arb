@@ -688,5 +688,72 @@
   "aquariumManagement": "Gestione Acquari",
   "selectToDelete": "Seleziona un acquario da eliminare",
   "selectAquarium": "Seleziona Acquario",
-  "chooseAquariumToEdit": "Scegli un acquario da modificare"
+  "chooseAquariumToEdit": "Scegli un acquario da modificare",
+  
+  "retry": "Riprova",
+  "close": "Chiudi",
+  "clearAll": "Cancella tutto",
+  "removeDateFilter": "Rimuovi filtro data",
+  "fromDensityToSalinity": "Da Densit\u00e0 (g/cm\u00b3) a Salinit\u00e0 (ppt)",
+  "fromSalinityToDensity": "Da Salinit\u00e0 (ppt) a Densit\u00e0 (g/cm\u00b3)",
+  "fishOnly": "Solo Pesci",
+  "fishAndSoftCorals": "Pesci + Coralli Molli (LPS)",
+  "spsCorals": "Coralli SPS",
+  "fillAllRequiredFields": "Compila tutti i campi obbligatori",
+  "invalidSize": "Dimensione non valida",
+  "invalidQuantity": "Quantit\u00e0 non valida",
+  "databaseLoadError": "Errore caricamento database: {error}",
+  "@databaseLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "inhabitantsUpdated": "Abitanti aggiornati!",
+  "delete": "Elimina",
+  "clearFilters": "Cancella filtri",
+  "aquariumIdNotAvailable": "Errore: ID acquario non disponibile",
+  "newTask": "Nuovo Task",
+  "daily": "Giornaliero",
+  "weekly": "Settimanale",
+  "monthly": "Mensile",
+  "custom": "Personalizzato",
+  "low": "Bassa",
+  "medium": "Media",
+  "high": "Alta",
+  "dueDate": "Data scadenza",
+  "add": "Aggiungi",
+  "taskAddedSuccess": "Task aggiunto con successo",
+  "editTask": "Modifica Task",
+  "taskEditedSuccess": "Task modificato con successo",
+  "completeTask": "Completa Task",
+  "markAsCompleted": "Vuoi segnare \"{title}\" come completato?",
+  "@markAsCompleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "complete": "Completa",
+  "taskCompleted": "{title} completato!",
+  "@taskCompleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteTask": "Elimina Task",
+  "confirmDeleteTask": "Vuoi eliminare \"{title}\"?",
+  "@confirmDeleteTask": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "taskDeleted": "Task eliminato",
+  "language": "Lingua"
 }

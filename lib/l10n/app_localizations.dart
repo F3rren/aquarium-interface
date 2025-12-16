@@ -1463,7 +1463,7 @@ abstract class AppLocalizations {
   /// No description provided for @fishAndSoftCorals.
   ///
   /// In it, this message translates to:
-  /// **'Pesci + Coralli Molli'**
+  /// **'Pesci + Coralli Molli (LPS)'**
   String get fishAndSoftCorals;
 
   /// No description provided for @spsCorals.
@@ -2353,6 +2353,132 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Ripristina'**
   String get resetButton;
+
+  /// No description provided for @fillAllRequiredFields.
+  ///
+  /// In it, this message translates to:
+  /// **'Compila tutti i campi obbligatori'**
+  String get fillAllRequiredFields;
+
+  /// No description provided for @inhabitantsUpdated.
+  ///
+  /// In it, this message translates to:
+  /// **'Abitanti aggiornati!'**
+  String get inhabitantsUpdated;
+
+  /// No description provided for @clearFilters.
+  ///
+  /// In it, this message translates to:
+  /// **'Cancella filtri'**
+  String get clearFilters;
+
+  /// No description provided for @aquariumIdNotAvailable.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore: ID acquario non disponibile'**
+  String get aquariumIdNotAvailable;
+
+  /// No description provided for @daily.
+  ///
+  /// In it, this message translates to:
+  /// **'Giornaliero'**
+  String get daily;
+
+  /// No description provided for @weekly.
+  ///
+  /// In it, this message translates to:
+  /// **'Settimanale'**
+  String get weekly;
+
+  /// No description provided for @monthly.
+  ///
+  /// In it, this message translates to:
+  /// **'Mensile'**
+  String get monthly;
+
+  /// No description provided for @custom.
+  ///
+  /// In it, this message translates to:
+  /// **'Personalizzato'**
+  String get custom;
+
+  /// No description provided for @medium.
+  ///
+  /// In it, this message translates to:
+  /// **'Media'**
+  String get medium;
+
+  /// No description provided for @dueDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Data scadenza'**
+  String get dueDate;
+
+  /// No description provided for @add.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi'**
+  String get add;
+
+  /// No description provided for @taskAddedSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Task aggiunto con successo'**
+  String get taskAddedSuccess;
+
+  /// No description provided for @editTask.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica Task'**
+  String get editTask;
+
+  /// No description provided for @taskEditedSuccess.
+  ///
+  /// In it, this message translates to:
+  /// **'Task modificato con successo'**
+  String get taskEditedSuccess;
+
+  /// No description provided for @completeTask.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa Task'**
+  String get completeTask;
+
+  /// No description provided for @markAsCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi segnare \"{title}\" come completato?'**
+  String markAsCompleted(String title);
+
+  /// No description provided for @complete.
+  ///
+  /// In it, this message translates to:
+  /// **'Completa'**
+  String get complete;
+
+  /// No description provided for @taskCompleted.
+  ///
+  /// In it, this message translates to:
+  /// **'{title} completato!'**
+  String taskCompleted(String title);
+
+  /// No description provided for @deleteTask.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Task'**
+  String get deleteTask;
+
+  /// No description provided for @confirmDeleteTask.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi eliminare \"{title}\"?'**
+  String confirmDeleteTask(String title);
+
+  /// No description provided for @taskDeleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Task eliminato'**
+  String get taskDeleted;
 }
 
 class _AppLocalizationsDelegate

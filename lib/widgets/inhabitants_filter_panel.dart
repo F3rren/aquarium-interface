@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../models/inhabitants_filter.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class InhabitantsFilterPanel extends StatefulWidget {
   final InhabitantsFilter currentFilter;
@@ -74,6 +75,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Container(
@@ -119,7 +121,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                       _updateFilter(_filter.clearAll());
                     },
                     icon: const FaIcon(FontAwesomeIcons.xmark, size: 14),
-                    label: const Text('Cancella tutto'),
+                    label: Text(l10n.clearAll),
                     style: TextButton.styleFrom(
                       foregroundColor: theme.colorScheme.error,
                     ),
@@ -337,7 +339,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                           _updateFilter(_filter.copyWith(clearDate: true));
                         },
                         icon: const FaIcon(FontAwesomeIcons.xmark, size: 12),
-                        label: const Text('Rimuovi filtro data'),
+                        label: Text(l10n.removeDateFilter),
                         style: TextButton.styleFrom(
                           foregroundColor: theme.colorScheme.error,
                         ),

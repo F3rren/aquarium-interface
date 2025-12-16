@@ -727,7 +727,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get fishOnly => 'Solo Pesci';
 
   @override
-  String get fishAndSoftCorals => 'Pesci + Coralli Molli';
+  String get fishAndSoftCorals => 'Pesci + Coralli Molli (LPS)';
 
   @override
   String get spsCorals => 'Coralli SPS';
@@ -1217,4 +1217,73 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get resetButton => 'Ripristina';
+
+  @override
+  String get fillAllRequiredFields => 'Compila tutti i campi obbligatori';
+
+  @override
+  String get inhabitantsUpdated => 'Abitanti aggiornati!';
+
+  @override
+  String get clearFilters => 'Cancella filtri';
+
+  @override
+  String get aquariumIdNotAvailable => 'Errore: ID acquario non disponibile';
+
+  @override
+  String get daily => 'Giornaliero';
+
+  @override
+  String get weekly => 'Settimanale';
+
+  @override
+  String get monthly => 'Mensile';
+
+  @override
+  String get custom => 'Personalizzato';
+
+  @override
+  String get medium => 'Media';
+
+  @override
+  String get dueDate => 'Data scadenza';
+
+  @override
+  String get add => 'Aggiungi';
+
+  @override
+  String get taskAddedSuccess => 'Task aggiunto con successo';
+
+  @override
+  String get editTask => 'Modifica Task';
+
+  @override
+  String get taskEditedSuccess => 'Task modificato con successo';
+
+  @override
+  String get completeTask => 'Completa Task';
+
+  @override
+  String markAsCompleted(String title) {
+    return 'Vuoi segnare \"$title\" come completato?';
+  }
+
+  @override
+  String get complete => 'Completa';
+
+  @override
+  String taskCompleted(String title) {
+    return '$title completato!';
+  }
+
+  @override
+  String get deleteTask => 'Elimina Task';
+
+  @override
+  String confirmDeleteTask(String title) {
+    return 'Vuoi eliminare \"$title\"?';
+  }
+
+  @override
+  String get taskDeleted => 'Task eliminato';
 }

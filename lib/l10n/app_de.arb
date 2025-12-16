@@ -595,5 +595,72 @@
   "aquariumManagement": "Aquarienverwaltung",
   "selectToDelete": "Wählen Sie ein Aquarium zum Löschen aus",
   "selectAquarium": "Aquarium Auswählen",
-  "chooseAquariumToEdit": "Wählen Sie ein Aquarium zum Bearbeiten"
+  "chooseAquariumToEdit": "W\u00e4hlen Sie ein Aquarium zum Bearbeiten",
+  
+  "retry": "Wiederholen",
+  "close": "Schlie\u00dfen",
+  "clearAll": "Alles l\u00f6schen",
+  "removeDateFilter": "Datumsfilter entfernen",
+  "fromDensityToSalinity": "Von Dichte (g/cm\u00b3) zu Salzgehalt (ppt)",
+  "fromSalinityToDensity": "Von Salzgehalt (ppt) zu Dichte (g/cm\u00b3)",
+  "fishOnly": "Nur Fische",
+  "fishAndSoftCorals": "Fische + Weichkorallen (LPS)",
+  "spsCorals": "SPS-Korallen",
+  "fillAllRequiredFields": "F\u00fcllen Sie alle Pflichtfelder aus",
+  "invalidSize": "Ung\u00fcltige Gr\u00f6\u00dfe",
+  "invalidQuantity": "Ung\u00fcltige Menge",
+  "databaseLoadError": "Fehler beim Laden der Datenbank: {error}",
+  "@databaseLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "inhabitantsUpdated": "Bewohner aktualisiert!",
+  "delete": "L\u00f6schen",
+  "clearFilters": "Filter l\u00f6schen",
+  "aquariumIdNotAvailable": "Fehler: Aquarium-ID nicht verf\u00fcgbar",
+  "newTask": "Neue Aufgabe",
+  "daily": "T\u00e4glich",
+  "weekly": "W\u00f6chentlich",
+  "monthly": "Monatlich",
+  "custom": "Benutzerdefiniert",
+  "low": "Niedrig",
+  "medium": "Mittel",
+  "high": "Hoch",
+  "dueDate": "F\u00e4lligkeitsdatum",
+  "add": "Hinzuf\u00fcgen",
+  "taskAddedSuccess": "Aufgabe erfolgreich hinzugef\u00fcgt",
+  "editTask": "Aufgabe Bearbeiten",
+  "taskEditedSuccess": "Aufgabe erfolgreich bearbeitet",
+  "completeTask": "Aufgabe Abschlie\u00dfen",
+  "markAsCompleted": "M\u00f6chten Sie \"{title}\" als abgeschlossen markieren?",
+  "@markAsCompleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "complete": "Abschlie\u00dfen",
+  "taskCompleted": "{title} abgeschlossen!",
+  "@taskCompleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteTask": "Aufgabe L\u00f6schen",
+  "confirmDeleteTask": "M\u00f6chten Sie \"{title}\" l\u00f6schen?",
+  "@confirmDeleteTask": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "taskDeleted": "Aufgabe gel\u00f6scht",
+  "language": "Sprache"
 }
