@@ -37,19 +37,23 @@ class CoralSpecies {
   factory CoralSpecies.fromJson(Map<String, dynamic> json) {
     return CoralSpecies(
       id: json['id'].toString(),
-      commonName: json['commonName'] as String,
-      scientificName: json['scientificName'] as String,
-      type: json['type'] as String,
-      minTankSize: json['minTankSize'] as int,
-      maxSize: json['maxSize'] as int,
-      difficulty: json['difficulty'] as String,
-      lightRequirement: json['lightRequirement'] as String,
-      flowRequirement: json['flowRequirement'] as String,
-      placement: json['placement'] as String,
-      aggressive: json['aggressive'] as bool,
-      feeding: json['feeding'] as String,
+      commonName: json['commonName'] as String? ?? '',
+      scientificName: json['scientificName'] as String? ?? '',
+      type: json['type'] as String? ?? '',
+      minTankSize: (json['minTankSize'] is int) 
+          ? json['minTankSize'] as int 
+          : int.tryParse(json['minTankSize'].toString()) ?? 0,
+      maxSize: (json['maxSize'] is int) 
+          ? json['maxSize'] as int 
+          : int.tryParse(json['maxSize'].toString()) ?? 0,
+      difficulty: json['difficulty'] as String? ?? '',
+      lightRequirement: json['lightRequirement'] as String? ?? '',
+      flowRequirement: json['flowRequirement'] as String? ?? '',
+      placement: json['placement'] as String? ?? '',
+      aggressive: json['aggressive'] == true || json['aggressive'] == 'true',
+      feeding: json['feeding'] as String? ?? '',
       imageUrl: json['imageUrl'] as String?,
-      description: json['description'] as String,
+      description: json['description'] as String? ?? '',
     );
   }
 

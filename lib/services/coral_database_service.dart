@@ -25,20 +25,35 @@ class CoralDatabaseService {
       if (response is List) {
         coralList = response;
       } else if (response is Map<String, dynamic>) {
-        var dataField = response['data'] ?? response['corals'] ?? [];
-        // Se data contiene un array annidato, prendi il primo elemento
-        if (dataField is List && dataField.isNotEmpty && dataField[0] is List) {
-          coralList = dataField[0];
+        // Controlla prima 'data'
+        if (response.containsKey('data')) {
+          var dataField = response['data'];
+          // Se data è già una lista, usala direttamente
+          if (dataField is List) {
+            coralList = dataField;
+          } else {
+            coralList = [];
+          }
+        } else if (response.containsKey('corals')) {
+          // Altrimenti prova 'corals'
+          coralList = response['corals'] as List? ?? [];
         } else {
-          coralList = dataField;
+          coralList = [];
         }
       } else {
         coralList = [];
       }
 
-      _cachedCorals = coralList
-          .map((json) => CoralSpecies.fromJson(json as Map<String, dynamic>))
-          .toList();
+      // Parse con gestione errori per ogni elemento
+      _cachedCorals = [];
+      for (var i = 0; i < coralList.length; i++) {
+        try {
+          final coral = CoralSpecies.fromJson(coralList[i] as Map<String, dynamic>);
+          _cachedCorals!.add(coral);
+        } catch (e) {
+        }
+      }
+      
       return _cachedCorals!;
     } catch (e) {
       return [];
@@ -70,6 +85,38 @@ class CoralDatabaseService {
     return allCorals
         .where((coral) => coral.type.toLowerCase() == type.toLowerCase())
         .toList();
+  }
+
+  /// Filtra coralli per tipo di acqua (marina)
+  /// I coralli sono tutti marini, quindi ritorna tutti se waterType è marino/salata
+  Future<List<CoralSpecies>> getCoralsByWaterType(String waterType) async {
+    final normalizedWaterType = _normalizeWaterType(waterType);
+    
+    // I coralli sono solo marini/salati
+    if (normalizedWaterType == 'salata') {
+      return await getAllCorals();
+    }
+    
+    // Se richiede acqua dolce, ritorna lista vuota
+    return [];
+  }
+
+  /// Normalizza il tipo di acqua per gestire diverse convenzioni di naming
+  String _normalizeWaterType(String waterType) {
+    final normalized = waterType.toLowerCase().trim();
+    
+    // Supporta sia termini italiani che inglesi
+    if (normalized.contains('marin') || 
+        normalized.contains('salt') || 
+        normalized.contains('reef') || 
+        normalized.contains('salat')) {
+      return 'salata';
+    } else if (normalized.contains('dolce') || 
+                normalized.contains('fresh')) {
+      return 'dolce';
+    }
+    
+    return normalized;
   }
 
   /// Filtra coralli per requisiti di luce
