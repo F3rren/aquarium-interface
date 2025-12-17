@@ -561,30 +561,16 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                     child: TabBarView(
                       controller: _tabController,
                       children: isDolce
-                          ? [_buildFishTab(bottomPadding)]
+                          ? [_buildFishTabWithFAB(bottomPadding)]
                           : [
-                              _buildFishTab(bottomPadding),
-                              _buildCoralsTab(bottomPadding),
+                              _buildFishTabWithFAB(bottomPadding),
+                              _buildCoralsTabWithFAB(bottomPadding),
                             ],
                     ),
                   ),
                 ],
               ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Se acquario dolce, mostra sempre dialog pesci (no coralli)
-          final isDolce =
-              (_aquariumWaterType ?? 'Marino').toLowerCase() == 'dolce';
-          if (isDolce || _tabController.index == 0) {
-            _showAddFishDialog();
-          } else {
-            _showAddCoralDialog();
-          }
-        },
-        backgroundColor: theme.colorScheme.primary,
-        child: const FaIcon(FontAwesomeIcons.plus),
-      ),
     );
   }
 
@@ -607,23 +593,29 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     if (_fishList.isEmpty) {
       return Center(
         child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            top: 8,
+            bottom: bottomPadding + 80,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FaIcon(
                 FontAwesomeIcons.fish,
-                size: 64,
+                size: 48,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
-              const SizedBox(height: 16),
-              Text(l10n.noFishAdded,
+              const SizedBox(height: 12),
+              Text(
+                l10n.noFishAdded,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 16,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(l10n.tapToAddFirstFish,
+              const SizedBox(height: 6),
+              Text(
+                l10n.tapToAddFirstFish,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -826,23 +818,29 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     if (_coralsList.isEmpty) {
       return Center(
         child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            top: 8,
+            bottom: bottomPadding + 80,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FaIcon(
                 FontAwesomeIcons.seedling,
-                size: 64,
+                size: 48,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
-              const SizedBox(height: 16),
-              Text(l10n.noCoralAdded,
+              const SizedBox(height: 12),
+              Text(
+                l10n.noCoralAdded,
                 style: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 16,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(l10n.tapToAddFirstCoral,
+              const SizedBox(height: 6),
+              Text(
+                l10n.tapToAddFirstCoral,
                 style: TextStyle(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -1058,6 +1056,48 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
           ),
         );
       },
+    );
+  }
+
+  // Wrapper per tab pesci con FAB posizionato
+  Widget _buildFishTabWithFAB(double bottomPadding) {
+    final l10n = AppLocalizations.of(context)!;
+    return Stack(
+      children: [
+        _buildFishTab(bottomPadding),
+        Positioned(
+          right: 16,
+          bottom: bottomPadding + 16,
+          child: FloatingActionButton.extended(
+            onPressed: _showAddFishDialog,
+            backgroundColor: const Color(0xFF60a5fa),
+            foregroundColor: Colors.white,
+            icon: const FaIcon(FontAwesomeIcons.plus),
+            label: Text(l10n.addFish),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Wrapper per tab coralli con FAB posizionato
+  Widget _buildCoralsTabWithFAB(double bottomPadding) {
+    final l10n = AppLocalizations.of(context)!;
+    return Stack(
+      children: [
+        _buildCoralsTab(bottomPadding),
+        Positioned(
+          right: 16,
+          bottom: bottomPadding + 16,
+          child: FloatingActionButton.extended(
+            onPressed: _showAddCoralDialog,
+            backgroundColor: const Color(0xFF34d399),
+            foregroundColor: Colors.white,
+            icon: const FaIcon(FontAwesomeIcons.plus),
+            label: Text(l10n.addCoral),
+          ),
+        ),
+      ],
     );
   }
 }

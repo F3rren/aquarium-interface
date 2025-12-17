@@ -56,21 +56,28 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
       _selectedPlacement = _mapPlacementToItalian(widget.coral!.placement);
     }
 
-    _loadCoralDatabase();
+    // Carica database dopo il primo frame per evitare errori con context
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadCoralDatabase();
+    });
   }
 
   Future<void> _loadCoralDatabase() async {
-    final l10n = AppLocalizations.of(context)!;
     try {
       final corals = await _coralDatabaseService.getAllCorals();
-      setState(() {
-        _coralDatabase = corals;
-      });
+      if (mounted) {
+        setState(() {
+          _coralDatabase = corals;
+        });
+      }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.databaseLoadError(e.toString()))),
-        );
+        final l10n = AppLocalizations.of(context);
+        if (l10n != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.databaseLoadError(e.toString()))),
+          );
+        }
       }
     }
   }
