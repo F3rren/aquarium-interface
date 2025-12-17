@@ -1040,5 +1040,78 @@
   "nitrateTooHigh": "Nitrates are too high.",
   "nitrateTooLow": "Nitrates are too low.",
   "phosphateTooHigh": "Phosphates are too high.",
-  "phosphateTooLow": "Phosphates are too low."
+  "phosphateTooLow": "Phosphates are too low.",
+
+  "products": "Products",
+  "product": "Product",
+  "addProduct": "Add Product",
+  "editProduct": "Edit Product",
+  "deleteProduct": "Delete Product",
+  "productName": "Product Name",
+  "productCategory": "Category",
+  "brand": "Brand",
+  "quantity": "Quantity",
+  "unit": "Unit",
+  "cost": "Cost",
+  "purchaseDate": "Purchase Date",
+  "expiryDate": "Expiry Date",
+  "notes": "Notes",
+  "favorite": "Favorite",
+  "usageFrequency": "Usage Frequency",
+  "lastUsed": "Last Used",
+  "recordUsage": "Record Usage",
+  "quantityUsed": "Quantity Used",
+  "usageRecorded": "Usage recorded",
+  
+  "categoryBacteria": "Bacteria",
+  "categoryFood": "Food",
+  "categoryTest": "Tests",
+  "categorySupplement": "Supplements",
+  "categoryWaterTreatment": "Water Treatment",
+  "categoryEquipment": "Equipment",
+  "categoryMedicine": "Medicine",
+  "categoryOther": "Other",
+  
+  "allCategories": "All Categories",
+  "favoritesOnly": "Favorites Only",
+  "totalProducts": "Total Products",
+  "totalCost": "Total Cost",
+  "alerts": "Alerts",
+  "noProducts": "No Products",
+  "noProductsDescription": "Add your first product to start managing your inventory",
+  
+  "expired": "Expired",
+  "expiringSoon": "Expiring Soon",
+  "lowStock": "Low Stock",
+  "shouldUseAgain": "Should Use",
+  "expiresIn": "Expires in {days} days",
+  "@expiresIn": {
+    "placeholders": {
+      "days": {"type": "String"}
+    }
+  },
+  "expiresToday": "Expires today",
+  "usedDaysAgo": "Used {days} days ago",
+  "@usedDaysAgo": {
+    "placeholders": {
+      "days": {"type": "String"}
+    }
+  },
+  
+  "confirmDeleteProduct": "Confirm deletion",
+  "confirmDeleteProductMessage": "Do you want to delete \"{name}\"?",
+  "@confirmDeleteProductMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "productAdded": "Product added",
+  "productUpdated": "Product updated",
+  "productDeleted": "Product deleted",
+  "errorLoadingProducts": "Error loading products: {error}",
+  "@errorLoadingProducts": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  }
 }
