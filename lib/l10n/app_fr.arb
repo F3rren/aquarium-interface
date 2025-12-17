@@ -927,5 +927,78 @@
   "nitrateTooHigh": "Les nitrates sont trop élevés.",
   "nitrateTooLow": "Les nitrates sont trop bas.",
   "phosphateTooHigh": "Les phosphates sont trop élevés.",
-  "phosphateTooLow": "Les phosphates sont trop bas."
+  "phosphateTooLow": "Les phosphates sont trop bas.",
+
+  "products": "Produits",
+  "product": "Produit",
+  "addProduct": "Ajouter un Produit",
+  "editProduct": "Modifier le Produit",
+  "deleteProduct": "Supprimer le Produit",
+  "productName": "Nom du Produit",
+  "productCategory": "Catégorie",
+  "brand": "Marque",
+  "quantity": "Quantité",
+  "unit": "Unité",
+  "cost": "Coût",
+  "purchaseDate": "Date d'Achat",
+  "expiryDate": "Date d'Expiration",
+  "notes": "Notes",
+  "favorite": "Favori",
+  "usageFrequency": "Fréquence d'Utilisation",
+  "lastUsed": "Dernière Utilisation",
+  "recordUsage": "Enregistrer l'Utilisation",
+  "quantityUsed": "Quantité Utilisée",
+  "usageRecorded": "Utilisation enregistrée",
+  
+  "categoryBacteria": "Bactéries",
+  "categoryFood": "Nourriture",
+  "categoryTest": "Tests",
+  "categorySupplement": "Suppléments",
+  "categoryWaterTreatment": "Traitement de l'Eau",
+  "categoryEquipment": "Équipement",
+  "categoryMedicine": "Médicaments",
+  "categoryOther": "Autre",
+  
+  "allCategories": "Toutes les Catégories",
+  "favoritesOnly": "Favoris Seulement",
+  "totalProducts": "Produits Totaux",
+  "totalCost": "Coût Total",
+  "alerts": "Alertes",
+  "noProducts": "Aucun Produit",
+  "noProductsDescription": "Ajoutez votre premier produit pour commencer à gérer votre inventaire",
+  
+  "expired": "Expiré",
+  "expiringSoon": "Expire Bientôt",
+  "lowStock": "Stock Faible",
+  "shouldUseAgain": "À Utiliser",
+  "expiresIn": "Expire dans {days} jours",
+  "@expiresIn": {
+    "placeholders": {
+      "days": {"type": "String"}
+    }
+  },
+  "expiresToday": "Expire aujourd'hui",
+  "usedDaysAgo": "Utilisé il y a {days} jours",
+  "@usedDaysAgo": {
+    "placeholders": {
+      "days": {"type": "String"}
+    }
+  },
+  
+  "confirmDeleteProduct": "Confirmer la suppression",
+  "confirmDeleteProductMessage": "Voulez-vous supprimer \"{name}\" ?",
+  "@confirmDeleteProductMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "productAdded": "Produit ajouté",
+  "productUpdated": "Produit mis à jour",
+  "productDeleted": "Produit supprimé",
+  "errorLoadingProducts": "Erreur lors du chargement des produits : {error}",
+  "@errorLoadingProducts": {
+    "placeholders": {
+      "error": {"type": "String"}
+    }
+  }
 }

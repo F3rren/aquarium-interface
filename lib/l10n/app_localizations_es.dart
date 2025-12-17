@@ -1969,4 +1969,148 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get phosphateTooLow => 'Los fosfatos son demasiado bajos.';
+
+  @override
+  String get products => 'Productos';
+
+  @override
+  String get product => 'Producto';
+
+  @override
+  String get addProduct => 'Agregar Producto';
+
+  @override
+  String get editProduct => 'Editar Producto';
+
+  @override
+  String get deleteProduct => 'Eliminar Producto';
+
+  @override
+  String get productName => 'Nombre del Producto';
+
+  @override
+  String get productCategory => 'Categoría';
+
+  @override
+  String get brand => 'Marca';
+
+  @override
+  String get unit => 'Unidad';
+
+  @override
+  String get cost => 'Costo';
+
+  @override
+  String get purchaseDate => 'Fecha de Compra';
+
+  @override
+  String get expiryDate => 'Fecha de Caducidad';
+
+  @override
+  String get favorite => 'Favorito';
+
+  @override
+  String get usageFrequency => 'Frecuencia de Uso';
+
+  @override
+  String get lastUsed => 'Último Uso';
+
+  @override
+  String get recordUsage => 'Registrar Uso';
+
+  @override
+  String get quantityUsed => 'Cantidad Utilizada';
+
+  @override
+  String get usageRecorded => 'Uso registrado';
+
+  @override
+  String get categoryBacteria => 'Bacterias';
+
+  @override
+  String get categoryFood => 'Comida';
+
+  @override
+  String get categoryTest => 'Pruebas';
+
+  @override
+  String get categorySupplement => 'Suplementos';
+
+  @override
+  String get categoryWaterTreatment => 'Tratamiento de Agua';
+
+  @override
+  String get categoryEquipment => 'Equipo';
+
+  @override
+  String get categoryMedicine => 'Medicamentos';
+
+  @override
+  String get categoryOther => 'Otro';
+
+  @override
+  String get allCategories => 'Todas las Categorías';
+
+  @override
+  String get favoritesOnly => 'Solo Favoritos';
+
+  @override
+  String get totalProducts => 'Productos Totales';
+
+  @override
+  String get totalCost => 'Costo Total';
+
+  @override
+  String get noProducts => 'Sin Productos';
+
+  @override
+  String get noProductsDescription =>
+      'Agrega tu primer producto para comenzar a gestionar tu inventario';
+
+  @override
+  String get expired => 'Caducado';
+
+  @override
+  String get expiringSoon => 'Por Caducar';
+
+  @override
+  String get lowStock => 'Stock Bajo';
+
+  @override
+  String get shouldUseAgain => 'Debe Usarse';
+
+  @override
+  String expiresIn(String days) {
+    return 'Caduca en $days días';
+  }
+
+  @override
+  String get expiresToday => 'Caduca hoy';
+
+  @override
+  String usedDaysAgo(String days) {
+    return 'Usado hace $days días';
+  }
+
+  @override
+  String get confirmDeleteProduct => 'Confirmar eliminación';
+
+  @override
+  String confirmDeleteProductMessage(String name) {
+    return '¿Quieres eliminar \"$name\"?';
+  }
+
+  @override
+  String get productAdded => 'Producto agregado';
+
+  @override
+  String get productUpdated => 'Producto actualizado';
+
+  @override
+  String get productDeleted => 'Producto eliminado';
+
+  @override
+  String errorLoadingProducts(String error) {
+    return 'Error al cargar productos: $error';
+  }
 }

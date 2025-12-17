@@ -161,7 +161,7 @@ abstract class AppLocalizations {
   /// No description provided for @alerts.
   ///
   /// In it, this message translates to:
-  /// **'Alert'**
+  /// **'Avvisi'**
   String get alerts;
 
   /// No description provided for @settings.
@@ -3697,6 +3697,276 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'I fosfati sono troppo bassi.'**
   String get phosphateTooLow;
+
+  /// No description provided for @products.
+  ///
+  /// In it, this message translates to:
+  /// **'Prodotti'**
+  String get products;
+
+  /// No description provided for @product.
+  ///
+  /// In it, this message translates to:
+  /// **'Prodotto'**
+  String get product;
+
+  /// No description provided for @addProduct.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi Prodotto'**
+  String get addProduct;
+
+  /// No description provided for @editProduct.
+  ///
+  /// In it, this message translates to:
+  /// **'Modifica Prodotto'**
+  String get editProduct;
+
+  /// No description provided for @deleteProduct.
+  ///
+  /// In it, this message translates to:
+  /// **'Elimina Prodotto'**
+  String get deleteProduct;
+
+  /// No description provided for @productName.
+  ///
+  /// In it, this message translates to:
+  /// **'Nome Prodotto'**
+  String get productName;
+
+  /// No description provided for @productCategory.
+  ///
+  /// In it, this message translates to:
+  /// **'Categoria'**
+  String get productCategory;
+
+  /// No description provided for @brand.
+  ///
+  /// In it, this message translates to:
+  /// **'Marca'**
+  String get brand;
+
+  /// No description provided for @unit.
+  ///
+  /// In it, this message translates to:
+  /// **'Unità'**
+  String get unit;
+
+  /// No description provided for @cost.
+  ///
+  /// In it, this message translates to:
+  /// **'Costo'**
+  String get cost;
+
+  /// No description provided for @purchaseDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Data Acquisto'**
+  String get purchaseDate;
+
+  /// No description provided for @expiryDate.
+  ///
+  /// In it, this message translates to:
+  /// **'Data Scadenza'**
+  String get expiryDate;
+
+  /// No description provided for @favorite.
+  ///
+  /// In it, this message translates to:
+  /// **'Preferito'**
+  String get favorite;
+
+  /// No description provided for @usageFrequency.
+  ///
+  /// In it, this message translates to:
+  /// **'Frequenza Utilizzo'**
+  String get usageFrequency;
+
+  /// No description provided for @lastUsed.
+  ///
+  /// In it, this message translates to:
+  /// **'Ultimo Utilizzo'**
+  String get lastUsed;
+
+  /// No description provided for @recordUsage.
+  ///
+  /// In it, this message translates to:
+  /// **'Registra Utilizzo'**
+  String get recordUsage;
+
+  /// No description provided for @quantityUsed.
+  ///
+  /// In it, this message translates to:
+  /// **'Quantità Utilizzata'**
+  String get quantityUsed;
+
+  /// No description provided for @usageRecorded.
+  ///
+  /// In it, this message translates to:
+  /// **'Utilizzo registrato'**
+  String get usageRecorded;
+
+  /// No description provided for @categoryBacteria.
+  ///
+  /// In it, this message translates to:
+  /// **'Batteri'**
+  String get categoryBacteria;
+
+  /// No description provided for @categoryFood.
+  ///
+  /// In it, this message translates to:
+  /// **'Cibo'**
+  String get categoryFood;
+
+  /// No description provided for @categoryTest.
+  ///
+  /// In it, this message translates to:
+  /// **'Test'**
+  String get categoryTest;
+
+  /// No description provided for @categorySupplement.
+  ///
+  /// In it, this message translates to:
+  /// **'Integratori'**
+  String get categorySupplement;
+
+  /// No description provided for @categoryWaterTreatment.
+  ///
+  /// In it, this message translates to:
+  /// **'Trattamento Acqua'**
+  String get categoryWaterTreatment;
+
+  /// No description provided for @categoryEquipment.
+  ///
+  /// In it, this message translates to:
+  /// **'Attrezzatura'**
+  String get categoryEquipment;
+
+  /// No description provided for @categoryMedicine.
+  ///
+  /// In it, this message translates to:
+  /// **'Medicinali'**
+  String get categoryMedicine;
+
+  /// No description provided for @categoryOther.
+  ///
+  /// In it, this message translates to:
+  /// **'Altro'**
+  String get categoryOther;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In it, this message translates to:
+  /// **'Tutte le Categorie'**
+  String get allCategories;
+
+  /// No description provided for @favoritesOnly.
+  ///
+  /// In it, this message translates to:
+  /// **'Solo Preferiti'**
+  String get favoritesOnly;
+
+  /// No description provided for @totalProducts.
+  ///
+  /// In it, this message translates to:
+  /// **'Prodotti Totali'**
+  String get totalProducts;
+
+  /// No description provided for @totalCost.
+  ///
+  /// In it, this message translates to:
+  /// **'Costo Totale'**
+  String get totalCost;
+
+  /// No description provided for @noProducts.
+  ///
+  /// In it, this message translates to:
+  /// **'Nessun Prodotto'**
+  String get noProducts;
+
+  /// No description provided for @noProductsDescription.
+  ///
+  /// In it, this message translates to:
+  /// **'Aggiungi il tuo primo prodotto per iniziare a gestire l\'inventario'**
+  String get noProductsDescription;
+
+  /// No description provided for @expired.
+  ///
+  /// In it, this message translates to:
+  /// **'Scaduto'**
+  String get expired;
+
+  /// No description provided for @expiringSoon.
+  ///
+  /// In it, this message translates to:
+  /// **'In Scadenza'**
+  String get expiringSoon;
+
+  /// No description provided for @lowStock.
+  ///
+  /// In it, this message translates to:
+  /// **'Scorte Basse'**
+  String get lowStock;
+
+  /// No description provided for @shouldUseAgain.
+  ///
+  /// In it, this message translates to:
+  /// **'Da Utilizzare'**
+  String get shouldUseAgain;
+
+  /// No description provided for @expiresIn.
+  ///
+  /// In it, this message translates to:
+  /// **'Scade tra {days} giorni'**
+  String expiresIn(String days);
+
+  /// No description provided for @expiresToday.
+  ///
+  /// In it, this message translates to:
+  /// **'Scade oggi'**
+  String get expiresToday;
+
+  /// No description provided for @usedDaysAgo.
+  ///
+  /// In it, this message translates to:
+  /// **'Usato {days} giorni fa'**
+  String usedDaysAgo(String days);
+
+  /// No description provided for @confirmDeleteProduct.
+  ///
+  /// In it, this message translates to:
+  /// **'Conferma eliminazione'**
+  String get confirmDeleteProduct;
+
+  /// No description provided for @confirmDeleteProductMessage.
+  ///
+  /// In it, this message translates to:
+  /// **'Vuoi eliminare \"{name}\"?'**
+  String confirmDeleteProductMessage(String name);
+
+  /// No description provided for @productAdded.
+  ///
+  /// In it, this message translates to:
+  /// **'Prodotto aggiunto'**
+  String get productAdded;
+
+  /// No description provided for @productUpdated.
+  ///
+  /// In it, this message translates to:
+  /// **'Prodotto modificato'**
+  String get productUpdated;
+
+  /// No description provided for @productDeleted.
+  ///
+  /// In it, this message translates to:
+  /// **'Prodotto eliminato'**
+  String get productDeleted;
+
+  /// No description provided for @errorLoadingProducts.
+  ///
+  /// In it, this message translates to:
+  /// **'Errore nel caricamento dei prodotti: {error}'**
+  String errorLoadingProducts(String error);
 }
 
 class _AppLocalizationsDelegate

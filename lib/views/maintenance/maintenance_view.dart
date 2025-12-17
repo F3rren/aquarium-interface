@@ -1,5 +1,6 @@
-﻿import 'package:acquariumfe/models/maintenance_task.dart';
+import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:acquariumfe/services/maintenance_task_service.dart';
+import 'package:acquariumfe/views/maintenance/products_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
@@ -14,10 +15,13 @@ class MaintenanceView extends StatefulWidget {
   State<MaintenanceView> createState() => _MaintenanceViewState();
 }
 
-class _MaintenanceViewState extends State<MaintenanceView> {
+class _MaintenanceViewState extends State<MaintenanceView>
+    with SingleTickerProviderStateMixin {
   final MaintenanceTaskService _service = MaintenanceTaskService();
   MaintenanceCategory? _filterCategory;
   bool _showCompleted = false; // Toggle tra task in corso e completati
+
+  late TabController _tabController;
 
   List<MaintenanceTask> _tasks = [];
   bool _isLoading = true;
@@ -25,11 +29,18 @@ class _MaintenanceViewState extends State<MaintenanceView> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
 
     if (widget.aquariumId != null) {
       _service.setCurrentAquarium(widget.aquariumId!);
       _loadTasks();
     }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadTasks() async {
@@ -75,36 +86,82 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     final padding = ResponsiveBreakpoints.horizontalPadding(screenWidth);
 
     return Scaffold(
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadTasks,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(
-                  left: padding,
-                  right: padding,
-                  top: padding,
-                  bottom: padding + bottomPadding + 80,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildStats(theme),
-                    const SizedBox(height: 20),
-                    _buildSectionToggle(theme),
-                    const SizedBox(height: 20),
-                    _buildCategoryFilter(theme),
-                    const SizedBox(height: 20),
-                    _buildTasksList(theme),
-                  ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Container(
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            border: Border(
+              bottom: BorderSide(color: theme.dividerColor.withOpacity(0.1)),
+            ),
+          ),
+          child: TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(
+                icon: const FaIcon(FontAwesomeIcons.listCheck, size: 18),
+                text: 'Attività',
+              ),
+              Tab(
+                icon: const FaIcon(FontAwesomeIcons.boxesStacked, size: 18),
+                text: 'Prodotti',
+              ),
+            ],
+            indicatorColor: theme.colorScheme.primary,
+            labelColor: theme.colorScheme.primary,
+            unselectedLabelColor: theme.textTheme.bodyMedium?.color
+                ?.withOpacity(0.6),
+          ),
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          // Tab Attività (contenuto originale)
+          Stack(
+            children: [
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : RefreshIndicator(
+                      onRefresh: _loadTasks,
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                          left: padding,
+                          right: padding,
+                          top: padding,
+                          bottom: padding + bottomPadding + 80,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildStats(theme),
+                            const SizedBox(height: 20),
+                            _buildSectionToggle(theme),
+                            const SizedBox(height: 20),
+                            _buildCategoryFilter(theme),
+                            const SizedBox(height: 20),
+                            _buildTasksList(theme),
+                          ],
+                        ),
+                      ),
+                    ),
+              // FAB per attività
+              Positioned(
+                right: 16,
+                bottom: 16 + bottomPadding,
+                child: FloatingActionButton.extended(
+                  onPressed: _showAddTaskDialog,
+                  icon: const FaIcon(FontAwesomeIcons.plus),
+                  label: Text(AppLocalizations.of(context)!.addTask),
+                  backgroundColor: const Color(0xFF8b5cf6),
                 ),
               ),
-            ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddTaskDialog,
-        icon: const FaIcon(FontAwesomeIcons.plus),
-        label: Text(AppLocalizations.of(context)!.addTask),
-        backgroundColor: const Color(0xFF8b5cf6),
+            ],
+          ),
+
+          // Tab Prodotti
+          ProductsView(aquariumId: widget.aquariumId),
+        ],
       ),
     );
   }
@@ -147,7 +204,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                           : theme.textTheme.bodyMedium?.color,
                     ),
                     const SizedBox(width: 8),
-                    Text(l10n.inProgress(_pendingTasks.length),
+                    Text(
+                      l10n.inProgress(_pendingTasks.length),
                       style: TextStyle(
                         color: !_showCompleted
                             ? Colors.white
@@ -191,7 +249,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                           : theme.textTheme.bodyMedium?.color,
                     ),
                     const SizedBox(width: 8),
-                    Text(l10n.completed(_completedTasks.length),
+                    Text(
+                      l10n.completed(_completedTasks.length),
                       style: TextStyle(
                         color: _showCompleted
                             ? Colors.white
@@ -265,13 +324,15 @@ class _MaintenanceViewState extends State<MaintenanceView> {
         children: [
           FaIcon(icon, color: color, size: 24),
           const SizedBox(height: 8),
-          Text(value,
+          Text(
+            value,
             style: theme.textTheme.headlineSmall?.copyWith(
               color: color,
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(label,
+          Text(
+            label,
             style: theme.textTheme.bodySmall,
             textAlign: TextAlign.center,
           ),
@@ -347,7 +408,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
               const SizedBox(height: 16),
-              Text(_showCompleted ? l10n.noCompletedTasks : l10n.noTasksInProgress,
+              Text(
+                _showCompleted ? l10n.noCompletedTasks : l10n.noTasksInProgress,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
@@ -419,13 +481,15 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(task.title,
+                        Text(
+                          task.title,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         if (task.description != null)
-                          Text(task.description!,
+                          Text(
+                            task.description!,
                             style: theme.textTheme.bodySmall,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -455,7 +519,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                         color: theme.textTheme.bodySmall?.color,
                       ),
                       const SizedBox(width: 6),
-                      Text(_showCompleted && task.completedAt != null
+                      Text(
+                        _showCompleted && task.completedAt != null
                             ? l10n.completedOn(_formatDate(task.completedAt!))
                             : l10n.everyDays(task.frequencyDays),
                         style: theme.textTheme.bodySmall,
@@ -472,7 +537,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                         color: statusColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Text(statusText,
+                      child: Text(
+                        statusText,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: statusColor,
                           fontWeight: FontWeight.bold,
@@ -499,7 +565,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                             color: _getPriorityColor(task.priority!),
                           ),
                           const SizedBox(width: 4),
-                          Text(_getPriorityLabel(task.priority!),
+                          Text(
+                            _getPriorityLabel(task.priority!),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: _getPriorityColor(task.priority!),
                               fontWeight: FontWeight.bold,
@@ -603,7 +670,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     value: selectedPriority,
-                    decoration: const InputDecoration(labelText: 'PrioritÃ '),
+                    decoration: const InputDecoration(labelText: 'Priorità'),
                     items: [
                       DropdownMenuItem(value: 'low', child: Text(l10n.low)),
                       DropdownMenuItem(
@@ -622,7 +689,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(l10n.dueDate),
-                    subtitle: Text(selectedDueDate != null
+                    subtitle: Text(
+                      selectedDueDate != null
                           ? _formatDate(selectedDueDate!)
                           : l10n.notSet,
                     ),
@@ -718,6 +786,31 @@ class _MaintenanceViewState extends State<MaintenanceView> {
     }
   }
 
+  void _showAddProductDialog() {
+    if (widget.aquariumId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('ID acquario non disponibile'),
+          backgroundColor: Color(0xFFef4444),
+        ),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddEditProductView(
+          aquariumId: widget.aquariumId!,
+          onSaved: () {
+            // Ricarica i dati se necessario
+            setState(() {});
+          },
+        ),
+      ),
+    );
+  }
+
   Future<void> _showEditTaskDialog(MaintenanceTask task) async {
     final TextEditingController titleController = TextEditingController(
       text: task.title,
@@ -799,7 +892,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     value: selectedPriority,
-                    decoration: const InputDecoration(labelText: 'PrioritÃ '),
+                    decoration: const InputDecoration(labelText: 'Priorità '),
                     items: [
                       DropdownMenuItem(value: 'low', child: Text(l10n.low)),
                       DropdownMenuItem(
@@ -818,7 +911,8 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(l10n.dueDate),
-                    subtitle: Text(selectedDueDate != null
+                    subtitle: Text(
+                      selectedDueDate != null
                           ? _formatDate(selectedDueDate!)
                           : l10n.notSet,
                     ),
@@ -992,10 +1086,12 @@ class _MaintenanceViewState extends State<MaintenanceView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(task.title,
+                      Text(
+                        task.title,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      Text(_getCategoryName(task.category),
+                      Text(
+                        _getCategoryName(task.category),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -1044,7 +1140,7 @@ class _MaintenanceViewState extends State<MaintenanceView> {
             const Divider(),
             const SizedBox(height: 16),
             if (task.priority != null)
-              _buildTaskInfo('PrioritÃ ', _getPriorityLabel(task.priority!)),
+              _buildTaskInfo('Priorità ', _getPriorityLabel(task.priority!)),
             if (task.frequency != null)
               _buildTaskInfo('Frequenza', _getFrequencyLabel(task.frequency!)),
             if (task.dueDate != null && !task.isCompleted)
@@ -1102,12 +1198,14 @@ class _MaintenanceViewState extends State<MaintenanceView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
+          Text(
+            label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(context).textTheme.bodySmall?.color,
             ),
           ),
-          Text(value,
+          Text(
+            value,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
