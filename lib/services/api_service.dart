@@ -189,6 +189,49 @@ class ApiService {
     });
   }
 
+  /// PATCH request generico con retry automatico
+  Future<dynamic> patch(
+    String endpoint,
+    Map<String, dynamic> body, {
+    Duration? timeout,
+    RetryPolicy? retry,
+  }) async {
+    final effectiveTimeout = timeout ?? defaultTimeout;
+    final effectiveRetry =
+        retry ?? RetryPolicies.none; // PATCH non ha retry di default
+
+    return effectiveRetry.execute(() async {
+      try {
+        final url = Uri.parse('$baseUrl$endpoint');
+
+        final response = await http
+            .patch(url, headers: _headers, body: jsonEncode(body))
+            .timeout(effectiveTimeout);
+
+        return _handleResponse(response);
+      } on SocketException catch (e) {
+        throw NetworkException(
+          'Impossibile connettersi al server',
+          details: endpoint,
+          originalError: e,
+        );
+      } on TimeoutException catch (e) {
+        throw TimeoutException(
+          'La richiesta ha impiegato troppo tempo',
+          timeout: effectiveTimeout,
+          details: endpoint,
+          originalError: e,
+        );
+      } on FormatException catch (e) {
+        throw DataFormatException(
+          'Errore nel formato dei dati',
+          details: endpoint,
+          originalError: e,
+        );
+      }
+    });
+  }
+
   /// DELETE request generico con retry automatico
   Future<dynamic> delete(
     String endpoint, {
