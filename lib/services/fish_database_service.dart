@@ -18,24 +18,35 @@ class FishDatabaseService {
 
     try {
       final response = await _apiService.get('/species/fishs');
-      
+
       // Gestisci sia formato array diretto che con wrapper
       List<dynamic> fishList;
       if (response is List) {
         fishList = response;
       } else if (response is Map<String, dynamic>) {
-        var dataField = response['data'] ?? response['fishs'] ?? [];
-        // Se data contiene un array annidato, prendi il primo elemento
-        if (dataField is List && dataField.isNotEmpty && dataField[0] is List) {
-          fishList = dataField[0];
+        // Controlla prima 'data'
+        if (response.containsKey('data')) {
+          var dataField = response['data'];
+          // Se data è già una lista, usala direttamente
+          if (dataField is List) {
+            fishList = dataField;
+          } else {
+            fishList = [];
+          }
+        } else if (response.containsKey('fishs')) {
+          // Altrimenti prova 'fishs'
+          fishList = response['fishs'] as List? ?? [];
         } else {
-          fishList = dataField;
+          fishList = [];
         }
       } else {
         fishList = [];
       }
+
+      _cachedFish = fishList
+          .map((json) => FishSpecies.fromJson(json as Map<String, dynamic>))
+          .toList();
       
-      _cachedFish = fishList.map((json) => FishSpecies.fromJson(json as Map<String, dynamic>)).toList();
       return _cachedFish!;
     } catch (e) {
       return [];
@@ -70,7 +81,9 @@ class FishDatabaseService {
   /// Filtra pesci per dimensione vasca minima
   Future<List<FishSpecies>> getFishByTankSize(int tankSizeInLiters) async {
     final allFish = await getAllFish();
-    return allFish.where((fish) => fish.minTankSize <= tankSizeInLiters).toList();
+    return allFish
+        .where((fish) => fish.minTankSize <= tankSizeInLiters)
+        .toList();
   }
 
   /// Ottieni un pesce per ID
@@ -92,43 +105,57 @@ class FishDatabaseService {
   /// Filtra per famiglia
   Future<List<FishSpecies>> getFishByFamily(String family) async {
     final allFish = await getAllFish();
-    return allFish.where((fish) => fish.family.toLowerCase().contains(family.toLowerCase())).toList();
+    return allFish
+        .where(
+          (fish) => fish.family.toLowerCase().contains(family.toLowerCase()),
+        )
+        .toList();
   }
 
   /// Filtra pesci per tipo d'acqua (es. "Marino", "Dolce")
   Future<List<FishSpecies>> getFishByWaterType(String waterType) async {
     final allFish = await getAllFish();
-    if (waterType.isEmpty) return allFish;
     
+    if (waterType.isEmpty) return allFish;
+
     // Normalizza il tipo d'acqua per il confronto
     String normalizedWaterType = _normalizeWaterType(waterType);
-    
-    return allFish.where((fish) {
+
+    final filtered = allFish.where((fish) {
       // Se il pesce non ha un waterType specificato, NON lo mostra
-      if (fish.waterType == null || fish.waterType!.isEmpty) return false;
-      
+      if (fish.waterType == null || fish.waterType!.isEmpty) {
+        return false;
+      }
+
       // Normalizza e confronta
       String fishWaterType = _normalizeWaterType(fish.waterType!);
       return fishWaterType == normalizedWaterType;
     }).toList();
+    
+    return filtered;
   }
-  
+
   /// Normalizza il tipo d'acqua per il confronto
-  /// "Marino" / "Reef" / "salata" / "marino" / "reef" -> "salata"
-  /// "Dolce" / "dolce" -> "dolce"
+  /// "Marino" / "Reef" / "salata" / "marino" / "reef" / "Marine" -> "salata"
+  /// "Dolce" / "dolce" / "Freshwater" / "freshwater" -> "dolce"
   String _normalizeWaterType(String waterType) {
     final normalized = waterType.toLowerCase().trim();
-    
-    // Mappa tutte le varianti di acqua salata (Marino e Reef sono entrambi salati)
-    if (normalized == 'marino' || normalized == 'reef' || normalized == 'salata') {
+
+    // Mappa tutte le varianti di acqua salata (Marino, Reef, Marine, Salata sono tutti salati)
+    if (normalized == 'marino' ||
+        normalized == 'reef' ||
+        normalized == 'salata' ||
+        normalized == 'marine' ||
+        normalized == 'saltwater') {
       return 'salata';
     }
-    
-    // Mappa "dolce" a "dolce"
-    if (normalized == 'dolce') {
+
+    // Mappa tutte le varianti di acqua dolce
+    if (normalized == 'dolce' ||
+        normalized == 'freshwater') {
       return 'dolce';
     }
-    
+
     return normalized;
   }
 

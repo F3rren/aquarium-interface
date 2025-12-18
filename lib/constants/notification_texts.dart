@@ -69,28 +69,32 @@ class NotificationTexts {
   static const String maintenanceTitle = 'Promemoria Manutenzione';
   static const String maintenanceWeekly = 'Manutenzione settimanale prevista';
   static const String maintenanceMonthly = 'Manutenzione mensile prevista';
-  
+
   // Titoli manutenzione specifici
   static const String waterChangeTitle = 'Promemoria: Cambio Acqua';
-  static const String waterChangeBody = 'È tempo di cambiare l\'acqua dell\'acquario';
-  
+  static const String waterChangeBody =
+      'È tempo di cambiare l\'acqua dell\'acquario';
+
   static const String filterCleaningTitle = 'Promemoria: Pulizia Filtro';
-  static const String filterCleaningBody = 'Controlla e pulisci il filtro dell\'acquario';
-  
+  static const String filterCleaningBody =
+      'Controlla e pulisci il filtro dell\'acquario';
+
   static const String parameterTestingTitle = 'Promemoria: Test Parametri';
-  static const String parameterTestingBody = 'Esegui i test dei parametri dell\'acqua';
-  
+  static const String parameterTestingBody =
+      'Esegui i test dei parametri dell\'acqua';
+
   static const String lightMaintenanceTitle = 'Promemoria: Manutenzione Luci';
-  static const String lightMaintenanceBody = 'Controlla e pulisci le luci dell\'acquario';
-  
-  static const String maintenanceWeeklyDetails = 
+  static const String lightMaintenanceBody =
+      'Controlla e pulisci le luci dell\'acquario';
+
+  static const String maintenanceWeeklyDetails =
       'È ora di effettuare la manutenzione settimanale:\n'
       '• Cambio acqua 10-15%\n'
       '• Pulizia vetri\n'
       '• Test parametri\n'
       '• Controllo attrezzature';
-  
-  static const String maintenanceMonthlyDetails = 
+
+  static const String maintenanceMonthlyDetails =
       'È ora di effettuare la manutenzione mensile:\n'
       '• Cambio acqua 20-25%\n'
       '• Pulizia filtro\n'
@@ -125,7 +129,8 @@ class NotificationTexts {
 
   static String getSuggestion(String parameter, bool isHigh) {
     final suggestions = isHigh ? highSuggestions : lowSuggestions;
-    return suggestions[parameter] ?? 'Controlla il parametro e verifica le impostazioni';
+    return suggestions[parameter] ??
+        'Controlla il parametro e verifica le impostazioni';
   }
 
   static String getSeverityLabel(String severity) {

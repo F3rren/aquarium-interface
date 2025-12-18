@@ -46,7 +46,7 @@ final targetParametersProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef TargetParametersRef = AutoDisposeFutureProviderRef<Map<String, double>>;
-String _$currentParametersHash() => r'4ab23c539bf7c60b16e838b7b044d7266176dc96';
+String _$currentParametersHash() => r'e3dadb01d6d25e57d53f2f61cd72e52e18abf014';
 
 /// Provider per i parametri correnti dell'acquario selezionato
 /// Si aggiorna automaticamente quando cambia l'acquario corrente

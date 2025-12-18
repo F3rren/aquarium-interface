@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 /// Barra di progresso che mostra la distanza dal valore target
 class TargetProgressBar extends StatefulWidget {
@@ -24,7 +25,8 @@ class TargetProgressBar extends StatefulWidget {
   State<TargetProgressBar> createState() => _TargetProgressBarState();
 }
 
-class _TargetProgressBarState extends State<TargetProgressBar> with SingleTickerProviderStateMixin {
+class _TargetProgressBarState extends State<TargetProgressBar>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   double _previousValue = 0;
@@ -33,7 +35,7 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
   void initState() {
     super.initState();
     _previousValue = widget.currentValue;
-    
+
     _controller = AnimationController(
       duration: widget.animationDuration,
       vsync: this,
@@ -42,10 +44,7 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
     _animation = Tween<double>(
       begin: _normalizeValue(_previousValue),
       end: _normalizeValue(widget.currentValue),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _controller.forward();
   }
@@ -53,19 +52,19 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
   @override
   void didUpdateWidget(TargetProgressBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (oldWidget.currentValue != widget.currentValue) {
       _previousValue = oldWidget.currentValue;
-      
+
       _controller.reset();
-      _animation = Tween<double>(
-        begin: _normalizeValue(_previousValue),
-        end: _normalizeValue(widget.currentValue),
-      ).animate(CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
-      ));
-      
+      _animation =
+          Tween<double>(
+            begin: _normalizeValue(_previousValue),
+            end: _normalizeValue(widget.currentValue),
+          ).animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+          );
+
       _controller.forward();
     }
   }
@@ -79,14 +78,15 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
   // Normalizza il valore tra 0 e 1
   double _normalizeValue(double value) {
     if (widget.maxValue == widget.minValue) return 0.5;
-    return ((value - widget.minValue) / (widget.maxValue - widget.minValue)).clamp(0.0, 1.0);
+    return ((value - widget.minValue) / (widget.maxValue - widget.minValue))
+        .clamp(0.0, 1.0);
   }
 
   // Calcola la distanza percentuale dal target
   double _getDistanceFromTarget() {
     final range = widget.maxValue - widget.minValue;
     if (range == 0) return 0;
-    
+
     final distance = (widget.currentValue - widget.targetValue).abs();
     return (distance / range) * 100;
   }
@@ -94,7 +94,7 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
   // Determina il colore in base alla distanza dal target
   Color _getProgressColor() {
     final distance = _getDistanceFromTarget();
-    
+
     if (distance <= 5) {
       return const Color(0xFF34d399); // Verde - molto vicino
     } else if (distance <= 15) {
@@ -104,25 +104,27 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
     }
   }
 
-  String _getStatusText() {
+  String _getStatusText(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final distance = _getDistanceFromTarget();
-    
+
     if (distance <= 5) {
-      return 'Ottimale';
+      return l10n.optimal;
     } else if (distance <= 15) {
-      return 'Accettabile';
+      return l10n.acceptable;
     } else {
-      return 'Da correggere';
+      return l10n.toCorrect;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isDark = theme.brightness == Brightness.dark;
     final color = _getProgressColor();
     final targetNormalized = _normalizeValue(widget.targetValue);
-    final status = _getStatusText();
+    final status = _getStatusText(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,12 +134,15 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
           children: [
             Row(
               children: [
-                FaIcon(FontAwesomeIcons.flag, size: 14, color: theme.colorScheme.onSurface.withValues(alpha:0.6)),
+                FaIcon(
+                  FontAwesomeIcons.flag,
+                  size: 14,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
                 const SizedBox(width: 4),
-                Text(
-                  'Target: ${widget.targetValue.toStringAsFixed(1)}${widget.unit}',
+                Text('${l10n.target}: ${widget.targetValue.toStringAsFixed(1)}${widget.unit}',
                   style: TextStyle(
-                    color: theme.colorScheme.onSurface.withValues(alpha:0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -147,11 +152,10 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: color.withValues(alpha:0.2),
+                color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                status,
+              child: Text(status,
                 style: TextStyle(
                   color: color,
                   fontSize: 11,
@@ -168,7 +172,7 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
             Container(
               height: 8,
               decoration: BoxDecoration(
-                color: isDark 
+                color: isDark
                     ? theme.colorScheme.surfaceContainerHighest
                     : theme.colorScheme.surfaceContainerHigh,
                 borderRadius: BorderRadius.circular(4),
@@ -196,15 +200,12 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
                     height: 8,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          color,
-                          color.withValues(alpha:0.7),
-                        ],
+                        colors: [color, color.withValues(alpha: 0.7)],
                       ),
                       borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
-                          color: color.withValues(alpha:0.3),
+                          color: color.withValues(alpha: 0.3),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -220,15 +221,13 @@ class _TargetProgressBarState extends State<TargetProgressBar> with SingleTicker
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              '${widget.minValue.toStringAsFixed(0)}${widget.unit}',
+            Text('${widget.minValue.toStringAsFixed(0)}${widget.unit}',
               style: TextStyle(
-                color: theme.colorScheme.onSurface.withValues(alpha:0.5),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 10,
               ),
             ),
-            Text(
-              '${widget.maxValue.toStringAsFixed(0)}${widget.unit}',
+            Text('${widget.maxValue.toStringAsFixed(0)}${widget.unit}',
               style: TextStyle(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 10,
@@ -264,7 +263,7 @@ class CircularTargetProgress extends StatefulWidget {
   State<CircularTargetProgress> createState() => _CircularTargetProgressState();
 }
 
-class _CircularTargetProgressState extends State<CircularTargetProgress> 
+class _CircularTargetProgressState extends State<CircularTargetProgress>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -277,9 +276,10 @@ class _CircularTargetProgressState extends State<CircularTargetProgress>
       vsync: this,
     );
 
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
+    _animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     _controller.forward();
   }
@@ -297,9 +297,11 @@ class _CircularTargetProgressState extends State<CircularTargetProgress>
   }
 
   Color _getColor() {
-    final distance = ((widget.currentValue - widget.targetValue).abs() / 
-                     (widget.maxValue - widget.minValue) * 100);
-    
+    final distance =
+        ((widget.currentValue - widget.targetValue).abs() /
+        (widget.maxValue - widget.minValue) *
+        100);
+
     if (distance <= 5) return const Color(0xFF34d399);
     if (distance <= 15) return const Color(0xFFfbbf24);
     return const Color(0xFFef4444);
@@ -322,8 +324,7 @@ class _CircularTargetProgressState extends State<CircularTargetProgress>
               color: color,
             ),
             child: Center(
-              child: Text(
-                '${(progress * 100).toInt()}%',
+              child: Text('${(progress * 100).toInt()}%',
                 style: TextStyle(
                   color: color,
                   fontSize: widget.size * 0.25,
@@ -351,7 +352,7 @@ class _CircularProgressPainter extends CustomPainter {
 
     // Background circle
     final bgPaint = Paint()
-      ..color = color.withValues(alpha:0.2)
+      ..color = color.withValues(alpha: 0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6;
 

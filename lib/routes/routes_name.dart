@@ -1,5 +1,4 @@
 class RouteNames {
-
   // rotte per drawer
   static const home = '/';
   // Rotta per dettaglio
@@ -14,5 +13,4 @@ class RouteNames {
   static const settings = '/settings';
   // Rotta per manutenzione
   static const maintenance = '/maintenance';
-
 }

@@ -3,32 +3,33 @@ import 'package:acquariumfe/services/api_service.dart';
 
 /// Service per gestire le impostazioni notifiche tramite API
 class NotificationSettingsService {
-  static final NotificationSettingsService _instance = NotificationSettingsService._internal();
+  static final NotificationSettingsService _instance =
+      NotificationSettingsService._internal();
   factory NotificationSettingsService() => _instance;
   NotificationSettingsService._internal();
 
   final ApiService _apiService = ApiService();
-  
+
   int? _currentAquariumId;
   NotificationSettings? _cachedSettings;
-  
+
   void setCurrentAquarium(int id) {
     _currentAquariumId = id;
     _cachedSettings = null;
   }
-  
+
   /// Salva impostazioni notifiche sul backend
   Future<void> saveSettings(NotificationSettings settings) async {
     if (_currentAquariumId == null) {
       throw Exception('Nessun acquario selezionato');
     }
-    
+
     try {
       await _apiService.post(
         '/aquariums/$_currentAquariumId/settings/notifications',
         settings.toJson(),
       );
-      
+
       _cachedSettings = settings;
     } catch (e) {
       rethrow;
@@ -40,14 +41,16 @@ class NotificationSettingsService {
     if (_currentAquariumId == null) {
       return NotificationSettings();
     }
-    
+
     if (_cachedSettings != null) {
       return _cachedSettings!;
     }
-    
+
     try {
-      final response = await _apiService.get('/aquariums/$_currentAquariumId/settings/notifications');
-      
+      final response = await _apiService.get(
+        '/aquariums/$_currentAquariumId/settings/notifications',
+      );
+
       final Map<String, dynamic> data;
       if (response is Map<String, dynamic>) {
         if (response.containsKey('data')) {
@@ -63,10 +66,9 @@ class NotificationSettingsService {
       } else {
         return NotificationSettings();
       }
-      
+
       _cachedSettings = NotificationSettings.fromJson(data);
       return _cachedSettings!;
-      
     } catch (e) {
       return NotificationSettings();
     }
@@ -78,7 +80,7 @@ class NotificationSettingsService {
     required ParameterThresholds threshold,
   }) async {
     final current = await loadSettings();
-    
+
     NotificationSettings updated;
     switch (parameterName) {
       case 'temperature':
@@ -111,7 +113,7 @@ class NotificationSettingsService {
       default:
         return;
     }
-    
+
     await saveSettings(updated);
   }
 
@@ -134,7 +136,9 @@ class NotificationSettingsService {
   }
 
   /// Aggiorna promemoria manutenzione
-  Future<void> updateMaintenanceReminders(MaintenanceReminders reminders) async {
+  Future<void> updateMaintenanceReminders(
+    MaintenanceReminders reminders,
+  ) async {
     final current = await loadSettings();
     await saveSettings(current.copyWith(maintenanceReminders: reminders));
   }
@@ -142,9 +146,11 @@ class NotificationSettingsService {
   /// Resetta alle impostazioni di default
   Future<void> resetToDefaults() async {
     if (_currentAquariumId == null) return;
-    
+
     try {
-      await _apiService.delete('/aquariums/$_currentAquariumId/settings/notifications');
+      await _apiService.delete(
+        '/aquariums/$_currentAquariumId/settings/notifications',
+      );
       _cachedSettings = null;
     } catch (e) {
       rethrow;

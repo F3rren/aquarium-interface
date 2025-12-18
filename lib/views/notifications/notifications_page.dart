@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/notification_preferences_service.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -11,12 +12,14 @@ class NotificationsPage extends StatefulWidget {
   State<NotificationsPage> createState() => _NotificationsPageState();
 }
 
-class _NotificationsPageState extends State<NotificationsPage> with TickerProviderStateMixin {
+class _NotificationsPageState extends State<NotificationsPage>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   final AlertManager _alertManager = AlertManager();
-  final NotificationPreferencesService _prefsService = NotificationPreferencesService();
+  final NotificationPreferencesService _prefsService =
+      NotificationPreferencesService();
   NotificationSettings _settings = NotificationSettings();
-  
+
   late Animation<double> _fadeAnimation;
   late AnimationController _animationController;
 
@@ -24,16 +27,16 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-    
+
     _animationController.forward();
     _loadSettings();
   }
@@ -50,15 +53,16 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   /// Salva le impostazioni correnti
   Future<void> _saveSettings() async {
     await _prefsService.saveSettings(_settings);
-    
+
     if (mounted) {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
               Icon(Icons.check_circle, color: Colors.white),
               const SizedBox(width: 12),
-              Text('Impostazioni salvate'),
+              Text(l10n.settingsSaved),
             ],
           ),
           backgroundColor: const Color(0xFF34d399),
@@ -80,12 +84,16 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-    
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Notifiche', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        title: Text(
+          l10n.notifications,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
@@ -95,10 +103,10 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           indicatorColor: theme.colorScheme.primary,
           labelColor: theme.colorScheme.primary,
           unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
-          tabs: const [
-            Tab(text: 'Impostazioni'),
-            Tab(text: 'Soglie'),
-            Tab(text: 'Storico'),
+          tabs: [
+            Tab(text: l10n.settingsTab),
+            Tab(text: l10n.thresholdsTab),
+            Tab(text: l10n.historyTab),
           ],
         ),
       ),
@@ -119,15 +127,20 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   // TAB 1: IMPOSTAZIONI GENERALI
   Widget _buildSettingsTab(double bottomPadding) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return ListView(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20 + bottomPadding),
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: 20 + bottomPadding,
+      ),
       children: [
-        
         // Alert Parametri
         _buildSwitchCard(
-          title: 'Alert Parametri',
-          subtitle: 'Notifiche quando i parametri sono fuori range',
+          title: l10n.alertParameters,
+          subtitle: l10n.alertParametersSubtitle,
           icon: FontAwesomeIcons.triangleExclamation,
           color: const Color(0xFFef4444),
           value: _settings.enabledAlerts,
@@ -139,11 +152,11 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           },
         ),
         const SizedBox(height: 12),
-        
+
         // Promemoria Manutenzione
         _buildSwitchCard(
-          title: 'Promemoria Manutenzione',
-          subtitle: 'Notifiche per cambio acqua, pulizia filtro, ecc.',
+          title: l10n.maintenanceReminders,
+          subtitle: l10n.maintenanceRemindersSubtitle,
           icon: FontAwesomeIcons.wrench,
           color: const Color(0xFF34d399),
           value: _settings.enabledMaintenance,
@@ -155,11 +168,11 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           },
         ),
         const SizedBox(height: 12),
-        
+
         // Riepilogo Giornaliero
         _buildSwitchCard(
-          title: 'Riepilogo Giornaliero',
-          subtitle: 'Notifica giornaliera con stato acquario',
+          title: l10n.dailySummary,
+          subtitle: l10n.dailySummarySubtitle,
           icon: FontAwesomeIcons.calendarDay,
           color: const Color(0xFF60a5fa),
           value: _settings.enabledDaily,
@@ -169,14 +182,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             });
           },
         ),
-        
+
         const SizedBox(height: 32),
-        _buildSectionTitle('Frequenza Manutenzione'),
+        _buildSectionTitle(l10n.maintenanceFrequency),
         const SizedBox(height: 12),
-        
+
         // Cambio Acqua
         _buildMaintenanceCard(
-          title: 'Cambio Acqua',
+          title: l10n.waterChange,
           icon: FontAwesomeIcons.droplet,
           color: const Color(0xFF60a5fa),
           schedule: _settings.maintenanceReminders.waterChange,
@@ -184,7 +197,8 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             setState(() {
               _settings = _settings.copyWith(
                 maintenanceReminders: _settings.maintenanceReminders.copyWith(
-                  waterChange: _settings.maintenanceReminders.waterChange.copyWith(enabled: enabled),
+                  waterChange: _settings.maintenanceReminders.waterChange
+                      .copyWith(enabled: enabled),
                 ),
               );
             });
@@ -193,17 +207,18 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             setState(() {
               _settings = _settings.copyWith(
                 maintenanceReminders: _settings.maintenanceReminders.copyWith(
-                  waterChange: _settings.maintenanceReminders.waterChange.copyWith(frequencyDays: days),
+                  waterChange: _settings.maintenanceReminders.waterChange
+                      .copyWith(frequencyDays: days),
                 ),
               );
             });
           },
         ),
         const SizedBox(height: 12),
-        
+
         // Pulizia Filtro
         _buildMaintenanceCard(
-          title: 'Pulizia Filtro',
+          title: l10n.filterCleaning,
           icon: FontAwesomeIcons.filter,
           color: const Color(0xFF34d399),
           schedule: _settings.maintenanceReminders.filterCleaning,
@@ -211,7 +226,8 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             setState(() {
               _settings = _settings.copyWith(
                 maintenanceReminders: _settings.maintenanceReminders.copyWith(
-                  filterCleaning: _settings.maintenanceReminders.filterCleaning.copyWith(enabled: enabled),
+                  filterCleaning: _settings.maintenanceReminders.filterCleaning
+                      .copyWith(enabled: enabled),
                 ),
               );
             });
@@ -220,17 +236,18 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             setState(() {
               _settings = _settings.copyWith(
                 maintenanceReminders: _settings.maintenanceReminders.copyWith(
-                  filterCleaning: _settings.maintenanceReminders.filterCleaning.copyWith(frequencyDays: days),
+                  filterCleaning: _settings.maintenanceReminders.filterCleaning
+                      .copyWith(frequencyDays: days),
                 ),
               );
             });
           },
         ),
         const SizedBox(height: 12),
-        
+
         // Test Parametri
         _buildMaintenanceCard(
-          title: 'Test Parametri',
+          title: l10n.parameterTesting,
           icon: FontAwesomeIcons.flask,
           color: const Color(0xFFa855f7),
           schedule: _settings.maintenanceReminders.parameterTesting,
@@ -238,7 +255,10 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             setState(() {
               _settings = _settings.copyWith(
                 maintenanceReminders: _settings.maintenanceReminders.copyWith(
-                  parameterTesting: _settings.maintenanceReminders.parameterTesting.copyWith(enabled: enabled),
+                  parameterTesting: _settings
+                      .maintenanceReminders
+                      .parameterTesting
+                      .copyWith(enabled: enabled),
                 ),
               );
             });
@@ -247,13 +267,16 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             setState(() {
               _settings = _settings.copyWith(
                 maintenanceReminders: _settings.maintenanceReminders.copyWith(
-                  parameterTesting: _settings.maintenanceReminders.parameterTesting.copyWith(frequencyDays: days),
+                  parameterTesting: _settings
+                      .maintenanceReminders
+                      .parameterTesting
+                      .copyWith(frequencyDays: days),
                 ),
               );
             });
           },
         ),
-        
+
         const SizedBox(height: 32),
         // Pulsante Salva
         SizedBox(
@@ -266,14 +289,22 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             style: ElevatedButton.styleFrom(
               backgroundColor: theme.colorScheme.primary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                FaIcon(FontAwesomeIcons.floppyDisk),
-                SizedBox(width: 8),
-                Text('Salva Impostazioni', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const FaIcon(FontAwesomeIcons.floppyDisk),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.saveSettings,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ],
             ),
           ),
@@ -284,27 +315,88 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
   // TAB 2: SOGLIE PARAMETRI
   Widget _buildThresholdsTab(double bottomPadding) {
+    final l10n = AppLocalizations.of(context)!;
+
     return ListView(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20 + bottomPadding),
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: 20 + bottomPadding,
+      ),
       children: [
-        _buildThresholdCard('Temperatura', '°C', _settings.temperature, FontAwesomeIcons.temperatureHalf, const Color(0xFFef4444)),
+        _buildThresholdCard(
+          l10n.temperatureParam,
+          '°C',
+          _settings.temperature,
+          FontAwesomeIcons.temperatureHalf,
+          const Color(0xFFef4444),
+        ),
         const SizedBox(height: 12),
-        _buildThresholdCard('pH', '', _settings.ph, FontAwesomeIcons.flask, const Color(0xFF60a5fa)),
+        _buildThresholdCard(
+          l10n.phParam,
+          '',
+          _settings.ph,
+          FontAwesomeIcons.flask,
+          const Color(0xFF60a5fa),
+        ),
         const SizedBox(height: 12),
-        _buildThresholdCard('Salinità', '', _settings.salinity, FontAwesomeIcons.water, const Color(0xFF2dd4bf)),
+        _buildThresholdCard(
+          l10n.salinityParam,
+          '',
+          _settings.salinity,
+          FontAwesomeIcons.water,
+          const Color(0xFF2dd4bf),
+        ),
         const SizedBox(height: 12),
-        _buildThresholdCard('ORP', ' mV', _settings.orp, FontAwesomeIcons.bolt, const Color(0xFFfbbf24)),
+        _buildThresholdCard(
+          l10n.orpParam,
+          ' mV',
+          _settings.orp,
+          FontAwesomeIcons.bolt,
+          const Color(0xFFfbbf24),
+        ),
         const SizedBox(height: 12),
-        _buildThresholdCard('Calcio', ' mg/L', _settings.calcium, FontAwesomeIcons.cubesStacked, const Color(0xFFa855f7)),
+        _buildThresholdCard(
+          l10n.calciumParam,
+          ' mg/L',
+          _settings.calcium,
+          FontAwesomeIcons.cubesStacked,
+          const Color(0xFFa855f7),
+        ),
         const SizedBox(height: 12),
-        _buildThresholdCard('Magnesio', ' mg/L', _settings.magnesium, FontAwesomeIcons.atom, const Color(0xFFec4899)),
+        _buildThresholdCard(
+          l10n.magnesiumParam,
+          ' mg/L',
+          _settings.magnesium,
+          FontAwesomeIcons.atom,
+          const Color(0xFFec4899),
+        ),
         const SizedBox(height: 12),
-        _buildThresholdCard('KH', ' dKH', _settings.kh, FontAwesomeIcons.chartLine, const Color(0xFF34d399)),
+        _buildThresholdCard(
+          l10n.khParam,
+          ' dKH',
+          _settings.kh,
+          FontAwesomeIcons.chartLine,
+          const Color(0xFF34d399),
+        ),
         const SizedBox(height: 12),
-        _buildThresholdCard('Nitrati', ' mg/L', _settings.nitrate, FontAwesomeIcons.seedling, const Color(0xFF10b981)),
+        _buildThresholdCard(
+          l10n.nitrateParam,
+          ' mg/L',
+          _settings.nitrate,
+          FontAwesomeIcons.seedling,
+          const Color(0xFF10b981),
+        ),
         const SizedBox(height: 12),
-        _buildThresholdCard('Fosfati', ' mg/L', _settings.phosphate, FontAwesomeIcons.droplet, const Color(0xFF8b5cf6)),
-        
+        _buildThresholdCard(
+          l10n.phosphateParam,
+          ' mg/L',
+          _settings.phosphate,
+          FontAwesomeIcons.droplet,
+          const Color(0xFF8b5cf6),
+        ),
+
         const SizedBox(height: 32),
         // Pulsante Ripristina Predefiniti
         SizedBox(
@@ -312,11 +404,16 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           child: OutlinedButton.icon(
             onPressed: () => _showResetDialog(),
             icon: const FaIcon(FontAwesomeIcons.arrowRotateRight),
-            label: const Text('Ripristina Valori Predefiniti', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            label: Text(
+              l10n.restoreDefaults,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             style: OutlinedButton.styleFrom(
               foregroundColor: const Color(0xFFfbbf24),
               side: const BorderSide(color: Color(0xFFfbbf24), width: 2),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -327,16 +424,22 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   // TAB 3: STORICO ALERT
   Widget _buildHistoryTab(double bottomPadding) {
     final history = _alertManager.getAlertHistory(limit: 50);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return history.isEmpty
         ? _buildEmptyState()
         : ListView(
-            padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20 + bottomPadding),
+            padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 20,
+              bottom: 20 + bottomPadding,
+            ),
             children: [
               _buildHeader(
                 icon: FontAwesomeIcons.clockRotateLeft,
-                title: 'Storico Alert',
-                subtitle: '${history.length} notifiche recenti',
+                title: l10n.alertHistoryCount,
+                subtitle: l10n.alertHistorySubtitle('${history.length}'),
               ),
               const SizedBox(height: 20),
               ...history.map((alert) => _buildAlertCard(alert)),
@@ -346,7 +449,8 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
   Widget _buildEmptyState() {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -357,26 +461,41 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               color: theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: FaIcon(FontAwesomeIcons.bellSlash, color: theme.colorScheme.onSurface.withValues(alpha: 0.3), size: 64),
+            child: FaIcon(
+              FontAwesomeIcons.bellSlash,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              size: 64,
+            ),
           ),
           const SizedBox(height: 20),
           Text(
-            'Nessun Alert',
-            style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold),
+            l10n.noAlerts,
+            style: TextStyle(
+              color: theme.colorScheme.onSurface,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Gli alert appariranno qui',
-            style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
+            l10n.alertsWillAppearHere,
+            style: TextStyle(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHeader({required IconData icon, required String title, required String subtitle}) {
+  Widget _buildHeader({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -388,7 +507,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withValues(alpha:0.2),
+              color: theme.colorScheme.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: theme.colorScheme.primary, size: 32),
@@ -398,9 +517,22 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(subtitle, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
+                ),
               ],
             ),
           ),
@@ -411,10 +543,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
   Widget _buildSectionTitle(String title) {
     final theme = Theme.of(context);
-    
+
     return Text(
       title,
-      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.bold),
+      style: TextStyle(
+        color: theme.colorScheme.onSurface,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 
@@ -427,20 +563,22 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     required ValueChanged<bool> onChanged,
   }) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha:0.1)),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withValues(alpha:0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: color, size: 24),
@@ -450,17 +588,26 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15, fontWeight: FontWeight.w600)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const SizedBox(height: 4),
-                Text(subtitle, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
           ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: color,
-          ),
+          Switch(value: value, onChanged: onChanged, activeThumbColor: color),
         ],
       ),
     );
@@ -475,13 +622,16 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     required ValueChanged<int> onFrequencyChanged,
   }) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha:0.1)),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       child: Column(
         children: [
@@ -490,14 +640,21 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha:0.2),
+                  color: color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: color, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: Text(title, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 15, fontWeight: FontWeight.w600)),
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
               Switch(
                 value: schedule.enabled,
@@ -510,7 +667,13 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             const SizedBox(height: 16),
             Row(
               children: [
-                Text('Ogni', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 13)),
+                Text(
+                  l10n.every,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Slider(
@@ -519,11 +682,18 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                     max: 90,
                     divisions: 89,
                     activeColor: color,
-                    label: '${schedule.frequencyDays} giorni',
+                    label: '${schedule.frequencyDays} ${l10n.daysLabel}',
                     onChanged: (value) => onFrequencyChanged(value.toInt()),
                   ),
                 ),
-                Text('${schedule.frequencyDays}d', style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w600)),
+                Text(
+                  l10n.frequencyDays('${schedule.frequencyDays}'),
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ],
             ),
           ],
@@ -532,9 +702,16 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
     );
   }
 
-  Widget _buildThresholdCard(String name, String unit, ParameterThresholds thresholds, IconData icon, Color color) {
+  Widget _buildThresholdCard(
+    String name,
+    String unit,
+    ParameterThresholds thresholds,
+    IconData icon,
+    Color color,
+  ) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     return GestureDetector(
       onTap: () => _showEditThresholdDialog(name, unit, thresholds, color),
       child: Container(
@@ -542,7 +719,9 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha:0.1)),
+          border: Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -551,11 +730,33 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               children: [
                 Icon(icon, color: color, size: 24),
                 const SizedBox(width: 12),
-                Text(name, style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 16, fontWeight: FontWeight.w600)),
+                Text(
+                  name,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const Spacer(),
-                FaIcon(FontAwesomeIcons.pen, color: theme.colorScheme.onSurfaceVariant, size: 18),
+                FaIcon(
+                  FontAwesomeIcons.pen,
+                  color: theme.colorScheme.onSurfaceVariant,
+                  size: 18,
+                ),
                 const SizedBox(width: 4),
-                Text('${thresholds.min} - ${thresholds.max}$unit', style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w600)),
+                Text(
+                  l10n.minMaxRange(
+                    '${thresholds.min}',
+                    '${thresholds.max}',
+                    unit,
+                  ),
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 12),
@@ -565,9 +766,22 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Min', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
+                      Text(
+                        l10n.min,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 11,
+                        ),
+                      ),
                       const SizedBox(height: 4),
-                      Text('${thresholds.min}$unit', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
+                      Text(
+                        l10n.minValueUnit('${thresholds.min}', unit),
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -575,9 +789,22 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('Max', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 11)),
+                      Text(
+                        l10n.max,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 11,
+                        ),
+                      ),
                       const SizedBox(height: 4),
-                      Text('${thresholds.max}$unit', style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600)),
+                      Text(
+                        l10n.maxValueUnit('${thresholds.max}', unit),
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -597,9 +824,13 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  thresholds.enabled ? 'Notifiche Attive' : 'Notifiche Disattivate',
+                  thresholds.enabled
+                      ? l10n.notificationsActiveLabel
+                      : l10n.notificationsDisabled,
                   style: TextStyle(
-                    color: thresholds.enabled ? color : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    color: thresholds.enabled
+                        ? color
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     fontSize: 12,
                   ),
                 ),
@@ -613,7 +844,8 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
   Widget _buildAlertCard(AlertLog alert) {
     final theme = Theme.of(context);
-    
+    final l10n = AppLocalizations.of(context)!;
+
     Color severityColor;
     IconData severityIcon;
 
@@ -642,16 +874,27 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
       directionIndicator = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: const Color(0xFF60a5fa).withValues(alpha:0.2),
+          color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: const Color(0xFF60a5fa), width: 1),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FaIcon(FontAwesomeIcons.arrowDown, color: Color(0xFF60a5fa), size: 12),
-            SizedBox(width: 4),
-            Text('BASSO', style: TextStyle(color: Color(0xFF60a5fa), fontSize: 10, fontWeight: FontWeight.bold)),
+            const FaIcon(
+              FontAwesomeIcons.arrowDown,
+              color: Color(0xFF60a5fa),
+              size: 12,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              l10n.lowLabel,
+              style: const TextStyle(
+                color: Color(0xFF60a5fa),
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       );
@@ -659,16 +902,27 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
       directionIndicator = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: const Color(0xFFef4444).withValues(alpha:0.2),
+          color: const Color(0xFFef4444).withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: const Color(0xFFef4444), width: 1),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FaIcon(FontAwesomeIcons.arrowUp, color: Color(0xFFef4444), size: 12),
-            SizedBox(width: 4),
-            Text('ALTO', style: TextStyle(color: Color(0xFFef4444), fontSize: 10, fontWeight: FontWeight.bold)),
+            const FaIcon(
+              FontAwesomeIcons.arrowUp,
+              color: Color(0xFFef4444),
+              size: 12,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              l10n.highLabel,
+              style: const TextStyle(
+                color: Color(0xFFef4444),
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       );
@@ -680,14 +934,14 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: severityColor.withValues(alpha:0.3)),
+        border: Border.all(color: severityColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: severityColor.withValues(alpha:0.2),
+              color: severityColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(severityIcon, color: severityColor, size: 20),
@@ -702,7 +956,11 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                     Expanded(
                       child: Text(
                         alert.title,
-                        style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     if (directionIndicator != null) ...[
@@ -712,11 +970,20 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(alert.message, style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+                Text(
+                  alert.message,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
                 const SizedBox(height: 6),
                 Text(
                   _formatTimestamp(alert.timestamp),
-                  style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.3), fontSize: 10),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    fontSize: 10,
+                  ),
                 ),
               ],
             ),
@@ -727,22 +994,33 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   }
 
   String _formatTimestamp(DateTime timestamp) {
+    final l10n = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final difference = now.difference(timestamp);
 
-    if (difference.inMinutes < 1) return 'Ora';
-    if (difference.inMinutes < 60) return '${difference.inMinutes}m fa';
-    if (difference.inHours < 24) return '${difference.inHours}h fa';
-    if (difference.inDays < 7) return '${difference.inDays}g fa';
-    
+    if (difference.inMinutes < 1) return l10n.nowLabel;
+    if (difference.inMinutes < 60) return l10n.minutesAgo('${difference.inMinutes}');
+    if (difference.inHours < 24) return l10n.hoursAgo('${difference.inHours}');
+    if (difference.inDays < 7) return l10n.daysAgo('${difference.inDays}');
+
     return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
   }
 
   // Dialog per modificare le soglie
-  void _showEditThresholdDialog(String name, String unit, ParameterThresholds currentThresholds, Color color) {
+  void _showEditThresholdDialog(
+    String name,
+    String unit,
+    ParameterThresholds currentThresholds,
+    Color color,
+  ) {
     final theme = Theme.of(context);
-    final minController = TextEditingController(text: currentThresholds.min.toString());
-    final maxController = TextEditingController(text: currentThresholds.max.toString());
+    final l10n = AppLocalizations.of(context)!;
+    final minController = TextEditingController(
+      text: currentThresholds.min.toString(),
+    );
+    final maxController = TextEditingController(
+      text: currentThresholds.max.toString(),
+    );
 
     showDialog(
       context: context,
@@ -754,8 +1032,11 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Modifica Soglie - $name',
-                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 17),
+                l10n.editThresholds(name),
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface,
+                  fontSize: 17,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -766,15 +1047,19 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           children: [
             TextField(
               controller: minController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               style: TextStyle(color: theme.colorScheme.onSurface),
               decoration: InputDecoration(
-                labelText: 'Valore Minimo',
-                labelStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                labelText: l10n.minimumValue,
+                labelStyle: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 suffixText: unit,
                 suffixStyle: TextStyle(color: color),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha:0.2)),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -786,15 +1071,19 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             const SizedBox(height: 16),
             TextField(
               controller: maxController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               style: TextStyle(color: theme.colorScheme.onSurface),
               decoration: InputDecoration(
-                labelText: 'Valore Massimo',
-                labelStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                labelText: l10n.maximumValue,
+                labelStyle: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 suffixText: unit,
                 suffixStyle: TextStyle(color: color),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha:0.2)),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 focusedBorder: OutlineInputBorder(
@@ -807,9 +1096,9 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withValues(alpha:0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: color.withValues(alpha:0.3)),
+                border: Border.all(color: color.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -817,7 +1106,7 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Riceverai notifiche quando il valore esce da questo range',
+                      l10n.notificationWhenOutOfRange,
                       style: TextStyle(color: color, fontSize: 11),
                     ),
                   ),
@@ -829,20 +1118,22 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annulla', style: TextStyle(color: Colors.white60)),
+            child: Text(
+              l10n.cancel,
+              style: const TextStyle(color: Colors.white60),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
+              final l10n = AppLocalizations.of(context)!;
               final newMin = double.tryParse(minController.text);
               final newMax = double.tryParse(maxController.text);
 
               if (newMin == null || newMax == null) {
-                
                 return;
               }
 
               if (newMin >= newMax) {
-                
                 return;
               }
 
@@ -851,13 +1142,12 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
               });
 
               Navigator.pop(context);
-             
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: color,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Salva'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -866,140 +1156,160 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
 
   // Aggiorna le soglie nel modello settings
   void _updateThresholds(String parameterName, double min, double max) {
-    switch (parameterName) {
-      case 'Temperatura':
-        _settings = _settings.copyWith(
-          temperature: ParameterThresholds(min: min, max: max, enabled: _settings.temperature.enabled),
-        );
-        break;
-      case 'pH':
-        _settings = _settings.copyWith(
-          ph: ParameterThresholds(min: min, max: max, enabled: _settings.ph.enabled),
-        );
-        break;
-      case 'Salinità':
-        _settings = _settings.copyWith(
-          salinity: ParameterThresholds(min: min, max: max, enabled: _settings.salinity.enabled),
-        );
-        break;
-      case 'ORP':
-        _settings = _settings.copyWith(
-          orp: ParameterThresholds(min: min, max: max, enabled: _settings.orp.enabled),
-        );
-        break;
-      case 'Calcio':
-        _settings = _settings.copyWith(
-          calcium: ParameterThresholds(min: min, max: max, enabled: _settings.calcium.enabled),
-        );
-        break;
-      case 'Magnesio':
-        _settings = _settings.copyWith(
-          magnesium: ParameterThresholds(min: min, max: max, enabled: _settings.magnesium.enabled),
-        );
-        break;
-      case 'KH':
-        _settings = _settings.copyWith(
-          kh: ParameterThresholds(min: min, max: max, enabled: _settings.kh.enabled),
-        );
-        break;
-      case 'Nitrati':
-        _settings = _settings.copyWith(
-          nitrate: ParameterThresholds(min: min, max: max, enabled: _settings.nitrate.enabled),
-        );
-        break;
-      case 'Fosfati':
-        _settings = _settings.copyWith(
-          phosphate: ParameterThresholds(min: min, max: max, enabled: _settings.phosphate.enabled),
-        );
-        break;
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (parameterName == l10n.temperatureParam) {
+      _settings = _settings.copyWith(
+        temperature: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.temperature.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phParam) {
+      _settings = _settings.copyWith(
+        ph: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.ph.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.salinityParam) {
+      _settings = _settings.copyWith(
+        salinity: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.salinity.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.orpParam) {
+      _settings = _settings.copyWith(
+        orp: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.orp.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.calciumParam) {
+      _settings = _settings.copyWith(
+        calcium: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.calcium.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.magnesiumParam) {
+      _settings = _settings.copyWith(
+        magnesium: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.magnesium.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.khParam) {
+      _settings = _settings.copyWith(
+        kh: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.kh.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.nitrateParam) {
+      _settings = _settings.copyWith(
+        nitrate: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.nitrate.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phosphateParam) {
+      _settings = _settings.copyWith(
+        phosphate: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.phosphate.enabled,
+        ),
+      );
     }
     _alertManager.updateSettings(_settings);
   }
 
   // Abilita/disabilita notifiche per un parametro
   void _updateThresholdEnabled(String parameterName, bool enabled) {
-    switch (parameterName) {
-      case 'Temperatura':
-        _settings = _settings.copyWith(
-          temperature: ParameterThresholds(
-            min: _settings.temperature.min,
-            max: _settings.temperature.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'pH':
-        _settings = _settings.copyWith(
-          ph: ParameterThresholds(
-            min: _settings.ph.min,
-            max: _settings.ph.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'Salinità':
-        _settings = _settings.copyWith(
-          salinity: ParameterThresholds(
-            min: _settings.salinity.min,
-            max: _settings.salinity.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'ORP':
-        _settings = _settings.copyWith(
-          orp: ParameterThresholds(
-            min: _settings.orp.min,
-            max: _settings.orp.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'Calcio':
-        _settings = _settings.copyWith(
-          calcium: ParameterThresholds(
-            min: _settings.calcium.min,
-            max: _settings.calcium.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'Magnesio':
-        _settings = _settings.copyWith(
-          magnesium: ParameterThresholds(
-            min: _settings.magnesium.min,
-            max: _settings.magnesium.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'KH':
-        _settings = _settings.copyWith(
-          kh: ParameterThresholds(
-            min: _settings.kh.min,
-            max: _settings.kh.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'Nitrati':
-        _settings = _settings.copyWith(
-          nitrate: ParameterThresholds(
-            min: _settings.nitrate.min,
-            max: _settings.nitrate.max,
-            enabled: enabled,
-          ),
-        );
-        break;
-      case 'Fosfati':
-        _settings = _settings.copyWith(
-          phosphate: ParameterThresholds(
-            min: _settings.phosphate.min,
-            max: _settings.phosphate.max,
-            enabled: enabled,
-          ),
-        );
-        break;
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (parameterName == l10n.temperatureParam) {
+      _settings = _settings.copyWith(
+        temperature: ParameterThresholds(
+          min: _settings.temperature.min,
+          max: _settings.temperature.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phParam) {
+      _settings = _settings.copyWith(
+        ph: ParameterThresholds(
+          min: _settings.ph.min,
+          max: _settings.ph.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.salinityParam) {
+      _settings = _settings.copyWith(
+        salinity: ParameterThresholds(
+          min: _settings.salinity.min,
+          max: _settings.salinity.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.orpParam) {
+      _settings = _settings.copyWith(
+        orp: ParameterThresholds(
+          min: _settings.orp.min,
+          max: _settings.orp.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.calciumParam) {
+      _settings = _settings.copyWith(
+        calcium: ParameterThresholds(
+          min: _settings.calcium.min,
+          max: _settings.calcium.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.magnesiumParam) {
+      _settings = _settings.copyWith(
+        magnesium: ParameterThresholds(
+          min: _settings.magnesium.min,
+          max: _settings.magnesium.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.khParam) {
+      _settings = _settings.copyWith(
+        kh: ParameterThresholds(
+          min: _settings.kh.min,
+          max: _settings.kh.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.nitrateParam) {
+      _settings = _settings.copyWith(
+        nitrate: ParameterThresholds(
+          min: _settings.nitrate.min,
+          max: _settings.nitrate.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phosphateParam) {
+      _settings = _settings.copyWith(
+        phosphate: ParameterThresholds(
+          min: _settings.phosphate.min,
+          max: _settings.phosphate.max,
+          enabled: enabled,
+        ),
+      );
     }
     _alertManager.updateSettings(_settings);
   }
@@ -1007,20 +1317,27 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
   /// Mostra dialog di conferma per ripristino valori predefiniti
   void _showResetDialog() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
         title: Row(
           children: [
-            const FaIcon(FontAwesomeIcons.triangleExclamation, color: Color(0xFFfbbf24), size: 28),
+            const FaIcon(
+              FontAwesomeIcons.triangleExclamation,
+              color: Color(0xFFfbbf24),
+              size: 28,
+            ),
             const SizedBox(width: 12),
-            //Text('Ripristinare Valori Predefiniti?', style: TextStyle(color: Colors.white, fontSize: 18)),
             Text(
-                'Ripristinare Predefiniti?',
-                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 17),
-                overflow: TextOverflow.ellipsis,
+              l10n.restoreDefaultsConfirm,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+                fontSize: 17,
               ),
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         ),
         content: Column(
@@ -1028,48 +1345,80 @@ class _NotificationsPageState extends State<NotificationsPage> with TickerProvid
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Questa azione resetterà tutte le soglie personalizzate ai valori di default:',
-              style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14),
+              l10n.restoreDefaultsMessage,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 16),
-            Text('• Temperatura: 24-26°C', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
-            Text('• pH: 8.0-8.4', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
-            Text('• Salinità: 1020-1028', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
-            Text('• E tutti gli altri parametri...', style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+            Text(
+              l10n.temperatureDefault,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              l10n.phDefault,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              l10n.salinityDefault,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              l10n.andOtherParameters,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
             const SizedBox(height: 16),
-            const Text(
-              'Le modifiche verranno salvate immediatamente.',
-              style: TextStyle(color: Color(0xFFfbbf24), fontSize: 12, fontWeight: FontWeight.bold),
+            Text(
+              l10n.changesWillBeSavedImmediately,
+              style: TextStyle(
+                color: Color(0xFFfbbf24),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Annulla', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
+              final l10n = AppLocalizations.of(context)!;
               setState(() {
                 _settings = NotificationSettings(); // Reset a default
               });
               _alertManager.updateSettings(_settings);
               await _prefsService.resetToDefaults();
-              
+
               if (!context.mounted) return;
               Navigator.pop(context);
-              
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFfbbf24),
               foregroundColor: Colors.black,
             ),
-            child: const Text('Ripristina'),
+            child: Text(l10n.resetButton),
           ),
         ],
       ),
     );
   }
 }
-
-

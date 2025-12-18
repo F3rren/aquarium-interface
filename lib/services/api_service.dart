@@ -14,13 +14,13 @@ class ApiService {
 
   // Token JWT per autenticazione
   String? _token;
-  
+
   // Timeout di default per le richieste
   Duration defaultTimeout = const Duration(seconds: 15);
-  
+
   // Retry policy di default
   RetryPolicy retryPolicy = RetryPolicies.network;
-  
+
   void setToken(String token) => _token = token;
   void clearToken() => _token = null;
 
@@ -37,18 +37,18 @@ class ApiService {
       return 'http://localhost:8080';
     }
   }
-  
+
   // Headers comuni per tutte le richieste con token JWT
   Map<String, String> get _headers {
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
-    
+
     if (_token != null) {
       headers['Authorization'] = 'Bearer $_token';
     }
-    
+
     return headers;
   }
 
@@ -65,11 +65,11 @@ class ApiService {
       () async {
         try {
           final url = Uri.parse('$baseUrl$endpoint');
-          
+
           final response = await http
               .get(url, headers: _headers)
               .timeout(effectiveTimeout);
-              
+
           return _handleResponse(response);
         } on SocketException catch (e) {
           throw NetworkException(
@@ -94,9 +94,11 @@ class ApiService {
       },
       shouldRetry: (error) {
         // Retry solo per errori di rete, non per errori 4xx
-        return error is NetworkException || 
-               error is TimeoutException ||
-               (error is ServerException && error.statusCode != null && error.statusCode! >= 500);
+        return error is NetworkException ||
+            error is TimeoutException ||
+            (error is ServerException &&
+                error.statusCode != null &&
+                error.statusCode! >= 500);
       },
     );
   }
@@ -109,44 +111,39 @@ class ApiService {
     RetryPolicy? retry,
   }) async {
     final effectiveTimeout = timeout ?? defaultTimeout;
-    final effectiveRetry = retry ?? RetryPolicies.none; // POST non ha retry di default
+    final effectiveRetry =
+        retry ?? RetryPolicies.none; // POST non ha retry di default
 
-    return effectiveRetry.execute(
-      () async {
-        try {
-          final url = Uri.parse('$baseUrl$endpoint');
-          
-          final response = await http
-              .post(
-                url,
-                headers: _headers,
-                body: jsonEncode(body),
-              )
-              .timeout(effectiveTimeout);
-              
-          return _handleResponse(response);
-        } on SocketException catch (e) {
-          throw NetworkException(
-            'Impossibile connettersi al server',
-            details: endpoint,
-            originalError: e,
-          );
-        } on TimeoutException catch (e) {
-          throw TimeoutException(
-            'La richiesta ha impiegato troppo tempo',
-            timeout: effectiveTimeout,
-            details: endpoint,
-            originalError: e,
-          );
-        } on FormatException catch (e) {
-          throw DataFormatException(
-            'Errore nel formato dei dati',
-            details: endpoint,
-            originalError: e,
-          );
-        }
-      },
-    );
+    return effectiveRetry.execute(() async {
+      try {
+        final url = Uri.parse('$baseUrl$endpoint');
+
+        final response = await http
+            .post(url, headers: _headers, body: jsonEncode(body))
+            .timeout(effectiveTimeout);
+
+        return _handleResponse(response);
+      } on SocketException catch (e) {
+        throw NetworkException(
+          'Impossibile connettersi al server',
+          details: endpoint,
+          originalError: e,
+        );
+      } on TimeoutException catch (e) {
+        throw TimeoutException(
+          'La richiesta ha impiegato troppo tempo',
+          timeout: effectiveTimeout,
+          details: endpoint,
+          originalError: e,
+        );
+      } on FormatException catch (e) {
+        throw DataFormatException(
+          'Errore nel formato dei dati',
+          details: endpoint,
+          originalError: e,
+        );
+      }
+    });
   }
 
   /// PUT request generico con retry automatico
@@ -157,44 +154,82 @@ class ApiService {
     RetryPolicy? retry,
   }) async {
     final effectiveTimeout = timeout ?? defaultTimeout;
-    final effectiveRetry = retry ?? RetryPolicies.none; // PUT non ha retry di default
+    final effectiveRetry =
+        retry ?? RetryPolicies.none; // PUT non ha retry di default
 
-    return effectiveRetry.execute(
-      () async {
-        try {
-          final url = Uri.parse('$baseUrl$endpoint');
-          
-          final response = await http
-              .put(
-                url,
-                headers: _headers,
-                body: jsonEncode(body),
-              )
-              .timeout(effectiveTimeout);
-              
-          return _handleResponse(response);
-        } on SocketException catch (e) {
-          throw NetworkException(
-            'Impossibile connettersi al server',
-            details: endpoint,
-            originalError: e,
-          );
-        } on TimeoutException catch (e) {
-          throw TimeoutException(
-            'La richiesta ha impiegato troppo tempo',
-            timeout: effectiveTimeout,
-            details: endpoint,
-            originalError: e,
-          );
-        } on FormatException catch (e) {
-          throw DataFormatException(
-            'Errore nel formato dei dati',
-            details: endpoint,
-            originalError: e,
-          );
-        }
-      },
-    );
+    return effectiveRetry.execute(() async {
+      try {
+        final url = Uri.parse('$baseUrl$endpoint');
+
+        final response = await http
+            .put(url, headers: _headers, body: jsonEncode(body))
+            .timeout(effectiveTimeout);
+
+        return _handleResponse(response);
+      } on SocketException catch (e) {
+        throw NetworkException(
+          'Impossibile connettersi al server',
+          details: endpoint,
+          originalError: e,
+        );
+      } on TimeoutException catch (e) {
+        throw TimeoutException(
+          'La richiesta ha impiegato troppo tempo',
+          timeout: effectiveTimeout,
+          details: endpoint,
+          originalError: e,
+        );
+      } on FormatException catch (e) {
+        throw DataFormatException(
+          'Errore nel formato dei dati',
+          details: endpoint,
+          originalError: e,
+        );
+      }
+    });
+  }
+
+  /// PATCH request generico con retry automatico
+  Future<dynamic> patch(
+    String endpoint,
+    Map<String, dynamic> body, {
+    Duration? timeout,
+    RetryPolicy? retry,
+  }) async {
+    final effectiveTimeout = timeout ?? defaultTimeout;
+    final effectiveRetry =
+        retry ?? RetryPolicies.none; // PATCH non ha retry di default
+
+    return effectiveRetry.execute(() async {
+      try {
+        final url = Uri.parse('$baseUrl$endpoint');
+
+        final response = await http
+            .patch(url, headers: _headers, body: jsonEncode(body))
+            .timeout(effectiveTimeout);
+
+        return _handleResponse(response);
+      } on SocketException catch (e) {
+        throw NetworkException(
+          'Impossibile connettersi al server',
+          details: endpoint,
+          originalError: e,
+        );
+      } on TimeoutException catch (e) {
+        throw TimeoutException(
+          'La richiesta ha impiegato troppo tempo',
+          timeout: effectiveTimeout,
+          details: endpoint,
+          originalError: e,
+        );
+      } on FormatException catch (e) {
+        throw DataFormatException(
+          'Errore nel formato dei dati',
+          details: endpoint,
+          originalError: e,
+        );
+      }
+    });
   }
 
   /// DELETE request generico con retry automatico
@@ -204,40 +239,39 @@ class ApiService {
     RetryPolicy? retry,
   }) async {
     final effectiveTimeout = timeout ?? defaultTimeout;
-    final effectiveRetry = retry ?? RetryPolicies.none; // DELETE non ha retry di default
+    final effectiveRetry =
+        retry ?? RetryPolicies.none; // DELETE non ha retry di default
 
-    return effectiveRetry.execute(
-      () async {
-        try {
-          final url = Uri.parse('$baseUrl$endpoint');
-          
-          final response = await http
-              .delete(url, headers: _headers)
-              .timeout(effectiveTimeout);
-              
-          return _handleResponse(response);
-        } on SocketException catch (e) {
-          throw NetworkException(
-            'Impossibile connettersi al server',
-            details: endpoint,
-            originalError: e,
-          );
-        } on TimeoutException catch (e) {
-          throw TimeoutException(
-            'La richiesta ha impiegato troppo tempo',
-            timeout: effectiveTimeout,
-            details: endpoint,
-            originalError: e,
-          );
-        } on FormatException catch (e) {
-          throw DataFormatException(
-            'Errore nel formato dei dati',
-            details: endpoint,
-            originalError: e,
-          );
-        }
-      },
-    );
+    return effectiveRetry.execute(() async {
+      try {
+        final url = Uri.parse('$baseUrl$endpoint');
+
+        final response = await http
+            .delete(url, headers: _headers)
+            .timeout(effectiveTimeout);
+
+        return _handleResponse(response);
+      } on SocketException catch (e) {
+        throw NetworkException(
+          'Impossibile connettersi al server',
+          details: endpoint,
+          originalError: e,
+        );
+      } on TimeoutException catch (e) {
+        throw TimeoutException(
+          'La richiesta ha impiegato troppo tempo',
+          timeout: effectiveTimeout,
+          details: endpoint,
+          originalError: e,
+        );
+      } on FormatException catch (e) {
+        throw DataFormatException(
+          'Errore nel formato dei dati',
+          details: endpoint,
+          originalError: e,
+        );
+      }
+    });
   }
 
   /// Ottiene i dati di manutenzione per un acquario
@@ -269,28 +303,28 @@ class ApiService {
     // Gestione errori HTTP
     String errorMessage = 'Errore del server';
     Map<String, dynamic>? errorDetails;
-    
+
     try {
       final errorBody = jsonDecode(response.body);
       if (errorBody is Map<String, dynamic>) {
-        errorMessage = errorBody['message'] ?? 
-                      errorBody['error'] ?? 
-                      errorBody['errorMessage'] ??
-                      'Errore sconosciuto';
+        errorMessage =
+            errorBody['message'] ??
+            errorBody['error'] ??
+            errorBody['errorMessage'] ??
+            'Errore sconosciuto';
         errorDetails = errorBody;
       }
     } catch (e) {
-      errorMessage = response.body.isNotEmpty ? response.body : 'Errore sconosciuto';
+      errorMessage = response.body.isNotEmpty
+          ? response.body
+          : 'Errore sconosciuto';
     }
-    
+
     // Lancia eccezioni specifiche basate sullo status code
     final statusCode = response.statusCode;
-    
+
     if (statusCode == 401 || statusCode == 403) {
-      throw AuthException(
-        errorMessage,
-        details: 'Status code: $statusCode',
-      );
+      throw AuthException(errorMessage, details: 'Status code: $statusCode');
     } else if (statusCode == 404) {
       throw NotFoundException(
         errorMessage,
@@ -309,10 +343,7 @@ class ApiService {
         details: 'Errore interno del server',
       );
     } else {
-      throw AppError(
-        errorMessage,
-        details: 'Status code: $statusCode',
-      );
+      throw AppError(errorMessage, details: 'Status code: $statusCode');
     }
   }
 }

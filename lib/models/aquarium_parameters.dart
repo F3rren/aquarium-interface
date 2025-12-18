@@ -28,22 +28,30 @@ class AquariumParameters {
   factory AquariumParameters.fromJson(Map<String, dynamic> json) {
     // Salinità viene mantenuta come PPT (1024, 1025, ecc.)
     double salinity = (json['salinity'] ?? 0).toDouble();
-    
+
     return AquariumParameters(
       temperature: (json['temperature'] ?? 0).toDouble(),
       ph: (json['ph'] ?? 0).toDouble(),
       salinity: salinity,
       orp: (json['orp'] ?? 0).toDouble(),
-      calcium: json['calcium'] != null ? (json['calcium'] as num).toDouble() : null,
-      magnesium: json['magnesium'] != null ? (json['magnesium'] as num).toDouble() : null,
+      calcium: json['calcium'] != null
+          ? (json['calcium'] as num).toDouble()
+          : null,
+      magnesium: json['magnesium'] != null
+          ? (json['magnesium'] as num).toDouble()
+          : null,
       kh: json['kh'] != null ? (json['kh'] as num).toDouble() : null,
-      nitrate: json['nitrate'] != null ? (json['nitrate'] as num).toDouble() : null,
-      phosphate: json['phosphate'] != null ? (json['phosphate'] as num).toDouble() : null,
-      timestamp: json['measuredAt'] != null 
+      nitrate: json['nitrate'] != null
+          ? (json['nitrate'] as num).toDouble()
+          : null,
+      phosphate: json['phosphate'] != null
+          ? (json['phosphate'] as num).toDouble()
+          : null,
+      timestamp: json['measuredAt'] != null
           ? DateTime.parse(json['measuredAt'])
-          : (json['timestamp'] != null 
-              ? DateTime.parse(json['timestamp'])
-              : DateTime.now()),
+          : (json['timestamp'] != null
+                ? DateTime.parse(json['timestamp'])
+                : DateTime.now()),
     );
   }
 
