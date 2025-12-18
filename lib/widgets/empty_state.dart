@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 /// Widget riutilizzabile per stati vuoti con illustrazione
 class EmptyState extends StatelessWidget {
@@ -39,15 +40,14 @@ class EmptyState extends StatelessWidget {
               duration: const Duration(milliseconds: 800),
               curve: Curves.elasticOut,
               builder: (context, value, child) {
-                return Transform.scale(
-                  scale: value,
-                  child: child,
-                );
+                return Transform.scale(scale: value, child: child);
               },
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: (iconColor ?? theme.primaryColor).withValues(alpha: isDark ? 0.15 : 0.1),
+                  color: (iconColor ?? theme.primaryColor).withValues(
+                    alpha: isDark ? 0.15 : 0.1,
+                  ),
                   shape: BoxShape.circle,
                 ),
                 child: FaIcon(
@@ -57,9 +57,9 @@ class EmptyState extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Title con fade-in
             TweenAnimationBuilder<double>(
               tween: Tween(begin: 0.0, end: 1.0),
@@ -74,17 +74,16 @@ class EmptyState extends StatelessWidget {
                   ),
                 );
               },
-              child: Text(
-                title,
+              child: Text(title,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Message con fade-in ritardato
             TweenAnimationBuilder<double>(
               tween: Tween(begin: 0.0, end: 1.0),
@@ -99,18 +98,17 @@ class EmptyState extends StatelessWidget {
                   ),
                 );
               },
-              child: Text(
-                message,
+              child: Text(message,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.textTheme.bodySmall?.color,
                 ),
                 textAlign: TextAlign.center,
               ),
             ),
-            
+
             if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: 32),
-              
+
               // Button con animazione
               TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0.0, end: 1.0),
@@ -156,11 +154,12 @@ class NoAquariumsEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return EmptyState(
       icon: FontAwesomeIcons.fishFins,
-      title: 'Nessun Acquario',
-      message: 'Inizia creando il tuo primo acquario per monitorare i parametri dell\'acqua e la salute dei tuoi pesci.',
-      actionLabel: 'Crea Acquario',
+      title: l10n.noAquarium,
+      message: l10n.noAquariumDescription,
+      actionLabel: l10n.createAquarium,
       onAction: onAddAquarium,
       iconColor: const Color(0xFF3b82f6),
     );
@@ -175,11 +174,12 @@ class NoFishEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return EmptyState(
       icon: FontAwesomeIcons.fish,
-      title: 'Nessun Pesce',
-      message: 'Aggiungi i tuoi pesci per tenere traccia della popolazione del tuo acquario.',
-      actionLabel: 'Aggiungi Pesce',
+      title: l10n.noFish,
+      message: l10n.noFishDescription,
+      actionLabel: l10n.addFish,
       onAction: onAddFish,
       iconColor: const Color(0xFF10b981),
     );
@@ -194,11 +194,12 @@ class NoCoralsEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return EmptyState(
       icon: FontAwesomeIcons.tree,
-      title: 'Nessun Corallo',
-      message: 'Documenta i coralli presenti nel tuo acquario marino.',
-      actionLabel: 'Aggiungi Corallo',
+      title: l10n.noCoral,
+      message: l10n.noCoralDescription,
+      actionLabel: l10n.addCoral,
       onAction: onAddCoral,
       iconColor: const Color(0xFFf59e0b),
     );
@@ -211,11 +212,12 @@ class NoHistoryEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const EmptyState(
+    final l10n = AppLocalizations.of(context)!;
+    return EmptyState(
       icon: FontAwesomeIcons.chartLine,
-      title: 'Nessuno Storico',
-      message: 'Non ci sono ancora dati storici disponibili. I parametri verranno registrati automaticamente.',
-      iconColor: Color(0xFF8b5cf6),
+      title: l10n.noHistory,
+      message: l10n.noHistoryDescription,
+      iconColor: const Color(0xFF8b5cf6),
     );
   }
 }
@@ -228,11 +230,12 @@ class NoMaintenanceTasksEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return EmptyState(
       icon: FontAwesomeIcons.screwdriverWrench,
-      title: 'Nessun Task',
-      message: 'Crea promemoria per le attività di manutenzione del tuo acquario.',
-      actionLabel: 'Crea Task',
+      title: l10n.noTasks,
+      message: l10n.noTasksDescription,
+      actionLabel: l10n.createTask,
       onAction: onAddTask,
       iconColor: const Color(0xFFec4899),
     );
@@ -245,11 +248,12 @@ class NoAlertsEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const EmptyState(
+    final l10n = AppLocalizations.of(context)!;
+    return EmptyState(
       icon: FontAwesomeIcons.bellSlash,
-      title: 'Tutto OK!',
-      message: 'Non ci sono alert attivi. Tutti i parametri sono nella norma.',
-      iconColor: Color(0xFF10b981),
+      title: l10n.allOk,
+      message: l10n.allOkDescription,
+      iconColor: const Color(0xFF10b981),
     );
   }
 }
@@ -262,10 +266,11 @@ class NoSearchResultsEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return EmptyState(
       icon: FontAwesomeIcons.magnifyingGlass,
-      title: 'Nessun Risultato',
-      message: 'Non abbiamo trovato risultati per "$searchQuery".\nProva con parole chiave diverse.',
+      title: l10n.noResults,
+      message: l10n.noResultsDescription(searchQuery),
       iconColor: const Color(0xFF6b7280),
     );
   }
@@ -273,22 +278,19 @@ class NoSearchResultsEmptyState extends StatelessWidget {
 
 /// Empty state generico con errore
 class ErrorEmptyState extends StatelessWidget {
-  final String message;
+  final String? message;
   final VoidCallback? onRetry;
 
-  const ErrorEmptyState({
-    super.key,
-    this.message = 'Si è verificato un errore',
-    this.onRetry,
-  });
+  const ErrorEmptyState({super.key, this.message, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return EmptyState(
       icon: FontAwesomeIcons.triangleExclamation,
-      title: 'Ops!',
-      message: message,
-      actionLabel: onRetry != null ? 'Riprova' : null,
+      title: l10n.errorTitle,
+      message: message ?? l10n.errorDescription,
+      actionLabel: onRetry != null ? l10n.retry : null,
       onAction: onRetry,
       iconColor: const Color(0xFFef4444),
     );
@@ -303,11 +305,12 @@ class OfflineEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return EmptyState(
       icon: FontAwesomeIcons.wifi,
-      title: 'Sei Offline',
-      message: 'Verifica la tua connessione internet e riprova.',
-      actionLabel: onRetry != null ? 'Riprova' : null,
+      title: l10n.offline,
+      message: l10n.offlineDescription,
+      actionLabel: onRetry != null ? l10n.retry : null,
       onAction: onRetry,
       iconColor: const Color(0xFF6b7280),
     );

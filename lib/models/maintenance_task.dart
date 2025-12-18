@@ -6,7 +6,8 @@ class MaintenanceTask {
   final String? description;
   final MaintenanceCategory category;
   final int frequencyDays; // Ogni quanti giorni si ripete (retrocompatibilità)
-  final String? frequency; // Frequenza come string (daily, weekly, monthly, custom)
+  final String?
+  frequency; // Frequenza come string (daily, weekly, monthly, custom)
   final String? priority; // Priorità (low, medium, high)
   final DateTime? dueDate; // Data/ora scadenza specifica
   final String? notes; // Note aggiuntive
@@ -48,7 +49,7 @@ class MaintenanceTask {
     if (dueDate != null) {
       return dueDate!;
     }
-    
+
     if (lastCompleted == null) {
       return DateTime.now();
     }
@@ -87,9 +88,7 @@ class MaintenanceTask {
 
   /// Segna come completato
   MaintenanceTask markCompleted([DateTime? completionDate]) {
-    return copyWith(
-      lastCompleted: completionDate ?? DateTime.now(),
-    );
+    return copyWith(lastCompleted: completionDate ?? DateTime.now());
   }
 
   MaintenanceTask copyWith({
@@ -169,22 +168,36 @@ class MaintenanceTask {
       final title = json['title']?.toString().toLowerCase() ?? '';
       final desc = json['description']?.toString().toLowerCase() ?? '';
       final text = '$title $desc';
-      
-      if (text.contains('acqua') || text.contains('water') || text.contains('cambio')) {
+
+      if (text.contains('acqua') ||
+          text.contains('water') ||
+          text.contains('cambio')) {
         parsedCategory = MaintenanceCategory.water;
-      } else if (text.contains('vetri') || text.contains('pulizia') || text.contains('clean') || text.contains('glass')) {
+      } else if (text.contains('vetri') ||
+          text.contains('pulizia') ||
+          text.contains('clean') ||
+          text.contains('glass')) {
         parsedCategory = MaintenanceCategory.cleaning;
-      } else if (text.contains('filtro') || text.contains('pompa') || text.contains('schiumatoio') || text.contains('filter') || text.contains('pump')) {
+      } else if (text.contains('filtro') ||
+          text.contains('pompa') ||
+          text.contains('schiumatoio') ||
+          text.contains('filter') ||
+          text.contains('pump')) {
         parsedCategory = MaintenanceCategory.equipment;
       } else if (text.contains('test') || text.contains('parametr')) {
         parsedCategory = MaintenanceCategory.testing;
-      } else if (text.contains('dosaggio') || text.contains('calcio') || text.contains('magnesio') || text.contains('kh')) {
+      } else if (text.contains('dosaggio') ||
+          text.contains('calcio') ||
+          text.contains('magnesio') ||
+          text.contains('kh')) {
         parsedCategory = MaintenanceCategory.dosing;
-      } else if (text.contains('cibo') || text.contains('alimenta') || text.contains('feed')) {
+      } else if (text.contains('cibo') ||
+          text.contains('alimenta') ||
+          text.contains('feed')) {
         parsedCategory = MaintenanceCategory.feeding;
       }
     }
-    
+
     return MaintenanceTask(
       id: json['id'].toString(),
       aquariumId: json['aquariumId'].toString(),
@@ -192,9 +205,7 @@ class MaintenanceTask {
       description: json['description']?.toString(),
       frequency: json['frequency']?.toString(),
       priority: json['priority']?.toString(),
-      dueDate: json['dueDate'] != null
-          ? DateTime.parse(json['dueDate'])
-          : null,
+      dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
       notes: json['notes']?.toString(),
       isCompleted: json['isCompleted'] ?? false,
       completedAt: json['completedAt'] != null
@@ -203,14 +214,14 @@ class MaintenanceTask {
       status: json['status']?.toString(),
       overdue: json['overdue'] as bool?,
       category: parsedCategory,
-      frequencyDays: json['frequencyDays'] is int 
-          ? json['frequencyDays'] 
+      frequencyDays: json['frequencyDays'] is int
+          ? json['frequencyDays']
           : int.tryParse(json['frequencyDays']?.toString() ?? '') ?? 7,
       lastCompleted: json['completedAt'] != null
           ? DateTime.parse(json['completedAt'])
           : (json['lastCompleted'] != null
-              ? DateTime.parse(json['lastCompleted'])
-              : null),
+                ? DateTime.parse(json['lastCompleted'])
+                : null),
       enabled: json['enabled'] ?? true,
       reminderHour: json['reminderHour'],
       reminderMinute: json['reminderMinute'],
@@ -328,18 +339,17 @@ class MaintenanceTask {
 
 /// Categorie task di manutenzione
 enum MaintenanceCategory {
-  water,      // Acqua (cambio, rabbocco)
-  equipment,  // Attrezzatura (filtri, pompe, luci)
-  testing,    // Test parametri
-  cleaning,   // Pulizia (vetri, fondo)
-  dosing,     // Dosaggio (calcio, oligoelementi)
-  feeding,    // Alimentazione
-  other,      // Altro
+  water, // Acqua (cambio, rabbocco)
+  equipment, // Attrezzatura (filtri, pompe, luci)
+  testing, // Test parametri
+  cleaning, // Pulizia (vetri, fondo)
+  dosing, // Dosaggio (calcio, oligoelementi)
+  feeding, // Alimentazione
+  other, // Altro
 }
 
 /// Extension per icone e colori categorie
 extension MaintenanceCategoryExtension on MaintenanceCategory {
-
   String get label {
     switch (this) {
       case MaintenanceCategory.water:

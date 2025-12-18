@@ -5,7 +5,7 @@ import 'api_service.dart';
 class InhabitantsService {
   static final InhabitantsService _instance = InhabitantsService._internal();
   factory InhabitantsService() => _instance;
-  
+
   InhabitantsService._internal();
 
   final ApiService _apiService = ApiService();
@@ -22,30 +22,38 @@ class InhabitantsService {
     }
 
     try {
-      final response = await _apiService.get('/aquariums/$_currentAquariumId/inhabitants');
-      
+      final response = await _apiService.get(
+        '/aquariums/$_currentAquariumId/inhabitants',
+      );
+
       if (response['data'] == null) return [];
-      
+
       final List<dynamic> inhabitants = response['data'] as List;
-      
+
       // Filtra solo i pesci (type == 'fish')
-      return inhabitants
-          .where((item) => item['type'] == 'fish')
-          .map((item) {
-            // Estrai la dimensione dai dettagli o usa un valore di default
-            final size = item['details']?['size'] ?? item['details']?['maxSize'] ?? 10.0;
-            
-            return Fish.fromJson({
-              'id': item['id'].toString(),
-              'name': item['commonName'] ?? '',
-              'species': item['scientificName'] ?? '',
-              'size': size is int ? size.toDouble() : (size as double),
-              'addedDate': item['addedDate'] ?? DateTime.now().toIso8601String(),
-              'notes': item['details']?['notes'] ?? '',
-              'imageUrl': null,
-            });
-          })
-          .toList();
+      return inhabitants.where((item) => item['type'] == 'fish').map((item) {
+        // Estrai la dimensione dai dettagli o usa un valore di default
+        final size =
+            item['details']?['size'] ?? item['details']?['maxSize'] ?? 10.0;
+
+        return Fish.fromJson({
+          'id': item['id'].toString(),
+          'name': item['commonName'] ?? '',
+          'species': item['scientificName'] ?? '',
+          'size': size is int ? size.toDouble() : (size as double),
+          'addedDate': item['addedDate'] ?? DateTime.now().toIso8601String(),
+          'notes': item['details']?['notes'] ?? '',
+          'imageUrl': item['details']?['imageUrl'],
+          'family': item['details']?['family'],
+          'minTankSize': item['details']?['minTankSize'],
+          'maxSize': item['details']?['maxSize']?.toDouble(),
+          'difficulty': item['details']?['difficulty'],
+          'temperament': item['details']?['temperament'],
+          'diet': item['details']?['diet'],
+          'description': item['details']?['description'],
+          'reefSafe': item['details']?['reefSafe'],
+        });
+      }).toList();
     } catch (e) {
       return [];
     }
@@ -66,10 +74,7 @@ class InhabitantsService {
       'notes': fish.notes ?? '',
     };
 
-    await _apiService.post(
-      '/aquariums/$_currentAquariumId/inhabitants',
-      body,
-    );
+    await _apiService.post('/aquariums/$_currentAquariumId/inhabitants', body);
   }
 
   Future<void> updateFish(Fish fish) async {
@@ -77,10 +82,7 @@ class InhabitantsService {
       throw Exception('No aquarium selected');
     }
 
-    final body = {
-      'quantity': fish.size.toInt(),
-      'notes': fish.notes ?? '',
-    };
+    final body = {'quantity': fish.size.toInt(), 'notes': fish.notes ?? ''};
 
     await _apiService.put(
       '/aquariums/$_currentAquariumId/inhabitants/${fish.id}',
@@ -103,32 +105,40 @@ class InhabitantsService {
     }
 
     try {
-      final response = await _apiService.get('/aquariums/$_currentAquariumId/inhabitants');
-      
+      final response = await _apiService.get(
+        '/aquariums/$_currentAquariumId/inhabitants',
+      );
+
       if (response['data'] == null) return [];
-      
+
       final List<dynamic> inhabitants = response['data'] as List;
-      
+
       // Filtra solo i coralli (type == 'coral')
-      return inhabitants
-          .where((item) => item['type'] == 'coral')
-          .map((item) {
-            // Estrai la dimensione dai dettagli o usa un valore di default
-            final size = item['details']?['size'] ?? item['details']?['maxSize'] ?? 5.0;
-            
-            return Coral.fromJson({
-              'id': item['id'].toString(),
-              'name': item['commonName'] ?? '',
-              'species': item['scientificName'] ?? '',
-              'type': item['details']?['type'] ?? 'SPS',
-              'size': size is int ? size.toDouble() : (size as double),
-              'addedDate': item['addedDate'] ?? DateTime.now().toIso8601String(),
-              'placement': item['details']?['placement'] ?? 'Medio',
-              'notes': item['details']?['notes'] ?? '',
-              'imageUrl': null,
-            });
-          })
-          .toList();
+      return inhabitants.where((item) => item['type'] == 'coral').map((item) {
+        // Estrai la dimensione dai dettagli o usa un valore di default
+        final size =
+            item['details']?['size'] ?? item['details']?['maxSize'] ?? 5.0;
+
+        return Coral.fromJson({
+          'id': item['id'].toString(),
+          'name': item['commonName'] ?? '',
+          'species': item['scientificName'] ?? '',
+          'type': item['details']?['type'] ?? 'SPS',
+          'size': size is int ? size.toDouble() : (size as double),
+          'addedDate': item['addedDate'] ?? DateTime.now().toIso8601String(),
+          'placement': item['details']?['placement'] ?? 'Medio',
+          'notes': item['details']?['notes'] ?? '',
+          'imageUrl': null,
+          'difficulty': item['details']?['difficulty'],
+          'lightRequirement': item['details']?['lightRequirement'],
+          'flowRequirement': item['details']?['flowRequirement'],
+          'feeding': item['details']?['feeding'],
+          'description': item['details']?['description'],
+          'aggressive': item['details']?['aggressive'],
+          'minTankSize': item['details']?['minTankSize'],
+          'maxSize': item['details']?['maxSize'],
+        });
+      }).toList();
     } catch (e) {
       return [];
     }
@@ -149,10 +159,7 @@ class InhabitantsService {
       'notes': coral.notes ?? '',
     };
 
-    await _apiService.post(
-      '/aquariums/$_currentAquariumId/inhabitants',
-      body,
-    );
+    await _apiService.post('/aquariums/$_currentAquariumId/inhabitants', body);
   }
 
   Future<void> updateCoral(Coral coral) async {
@@ -160,10 +167,7 @@ class InhabitantsService {
       throw Exception('No aquarium selected');
     }
 
-    final body = {
-      'quantity': coral.size.toInt(),
-      'notes': coral.notes ?? '',
-    };
+    final body = {'quantity': coral.size.toInt(), 'notes': coral.notes ?? ''};
 
     await _apiService.put(
       '/aquariums/$_currentAquariumId/inhabitants/${coral.id}',
@@ -183,12 +187,15 @@ class InhabitantsService {
   Future<Map<String, dynamic>> getStatistics() async {
     final fish = await getFish();
     final corals = await getCorals();
-    
+
     final totalFish = fish.length;
     final totalCorals = corals.length;
-    final avgFishSize = fish.isEmpty ? 0.0 : fish.map((f) => f.size).reduce((a, b) => a + b) / fish.length;
-    final totalBioLoad = fish.fold<double>(0, (sum, f) => sum + f.size) + (corals.length * 2.0);
-    
+    final avgFishSize = fish.isEmpty
+        ? 0.0
+        : fish.map((f) => f.size).reduce((a, b) => a + b) / fish.length;
+    final totalBioLoad =
+        fish.fold<double>(0, (sum, f) => sum + f.size) + (corals.length * 2.0);
+
     return {
       'totalFish': totalFish,
       'totalCorals': totalCorals,

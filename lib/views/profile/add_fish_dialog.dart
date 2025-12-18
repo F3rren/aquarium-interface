@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../models/fish.dart';
 import '../../models/fish_species.dart';
 import '../../services/fish_database_service.dart';
+import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class AddFishDialog extends StatefulWidget {
   final Fish? fish;
@@ -29,7 +30,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
   late TextEditingController _sizeController;
   late TextEditingController _notesController;
   late TextEditingController _quantityController;
-  
+
   final _fishDbService = FishDatabaseService();
   List<FishSpecies> _availableFish = [];
   FishSpecies? _selectedFishSpecies;
@@ -39,25 +40,34 @@ class _AddFishDialogState extends State<AddFishDialog> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.fish?.name ?? '');
-    _speciesController = TextEditingController(text: widget.fish?.species ?? '');
-    _sizeController = TextEditingController(text: widget.fish?.size.toString() ?? '');
+    _speciesController = TextEditingController(
+      text: widget.fish?.species ?? '',
+    );
+    _sizeController = TextEditingController(
+      text: widget.fish?.size.toString() ?? '',
+    );
     _notesController = TextEditingController(text: widget.fish?.notes ?? '');
-    _quantityController = TextEditingController(text: widget.fish == null ? '1' : '1');
-    
+    _quantityController = TextEditingController(
+      text: widget.fish == null ? '1' : '1',
+    );
+
     _loadFishDatabase();
   }
-  
+
   Future<void> _loadFishDatabase() async {
     try {
       List<FishSpecies> fish;
-      
+
       // Se è specificato il tipo d'acqua dell'acquario, filtra i pesci compatibili
-      if (widget.aquariumWaterType != null && widget.aquariumWaterType!.isNotEmpty) {
-        fish = await _fishDbService.getFishByWaterType(widget.aquariumWaterType!);
+      if (widget.aquariumWaterType != null &&
+          widget.aquariumWaterType!.isNotEmpty) {
+        fish = await _fishDbService.getFishByWaterType(
+          widget.aquariumWaterType!,
+        );
       } else {
         fish = await _fishDbService.getAllFish();
       }
-      
+
       setState(() {
         _availableFish = fish;
         _isLoadingDatabase = false;
@@ -66,68 +76,84 @@ class _AddFishDialogState extends State<AddFishDialog> {
       setState(() => _isLoadingDatabase = false);
     }
   }
-  
+
   void _onFishSpeciesSelected(FishSpecies? species) {
     if (species == null) return;
-    
+
+    final l10n = AppLocalizations.of(context)!;
+
     setState(() {
       _selectedFishSpecies = species;
       _nameController.text = species.commonName;
       _speciesController.text = species.scientificName;
       _sizeController.text = species.maxSize.toString();
-      
+
       // Aggiungi info utili nelle note
       final info = StringBuffer();
-      info.writeln('Difficoltà: ${_getDifficultyLabel(species.difficulty)}');
-      info.writeln('Vasca minima: ${species.minTankSize}L');
-      info.writeln('Temperamento: ${_getTemperamentLabel(species.temperament)}');
-      info.writeln('Dieta: ${_getDietLabel(species.diet)}');
-      info.writeln('Reef-safe: ${species.reefSafe ? "Sì" : "No"}');
+      info.writeln('${l10n.difficultyLabel}: ${_getDifficultyLabel(species.difficulty)}');
+      info.writeln('${l10n.minTankSizeLabel}: ${species.minTankSize}L');
+      info.writeln(
+        '${l10n.temperamentLabel}: ${_getTemperamentLabel(species.temperament)}',
+      );
+      info.writeln('${l10n.dietLabel}: ${_getDietLabel(species.diet)}');
+      info.writeln('${l10n.reefSafeLabel}: ${species.reefSafe ? l10n.yes : l10n.no}');
       if (species.description != null) {
         info.writeln('\n${species.description}');
       }
-      
+
       _notesController.text = info.toString();
     });
   }
-  
+
   String _getDifficultyLabel(String difficulty) {
     switch (difficulty) {
-      case 'beginner': return 'Principiante';
-      case 'intermediate': return 'Intermedio';
-      case 'expert': return 'Esperto';
-      default: return difficulty;
+      case 'beginner':
+        return 'Principiante';
+      case 'intermediate':
+        return 'Intermedio';
+      case 'expert':
+        return 'Esperto';
+      default:
+        return difficulty;
     }
   }
-  
+
   String _getTemperamentLabel(String temperament) {
     switch (temperament) {
-      case 'peaceful': return 'Pacifico';
-      case 'semi-aggressive': return 'Semi-aggressivo';
-      case 'aggressive': return 'Aggressivo';
-      default: return temperament;
+      case 'peaceful':
+        return 'Pacifico';
+      case 'semi-aggressive':
+        return 'Semi-aggressivo';
+      case 'aggressive':
+        return 'Aggressivo';
+      default:
+        return temperament;
     }
   }
-  
+
   String _getDietLabel(String diet) {
     switch (diet) {
-      case 'herbivore': return 'Erbivoro';
-      case 'carnivore': return 'Carnivoro';
-      case 'omnivore': return 'Onnivoro';
-      default: return diet;
+      case 'herbivore':
+        return 'Erbivoro';
+      case 'carnivore':
+        return 'Carnivoro';
+      case 'omnivore':
+        return 'Onnivoro';
+      default:
+        return diet;
     }
   }
-  
+
   Color _getDifficultyColor(String difficulty) {
     switch (difficulty.toLowerCase()) {
       case 'facile':
         return const Color(0xFF34d399);
-      case 'intermedio':
+      case 'medio':
         return const Color(0xFFfbbf24);
       case 'difficile':
         return const Color(0xFFef4444);
       default:
-        return const Color(0xFF6b7280);
+        return const Color.fromARGB(255, 0, 0, 0);
     }
   }
 
@@ -142,26 +168,29 @@ class _AddFishDialogState extends State<AddFishDialog> {
   }
 
   void _save() {
-    if (_nameController.text.isEmpty || _speciesController.text.isEmpty || _sizeController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Compila tutti i campi obbligatori')),
-      );
+    final l10n = AppLocalizations.of(context)!;
+    if (_nameController.text.isEmpty ||
+        _speciesController.text.isEmpty ||
+        _sizeController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.fillAllRequiredFields)));
       return;
     }
 
     final size = double.tryParse(_sizeController.text);
     if (size == null || size <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Dimensione non valida')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.invalidSize)));
       return;
     }
 
     final quantity = int.tryParse(_quantityController.text) ?? 1;
     if (quantity <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Quantità non valida')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.invalidQuantity)));
       return;
     }
 
@@ -197,14 +226,16 @@ class _AddFishDialogState extends State<AddFishDialog> {
         final fishNumber = index + 1;
         return Fish(
           id: const Uuid().v4(),
-          name: quantity > 1 ? '${_nameController.text} #$fishNumber' : _nameController.text,
+          name: quantity > 1
+              ? '${_nameController.text} #$fishNumber'
+              : _nameController.text,
           species: _speciesController.text,
           size: size,
           addedDate: DateTime.now(),
           notes: _notesController.text.isEmpty ? null : _notesController.text,
         );
       });
-      
+
       if (widget.onSaveMultiple != null) {
         widget.onSaveMultiple!(fishList, _selectedFishSpecies?.id);
       } else {
@@ -214,15 +245,18 @@ class _AddFishDialogState extends State<AddFishDialog> {
         }
       }
     }
-    
+
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final heroTag = widget.fish != null ? 'fish_${widget.fish!.id}' : 'fish_new';
-    
+    final l10n = AppLocalizations.of(context)!;
+    final heroTag = widget.fish != null
+        ? 'fish_${widget.fish!.id}'
+        : 'fish_new';
+
     return Dialog(
       backgroundColor: theme.colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -235,7 +269,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            children: [
               Row(
                 children: [
                   Hero(
@@ -245,16 +279,21 @@ class _AddFishDialogState extends State<AddFishDialog> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.2,
+                          ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: FaIcon(FontAwesomeIcons.fish, color: theme.colorScheme.primary, size: 28),
+                        child: FaIcon(
+                          FontAwesomeIcons.fish,
+                          color: theme.colorScheme.primary,
+                          size: 28,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Text(
-                    widget.fish == null ? 'Aggiungi Pesce' : 'Modifica Pesce',
+                  Text( widget.fish == null ? l10n.addFishTitle : l10n.editFishTitle,
                     style: TextStyle(
                       color: theme.colorScheme.onSurface,
                       fontSize: 20,
@@ -264,7 +303,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                 ],
               ),
               const SizedBox(height: 24),
-              
+
               // Dropdown per selezionare dal database
               if (widget.fish == null && !_isLoadingDatabase) ...[
                 if (_availableFish.isEmpty)
@@ -279,14 +318,19 @@ class _AddFishDialogState extends State<AddFishDialog> {
                     ),
                     child: Row(
                       children: [
-                        Icon(FontAwesomeIcons.circleExclamation, color: theme.colorScheme.error, size: 20),
+                        Icon(
+                          FontAwesomeIcons.circleExclamation,
+                          color: theme.colorScheme.error,
+                          size: 20,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: Text(
-                            widget.aquariumWaterType != null
-                                ? 'Nessun pesce compatibile con acquario ${widget.aquariumWaterType}'
-                                : 'Nessun pesce disponibile nel database',
-                            style: TextStyle(color: theme.colorScheme.onErrorContainer),
+                          child: Text(widget.aquariumWaterType != null
+                                ? l10n.noCompatibleFish(widget.aquariumWaterType!)
+                                : l10n.noDatabaseFish,
+                            style: TextStyle(
+                              color: theme.colorScheme.onErrorContainer,
+                            ),
                           ),
                         ),
                       ],
@@ -294,7 +338,10 @@ class _AddFishDialogState extends State<AddFishDialog> {
                   )
                 else
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
@@ -307,74 +354,86 @@ class _AddFishDialogState extends State<AddFishDialog> {
                         isExpanded: true,
                         hint: Row(
                           children: [
-                            FaIcon(FontAwesomeIcons.magnifyingGlass, color: theme.colorScheme.primary, size: 20),
+                            FaIcon(
+                              FontAwesomeIcons.magnifyingGlass,
+                              color: theme.colorScheme.primary,
+                              size: 20,
+                            ),
                             const SizedBox(width: 12),
-                            Text(
-                              'Seleziona dalla lista',
-                              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                            Text(l10n.selectFromList,
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           ],
                         ),
                         value: _selectedFishSpecies,
                         dropdownColor: theme.colorScheme.surface,
-                        icon: FaIcon(FontAwesomeIcons.caretDown, color: theme.colorScheme.primary),
+                        icon: FaIcon(
+                          FontAwesomeIcons.caretDown,
+                          color: theme.colorScheme.primary,
+                        ),
                         items: _availableFish.map((species) {
-                        return DropdownMenuItem<FishSpecies>(
-                          value: species,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      species.commonName,
-                                      style: TextStyle(
-                                        color: theme.colorScheme.onSurface,
-                                        fontWeight: FontWeight.w500,
+                          return DropdownMenuItem<FishSpecies>(
+                            value: species,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(species.commonName,
+                                        style: TextStyle(
+                                          color: theme.colorScheme.onSurface,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      species.scientificName,
-                                      style: TextStyle(
-                                        color: theme.colorScheme.onSurfaceVariant,
-                                        fontSize: 11,
-                                        fontStyle: FontStyle.italic,
+                                      Text(species.scientificName,
+                                        style: TextStyle(
+                                          color: theme
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                          fontSize: 11,
+                                          fontStyle: FontStyle.italic,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // Badge difficoltà
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: _getDifficultyColor(species.difficulty),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  _getDifficultyLabel(species.difficulty)[0],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: _onFishSpeciesSelected,
+                                // Badge difficoltà
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: _getDifficultyColor(
+                                      species.difficulty,
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(_getDifficultyLabel(species.difficulty)[0],
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: _onFishSpeciesSelected,
+                      ),
                     ),
                   ),
-                ),
                 const SizedBox(height: 24),
                 Center(
-                  child: Text(
-                    'oppure inserisci manualmente',
+                  child: Text(l10n.orEnterManually,
                     style: TextStyle(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontSize: 12,
@@ -384,43 +443,42 @@ class _AddFishDialogState extends State<AddFishDialog> {
                 ),
                 const SizedBox(height: 16),
               ],
-              
+
               _buildTextField(
                 controller: _nameController,
-                label: 'Nome *',
-                hint: 'es: Nemo',
+                label: l10n.fishNameLabel,
+                hint: l10n.fishNameHint,
                 icon: FontAwesomeIcons.tag,
               ),
               const SizedBox(height: 16),
-              
+
               _buildTextField(
                 controller: _speciesController,
-                label: 'Specie *',
-                hint: 'es: Amphiprion ocellaris',
+                label: l10n.fishSpeciesLabel,
+                hint: l10n.fishSpeciesHint,
                 icon: FontAwesomeIcons.circleInfo,
               ),
               const SizedBox(height: 16),
-              
+
               _buildTextField(
                 controller: _sizeController,
-                label: 'Dimensione (cm) *',
-                hint: 'es: 8.5',
+                label: l10n.fishSizeLabel,
+                hint: l10n.fishSizeHint,
                 icon: FontAwesomeIcons.ruler,
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
-              
+
               if (widget.fish == null) ...[
                 _buildTextField(
                   controller: _quantityController,
-                  label: 'Quantità',
-                  hint: 'Numero di esemplari da aggiungere',
+                  label: l10n.quantityLabel,
+                  hint: l10n.quantityHint,
                   icon: FontAwesomeIcons.circlePlus,
                   keyboardType: TextInputType.number,
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Se aggiungi più esemplari, verranno numerati automaticamente',
+                Text(l10n.multipleSpecimensNote,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.5),
                     fontSize: 12,
@@ -429,22 +487,26 @@ class _AddFishDialogState extends State<AddFishDialog> {
                 ),
                 const SizedBox(height: 16),
               ],
-              
+
               _buildTextField(
                 controller: _notesController,
-                label: 'Note',
-                hint: 'Aggiungi note opzionali',
+                label: l10n.notesLabel,
+                hint: l10n.notesHint,
                 icon: FontAwesomeIcons.noteSticky,
                 maxLines: 3,
               ),
-              
+
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('Annulla', style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
+                    child: Text(l10n.cancel,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   ElevatedButton(
@@ -452,10 +514,17 @@ class _AddFishDialogState extends State<AddFishDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
                       foregroundColor: theme.colorScheme.onPrimary,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    child: const Text('Salva', style: TextStyle(fontWeight: FontWeight.w600)),
+                    child: Text(l10n.save,
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
               ),
@@ -475,13 +544,16 @@ class _AddFishDialogState extends State<AddFishDialog> {
     int maxLines = 1,
   }) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(color: theme.colorScheme.onSurfaceVariant, fontSize: 14, fontWeight: FontWeight.w500),
+        Text(label,
+          style: TextStyle(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: 8),
         TextField(
@@ -491,7 +563,9 @@ class _AddFishDialogState extends State<AddFishDialog> {
           style: TextStyle(color: theme.colorScheme.onSurface),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+            ),
             prefixIcon: Icon(icon, color: theme.colorScheme.primary),
             filled: true,
             fillColor: theme.colorScheme.surfaceContainerHighest,
@@ -501,7 +575,9 @@ class _AddFishDialogState extends State<AddFishDialog> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
+              borderSide: BorderSide(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -513,5 +589,3 @@ class _AddFishDialogState extends State<AddFishDialog> {
     );
   }
 }
-
-

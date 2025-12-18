@@ -32,7 +32,8 @@ ParameterService parameterService(ParameterServiceRef ref) {
 /// Gestisce i parametri target dell'acquario
 @riverpod
 TargetParametersService targetParametersService(
-    TargetParametersServiceRef ref) {
+  TargetParametersServiceRef ref,
+) {
   return TargetParametersService();
 }
 
