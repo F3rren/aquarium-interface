@@ -3,7 +3,6 @@ import 'package:acquariumfe/services/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
-import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class ProductsView extends StatefulWidget {
   final int? aquariumId;

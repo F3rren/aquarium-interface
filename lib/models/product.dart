@@ -83,31 +83,78 @@ class Product {
 
   // Serializzazione JSON
   Map<String, dynamic> toJson() {
+    // Mappa le enum Dart alle categorie backend (UPPERCASE)
+    String getCategoryString(ProductCategory category) {
+      switch (category) {
+        case ProductCategory.bacteria:
+          return 'BACTERIA';
+        case ProductCategory.food:
+          return 'FOOD';
+        case ProductCategory.test:
+          return 'TEST';
+        case ProductCategory.supplement:
+          return 'SUPPLEMENT';
+        case ProductCategory.waterTreatment:
+          return 'WATER_TREATMENT';
+        case ProductCategory.equipment:
+          return 'EQUIPMENT';
+        case ProductCategory.medicine:
+          return 'MEDICINE';
+        case ProductCategory.other:
+          return 'OTHER';
+      }
+    }
+
     return {
-      'id': id,
+      if (id.isNotEmpty) 'id': int.tryParse(id) ?? id, // Manda come int se possibile
       'name': name,
-      'category': category.index,
+      'category': getCategoryString(category),
       'brand': brand,
       'quantity': quantity,
       'unit': unit,
       'cost': cost,
       'currency': currency,
-      'purchaseDate': purchaseDate?.toIso8601String(),
-      'expiryDate': expiryDate?.toIso8601String(),
+      'purchaseDate': purchaseDate?.toIso8601String().split('T')[0], // Solo data
+      'expiryDate': expiryDate?.toIso8601String().split('T')[0],
       'notes': notes,
       'imageUrl': imageUrl,
       'isFavorite': isFavorite,
       'usageFrequency': usageFrequency,
-      'lastUsed': lastUsed?.toIso8601String(),
+      'lastUsed': lastUsed?.toIso8601String().split('T')[0],
     };
   }
 
   // Deserializzazione JSON
   factory Product.fromJson(Map<String, dynamic> json) {
+    // Mappa le categorie dal backend (UPPERCASE) alle enum Dart
+    ProductCategory parseCategory(String categoryString) {
+      switch (categoryString.toUpperCase()) {
+        case 'BACTERIA':
+          return ProductCategory.bacteria;
+        case 'FOOD':
+          return ProductCategory.food;
+        case 'TEST':
+          return ProductCategory.test;
+        case 'SUPPLEMENT':
+          return ProductCategory.supplement;
+        case 'WATER_TREATMENT':
+          return ProductCategory.waterTreatment;
+        case 'EQUIPMENT':
+          return ProductCategory.equipment;
+        case 'MEDICINE':
+          return ProductCategory.medicine;
+        case 'OTHER':
+        default:
+          return ProductCategory.other;
+      }
+    }
+
     return Product(
-      id: json['id'] as String,
+      id: json['id'].toString(), // Converti int a String
       name: json['name'] as String,
-      category: ProductCategory.values[json['category'] as int],
+      category: json['category'] is String
+          ? parseCategory(json['category'] as String)
+          : ProductCategory.values[json['category'] as int],
       brand: json['brand'] as String?,
       quantity: json['quantity'] != null
           ? (json['quantity'] as num).toDouble()
