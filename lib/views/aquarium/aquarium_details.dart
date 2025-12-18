@@ -4,6 +4,7 @@ import 'package:acquariumfe/views/charts/charts_view.dart';
 import 'package:acquariumfe/views/notifications/notifications_page.dart';
 import 'package:acquariumfe/views/profile/profile_page.dart';
 import 'package:acquariumfe/views/maintenance/maintenance_view.dart';
+import 'package:acquariumfe/widgets/ai_chat_overlay.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/widgets/components/skeleton_loader.dart';
 import 'package:flutter/material.dart';
@@ -138,7 +139,8 @@ class _AquariumDetailsState extends State<AquariumDetails>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(AppLocalizations.of(context)!.myAquarium,
+                        Text(
+                          AppLocalizations.of(context)!.myAquarium,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface,
                             fontSize: 18,
@@ -203,6 +205,9 @@ class _AquariumDetailsState extends State<AquariumDetails>
           ],
         ),
       ),
+      floatingActionButton: _selectedBottomIndex == 0
+          ? const AiChatOverlayInner()
+          : null,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:acquariumfe/models/product.dart';
 import 'api_service.dart';
 
@@ -81,7 +80,6 @@ class ProductService {
 
       return products;
     } catch (e) {
-      print('Errore nel caricamento dei prodotti: $e');
       return _cachedProducts ?? [];
     }
   }
@@ -122,7 +120,6 @@ class ProductService {
       }
       return null;
     } catch (e) {
-      print('Errore nel recupero del prodotto: $e');
       return null;
     }
   }
@@ -137,7 +134,6 @@ class ProductService {
       await _apiService.post('/products', product.toJson());
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nell\'aggiunta del prodotto: $e');
       rethrow;
     }
   }
@@ -152,7 +148,6 @@ class ProductService {
       await _apiService.put('/products/${product.id}', product.toJson());
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nell\'aggiornamento del prodotto: $e');
       rethrow;
     }
   }
@@ -167,7 +162,6 @@ class ProductService {
       await _apiService.delete('/products/$id');
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nell\'eliminazione del prodotto: $e');
       rethrow;
     }
   }
@@ -191,7 +185,6 @@ class ProductService {
       
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nella registrazione dell\'uso: $e');
       rethrow;
     }
   }
@@ -206,7 +199,6 @@ class ProductService {
       await _apiService.patch('/products/$productId/toggle-favorite', {});
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nel toggle preferito: $e');
       rethrow;
     }
   }
@@ -223,7 +215,6 @@ class ProductService {
       });
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nell\'aggiornamento della quantità: $e');
       rethrow;
     }
   }
