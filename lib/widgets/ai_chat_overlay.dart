@@ -279,6 +279,12 @@ class _AiChatOverlayState extends ConsumerState<AiChatOverlay>
                 );
               },
             ),
+
+          // Close button
+          IconButton(
+            icon: const Icon(Icons.close, color: AppColors.textGray),
+            onPressed: _toggleChat,
+          ),
         ],
       ),
     );
@@ -747,6 +753,12 @@ class _AiChatOverlayInnerState extends ConsumerState<AiChatOverlayInner>
                 );
               },
             ),
+
+          // Close button
+          IconButton(
+            icon: const Icon(Icons.close, color: AppColors.textGray),
+            onPressed: _removeOverlay,
+          ),
         ],
       ),
     );
