@@ -56,9 +56,11 @@ class AquariumsService {
 
   /// Crea un nuovo acquario
   Future<Aquarium> createAquarium(Aquarium aquarium) async {
-    // Non serve più rimuovere l'ID, toJson() lo gestisce automaticamente
     final response = await _apiService.post('/aquariums', aquarium.toJson());
-    return Aquarium.fromJson(response);
+    if (response is Map<String, dynamic> && response.containsKey('data')) {
+      return Aquarium.fromJson(response['data'] as Map<String, dynamic>);
+    }
+    return Aquarium.fromJson(response as Map<String, dynamic>);
   }
 
   /// Aggiorna un acquario esistente

@@ -192,14 +192,16 @@ class MaintenanceTaskService {
     );
   }
 
-  /// Inizializza task predefiniti per un nuovo acquario
-  Future<void> initializeDefaultTasks() async {
+  /// Inizializza task predefiniti per un nuovo acquario.
+  /// [type] accetta 'saltwater' o 'freshwater' (valori backend) — determina quali task creare.
+  Future<void> initializeDefaultTasks({String type = 'saltwater'}) async {
     if (_currentAquariumId == null) {
       throw Exception('Nessun acquario selezionato');
     }
 
     final defaultTasks = MaintenanceTask.getDefaultTasks(
       _currentAquariumId.toString(),
+      type: type,
     );
 
     for (final task in defaultTasks) {

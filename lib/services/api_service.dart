@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:async';
+import 'dart:io' show SocketException;
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:acquariumfe/utils/retry_policy.dart';
 
@@ -12,8 +13,14 @@ class ApiService {
   factory ApiService() => _instance;
   ApiService._internal();
 
-  // Token JWT per autenticazione
-  String? _token;
+  // Secure storage per il token JWT (Android Keystore / iOS Keychain)
+  static const _storage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
+  static const _tokenKey = 'jwt_token';
+
+  // Cache in memoria per evitare letture ripetute dallo storage
+  String? _cachedToken;
 
   // Timeout di default per le richieste
   Duration defaultTimeout = const Duration(seconds: 15);
@@ -21,34 +28,41 @@ class ApiService {
   // Retry policy di default
   RetryPolicy retryPolicy = RetryPolicies.network;
 
-  void setToken(String token) => _token = token;
-  void clearToken() => _token = null;
-
-  // Base URL dinamico basato sulla piattaforma
-  static String get baseUrl {
-    // Per Android dispositivo fisico, usa l'IP del PC
-    if (Platform.isAndroid) {
-      return 'http://REDACTED:8080';
-    } else if (Platform.isIOS) {
-      // iOS Simulator può usare localhost
-      return 'http://localhost:8080';
-    } else {
-      // Desktop/Web
-      return 'http://localhost:8080';
-    }
+  /// Persiste il token JWT nello storage cifrato e aggiorna la cache
+  Future<void> setToken(String token) async {
+    _cachedToken = token;
+    await _storage.write(key: _tokenKey, value: token);
   }
 
+  /// Rimuove il token da storage e cache (logout)
+  Future<void> clearToken() async {
+    _cachedToken = null;
+    await _storage.delete(key: _tokenKey);
+  }
+
+  /// Legge il token: usa la cache, legge lo storage al cold start
+  Future<String?> getToken() async {
+    _cachedToken ??= await _storage.read(key: _tokenKey);
+    return _cachedToken;
+  }
+
+  // Base URL iniettato a compile-time tramite --dart-define=API_BASE_URL=...
+  // Default: server di sviluppo locale (sostituire con URL di produzione in release)
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://REDACTED:8080',
+  );
+
   // Headers comuni per tutte le richieste con token JWT
-  Map<String, String> get _headers {
+  Future<Map<String, String>> get _headers async {
+    final token = await getToken();
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
-
-    if (_token != null) {
-      headers['Authorization'] = 'Bearer $_token';
+    if (token != null) {
+      headers['Authorization'] = 'Bearer $token';
     }
-
     return headers;
   }
 
@@ -67,7 +81,7 @@ class ApiService {
           final url = Uri.parse('$baseUrl$endpoint');
 
           final response = await http
-              .get(url, headers: _headers)
+              .get(url, headers: await _headers)
               .timeout(effectiveTimeout);
 
           return _handleResponse(response);
@@ -119,7 +133,7 @@ class ApiService {
         final url = Uri.parse('$baseUrl$endpoint');
 
         final response = await http
-            .post(url, headers: _headers, body: jsonEncode(body))
+            .post(url, headers: await _headers, body: jsonEncode(body))
             .timeout(effectiveTimeout);
 
         return _handleResponse(response);
@@ -162,7 +176,7 @@ class ApiService {
         final url = Uri.parse('$baseUrl$endpoint');
 
         final response = await http
-            .put(url, headers: _headers, body: jsonEncode(body))
+            .put(url, headers: await _headers, body: jsonEncode(body))
             .timeout(effectiveTimeout);
 
         return _handleResponse(response);
@@ -205,7 +219,7 @@ class ApiService {
         final url = Uri.parse('$baseUrl$endpoint');
 
         final response = await http
-            .patch(url, headers: _headers, body: jsonEncode(body))
+            .patch(url, headers: await _headers, body: jsonEncode(body))
             .timeout(effectiveTimeout);
 
         return _handleResponse(response);
@@ -247,7 +261,7 @@ class ApiService {
         final url = Uri.parse('$baseUrl$endpoint');
 
         final response = await http
-            .delete(url, headers: _headers)
+            .delete(url, headers: await _headers)
             .timeout(effectiveTimeout);
 
         return _handleResponse(response);

@@ -70,18 +70,18 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
           throw Exception(l10n.volumeMustBePositive);
         }
 
-        // Mappa la chiave al valore tradotto
-        final typeMap = {
-          'marine': l10n.marine,
-          'freshwater': l10n.freshwater,
-          'reef': l10n.reef,
+        // Mappa i tipi UI ai valori accettati dal backend
+        const typeToBackend = {
+          'marine': 'saltwater',
+          'reef': 'saltwater',
+          'freshwater': 'freshwater',
         };
 
         // Crea l'oggetto Aquarium con i dati del form
         final newAquarium = Aquarium(
           name: _nameController.text.trim(),
           volume: volume,
-          type: typeMap[_selectedType] ?? l10n.marine,
+          type: typeToBackend[_selectedType] ?? 'saltwater',
         );
 
         // Chiamata al provider per creare l'acquario

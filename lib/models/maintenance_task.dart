@@ -229,9 +229,16 @@ class MaintenanceTask {
     );
   }
 
-  /// Task predefiniti comuni
-  static List<MaintenanceTask> getDefaultTasks(String aquariumId) {
-    return [
+  /// Task predefiniti per tipo di vasca.
+  /// [type] accetta 'saltwater' o 'freshwater' (valori backend).
+  /// saltwater → 10 task; freshwater → 6 task comuni (no schiumatoio, calcio, oligoelementi, luci).
+  static List<MaintenanceTask> getDefaultTasks(
+    String aquariumId, {
+    String type = 'saltwater',
+  }) {
+    final bool isSaltwater = type == 'saltwater';
+
+    final commonTasks = [
       MaintenanceTask(
         id: 'water_change',
         aquariumId: aquariumId,
@@ -273,16 +280,6 @@ class MaintenanceTask {
         reminderMinute: 30,
       ),
       MaintenanceTask(
-        id: 'protein_skimmer',
-        aquariumId: aquariumId,
-        title: 'Svuota Schiumatoio',
-        description: 'Svuotare e pulire bicchiere schiumatoio',
-        category: MaintenanceCategory.equipment,
-        frequencyDays: 3,
-        reminderHour: 8,
-        reminderMinute: 0,
-      ),
-      MaintenanceTask(
         id: 'substrate_cleaning',
         aquariumId: aquariumId,
         title: 'Sifonatura Fondo',
@@ -290,6 +287,29 @@ class MaintenanceTask {
         category: MaintenanceCategory.cleaning,
         frequencyDays: 14,
         reminderHour: 9,
+        reminderMinute: 0,
+      ),
+      MaintenanceTask(
+        id: 'pump_maintenance',
+        aquariumId: aquariumId,
+        title: 'Pulizia Pompe',
+        description: 'Pulizia rotori e giranti pompe',
+        category: MaintenanceCategory.equipment,
+        frequencyDays: 90,
+        reminderHour: 10,
+        reminderMinute: 0,
+      ),
+    ];
+
+    final saltwaterTasks = [
+      MaintenanceTask(
+        id: 'protein_skimmer',
+        aquariumId: aquariumId,
+        title: 'Svuota Schiumatoio',
+        description: 'Svuotare e pulire bicchiere schiumatoio',
+        category: MaintenanceCategory.equipment,
+        frequencyDays: 3,
+        reminderHour: 8,
         reminderMinute: 0,
       ),
       MaintenanceTask(
@@ -323,16 +343,11 @@ class MaintenanceTask {
         reminderMinute: 0,
         enabled: false,
       ),
-      MaintenanceTask(
-        id: 'pump_maintenance',
-        aquariumId: aquariumId,
-        title: 'Pulizia Pompe',
-        description: 'Pulizia rotori e giranti pompe',
-        category: MaintenanceCategory.equipment,
-        frequencyDays: 90,
-        reminderHour: 10,
-        reminderMinute: 0,
-      ),
+    ];
+
+    return [
+      ...commonTasks,
+      if (isSaltwater) ...saltwaterTasks,
     ];
   }
 }

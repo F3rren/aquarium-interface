@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Solo HTTPS — tutto il traffico cleartext è bloccato -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+
+    <!-- TEMPORANEO: HTTP verso il backend AWS finché non è su HTTPS -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">REDACTED</domain>
+    </domain-config>
+
+    <!-- In debug permette certificati utente (utile per proxy di test come Charles/mitmproxy) -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="user"/>
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>

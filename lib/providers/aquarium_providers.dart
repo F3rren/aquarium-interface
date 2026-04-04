@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:acquariumfe/models/aquarium.dart';
 import 'package:acquariumfe/models/aquarium_parameters.dart';
 import 'package:acquariumfe/providers/service_providers.dart';
+import 'package:acquariumfe/services/maintenance_task_service.dart';
 import 'package:acquariumfe/utils/exceptions.dart';
 
 part 'aquarium_providers.g.dart';
@@ -115,12 +116,23 @@ class Aquariums extends _$Aquariums {
     });
   }
 
-  /// Aggiunge un nuovo acquario
+  /// Aggiunge un nuovo acquario e inizializza i task predefiniti per il suo tipo
   Future<void> addAquarium(Aquarium aquarium) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final aquariumService = ref.read(aquariumsServiceProvider);
-      await aquariumService.createAquarium(aquarium);
+      final created = await aquariumService.createAquarium(aquarium);
+
+      if (created.id != null) {
+        final taskService = MaintenanceTaskService();
+        taskService.setCurrentAquarium(created.id!);
+        try {
+          await taskService.initializeDefaultTasks(type: aquarium.type);
+        } catch (_) {
+          // Non bloccare la creazione dell'acquario se i task falliscono
+        }
+      }
+
       return await _loadAquariums();
     });
   }

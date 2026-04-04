@@ -42,7 +42,7 @@ A cross-platform aquarium monitoring app designed for hobbyists to track water p
 - [ ] Add cloud backup/sync across devices
 - [X] Improve UI for full tablet/desktop support
 - [ ] Expand species database (community add/edit)
-- [ ] Localization for additional languages
+- [X] Localization for additional languages
 
 
 

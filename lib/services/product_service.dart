@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:logger/logger.dart';
 import 'package:acquariumfe/models/product.dart';
 import 'api_service.dart';
 
 class ProductService {
   final _apiService = ApiService();
+  final _logger = Logger();
   int? _currentAquariumId;
   List<Product>? _cachedProducts;
 
@@ -81,7 +83,7 @@ class ProductService {
 
       return products;
     } catch (e) {
-      print('Errore nel caricamento dei prodotti: $e');
+      _logger.e('Errore nel caricamento dei prodotti', error: e);
       return _cachedProducts ?? [];
     }
   }
@@ -114,7 +116,7 @@ class ProductService {
 
     try {
       final response = await _apiService.get('/products/$id');
-      
+
       if (response is Map<String, dynamic>) {
         if (response.containsKey('data')) {
           return Product.fromJson(response['data'] as Map<String, dynamic>);
@@ -122,7 +124,7 @@ class ProductService {
       }
       return null;
     } catch (e) {
-      print('Errore nel recupero del prodotto: $e');
+      _logger.e('Errore nel recupero del prodotto', error: e);
       return null;
     }
   }
@@ -137,7 +139,7 @@ class ProductService {
       await _apiService.post('/products', product.toJson());
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nell\'aggiunta del prodotto: $e');
+      _logger.e("Errore nell'aggiunta del prodotto", error: e);
       rethrow;
     }
   }
@@ -152,7 +154,7 @@ class ProductService {
       await _apiService.put('/products/${product.id}', product.toJson());
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nell\'aggiornamento del prodotto: $e');
+      _logger.e("Errore nell'aggiornamento del prodotto", error: e);
       rethrow;
     }
   }
@@ -167,7 +169,7 @@ class ProductService {
       await _apiService.delete('/products/$id');
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nell\'eliminazione del prodotto: $e');
+      _logger.e("Errore nell'eliminazione del prodotto", error: e);
       rethrow;
     }
   }
@@ -181,17 +183,17 @@ class ProductService {
     try {
       // Prima marca come usato
       await _apiService.patch('/products/$productId/mark-used', {});
-      
+
       // Poi aggiorna la quantità se specificata
       if (quantityUsed != null) {
         await _apiService.patch('/products/$productId/quantity', {
           'change': -quantityUsed,
         });
       }
-      
+
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nella registrazione dell\'uso: $e');
+      _logger.e("Errore nella registrazione dell'uso", error: e);
       rethrow;
     }
   }
@@ -206,7 +208,7 @@ class ProductService {
       await _apiService.patch('/products/$productId/toggle-favorite', {});
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nel toggle preferito: $e');
+      _logger.e('Errore nel toggle preferito', error: e);
       rethrow;
     }
   }
@@ -223,7 +225,7 @@ class ProductService {
       });
       _cachedProducts = null; // Invalida cache
     } catch (e) {
-      print('Errore nell\'aggiornamento della quantità: $e');
+      _logger.e("Errore nell'aggiornamento della quantità", error: e);
       rethrow;
     }
   }

@@ -57,6 +57,9 @@ dependencies:
   
   # HTTP client for API calls
   http: ^1.2.2
+
+  # Secure encrypted storage for JWT tokens (Android Keystore / iOS Keychain)
+  flutter_secure_storage: ^9.2.2
   
   # JSON serialization
   json_annotation: ^4.9.0
