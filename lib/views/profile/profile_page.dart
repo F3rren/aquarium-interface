@@ -8,6 +8,7 @@ import 'package:acquariumfe/providers/aquarium_providers.dart';
 import 'package:acquariumfe/providers/locale_provider.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
+import 'package:acquariumfe/utils/task_localizer.dart';
 
 class ProfilePage extends ConsumerWidget {
   final int? aquariumId;
@@ -571,10 +572,8 @@ class ProfilePage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: FaIcon(
-                    aquarium.type == 'Marino'
+                    aquarium.type == 'saltwater'
                         ? FontAwesomeIcons.droplet
-                        : aquarium.type == 'Reef'
-                        ? FontAwesomeIcons.atom
                         : FontAwesomeIcons.water,
                     color: const Color(0xFF34d399),
                     size: 24,
@@ -610,7 +609,7 @@ class ProfilePage extends ConsumerWidget {
                   // Tipo
                   _buildInfoRow(
                     l10n.typeLabel,
-                    aquarium.type,
+                    localizedAquariumType(aquarium.type, l10n),
                     FontAwesomeIcons.tag,
                     theme,
                   ),

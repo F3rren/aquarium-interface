@@ -5,6 +5,7 @@ import '../../models/fish.dart';
 import '../../models/fish_species.dart';
 import '../../services/fish_database_service.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
+import 'package:acquariumfe/utils/task_localizer.dart';
 
 class AddFishDialog extends StatefulWidget {
   final Fish? fish;
@@ -326,7 +327,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(widget.aquariumWaterType != null
-                                ? l10n.noCompatibleFish(widget.aquariumWaterType!)
+                                ? l10n.noCompatibleFish(localizedAquariumType(widget.aquariumWaterType!, l10n))
                                 : l10n.noDatabaseFish,
                             style: TextStyle(
                               color: theme.colorScheme.onErrorContainer,
