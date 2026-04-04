@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
+import 'package:acquariumfe/utils/task_localizer.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class DeleteAquarium extends ConsumerStatefulWidget {
@@ -384,6 +385,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
 
   Widget _buildAquariumCard(Aquarium aquarium) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -410,7 +412,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    aquarium.type == 'Marino'
+                    aquarium.type == 'saltwater'
                         ? FontAwesomeIcons.droplet
                         : FontAwesomeIcons.water,
                     color: theme.colorScheme.error,
@@ -430,7 +432,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text('${aquarium.volume} L • ${aquarium.type}',
+                      Text('${aquarium.volume} L • ${localizedAquariumType(aquarium.type, l10n)}',
                         style: TextStyle(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 13,

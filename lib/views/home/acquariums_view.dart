@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/widgets/animated_value.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
+import 'package:acquariumfe/utils/task_localizer.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 import 'package:acquariumfe/widgets/skeleton_loader.dart';
@@ -289,10 +290,8 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                               ),
                             ),
                             child: Icon(
-                              aquarium.type == 'Marino'
+                              aquarium.type == 'saltwater'
                                   ? FontAwesomeIcons.droplet
-                                  : aquarium.type == 'Reef'
-                                  ? FontAwesomeIcons.atom
                                   : FontAwesomeIcons.water,
                               color: const Color(0xFF60a5fa),
                               size: 20,
@@ -322,7 +321,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                                           .withValues(alpha: 0.5),
                                     ),
                                     const SizedBox(width: 4),
-                                    Text("${aquarium.volume.toInt()} L • ${aquarium.type}",
+                                    Text("${aquarium.volume.toInt()} L • ${localizedAquariumType(aquarium.type, l10n)}",
                                       style: TextStyle(
                                         color: theme.colorScheme.onSurface
                                             .withValues(alpha: 0.5),

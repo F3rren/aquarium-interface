@@ -1199,5 +1199,34 @@
     "placeholders": {
       "error": {"type": "String"}
     }
-  }
+  },
+
+  "taskWaterChangeTitle": "Cambio Acqua",
+  "taskWaterChangeDesc": "Cambio acqua settimanale (10-20%)",
+  "taskFilterCleaningTitle": "Pulizia Filtri",
+  "taskFilterCleaningDesc": "Pulizia meccanica filtri e spugne",
+  "taskParameterTestingTitle": "Test Parametri",
+  "taskParameterTestingDesc": "Controllo parametri acqua principali",
+  "taskGlassCleaningTitle": "Pulizia Vetri",
+  "taskGlassCleaningDesc": "Rimozione alghe dai vetri",
+  "taskSubstrateCleaningTitle": "Sifonatura Fondo",
+  "taskSubstrateCleaningDesc": "Pulizia detriti dal substrato",
+  "taskPumpMaintenanceTitle": "Pulizia Pompe",
+  "taskPumpMaintenanceDesc": "Pulizia rotori e giranti pompe",
+  "taskProteinSkimmerTitle": "Svuota Schiumatoio",
+  "taskProteinSkimmerDesc": "Svuotare e pulire bicchiere schiumatoio",
+  "taskCalciumDosingTitle": "Reintegro Calcio/KH",
+  "taskCalciumDosingDesc": "Controllo e dosaggio calcio/alcalinità",
+  "taskTraceElementsTitle": "Oligoelementi",
+  "taskTraceElementsDesc": "Dosaggio oligoelementi e additivi",
+  "taskLightMaintenanceTitle": "Manutenzione Luci",
+  "taskLightMaintenanceDesc": "Pulizia LED e controllo funzionamento",
+
+  "categoryWater": "Acqua",
+  "categoryEquipment": "Attrezzatura",
+  "categoryTesting": "Test",
+  "categoryCleaning": "Pulizia",
+  "categoryDosing": "Dosaggio",
+  "categoryFeeding": "Alimentazione",
+  "categoryOther": "Altro"
 }

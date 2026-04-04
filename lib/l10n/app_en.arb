@@ -1113,5 +1113,34 @@
     "placeholders": {
       "error": {"type": "String"}
     }
-  }
+  },
+
+  "taskWaterChangeTitle": "Water Change",
+  "taskWaterChangeDesc": "Weekly water change (10-20%)",
+  "taskFilterCleaningTitle": "Filter Cleaning",
+  "taskFilterCleaningDesc": "Mechanical cleaning of filters and sponges",
+  "taskParameterTestingTitle": "Parameter Testing",
+  "taskParameterTestingDesc": "Check main water parameters",
+  "taskGlassCleaningTitle": "Glass Cleaning",
+  "taskGlassCleaningDesc": "Remove algae from glass",
+  "taskSubstrateCleaningTitle": "Substrate Cleaning",
+  "taskSubstrateCleaningDesc": "Clean debris from substrate",
+  "taskPumpMaintenanceTitle": "Pump Maintenance",
+  "taskPumpMaintenanceDesc": "Clean pump rotors and impellers",
+  "taskProteinSkimmerTitle": "Empty Protein Skimmer",
+  "taskProteinSkimmerDesc": "Empty and clean protein skimmer cup",
+  "taskCalciumDosingTitle": "Calcium/KH Dosing",
+  "taskCalciumDosingDesc": "Check and dose calcium/alkalinity",
+  "taskTraceElementsTitle": "Trace Elements",
+  "taskTraceElementsDesc": "Dose trace elements and additives",
+  "taskLightMaintenanceTitle": "Light Maintenance",
+  "taskLightMaintenanceDesc": "Clean LEDs and check operation",
+
+  "categoryWater": "Water",
+  "categoryEquipment": "Equipment",
+  "categoryTesting": "Testing",
+  "categoryCleaning": "Cleaning",
+  "categoryDosing": "Dosing",
+  "categoryFeeding": "Feeding",
+  "categoryOther": "Other"
 }

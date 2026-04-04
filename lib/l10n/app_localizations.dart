@@ -3967,6 +3967,156 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Errore nel caricamento dei prodotti: {error}'**
   String errorLoadingProducts(String error);
+
+  /// No description provided for @taskWaterChangeTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambio Acqua'**
+  String get taskWaterChangeTitle;
+
+  /// No description provided for @taskWaterChangeDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Cambio acqua settimanale (10-20%)'**
+  String get taskWaterChangeDesc;
+
+  /// No description provided for @taskFilterCleaningTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Pulizia Filtri'**
+  String get taskFilterCleaningTitle;
+
+  /// No description provided for @taskFilterCleaningDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Pulizia meccanica filtri e spugne'**
+  String get taskFilterCleaningDesc;
+
+  /// No description provided for @taskParameterTestingTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Test Parametri'**
+  String get taskParameterTestingTitle;
+
+  /// No description provided for @taskParameterTestingDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Controllo parametri acqua principali'**
+  String get taskParameterTestingDesc;
+
+  /// No description provided for @taskGlassCleaningTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Pulizia Vetri'**
+  String get taskGlassCleaningTitle;
+
+  /// No description provided for @taskGlassCleaningDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Rimozione alghe dai vetri'**
+  String get taskGlassCleaningDesc;
+
+  /// No description provided for @taskSubstrateCleaningTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Sifonatura Fondo'**
+  String get taskSubstrateCleaningTitle;
+
+  /// No description provided for @taskSubstrateCleaningDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Pulizia detriti dal substrato'**
+  String get taskSubstrateCleaningDesc;
+
+  /// No description provided for @taskPumpMaintenanceTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Pulizia Pompe'**
+  String get taskPumpMaintenanceTitle;
+
+  /// No description provided for @taskPumpMaintenanceDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Pulizia rotori e giranti pompe'**
+  String get taskPumpMaintenanceDesc;
+
+  /// No description provided for @taskProteinSkimmerTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Svuota Schiumatoio'**
+  String get taskProteinSkimmerTitle;
+
+  /// No description provided for @taskProteinSkimmerDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Svuotare e pulire bicchiere schiumatoio'**
+  String get taskProteinSkimmerDesc;
+
+  /// No description provided for @taskCalciumDosingTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Reintegro Calcio/KH'**
+  String get taskCalciumDosingTitle;
+
+  /// No description provided for @taskCalciumDosingDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Controllo e dosaggio calcio/alcalinità'**
+  String get taskCalciumDosingDesc;
+
+  /// No description provided for @taskTraceElementsTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Oligoelementi'**
+  String get taskTraceElementsTitle;
+
+  /// No description provided for @taskTraceElementsDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Dosaggio oligoelementi e additivi'**
+  String get taskTraceElementsDesc;
+
+  /// No description provided for @taskLightMaintenanceTitle.
+  ///
+  /// In it, this message translates to:
+  /// **'Manutenzione Luci'**
+  String get taskLightMaintenanceTitle;
+
+  /// No description provided for @taskLightMaintenanceDesc.
+  ///
+  /// In it, this message translates to:
+  /// **'Pulizia LED e controllo funzionamento'**
+  String get taskLightMaintenanceDesc;
+
+  /// No description provided for @categoryWater.
+  ///
+  /// In it, this message translates to:
+  /// **'Acqua'**
+  String get categoryWater;
+
+  /// No description provided for @categoryTesting.
+  ///
+  /// In it, this message translates to:
+  /// **'Test'**
+  String get categoryTesting;
+
+  /// No description provided for @categoryCleaning.
+  ///
+  /// In it, this message translates to:
+  /// **'Pulizia'**
+  String get categoryCleaning;
+
+  /// No description provided for @categoryDosing.
+  ///
+  /// In it, this message translates to:
+  /// **'Dosaggio'**
+  String get categoryDosing;
+
+  /// No description provided for @categoryFeeding.
+  ///
+  /// In it, this message translates to:
+  /// **'Alimentazione'**
+  String get categoryFeeding;
 }
 
 class _AppLocalizationsDelegate

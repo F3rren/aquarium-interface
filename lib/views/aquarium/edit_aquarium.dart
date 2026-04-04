@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/models/aquarium.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
+import 'package:acquariumfe/utils/task_localizer.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
 class EditAquarium extends ConsumerStatefulWidget {
@@ -92,13 +93,10 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
   }
 
   void _selectAquarium(Aquarium aquarium) {
-    final l10n = AppLocalizations.of(context)!;
-
-    // Mappa inversa: dal tipo tradotto alla chiave
-    final typeToKey = {
-      l10n.marine: 'marine',
-      l10n.freshwater: 'freshwater',
-      l10n.reef: 'reef',
+    // Mappa dal tipo backend alla chiave UI
+    const typeToKey = {
+      'saltwater': 'marine',
+      'freshwater': 'freshwater',
     };
 
     setState(() {
@@ -115,20 +113,18 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
   Future<void> _saveChanges() async {
     if (_formKey.currentState!.validate() && _selectedAquarium != null) {
       try {
-        final l10n = AppLocalizations.of(context)!;
-
-        // Mappa la chiave al valore tradotto
-        final typeMap = {
-          'marine': l10n.marine,
-          'freshwater': l10n.freshwater,
-          'reef': l10n.reef,
+        // Mappa la chiave UI al valore backend
+        const typeMap = {
+          'marine': 'saltwater',
+          'freshwater': 'freshwater',
+          'reef': 'saltwater',
         };
 
         // Crea l'oggetto Aquarium aggiornato
         final updatedAquarium = _selectedAquarium!.copyWith(
           name: _nameController.text,
           volume: double.parse(_volumeController.text),
-          type: typeMap[_selectedType] ?? l10n.marine,
+          type: typeMap[_selectedType] ?? 'saltwater',
         );
 
         // Chiama il provider per aggiornare la vasca
@@ -317,6 +313,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
 
   Widget _buildAquariumCard(Aquarium aquarium) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -343,7 +340,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    aquarium.type == 'Marino'
+                    aquarium.type == 'saltwater'
                         ? FontAwesomeIcons.droplet
                         : FontAwesomeIcons.water,
                     color: theme.colorScheme.primary,
@@ -363,7 +360,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text('${aquarium.volume} L  ${aquarium.type}',
+                      Text('${aquarium.volume} L  ${localizedAquariumType(aquarium.type, l10n)}',
                         style: TextStyle(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 13,

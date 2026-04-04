@@ -1113,5 +1113,34 @@
     "placeholders": {
       "error": {"type": "String"}
     }
-  }
+  },
+
+  "taskWaterChangeTitle": "Wasserwechsel",
+  "taskWaterChangeDesc": "Wöchentlicher Wasserwechsel (10-20%)",
+  "taskFilterCleaningTitle": "Filterreinigung",
+  "taskFilterCleaningDesc": "Mechanische Reinigung von Filtern und Schwämmen",
+  "taskParameterTestingTitle": "Parametertests",
+  "taskParameterTestingDesc": "Überprüfung der wichtigsten Wasserparameter",
+  "taskGlassCleaningTitle": "Glassreinigung",
+  "taskGlassCleaningDesc": "Algen vom Glas entfernen",
+  "taskSubstrateCleaningTitle": "Bodenreinigung",
+  "taskSubstrateCleaningDesc": "Ablagerungen vom Substrat entfernen",
+  "taskPumpMaintenanceTitle": "Pumpenwartung",
+  "taskPumpMaintenanceDesc": "Pumpenrotoren und Laufräder reinigen",
+  "taskProteinSkimmerTitle": "Abschäumer leeren",
+  "taskProteinSkimmerDesc": "Abschäumerbecher leeren und reinigen",
+  "taskCalciumDosingTitle": "Kalzium/KH Dosierung",
+  "taskCalciumDosingDesc": "Kalzium/Alkalinität kontrollieren und dosieren",
+  "taskTraceElementsTitle": "Spurenelemente",
+  "taskTraceElementsDesc": "Spurenelemente und Zusätze dosieren",
+  "taskLightMaintenanceTitle": "Lichtwartung",
+  "taskLightMaintenanceDesc": "LEDs reinigen und Betrieb prüfen",
+
+  "categoryWater": "Wasser",
+  "categoryEquipment": "Ausstattung",
+  "categoryTesting": "Tests",
+  "categoryCleaning": "Reinigung",
+  "categoryDosing": "Dosierung",
+  "categoryFeeding": "Fütterung",
+  "categoryOther": "Andere"
 }
