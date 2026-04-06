@@ -50,7 +50,7 @@ class ApiService {
   // Default: server di sviluppo locale (sostituire con URL di produzione in release)
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://REDACTED:8080',
+    defaultValue: 'http://REDACTED',
   );
 
   // Headers comuni per tutte le richieste con token JWT
