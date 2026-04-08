@@ -30,11 +30,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   flutter_localizations:
     sdk: flutter
-  
+
   intl: any
+
+  # Environment variables — reads from .env, generates obfuscated Dart code
+  envied: ^1.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -91,6 +94,7 @@ dev_dependencies:
   # Testing packages
   mockito: ^5.4.4
   build_runner: ^2.4.13
+  envied_generator: ^1.0.0
   riverpod_generator: ^2.6.2
   riverpod_lint: ^2.6.2
   custom_lint: ^0.7.0

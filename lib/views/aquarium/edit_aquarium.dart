@@ -1,3 +1,6 @@
+/// Screen for selecting and editing an existing aquarium.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,6 +9,17 @@ import 'package:acquariumfe/providers/aquarium_providers.dart';
 import 'package:acquariumfe/utils/task_localizer.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// A two-phase screen for editing an aquarium's name, type, and volume.
+///
+/// **Phase 1 — selection list:** shows all aquariums owned by the user.
+/// Tapping an item switches to phase 2.
+///
+/// **Phase 2 — edit form:** pre-populates the fields with the selected
+/// aquarium's current values. Saving calls [aquariumsProvider]'s
+/// `updateAquarium` and returns to phase 1. Cancelling returns without saving.
+///
+/// Both phases share the same animated fade + slide-up entrance. The animation
+/// is replayed each time the user selects an aquarium.
 class EditAquarium extends ConsumerStatefulWidget {
   const EditAquarium({super.key});
 

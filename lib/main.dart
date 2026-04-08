@@ -1,3 +1,11 @@
+/// Entry point and root widget tree for the ReefLife application.
+///
+/// Initialises essential services (push notifications, alert manager) before
+/// handing control to Flutter's widget tree.  The Riverpod [ProviderScope] is
+/// placed at the very top so that every descendant widget can read and watch
+/// providers without additional setup.
+library;
+
 import 'package:acquariumfe/routes/app_routes.dart';
 import 'package:acquariumfe/views/home/acquariums_view.dart';
 import 'package:acquariumfe/views/shared/navbar/navbar.dart';
@@ -12,6 +20,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Application entry point.
+///
+/// Performs async service initialisation before calling [runApp]:
+/// - [NotificationService.initialize] — registers local notification channels
+///   and requests platform permissions.
+/// - [AlertManager.initialize] — seeds default alert thresholds used when no
+///   persisted [NotificationSettings] are available yet.
+///
+/// The entire widget tree is wrapped in [ProviderScope] so that Riverpod
+/// providers are accessible from any widget.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -33,7 +51,24 @@ void main() async {
   );
 }
 
+/// Root widget of the ReefLife application.
+///
+/// This [ConsumerWidget] observes two top-level Riverpod providers:
+/// - [appThemeModeProvider] — switches between light and dark [ThemeMode].
+/// - [localeProvider] — drives the active [Locale] for the whole app.
+///
+/// It configures [MaterialApp] with:
+/// - Dynamically themed [ThemeData] supplied by [lightThemeProvider] and
+///   [darkThemeProvider].
+/// - Full i18n support for Italian, English, Spanish, German, and French via
+///   the generated [AppLocalizations] delegate.
+/// - Named-route navigation handled by [AppRouter.generateRoute].
+///
+/// Whenever the locale changes, [AppLocaleService] is updated so that
+/// non-widget code (e.g. notification text builders) can access the current
+/// locale without a [BuildContext].
 class MyApp extends ConsumerWidget {
+  /// Creates the root application widget.
   const MyApp({super.key});
 
   @override
@@ -75,7 +110,19 @@ class MyApp extends ConsumerWidget {
   }
 }
 
+/// The first screen shown after the app launches.
+///
+/// Wraps its content in a [Container] with an adaptive linear gradient so that
+/// the background transitions smoothly between the dark navy palette (dark
+/// mode) and the sky-blue/white palette (light mode).  The [Scaffold] sits on
+/// top of this gradient with a transparent background so the gradient shows
+/// through.
+///
+/// Structure:
+/// - AppBar — [Navbar] (contains branding, search, and settings actions).
+/// - Body — [AquariumView] (the main list/grid of the user's aquariums).
 class HomePage extends StatelessWidget {
+  /// Creates the home page.
   const HomePage({super.key});
 
   @override

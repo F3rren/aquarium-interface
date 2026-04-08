@@ -1,3 +1,6 @@
+/// Screen for creating a new aquarium.
+library;
+
 import 'package:acquariumfe/models/aquarium.dart';
 import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +9,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// A full-screen form that lets the user create a new aquarium.
+///
+/// Fields: name, type (marine / freshwater / reef), and volume in litres.
+/// The UI type key is mapped to the backend value before submission
+/// (`'marine'` / `'reef'` → `'saltwater'`, `'freshwater'` → `'freshwater'`).
+///
+/// On success, pops with `true` so the calling screen can refresh its list.
+/// Validated errors from [AppException] are shown in a red floating SnackBar.
+/// The form and header card animate in with a combined fade + slide-up
+/// transition on first build.
 class AddAquarium extends ConsumerStatefulWidget {
   const AddAquarium({super.key});
 
@@ -56,6 +69,11 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
     super.dispose();
   }
 
+  /// Validates the form, builds an [Aquarium], and calls the
+  /// [aquariumsProvider] notifier's `addAquarium` method.
+  ///
+  /// Displays a green success SnackBar and pops the route on success.
+  /// Displays a red error SnackBar on [AppException] or any other exception.
   void _saveAquarium() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);

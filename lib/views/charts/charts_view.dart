@@ -1,3 +1,6 @@
+/// Interactive line-chart view for historical water-parameter data.
+library;
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +10,22 @@ import 'package:acquariumfe/models/parameter_data_point.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Renders a line chart for a selected water parameter over a configurable
+/// time window.
+///
+/// **Parameter selector:** a horizontal chip row lets the user choose one of
+/// the 9 tracked parameters (temperature, pH, salinity, ORP, calcium,
+/// magnesium, KH, nitrate, phosphate).
+///
+/// **Time window selector:** buttons for 24 h, 7 days, and 30 days.
+///
+/// **Auto-refresh:** data is reloaded every 30 seconds via a [Timer].
+///
+/// **Stats bar:** shows min, max, average, and current values derived from
+/// [ChartDataService.calculateStats].
+///
+/// Uses the `fl_chart` package for rendering. The chart animates in
+/// (duration 400 ms) whenever new data is loaded.
 class ChartsView extends StatefulWidget {
   const ChartsView({super.key});
 

@@ -1,3 +1,6 @@
+/// Top application bar with the aquarium management popup menu.
+library;
+
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/views/aquarium/add_aquarium.dart';
 import 'package:acquariumfe/views/aquarium/edit_aquarium.dart';
@@ -7,6 +10,16 @@ import 'package:acquariumfe/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+/// Application-level [AppBar] that implements [PreferredSizeWidget].
+///
+/// Contains a single popup menu (triggered by a `FontAwesomeIcons.circlePlus`
+/// button) with three actions:
+/// - **Add** — navigates to [AddAquarium] with a slide-from-bottom transition
+/// - **Edit** — navigates to [EditAquarium] with a fade-slide transition
+/// - **Delete** — navigates to [DeleteAquarium] with a fade-slide transition
+///
+/// The plus icon animates by rotating 45 ° while the menu is open
+/// (`_iconController`), giving visual feedback that the menu is active.
 class Navbar extends StatefulWidget implements PreferredSizeWidget {
   const Navbar({super.key});
 

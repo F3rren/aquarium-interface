@@ -1,3 +1,6 @@
+/// Screen for permanently deleting an aquarium.
+library;
+
 import 'package:acquariumfe/models/aquarium.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +9,20 @@ import 'package:acquariumfe/providers/aquarium_providers.dart';
 import 'package:acquariumfe/utils/task_localizer.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Displays a scrollable list of the user's aquariums; tapping one opens a
+/// confirmation dialog before permanently deleting it.
+///
+/// **Empty state:** when no aquariums exist a centred message with a check
+/// icon is displayed. This is the expected state after the last aquarium is
+/// deleted.
+///
+/// **Confirmation dialog:** presents the aquarium name, a red warning, and
+/// a two-button row (Cancel / Delete). Deletion only proceeds when the user
+/// explicitly confirms. Success and error outcomes are reported via floating
+/// SnackBars.
+///
+/// Aquariums whose [Aquarium.id] is `null` cannot be deleted; an error SnackBar
+/// is shown immediately without opening the dialog.
 class DeleteAquarium extends ConsumerStatefulWidget {
   const DeleteAquarium({super.key});
 

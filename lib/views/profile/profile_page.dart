@@ -1,3 +1,6 @@
+/// Profile / settings hub for the active aquarium.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,6 +13,21 @@ import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 import 'package:acquariumfe/utils/task_localizer.dart';
 
+/// Settings and tools hub displayed in the Profile tab.
+///
+/// Renders a scrollable list of menu cards grouped into sections:
+///
+/// - **Tools:** Calculators ([CalculatorsPage]) and My Inhabitants
+///   ([InhabitantsPage]) — navigated with [CustomPageRoute.fadeSlide].
+///
+/// - **Aquarium settings:** current aquarium type badge, theme toggle
+///   (dark / light via [AppThemeModeNotifier]), and language selector
+///   (via [LocaleNotifier]).
+///
+/// - **About:** app version card.
+///
+/// [aquariumId] is passed from the parent [AquariumDetails] to allow
+/// [InhabitantsPage] to load the correct aquarium's inhabitants.
 class ProfilePage extends ConsumerWidget {
   final int? aquariumId;
 

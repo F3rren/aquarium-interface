@@ -1,12 +1,31 @@
+/// Localised counterpart of [NotificationTexts] for use inside the widget tree.
+///
+/// Unlike the static [NotificationTexts] class, [NotificationTextsL10n] holds
+/// an [AppLocalizations] instance and exposes the same API as instance getters
+/// so that every string goes through the ARB catalogue and respects the active
+/// locale.  Construct it once per build pass or pass it down the tree.
+library;
+
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
-/// Testi e messaggi delle notifiche usando l10n
+/// Localised notification copy powered by [AppLocalizations].
+///
+/// Usage:
+/// ```dart
+/// final texts = NotificationTextsL10n(AppLocalizations.of(context)!);
+/// final title = texts.getTitle('pH');
+/// ```
 class NotificationTextsL10n {
+  /// The [AppLocalizations] instance used for all string lookups.
   final AppLocalizations l10n;
 
+  /// Creates a [NotificationTextsL10n] bound to [l10n].
   NotificationTextsL10n(this.l10n);
 
-  // Titoli delle notifiche per parametro
+  // ── Parameter alert titles ─────────────────────────────────────────────────
+
+  /// Maps parameter names (Italian backend keys) to their localised
+  /// out-of-range notification titles.
   Map<String, String> get parameterTitles => {
     'Temperatura': l10n.temperatureAnomaly,
     'pH': l10n.phOutOfRange,
@@ -19,7 +38,9 @@ class NotificationTextsL10n {
     'Fosfati': l10n.phosphatesHigh,
   };
 
-  // Messaggi per stato alto
+  // ── Alert body messages ────────────────────────────────────────────────────
+
+  /// Localised body text when a parameter value is too high.
   Map<String, String> get highMessages => {
     'Temperatura': l10n.temperatureTooHigh,
     'pH': l10n.phTooHigh,
@@ -32,7 +53,7 @@ class NotificationTextsL10n {
     'Fosfati': l10n.phosphatesTooHigh,
   };
 
-  // Messaggi per stato basso
+  /// Localised body text when a parameter value is too low.
   Map<String, String> get lowMessages => {
     'Temperatura': l10n.temperatureTooLow,
     'pH': l10n.phTooLow,
@@ -45,7 +66,9 @@ class NotificationTextsL10n {
     'Fosfati': l10n.phosphatesTooLow,
   };
 
-  // Suggerimenti per stato alto
+  // ── Corrective-action suggestions ─────────────────────────────────────────
+
+  /// Localised corrective-action suggestions when a parameter is too high.
   Map<String, String> get highSuggestions => {
     'Temperatura': l10n.suggestionTemperatureHigh,
     'pH': l10n.suggestionPhHigh,
@@ -58,7 +81,7 @@ class NotificationTextsL10n {
     'Fosfati': l10n.suggestionPhosphatesHigh,
   };
 
-  // Suggerimenti per stato basso
+  /// Localised corrective-action suggestions when a parameter is too low.
   Map<String, String> get lowSuggestions => {
     'Temperatura': l10n.suggestionTemperatureLow,
     'pH': l10n.suggestionPhLow,
@@ -71,28 +94,50 @@ class NotificationTextsL10n {
     'Fosfati': l10n.suggestionPhosphatesLow,
   };
 
-  // Manutenzione
+  // ── Maintenance reminder strings ──────────────────────────────────────────
+
+  /// Localised generic maintenance reminder title.
   String get maintenanceTitle => l10n.maintenanceReminder;
+
+  /// Localised body for a weekly maintenance reminder.
   String get maintenanceWeekly => l10n.weeklyMaintenance;
+
+  /// Localised body for a monthly maintenance reminder.
   String get maintenanceMonthly => l10n.monthlyMaintenance;
 
-  // Titoli manutenzione specifici
+  /// Localised title for a water-change reminder.
   String get waterChangeTitle => l10n.waterChangeReminder;
+
+  /// Localised body for a water-change reminder.
   String get waterChangeBody => l10n.waterChangeReminderBody;
 
+  /// Localised title for a filter-cleaning reminder.
   String get filterCleaningTitle => l10n.filterCleaningReminder;
+
+  /// Localised body for a filter-cleaning reminder.
   String get filterCleaningBody => l10n.filterCleaningReminderBody;
 
+  /// Localised title for a parameter-testing reminder.
   String get parameterTestingTitle => l10n.parameterTestingReminder;
+
+  /// Localised body for a parameter-testing reminder.
   String get parameterTestingBody => l10n.parameterTestingReminderBody;
 
+  /// Localised title for a light-maintenance reminder.
   String get lightMaintenanceTitle => l10n.lightMaintenanceReminder;
+
+  /// Localised body for a light-maintenance reminder.
   String get lightMaintenanceBody => l10n.lightMaintenanceReminderBody;
 
+  /// Localised weekly maintenance checklist detail.
   String get maintenanceWeeklyDetails => l10n.weeklyMaintenanceDetails;
+
+  /// Localised monthly maintenance checklist detail.
   String get maintenanceMonthlyDetails => l10n.monthlyMaintenanceDetails;
 
-  // Severità
+  // ── Severity labels ────────────────────────────────────────────────────────
+
+  /// Maps severity level strings to their localised display labels.
   Map<String, String> get severityLabels => {
     'CRITICAL': l10n.severityCritical,
     'HIGH': l10n.severityHigh,
@@ -100,6 +145,7 @@ class NotificationTextsL10n {
     'LOW': l10n.severityLow,
   };
 
+  /// Maps severity level strings to their localised short descriptions.
   Map<String, String> get severityDescriptions => {
     'CRITICAL': l10n.severityCriticalDesc,
     'HIGH': l10n.severityHighDesc,
@@ -107,25 +153,38 @@ class NotificationTextsL10n {
     'LOW': l10n.severityLowDesc,
   };
 
-  // Helper methods
+  // ── Helper methods ─────────────────────────────────────────────────────────
+
+  /// Returns the localised notification title for [parameter], falling back to
+  /// a generic out-of-range label if the parameter is not mapped.
   String getTitle(String parameter) {
     return parameterTitles[parameter] ?? l10n.parameterAnomaly;
   }
 
+  /// Returns the localised notification body for [parameter].
+  ///
+  /// [isHigh] selects between [highMessages] and [lowMessages].
   String getMessage(String parameter, bool isHigh) {
     final messages = isHigh ? highMessages : lowMessages;
     return messages[parameter] ?? l10n.parameterOutOfRange(parameter);
   }
 
+  /// Returns the localised corrective-action suggestion for [parameter].
+  ///
+  /// [isHigh] selects between [highSuggestions] and [lowSuggestions].
   String getSuggestion(String parameter, bool isHigh) {
     final suggestions = isHigh ? highSuggestions : lowSuggestions;
     return suggestions[parameter] ?? l10n.checkParameterSettings;
   }
 
+  /// Returns the localised label for [severity] (e.g. `'HIGH'` → `"Alto"`).
+  /// Falls back to [severity] unchanged if not in the map.
   String getSeverityLabel(String severity) {
     return severityLabels[severity] ?? severity;
   }
 
+  /// Returns the localised description for [severity]. Returns an empty string
+  /// if [severity] is not found.
   String getSeverityDescription(String severity) {
     return severityDescriptions[severity] ?? '';
   }

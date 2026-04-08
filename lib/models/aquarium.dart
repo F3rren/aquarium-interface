@@ -1,12 +1,37 @@
+/// Domain model representing a single user-owned aquarium.
+library;
+
+/// Represents a registered aquarium.
+///
+/// This is the primary domain entity of the app. Every aquarium owns its own
+/// water-parameter readings, maintenance tasks, fish, and corals. The [id] is
+/// assigned by the backend on first save; until then it is `null`.
 class Aquarium {
+  /// Backend-assigned unique identifier. `null` before the first save.
   final int? id;
+
+  /// Display name shown throughout the UI (e.g. `"Coral Reef Tank"`).
   final String name;
-  final double volume; // litri
-  final String type; // Marino, Dolce, etc.
+
+  /// Total water volume in litres.
+  final double volume;
+
+  /// Water type key used by the backend (e.g. `'saltwater'`, `'freshwater'`).
+  final String type;
+
+  /// Timestamp of when the aquarium was created on the backend. May be `null`
+  /// for locally constructed instances not yet persisted.
   final DateTime? createdAt;
+
+  /// Optional free-text description entered by the user.
   final String? description;
+
+  /// Optional URL pointing to a representative photo of the aquarium.
   final String? imageUrl;
 
+  /// Creates an [Aquarium].
+  ///
+  /// [name], [volume], and [type] are required; all other fields are optional.
   Aquarium({
     this.id,
     required this.name,
@@ -17,6 +42,11 @@ class Aquarium {
     this.imageUrl,
   });
 
+  /// Serialises this aquarium to a JSON map for API requests.
+  ///
+  /// Optional fields ([id], [createdAt], [description], [imageUrl]) are only
+  /// included when non-null, preventing accidental `null` overwrites on the
+  /// backend.
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
       'name': name,
@@ -24,7 +54,6 @@ class Aquarium {
       'type': type,
     };
 
-    // Aggiungi campi opzionali solo se presenti
     if (id != null) json['id'] = id;
     if (createdAt != null) json['createdAt'] = createdAt!.toIso8601String();
     if (description != null) json['description'] = description;
@@ -33,6 +62,11 @@ class Aquarium {
     return json;
   }
 
+  /// Deserialises an [Aquarium] from a backend JSON map.
+  ///
+  /// Provides safe fallbacks for every field: name defaults to `'Senza nome'`,
+  /// volume to `0.0`, type to `'Marino'`. [createdAt] uses [DateTime.tryParse]
+  /// so an invalid date string does not crash the parser.
   factory Aquarium.fromJson(Map<String, dynamic> json) {
     return Aquarium(
       id: json['id'] as int?,
@@ -47,6 +81,9 @@ class Aquarium {
     );
   }
 
+  /// Returns a copy of this aquarium with the specified fields replaced.
+  ///
+  /// Fields not provided retain their current values.
   Aquarium copyWith({
     int? id,
     String? name,

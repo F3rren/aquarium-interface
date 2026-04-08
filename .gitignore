@@ -44,3 +44,16 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Environment files — NEVER commit secrets
+.env
+.env.*
+!.env.example
+
+# Android signing — NEVER commit keystore credentials
+android/key.properties
+*.jks
+*.keystore
+
+# Generated Dart code — regenerate with: flutter pub run build_runner build
+*.g.dart
+

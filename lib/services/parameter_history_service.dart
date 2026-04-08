@@ -1,7 +1,26 @@
+/// In-memory parameter history service used as a fallback / mock data source.
+library;
+
 import 'dart:math';
 import '../models/parameter_data_point.dart';
 
-/// Servizio per generare e gestire dati storici dei parametri
+/// Singleton that generates and caches synthetic parameter history data.
+///
+/// **Purpose:** this service provides a fallback data source when the backend
+/// history endpoint returns no data. It is **not** backed by the API; all data
+/// is randomly generated at call time and held in memory.
+///
+/// **Caching:** generated datasets are keyed by `'${parameterName}_${hours}h'`
+/// (e.g. `'Temperatura_24h'`). The same key returns the same generated
+/// dataset for the lifetime of the process. Call [clearCache] to regenerate
+/// fresh data.
+///
+/// **Real-time data:** [addDataPoint] can inject real measurements into the
+/// `24h` cache slot. The list is capped at 96 entries (one reading every
+/// 15 minutes for 24 hours).
+///
+/// **Sampling interval:** 15 minutes for periods ≤ 48 hours, 60 minutes for
+/// longer periods.
 class ParameterHistoryService {
   static final ParameterHistoryService _instance =
       ParameterHistoryService._internal();
@@ -10,17 +29,27 @@ class ParameterHistoryService {
 
   final Random _random = Random();
 
-  // Storage in-memory per i dati storici
+  /// In-memory cache: key → list of data points.
   final Map<String, List<ParameterDataPoint>> _history = {};
 
-  /// Genera dati storici per un parametro
+  /// Generates (or returns cached) synthetic history for [parameterName] over
+  /// the past [hours] hours.
+  ///
+  /// [baseValue] is the centre value around which the generated series
+  /// fluctuates. [variationPercent] controls the maximum ± deviation as a
+  /// percentage of [baseValue] (default `5 %`).
+  ///
+  /// For `'Temperatura'`, a day/night pattern is applied: values are lowered
+  /// by 0.5 between midnight and 06:00 and between 20:00 and midnight, and
+  /// raised by 0.3 during daylight hours.
+  ///
+  /// All generated values are rounded to 2 decimal places.
   List<ParameterDataPoint> generateHistory({
     required String parameterName,
     required double baseValue,
     required int hours,
     double variationPercent = 5.0,
   }) {
-    // Se già esiste, restituisci quello cached
     final cacheKey = '${parameterName}_${hours}h';
     if (_history.containsKey(cacheKey)) {
       return _history[cacheKey]!;
@@ -28,9 +57,7 @@ class ParameterHistoryService {
 
     final dataPoints = <ParameterDataPoint>[];
     final now = DateTime.now();
-    final interval = hours > 48
-        ? 60
-        : 15; // 1h per periodi lunghi, 15min per 24h
+    final interval = hours > 48 ? 60 : 15;
     final pointsCount = (hours * 60) ~/ interval;
 
     double currentValue = baseValue;
@@ -38,12 +65,10 @@ class ParameterHistoryService {
     for (int i = pointsCount; i >= 0; i--) {
       final timestamp = now.subtract(Duration(minutes: i * interval));
 
-      // Aggiungi variazione casuale con smooth transition
       final variation =
           (baseValue * variationPercent / 100) * (_random.nextDouble() * 2 - 1);
       currentValue = baseValue + variation;
 
-      // Aggiungi trend leggero (ciclo giorno/notte per temperatura)
       if (parameterName == 'Temperatura') {
         final hourOfDay = timestamp.hour;
         final nightVariation = hourOfDay < 6 || hourOfDay > 20 ? -0.5 : 0.3;
@@ -63,7 +88,15 @@ class ParameterHistoryService {
     return dataPoints;
   }
 
-  /// Calcola statistiche da una lista di punti dati
+  /// Computes [ParameterStats] from [dataPoints].
+  ///
+  /// When [dataPoints] is empty, returns all-zero stats with
+  /// [TrendDirection.stable].
+  ///
+  /// **Trend calculation:** the dataset is split in half; if the mean of the
+  /// second half differs from the mean of the first half by more than 2 % of
+  /// the overall average, the trend is [TrendDirection.rising] or
+  /// [TrendDirection.falling]; otherwise [TrendDirection.stable].
   ParameterStats calculateStats(List<ParameterDataPoint> dataPoints) {
     if (dataPoints.isEmpty) {
       return ParameterStats(
@@ -82,7 +115,6 @@ class ParameterHistoryService {
     final average = values.reduce((a, b) => a + b) / values.length;
     final current = values.last;
 
-    // Calcola trend confrontando media prima metà vs seconda metà
     final halfPoint = values.length ~/ 2;
     final firstHalfAvg =
         values.sublist(0, halfPoint).reduce((a, b) => a + b) / halfPoint;
@@ -93,7 +125,6 @@ class ParameterHistoryService {
     final TrendDirection trend;
     final diff = secondHalfAvg - firstHalfAvg;
     if (diff.abs() < average * 0.02) {
-      // Meno del 2% = stabile
       trend = TrendDirection.stable;
     } else if (diff > 0) {
       trend = TrendDirection.rising;
@@ -111,7 +142,14 @@ class ParameterHistoryService {
     );
   }
 
-  /// Ottieni dati per tutti i parametri principali
+  /// Returns generated history for the four sensor parameters (temperature,
+  /// pH, salinity, ORP) as a named map.
+  ///
+  /// Uses realistic base values for a marine reef aquarium:
+  /// - Temperature: 25.0 °C (±3 %)
+  /// - pH: 8.2 (±2 %)
+  /// - Salinity: 1.024 (±0.5 %)
+  /// - ORP: 350 mV (±8 %)
   Map<String, List<ParameterDataPoint>> getAllParametersHistory({
     int hours = 24,
   }) {
@@ -143,12 +181,18 @@ class ParameterHistoryService {
     };
   }
 
-  /// Pulisce la cache dello storico
+  /// Clears all cached history data.
+  ///
+  /// The next call to [generateHistory] will produce a freshly randomised
+  /// dataset.
   void clearCache() {
     _history.clear();
   }
 
-  /// Aggiunge un nuovo punto dati in tempo reale
+  /// Appends [point] to the 24-hour cache slot for its parameter.
+  ///
+  /// The list is capped at 96 entries (one per 15-minute interval over 24
+  /// hours); the oldest entry is dropped when the cap is exceeded.
   void addDataPoint(ParameterDataPoint point) {
     final key = '${point.parameterName}_24h';
     if (!_history.containsKey(key)) {
@@ -157,7 +201,6 @@ class ParameterHistoryService {
 
     _history[key]!.add(point);
 
-    // Mantieni solo ultime 24h (max 96 punti se interval 15min)
     if (_history[key]!.length > 96) {
       _history[key]!.removeAt(0);
     }

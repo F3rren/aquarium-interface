@@ -1,3 +1,6 @@
+/// Widget for displaying and editing manually-entered chemical parameters.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5,6 +8,17 @@ import 'package:acquariumfe/services/manual_parameters_service.dart';
 import 'package:acquariumfe/providers/parameters_provider.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Displays and allows editing of the five manually-measured reef parameters:
+/// Calcium (Ca), Magnesium (Mg), KH, Nitrates (NO₃), and Phosphates (PO₄).
+///
+/// Values are loaded from [ManualParametersService] on `initState` and each
+/// parameter row shows its ideal range.  Tapping a row opens an inline
+/// [AlertDialog] to edit the value; on save the new value is persisted via
+/// [ManualParametersService.updateParameter] and [currentParametersProvider]
+/// is invalidated so the parameters view refreshes immediately.
+///
+/// The colour of each row icon/badge is green when the value is within the
+/// ideal range and red when outside it.
 class ManualParametersWidget extends ConsumerStatefulWidget {
   const ManualParametersWidget({super.key});
 

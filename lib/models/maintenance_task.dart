@@ -1,25 +1,80 @@
-/// Task di manutenzione ricorrente
+/// Domain model for recurring aquarium maintenance tasks.
+library;
+
+/// A recurring maintenance task associated with a specific aquarium.
+///
+/// Tasks can be **system-defined** (shipped with the app, [isCustom] == `false`)
+/// or **user-created** ([isCustom] == `true`). System tasks have well-known
+/// [id] values (e.g. `'water_change'`) used for localisation lookup; custom
+/// tasks use arbitrary UUIDs.
+///
+/// **Frequency:** [frequency] (string: `'daily'`, `'weekly'`, `'monthly'`,
+/// `'custom'`) is the canonical field; [frequencyDays] is a legacy integer
+/// kept for backwards compatibility with older backend responses.
 class MaintenanceTask {
+  /// Unique identifier. System tasks use descriptive IDs (e.g. `'water_change'`);
+  /// custom tasks use UUIDs.
   final String id;
-  final String aquariumId; // ID della vasca associata
+
+  /// ID of the aquarium this task belongs to.
+  final String aquariumId;
+
+  /// Display title shown in the task list.
   final String title;
+
+  /// Optional longer description of what the task involves.
   final String? description;
+
+  /// Functional category used for grouping and colour coding.
   final MaintenanceCategory category;
-  final int frequencyDays; // Ogni quanti giorni si ripete (retrocompatibilità)
-  final String?
-  frequency; // Frequenza come string (daily, weekly, monthly, custom)
-  final String? priority; // Priorità (low, medium, high)
-  final DateTime? dueDate; // Data/ora scadenza specifica
-  final String? notes; // Note aggiuntive
-  final bool isCompleted; // Se il task è completato
-  final DateTime? completedAt; // Quando è stato completato
-  final DateTime? lastCompleted; // Retrocompatibilità
-  final String? status; // Status dal backend (completed, pending, overdue)
-  final bool? overdue; // Se è in ritardo
+
+  /// Legacy recurrence interval in days. Superseded by [frequency] for new
+  /// tasks but retained for backward compatibility.
+  final int frequencyDays;
+
+  /// Canonical frequency string: `'daily'`, `'weekly'`, `'monthly'`,
+  /// or `'custom'`. May be `null` for legacy records that only carry
+  /// [frequencyDays].
+  final String? frequency;
+
+  /// Task priority level: `'low'`, `'medium'`, or `'high'`.
+  final String? priority;
+
+  /// Explicit deadline for one-off or custom-scheduled tasks. When set,
+  /// [nextDue] returns this value directly instead of computing from
+  /// [lastCompleted].
+  final DateTime? dueDate;
+
+  /// Additional notes for this task.
+  final String? notes;
+
+  /// Whether the task has been completed in the current cycle.
+  final bool isCompleted;
+
+  /// Timestamp of the most recent completion (current API field name).
+  final DateTime? completedAt;
+
+  /// Alias for [completedAt] kept for backward compatibility with older code.
+  final DateTime? lastCompleted;
+
+  /// Backend status string: `'completed'`, `'pending'`, or `'overdue'`.
+  final String? status;
+
+  /// Explicit overdue flag from the backend. When `null`, use [isOverdue]
+  /// computed from dates instead.
+  final bool? overdue;
+
+  /// Whether this task is active and should appear in the due-task list.
   final bool enabled;
-  final int? reminderHour; // Ora notifica (0-23)
-  final int? reminderMinute; // Minuto notifica (0-59)
-  final bool isCustom; // true se creato dall'utente, false se predefinito
+
+  /// Hour of the day (0–23) at which the reminder notification fires.
+  final int? reminderHour;
+
+  /// Minute (0–59) at which the reminder notification fires.
+  final int? reminderMinute;
+
+  /// `true` for tasks created by the user; `false` for system-defined tasks.
+  final bool isCustom;
 
   MaintenanceTask({
     required this.id,
@@ -43,54 +98,61 @@ class MaintenanceTask {
     this.isCustom = false,
   });
 
-  /// Data prossimo completamento previsto
+  // ── Computed properties ───────────────────────────────────────────────────
+
+  /// The next time this task should be completed.
+  ///
+  /// Returns [dueDate] if set, otherwise computes
+  /// `lastCompleted + frequencyDays`. Falls back to [DateTime.now] when no
+  /// prior completion is recorded.
   DateTime get nextDue {
-    // Se c'è una dueDate specifica, usa quella
     if (dueDate != null) {
       return dueDate!;
     }
-
     if (lastCompleted == null) {
       return DateTime.now();
     }
     return lastCompleted!.add(Duration(days: frequencyDays));
   }
 
-  /// Giorni rimanenti al prossimo completamento
+  /// Number of calendar days until [nextDue]. Negative when overdue.
   int get daysUntilDue {
     final now = DateTime.now();
     final next = nextDue;
     return next.difference(now).inDays;
   }
 
-  /// È in ritardo?
+  /// Returns `true` if [nextDue] falls before today's midnight — i.e. the
+  /// task was not completed in time.
   bool get isOverdue {
     final now = DateTime.now();
     final next = nextDue;
-    // In ritardo se nextDue è prima di oggi (midnight)
     return next.isBefore(DateTime(now.year, now.month, now.day));
   }
 
-  /// È dovuto oggi?
+  /// Returns `true` if [nextDue] is exactly today (ignoring time-of-day).
   bool get isDueToday {
     final now = DateTime.now();
     final next = nextDue;
     final today = DateTime(now.year, now.month, now.day);
     final nextDay = DateTime(next.year, next.month, next.day);
-    // Dovuto oggi solo se nextDue è esattamente oggi
     return nextDay.isAtSameMomentAs(today);
   }
 
-  /// È dovuto questa settimana?
+  /// Returns `true` if the task is due within the next 7 days (inclusive).
   bool get isDueThisWeek {
     return daysUntilDue >= 0 && daysUntilDue <= 7;
   }
 
-  /// Segna come completato
+  // ── Mutating helpers ──────────────────────────────────────────────────────
+
+  /// Returns a copy of this task with [lastCompleted] set to
+  /// [completionDate] (defaults to [DateTime.now]).
   MaintenanceTask markCompleted([DateTime? completionDate]) {
     return copyWith(lastCompleted: completionDate ?? DateTime.now());
   }
 
+  /// Returns a copy with the specified fields replaced.
   MaintenanceTask copyWith({
     String? id,
     String? aquariumId,
@@ -135,6 +197,7 @@ class MaintenanceTask {
     );
   }
 
+  /// Serialises this task to a JSON map for API requests.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -155,8 +218,12 @@ class MaintenanceTask {
     };
   }
 
+  /// Deserialises a [MaintenanceTask] from a backend JSON map.
+  ///
+  /// **Category inference:** if `'category'` is absent or unrecognised, the
+  /// parser attempts to deduce the category from keywords in [title] and
+  /// [description] before falling back to [MaintenanceCategory.other].
   factory MaintenanceTask.fromJson(Map<String, dynamic> json) {
-    // Parse category - se non c'è, prova a dedurlo dal titolo o usa 'other'
     MaintenanceCategory parsedCategory = MaintenanceCategory.other;
     if (json['category'] != null) {
       parsedCategory = MaintenanceCategory.values.firstWhere(
@@ -164,7 +231,6 @@ class MaintenanceTask {
         orElse: () => MaintenanceCategory.other,
       );
     } else {
-      // Deduzione categoria da titolo/descrizione
       final title = json['title']?.toString().toLowerCase() ?? '';
       final desc = json['description']?.toString().toLowerCase() ?? '';
       final text = '$title $desc';
@@ -229,9 +295,13 @@ class MaintenanceTask {
     );
   }
 
-  /// Task predefiniti per tipo di vasca.
-  /// [type] accetta 'saltwater' o 'freshwater' (valori backend).
-  /// saltwater → 10 task; freshwater → 6 task comuni (no schiumatoio, calcio, oligoelementi, luci).
+  /// Returns the default set of maintenance tasks for a new aquarium.
+  ///
+  /// [aquariumId] is injected into every task. [type] must be either
+  /// `'saltwater'` or `'freshwater'`:
+  /// - **saltwater** — 6 common tasks + 4 saltwater-specific tasks
+  ///   (protein skimmer, calcium/KH dosing, trace elements, light maintenance).
+  /// - **freshwater** — 6 common tasks only (no reef-specific tasks).
   static List<MaintenanceTask> getDefaultTasks(
     String aquariumId, {
     String type = 'saltwater',
@@ -352,19 +422,34 @@ class MaintenanceTask {
   }
 }
 
-/// Categorie task di manutenzione
+/// Functional category of a maintenance task, used for grouping and UI colour
+/// coding.
 enum MaintenanceCategory {
-  water, // Acqua (cambio, rabbocco)
-  equipment, // Attrezzatura (filtri, pompe, luci)
-  testing, // Test parametri
-  cleaning, // Pulizia (vetri, fondo)
-  dosing, // Dosaggio (calcio, oligoelementi)
-  feeding, // Alimentazione
-  other, // Altro
+  /// Water-related tasks: water changes, top-off, evaporation checks.
+  water,
+
+  /// Equipment tasks: filters, pumps, protein skimmers, lights.
+  equipment,
+
+  /// Water-quality testing tasks.
+  testing,
+
+  /// Physical cleaning: glass, substrate, rocks.
+  cleaning,
+
+  /// Dosing tasks: calcium, alkalinity (KH), magnesium, trace elements.
+  dosing,
+
+  /// Fish and coral feeding.
+  feeding,
+
+  /// Catch-all for tasks that do not fit the above categories.
+  other,
 }
 
-/// Extension per icone e colori categorie
+/// Adds display labels and brand colours to [MaintenanceCategory].
 extension MaintenanceCategoryExtension on MaintenanceCategory {
+  /// Italian display label for the category (used in the UI chip).
   String get label {
     switch (this) {
       case MaintenanceCategory.water:
@@ -384,6 +469,7 @@ extension MaintenanceCategoryExtension on MaintenanceCategory {
     }
   }
 
+  /// ARGB colour value for the category badge.
   int get colorValue {
     switch (this) {
       case MaintenanceCategory.water:
@@ -399,7 +485,7 @@ extension MaintenanceCategoryExtension on MaintenanceCategory {
       case MaintenanceCategory.feeding:
         return 0xFFfbbf24; // Yellow
       case MaintenanceCategory.other:
-        return 0xFF94a3b8; // Gray
+        return 0xFF94a3b8; // Grey
     }
   }
 }

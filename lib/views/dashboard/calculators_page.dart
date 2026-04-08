@@ -1,7 +1,23 @@
+/// Aquarium utility calculators screen.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// A multi-section page offering five standalone aquarium calculators:
+///
+/// 1. **Volume** — length × width × height → litres.
+/// 2. **Additive dosing** — given tank volume, current value, and target value,
+///    computes the grams or ml of additive needed.
+/// 3. **Water change** — percentage of tank volume → litres to remove, plus
+///    salt needed to re-mix the replacement water.
+/// 4. **Salinity / density conversion** — bidirectional conversion between
+///    specific gravity and salinity in PPT / PPM, temperature-corrected.
+/// 5. **Lighting** — watts per litre calculation with a recommendation string
+///    for the chosen tank type (reef, FOWLR, freshwater).
+///
+/// All calculations are performed locally with no network calls.
 class CalculatorsPage extends StatefulWidget {
   const CalculatorsPage({super.key});
 

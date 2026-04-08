@@ -1,3 +1,6 @@
+/// Home-tab view listing all of the user's aquariums.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,6 +17,17 @@ import 'package:acquariumfe/providers/aquarium_providers.dart';
 import 'package:acquariumfe/widgets/responsive_builder.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 
+/// Scrollable list of the user's aquariums, each shown as a card with its
+/// name, type, volume, and current water parameters.
+///
+/// Pulls data from [aquariumsProvider] and shows:
+/// - **Loading state** — three [AquariumCardSkeleton] placeholders
+/// - **Error state** — error message with a retry button
+/// - **Empty state** — [EmptyState] widget prompting the user to add an aquarium
+/// - **Data state** — animated fade + slide-up list of aquarium cards
+///
+/// Tapping a card navigates to [AquariumDetails] using a [CustomPageRoute].
+/// Pull-to-refresh calls `aquariumsProvider.notifier.refresh()`.
 class AquariumView extends ConsumerStatefulWidget {
   const AquariumView({super.key});
 

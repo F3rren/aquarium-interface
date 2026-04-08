@@ -1,3 +1,6 @@
+/// Real-time water-parameter display screen.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -11,6 +14,22 @@ import 'package:acquariumfe/widgets/responsive_builder.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Displays all water parameters for the currently selected aquarium in a
+/// responsive grid layout.
+///
+/// Watches [currentParametersProvider] and [targetParametersProvider] from
+/// Riverpod. The four sensor parameters (temperature, pH, salinity, ORP) are
+/// rendered by their dedicated widget components:
+/// - [Thermometer] — temperature with a visual thermometer
+/// - [PhWidget] — pH gauge
+/// - [SalinityWidget] — salinity / specific-gravity
+/// - [OrpWidget] — ORP millivolt gauge
+///
+/// The five manual parameters (calcium, magnesium, KH, nitrate, phosphate) are
+/// rendered by [ManualParametersWidget].
+///
+/// Pull-to-refresh calls `currentParametersProvider.notifier.refresh()` and
+/// invalidates [targetParametersProvider], then shows a brief green SnackBar.
 class ParametersView extends ConsumerWidget {
   const ParametersView({super.key});
 

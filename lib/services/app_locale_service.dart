@@ -1,24 +1,41 @@
+/// Provides localised alert strings to services that have no [BuildContext].
+library;
+
 import 'package:flutter/material.dart';
 import 'package:acquariumfe/models/aquarium_parameter.dart';
 
-/// Servizio singleton per gestire la localizzazione a livello di app
-/// Permette ai servizi senza BuildContext di accedere alle traduzioni
+/// Singleton that stores the current [Locale] and returns per-parameter alert
+/// titles and messages in the active language.
+///
+/// Because [AlertManager] and [ParameterService] run outside the widget tree
+/// they cannot access [AppLocalizations] via [BuildContext]. This service
+/// bridges that gap: the active locale is updated whenever the app locale
+/// changes (see `LocaleProvider`), and the service is queried at alert time to
+/// build human-readable notification strings.
+///
+/// **Supported languages:** Italian (default), English, French, German, Spanish.
 class AppLocaleService {
   static final AppLocaleService _instance = AppLocaleService._internal();
   factory AppLocaleService() => _instance;
   AppLocaleService._internal();
 
+  /// Currently active locale; defaults to Italian (`'it'`).
   Locale _currentLocale = const Locale('it');
-  
-  /// Aggiorna la locale corrente
+
+  /// Stores [locale] as the current app locale.
+  ///
+  /// Should be called whenever the user changes the language in settings.
   void setLocale(Locale locale) {
     _currentLocale = locale;
   }
 
-  /// Ottiene la locale corrente
+  /// Returns the current app locale.
   Locale get currentLocale => _currentLocale;
 
-  /// Ottiene il titolo dell'alert per un parametro nella lingua corrente
+  /// Returns the notification alert title for [param] in the current language.
+  ///
+  /// Example for [AquariumParameter.temperature] in English:
+  /// `"Anomalous Temperature"`.
   String getAlertTitle(AquariumParameter param) {
     switch (_currentLocale.languageCode) {
       case 'en':
@@ -34,7 +51,10 @@ class AppLocaleService {
     }
   }
 
-  /// Ottiene il messaggio dell'alert per un parametro nella lingua corrente
+  /// Returns the notification body message for [param] in the current language.
+  ///
+  /// [isHigh] distinguishes high-value alerts (`true`) from low-value alerts
+  /// (`false`), e.g. `"Temperature is too high."` vs `"Temperature is too low."`.
   String getAlertMessage(AquariumParameter param, bool isHigh) {
     switch (_currentLocale.languageCode) {
       case 'en':
@@ -50,7 +70,8 @@ class AppLocaleService {
     }
   }
 
-  // ===== ITALIANO =====
+  // ── Italian ──────────────────────────────────────────────────────────────
+
   String _getItalianTitle(AquariumParameter param) {
     switch (param) {
       case AquariumParameter.temperature: return 'Temperatura Anomala';
@@ -88,7 +109,8 @@ class AppLocaleService {
     }
   }
 
-  // ===== INGLESE =====
+  // ── English ───────────────────────────────────────────────────────────────
+
   String _getEnglishTitle(AquariumParameter param) {
     switch (param) {
       case AquariumParameter.temperature: return 'Anomalous Temperature';
@@ -126,7 +148,8 @@ class AppLocaleService {
     }
   }
 
-  // ===== FRANCESE =====
+  // ── French ────────────────────────────────────────────────────────────────
+
   String _getFrenchTitle(AquariumParameter param) {
     switch (param) {
       case AquariumParameter.temperature: return 'Température Anormale';
@@ -164,7 +187,8 @@ class AppLocaleService {
     }
   }
 
-  // ===== TEDESCO =====
+  // ── German ────────────────────────────────────────────────────────────────
+
   String _getGermanTitle(AquariumParameter param) {
     switch (param) {
       case AquariumParameter.temperature: return 'Anomale Temperatur';
@@ -202,7 +226,8 @@ class AppLocaleService {
     }
   }
 
-  // ===== SPAGNOLO =====
+  // ── Spanish ───────────────────────────────────────────────────────────────
+
   String _getSpanishTitle(AquariumParameter param) {
     switch (param) {
       case AquariumParameter.temperature: return 'Temperatura Anómala';

@@ -1,29 +1,87 @@
+/// Domain model for aquarium products tracked in the user's inventory.
+library;
+
+/// Classifies an aquarium product for display, filtering, and backend mapping.
+///
+/// Backend serialisation uses UPPERCASE strings (e.g. `'WATER_TREATMENT'`);
+/// the enum uses camelCase. Conversion is handled by [Product.toJson] and
+/// [Product.fromJson].
 enum ProductCategory {
+  /// Live bacteria cultures and biological additives.
   bacteria,
+
+  /// Fish and coral food.
   food,
+
+  /// Water-quality test kits and reagents.
   test,
+
+  /// Chemical supplements (e.g. calcium, alkalinity, magnesium).
   supplement,
+
+  /// Water conditioners and dechlorinators.
   waterTreatment,
+
+  /// Physical equipment (pumps, lights, heaters, etc.).
   equipment,
+
+  /// Medications and disease treatments.
   medicine,
+
+  /// Products that do not fit the above categories.
   other,
 }
 
+/// An aquarium product in the user's inventory.
+///
+/// Tracks purchase details, stock level, usage frequency, and expiry so the
+/// app can surface low-stock and expiry warnings. The [id] is a string to
+/// support both integer backend IDs and client-generated UUIDs.
 class Product {
+  /// Unique identifier. Stored as a string even when the backend sends an int.
   final String id;
+
+  /// Product display name (e.g. `"Seachem Stability"`).
   final String name;
+
+  /// Functional category of the product.
   final ProductCategory category;
+
+  /// Optional manufacturer or brand name.
   final String? brand;
+
+  /// Remaining quantity in the unit specified by [unit].
   final double? quantity;
-  final String? unit; // ml, g, pcs, etc.
+
+  /// Unit of measure for [quantity] (e.g. `'ml'`, `'g'`, `'pcs'`).
+  final String? unit;
+
+  /// Purchase price.
   final double? cost;
+
+  /// Currency symbol for [cost]. Defaults to `'€'`.
   final String? currency;
+
+  /// Date the product was purchased.
   final DateTime? purchaseDate;
+
+  /// Date after which the product should no longer be used.
   final DateTime? expiryDate;
+
+  /// Optional free-text notes.
   final String? notes;
+
+  /// Optional URL to a product image.
   final String? imageUrl;
+
+  /// Whether the user has starred this product as a favourite.
   final bool isFavorite;
-  final int? usageFrequency; // giorni tra un uso e l'altro
+
+  /// How many days should pass between uses. Used with [lastUsed] to
+  /// compute [shouldUseAgain].
+  final int? usageFrequency;
+
+  /// Date the product was last used.
   final DateTime? lastUsed;
 
   Product({
@@ -44,7 +102,7 @@ class Product {
     this.lastUsed,
   });
 
-  // Copia con modifiche
+  /// Returns a copy with the specified fields replaced.
   Product copyWith({
     String? id,
     String? name,
@@ -81,9 +139,13 @@ class Product {
     );
   }
 
-  // Serializzazione JSON
+  /// Serialises to a JSON map for API requests.
+  ///
+  /// [category] is mapped to the backend UPPERCASE string.
+  /// Dates for [purchaseDate], [expiryDate], and [lastUsed] are serialised as
+  /// date-only strings (`YYYY-MM-DD`) because the backend does not use time.
+  /// [id] is sent as an integer when it parses as one.
   Map<String, dynamic> toJson() {
-    // Mappa le enum Dart alle categorie backend (UPPERCASE)
     String getCategoryString(ProductCategory category) {
       switch (category) {
         case ProductCategory.bacteria:
@@ -106,7 +168,7 @@ class Product {
     }
 
     return {
-      if (id.isNotEmpty) 'id': int.tryParse(id) ?? id, // Manda come int se possibile
+      if (id.isNotEmpty) 'id': int.tryParse(id) ?? id,
       'name': name,
       'category': getCategoryString(category),
       'brand': brand,
@@ -114,7 +176,7 @@ class Product {
       'unit': unit,
       'cost': cost,
       'currency': currency,
-      'purchaseDate': purchaseDate?.toIso8601String().split('T')[0], // Solo data
+      'purchaseDate': purchaseDate?.toIso8601String().split('T')[0],
       'expiryDate': expiryDate?.toIso8601String().split('T')[0],
       'notes': notes,
       'imageUrl': imageUrl,
@@ -124,9 +186,11 @@ class Product {
     };
   }
 
-  // Deserializzazione JSON
+  /// Deserialises a [Product] from a backend JSON map.
+  ///
+  /// The backend sends category as an UPPERCASE string; this is mapped back
+  /// to the [ProductCategory] enum. [id] is always coerced to [String].
   factory Product.fromJson(Map<String, dynamic> json) {
-    // Mappa le categorie dal backend (UPPERCASE) alle enum Dart
     ProductCategory parseCategory(String categoryString) {
       switch (categoryString.toUpperCase()) {
         case 'BACTERIA':
@@ -150,7 +214,7 @@ class Product {
     }
 
     return Product(
-      id: json['id'].toString(), // Converti int a String
+      id: json['id'].toString(),
       name: json['name'] as String,
       category: json['category'] is String
           ? parseCategory(json['category'] as String)
@@ -178,28 +242,38 @@ class Product {
     );
   }
 
-  // Helper methods
+  // ── Computed status helpers ────────────────────────────────────────────────
+
+  /// Returns `true` if [expiryDate] is set and in the past.
   bool get isExpired {
     if (expiryDate == null) return false;
     return DateTime.now().isAfter(expiryDate!);
   }
 
+  /// Returns `true` if the product expires within the next 30 days (but has
+  /// not yet expired).
   bool get isExpiringSoon {
     if (expiryDate == null) return false;
     final daysUntilExpiry = expiryDate!.difference(DateTime.now()).inDays;
     return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
   }
 
+  /// Returns `true` when [quantity] is below 20 units (hard-coded low-stock
+  /// threshold). Returns `false` when [quantity] is `null`.
   bool get isLowStock {
     if (quantity == null) return false;
-    return quantity! < 20; // Soglia personalizzabile
+    return quantity! < 20;
   }
 
+  /// Number of days since the product was last used, or `null` if [lastUsed]
+  /// is not set.
   int? get daysSinceLastUse {
     if (lastUsed == null) return null;
     return DateTime.now().difference(lastUsed!).inDays;
   }
 
+  /// Returns `true` when the product's [usageFrequency] has elapsed since
+  /// [lastUsed], meaning it is time to use it again.
   bool get shouldUseAgain {
     if (usageFrequency == null || lastUsed == null) return false;
     return daysSinceLastUse! >= usageFrequency!;

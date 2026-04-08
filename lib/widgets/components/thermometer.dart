@@ -1,3 +1,6 @@
+/// Temperature sensor display card widget.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
@@ -6,6 +9,18 @@ import 'package:acquariumfe/widgets/tap_effect_card.dart';
 import 'package:acquariumfe/widgets/components/target_progress_bar.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Displays the current water temperature with status colour coding, a
+/// directional change indicator, and an optional [TargetProgressBar].
+///
+/// Colour logic:
+/// - < 24 °C → blue (low)
+/// - 24–26 °C → green (optimal)
+/// - > 26 °C → red (high)
+///
+/// The [AnimatedNumberWithIndicator] shows a red up-arrow on increase and a
+/// blue down-arrow on decrease.  Tapping the card opens a dialog to update
+/// the target temperature, persisted via [TargetParametersService.saveTarget]
+/// with key `'temperature'` and triggering [onTargetChanged].
 class Thermometer extends StatelessWidget {
   final double currentTemperature;
   final double? targetTemperature;

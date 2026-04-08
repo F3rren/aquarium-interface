@@ -1,3 +1,6 @@
+/// Tabbed view for maintenance tasks and product inventory.
+library;
+
 import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:acquariumfe/services/maintenance_task_service.dart';
 import 'package:acquariumfe/utils/task_localizer.dart';
@@ -7,6 +10,19 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Two-tab screen for the active aquarium's maintenance tasks and product
+/// inventory.
+///
+/// **Tab 0 — Tasks:** shows all [MaintenanceTask] records loaded from
+/// [MaintenanceTaskService]. Tasks can be filtered by [MaintenanceCategory]
+/// chip and toggled between "in-progress" and "completed" with [_showCompleted].
+/// Each task card has an action button for marking the task done. The tab also
+/// renders a horizontal summary bar (overdue / pending / done counts).
+///
+/// **Tab 1 — Products:** delegates to [ProductsView] for the product inventory.
+///
+/// [aquariumId] is injected by the parent screen; the service is configured
+/// with [MaintenanceTaskService.setCurrentAquarium] before the first fetch.
 class MaintenanceView extends StatefulWidget {
   final int? aquariumId;
 

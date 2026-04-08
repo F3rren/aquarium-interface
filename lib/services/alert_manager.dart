@@ -1,33 +1,71 @@
+/// Manages out-of-range parameter alerts and the in-app alert history.
+library;
+
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/models/aquarium_parameter.dart';
 import 'package:acquariumfe/services/notification_service.dart';
 
+/// Singleton that evaluates water-parameter readings against user-defined
+/// thresholds and dispatches push notifications when a parameter leaves its
+/// acceptable range.
+///
+/// **Duplicate-suppression:** once a parameter fires an alert, subsequent
+/// readings that are still out-of-range are silently ignored. The alert is
+/// re-armed only after the parameter returns within range, preventing
+/// notification floods.
+///
+/// **Alert history:** every fired alert is prepended to [_alertHistory].
+/// The list is capped at 100 entries; the oldest entry is dropped when the
+/// cap is exceeded.
+///
+/// **Severity:** calculated as the percentage deviation of the measured value
+/// beyond the range boundary:
+/// - `> 20 %` → [AlertSeverity.critical]
+/// - `> 10 %` → [AlertSeverity.high]
+/// - `>  5 %` → [AlertSeverity.medium]
+/// - otherwise → [AlertSeverity.low]
 class AlertManager {
   static final AlertManager _instance = AlertManager._internal();
   factory AlertManager() => _instance;
   AlertManager._internal();
 
   final NotificationService _notificationService = NotificationService();
+
+  /// Current notification preferences; replaced by [updateSettings].
   NotificationSettings _settings = NotificationSettings();
 
-  // Storico alert (da salvare poi su storage locale)
+  /// In-memory alert history; prepend-only, capped at 100 entries.
   final List<AlertLog> _alertHistory = [];
 
-  // Traccia se un parametro è attualmente in stato di allarme (per evitare notifiche duplicate)
+  /// Tracks which parameters are currently out-of-range so that duplicate
+  /// notifications are suppressed until the parameter recovers.
   final Map<AquariumParameter, bool> _parameterInAlertState = {};
 
-  /// Inizializza AlertManager
+  /// Initialises the alert manager with [settings] and starts the underlying
+  /// [NotificationService].
+  ///
+  /// Must be called at app start-up before [checkParameter] is invoked.
   Future<void> initialize(NotificationSettings settings) async {
     _settings = settings;
     await _notificationService.initialize();
   }
 
-  /// Aggiorna impostazioni
+  /// Replaces the current notification preferences with [settings].
+  ///
+  /// Changes take effect on the next [checkParameter] call.
   void updateSettings(NotificationSettings settings) {
     _settings = settings;
   }
 
-  /// Verifica parametro e invia notifica se necessario
+  /// Evaluates a single parameter reading and sends an alert notification if
+  /// all of the following are true:
+  /// - [NotificationSettings.enabledAlerts] is `true`
+  /// - [thresholds.enabled] is `true`
+  /// - [value] is outside `[thresholds.min, thresholds.max]`
+  /// - the parameter was **not** already in alert state (duplicate suppression)
+  ///
+  /// When [value] returns inside range the alert state is cleared, so a future
+  /// out-of-range reading will trigger a new notification.
   Future<void> checkParameter({
     required AquariumParameter parameter,
     required double value,
@@ -40,9 +78,9 @@ class AlertManager {
     }
 
     if (thresholds.isOutOfRange(value)) {
-      // Parametro fuori range
+      // Parameter is out of range.
 
-      // Controlla se è già in stato di allarme
+      // Only fire if it was previously in a normal state.
       final isAlreadyInAlert = _parameterInAlertState[parameter] ?? false;
 
       if (!isAlreadyInAlert) {
@@ -56,10 +94,10 @@ class AlertManager {
           alertMessage: alertMessage,
         );
 
-        // Marca come "in allarme"
+        // Mark as "in alert" to suppress subsequent duplicate notifications.
         _parameterInAlertState[parameter] = true;
 
-        // Registra nell'alert history
+        // Record in the alert history.
         _addToHistory(
           AlertLog(
             timestamp: DateTime.now(),
@@ -71,15 +109,14 @@ class AlertManager {
           ),
         );
       }
-      // Se è già in allarme, non fare nulla (non inviare notifica duplicata)
     } else {
-      // Parametro rientrato nella norma: resetta lo stato di allarme
-      // così se torna fuori range, invierà una nuova notifica
+      // Parameter has recovered — re-arm so the next excursion fires again.
       _parameterInAlertState[parameter] = false;
     }
   }
 
-  /// Calcola severitÃ  dell'alert
+  /// Calculates the [AlertSeverity] of an out-of-range reading as a percentage
+  /// of the threshold range width.
   AlertSeverity _calculateSeverity(
     double value,
     ParameterThresholds thresholds,
@@ -97,33 +134,37 @@ class AlertManager {
     return AlertSeverity.low;
   }
 
-  /// Resetta tutti gli stati di allarme (utile per il debug o reset manuale)
+  /// Clears all in-memory alert states so that the next out-of-range reading
+  /// for every parameter will immediately fire a notification.
+  ///
+  /// Useful for debugging or when the user manually resets the alert panel.
   void resetAllAlertStates() {
     _parameterInAlertState.clear();
   }
 
-  /* DEPRECATED - Usare parameter_service._checkAllParametersForAlerts
-  /// Verifica tutti i parametri dell'acquario
-  Future<void> checkAllParameters(Map<String, double> parameters) async {
-    // Questo metodo è deprecato - la logica è stata spostata in parameter_service
-  }
+  /* DEPRECATED — use parameter_service._checkAllParametersForAlerts instead.
+  Future<void> checkAllParameters(Map<String, double> parameters) async { ... }
   */
 
-  /// Schedula notifiche di manutenzione ricorrenti
+  /// Cancels all previously scheduled maintenance notifications (IDs 1000–2000)
+  /// and no-ops if [NotificationSettings.enabledMaintenance] is `false`.
+  ///
+  /// **Note:** recurring daily notifications are no longer auto-scheduled here.
+  /// Use [checkAndNotifyDailyTasks] instead when the app polls for due tasks.
   Future<void> scheduleMaintenanceReminders() async {
     if (!_settings.enabledMaintenance) return;
 
-    // Cancella tutte le vecchie notifiche di manutenzione (ID 1000-2000)
+    // Cancel all previously scheduled maintenance notifications.
     for (int i = 1000; i <= 2000; i++) {
       await _notificationService.cancelNotification(i);
     }
-
-    // Non scheduliamo piÃ¹ notifiche automatiche giornaliere
-    // Le notifiche verranno mostrate solo quando l'app verifica
-    // attivamente che ci sono task in scadenza (checkAndNotifyDailyTasks)
   }
 
-  /// Verifica se ci sono task da fare oggi e mostra notifica
+  /// Shows notification ID `2001` ("Hai N task oggi") when [tasksToday] is
+  /// non-empty and [NotificationSettings.enabledMaintenance] is `true`.
+  ///
+  /// The body lists up to 3 task titles; if there are more it appends
+  /// `"e altre N"`.
   Future<void> checkAndNotifyDailyTasks(List<dynamic> tasksToday) async {
     if (!_settings.enabledMaintenance) return;
     if (tasksToday.isEmpty) return;
@@ -149,17 +190,19 @@ class AlertManager {
     );
   }
 
-  /// Aggiunge alert allo storico
+  /// Prepends [log] to [_alertHistory] and trims the list to the most-recent
+  /// 100 entries.
   void _addToHistory(AlertLog log) {
     _alertHistory.insert(0, log);
 
-    // Mantieni solo gli ultimi 100 alert
     if (_alertHistory.length > 100) {
       _alertHistory.removeLast();
     }
   }
 
-  /// Ottieni storico alert
+  /// Returns a defensive copy of the alert history.
+  ///
+  /// Pass [limit] to retrieve only the most-recent N entries.
   List<AlertLog> getAlertHistory({int? limit}) {
     if (limit != null && limit < _alertHistory.length) {
       return _alertHistory.sublist(0, limit);
@@ -167,12 +210,12 @@ class AlertManager {
     return List.from(_alertHistory);
   }
 
-  /// Pulisci storico alert
+  /// Removes all entries from [_alertHistory].
   void clearAlertHistory() {
     _alertHistory.clear();
   }
 
-  /// Ottieni conteggio alert per severitÃ
+  /// Returns a map of [AlertSeverity] → count across the entire alert history.
   Map<AlertSeverity, int> getAlertCountBySeverity() {
     final counts = <AlertSeverity, int>{
       AlertSeverity.low: 0,
@@ -189,11 +232,24 @@ class AlertManager {
   }
 }
 
+/// An immutable record of a single fired alert.
+///
+/// Stored in [AlertManager._alertHistory] and serialisable to/from JSON for
+/// optional persistence to local storage.
 class AlertLog {
+  /// UTC timestamp of when the alert was fired.
   final DateTime timestamp;
+
+  /// Broad category of the alert (parameter, maintenance, system).
   final AlertType type;
+
+  /// Short notification title shown to the user.
   final String title;
+
+  /// Full notification body including measured value and range.
   final String message;
+
+  /// Calculated severity based on percentage deviation from threshold range.
   final AlertSeverity severity;
 
   AlertLog({
@@ -204,6 +260,7 @@ class AlertLog {
     required this.severity,
   });
 
+  /// Serialises this log entry to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'timestamp': timestamp.toIso8601String(),
@@ -214,6 +271,7 @@ class AlertLog {
     };
   }
 
+  /// Deserialises an [AlertLog] from a JSON map.
   factory AlertLog.fromJson(Map<String, dynamic> json) {
     return AlertLog(
       timestamp: DateTime.parse(json['timestamp']),
@@ -227,6 +285,29 @@ class AlertLog {
   }
 }
 
-enum AlertType { parameter, maintenance, system }
+/// Broad category of an alert log entry.
+enum AlertType {
+  /// Alert triggered by a water-parameter excursion.
+  parameter,
 
-enum AlertSeverity { low, medium, high, critical }
+  /// Alert triggered by a missed or overdue maintenance task.
+  maintenance,
+
+  /// Alert triggered by an app-level system event.
+  system,
+}
+
+/// Severity level of an alert, based on percentage deviation from range.
+enum AlertSeverity {
+  /// < 5 % deviation from the range boundary.
+  low,
+
+  /// 5–10 % deviation.
+  medium,
+
+  /// 10–20 % deviation.
+  high,
+
+  /// > 20 % deviation.
+  critical,
+}

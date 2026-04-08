@@ -1,6 +1,20 @@
+/// Service for saving and loading manually-entered water parameters.
+library;
+
 import 'package:acquariumfe/services/api_service.dart';
 
-/// Service per gestire i parametri manuali tramite API
+/// Singleton that persists the five parameters that are entered manually by the
+/// user (i.e. not measured by electronic sensors): calcium, magnesium, KH,
+/// nitrate, and phosphate.
+///
+/// Manual parameters are stored on the backend at
+/// `POST /aquariums/{id}/parameters/manual` and retrieved with
+/// `GET /aquariums/{id}/parameters/manual`. The `measuredAt` field is set to
+/// the current UTC timestamp on every save.
+///
+/// When no aquarium is selected, or on any network error, [loadManualParameters]
+/// falls back to [_getDefaultValues] (typical marine reef reference values) so
+/// the UI always has something to display.
 class ManualParametersService {
   static final ManualParametersService _instance =
       ManualParametersService._internal();
@@ -9,13 +23,18 @@ class ManualParametersService {
 
   final ApiService _apiService = ApiService();
 
+  /// ID of the currently selected aquarium.
   int? _currentAquariumId;
 
+  /// Sets the aquarium context for all subsequent operations.
   void setCurrentAquarium(int id) {
     _currentAquariumId = id;
   }
 
-  /// Salva parametri manuali sul backend
+  /// Saves the provided manual parameters to the backend.
+  ///
+  /// Only non-null values are included in the request body. The timestamp
+  /// `measuredAt` is always included. Throws if no aquarium has been selected.
   Future<void> saveManualParameters({
     double? calcium,
     double? magnesium,
@@ -46,7 +65,19 @@ class ManualParametersService {
     }
   }
 
-  /// Carica parametri manuali dal backend
+  /// Loads the most-recently saved manual parameters for the current aquarium.
+  ///
+  /// Falls back to [_getDefaultValues] when:
+  /// - no aquarium has been selected
+  /// - the backend returns an unexpected response shape
+  /// - any network or parse error occurs
+  ///
+  /// Default marine reference values:
+  /// - calcium: 420 mg/L
+  /// - magnesium: 1280 mg/L
+  /// - kh: 9 dKH
+  /// - nitrate: 5 mg/L
+  /// - phosphate: 0.03 mg/L
   Future<Map<String, double>> loadManualParameters() async {
     if (_currentAquariumId == null) {
       return _getDefaultValues();
@@ -85,13 +116,19 @@ class ManualParametersService {
     }
   }
 
-  /// Ottieni singolo parametro
+  /// Returns the value of a single parameter [key].
+  ///
+  /// [key] must be one of `'calcium'`, `'magnesium'`, `'kh'`, `'nitrate'`,
+  /// `'phosphate'`. Returns `0.0` when the key is not found.
   Future<double> getParameter(String key) async {
     final params = await loadManualParameters();
     return params[key] ?? 0.0;
   }
 
-  /// Aggiorna singolo parametro
+  /// Updates a single parameter [key] to [value] without modifying the others.
+  ///
+  /// Reads the current values first, then writes back the full map with [key]
+  /// replaced.
   Future<void> updateParameter(String key, double value) async {
     final current = await loadManualParameters();
 
@@ -104,7 +141,8 @@ class ManualParametersService {
     );
   }
 
-  /// Ottieni data ultimo aggiornamento
+  /// Returns the `measuredAt` timestamp of the most-recently saved manual
+  /// parameter set, or `null` if none exists or on any error.
   Future<DateTime?> getLastUpdate() async {
     if (_currentAquariumId == null) return null;
 
@@ -120,12 +158,14 @@ class ManualParametersService {
         }
       }
     } catch (e) {
-      // Ignora errori
+      // Ignore; return null below.
     }
 
     return null;
   }
 
+  /// Returns the default marine reference values used as a fallback when no
+  /// stored data is available.
   Map<String, double> _getDefaultValues() {
     return {
       'calcium': 420.0,
@@ -136,7 +176,9 @@ class ManualParametersService {
     };
   }
 
-  /// Resetta tutti i parametri ai valori di default
+  /// Resets all manual parameters to backend defaults by calling
+  /// `DELETE /aquariums/{id}/parameters/manual`. Throws if no aquarium has
+  /// been selected.
   Future<void> resetToDefaults() async {
     if (_currentAquariumId == null) return;
 

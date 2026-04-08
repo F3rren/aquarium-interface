@@ -1,3 +1,6 @@
+/// pH sensor display card widget.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
@@ -6,6 +9,17 @@ import 'package:acquariumfe/widgets/tap_effect_card.dart';
 import 'package:acquariumfe/widgets/components/target_progress_bar.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Displays the current pH value with status colour coding and an optional
+/// [TargetProgressBar].
+///
+/// Colour logic:
+/// - < 7.8 → red (low)
+/// - 7.8–8.4 → green (optimal)
+/// - > 8.4 → red (high)
+///
+/// Tapping the card opens a dialog to update the target pH, which is
+/// persisted via [TargetParametersService.saveTarget] with key `'ph'` and
+/// triggers [onTargetChanged] so the parent can refresh.
 class PhMeter extends StatelessWidget {
   final double currentPh;
   final double? targetPh;

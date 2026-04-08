@@ -1,10 +1,26 @@
+/// Utility for translating [AppException] instances into localised UI strings.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
-/// Helper per localizzare i messaggi delle eccezioni
+/// Maps typed [AppException] subclasses to the corresponding ARB-localised
+/// message string from [AppLocalizations].
+///
+/// This keeps i18n logic out of individual widgets and service classes.
 class ExceptionLocalizer {
-  /// Ottiene il messaggio localizzato per un'eccezione
+  /// Returns the localised error message for [exception] using the
+  /// [AppLocalizations] instance from the current [BuildContext].
+  ///
+  /// Mapping:
+  /// - [NetworkException]     → `l10n.networkError`
+  /// - [ServerException]      → `l10n.serverError`
+  /// - [AuthException]        → `l10n.sessionExpired`
+  /// - [TimeoutException]     → `l10n.requestTimeout`
+  /// - [DataFormatException]  → `l10n.invalidDataFormat`
+  /// - [ValidationException]  → the original `exception.message` (already user-facing)
+  /// - (other)                → `exception.userMessage`
   static String getLocalizedMessage(
     BuildContext context,
     AppException exception,
@@ -22,10 +38,10 @@ class ExceptionLocalizer {
     } else if (exception is DataFormatException) {
       return l10n.invalidDataFormat;
     } else if (exception is ValidationException) {
-      // ValidationException usa il suo messaggio originale
+      // ValidationException already carries a user-facing server message.
       return exception.message;
     } else {
-      // Fallback al messaggio originale per altre eccezioni
+      // Fall back to the exception's own user message for unknown subtypes.
       return exception.userMessage;
     }
   }

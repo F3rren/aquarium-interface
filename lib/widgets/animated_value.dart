@@ -1,6 +1,14 @@
+/// Miscellaneous animation utility widgets.
+library;
+
 import 'package:flutter/material.dart';
 
-/// Widget che anima il cambio di valore numerico con effetto di pulsazione
+/// Animates a numeric [double] change with a pulse (scale + opacity) effect.
+///
+/// When [value] changes the widget scales up to 1.2× then back to 1.0 while
+/// dimming opacity to 0.6 and back, over 600 ms.  The underlying text counter
+/// rolls from the previous value via an 800 ms easeOutCubic tween, so both
+/// the pulse and the roll run concurrently.
 class AnimatedValue extends StatefulWidget {
   final double value;
   final TextStyle? style;
@@ -98,7 +106,10 @@ class _AnimatedValueState extends State<AnimatedValue>
   }
 }
 
-/// Widget per mostrare un effetto shimmer durante il caricamento
+/// A rectangular shimmer placeholder displayed while content is loading.
+///
+/// Repeats a left-to-right highlight sweep on a dark grey background
+/// (light: `#2a2a2a` → `#3a3a3a`) indefinitely at 1.5 s per cycle.
 class ShimmerLoading extends StatefulWidget {
   final double width;
   final double height;
@@ -171,7 +182,11 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
   }
 }
 
-/// Widget per bounce animation su tap
+/// Wraps any widget with a brief scale-down-then-release tap animation.
+///
+/// On `onTapDown` the child scales to [scaleFactor] (default 0.95) over
+/// 100 ms; on `onTapUp` or `onTapCancel` it returns to 1.0 and the
+/// [onTap] callback fires.
 class BounceButton extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
@@ -226,7 +241,11 @@ class _BounceButtonState extends State<BounceButton>
   }
 }
 
-/// Animazione di fade-in progressivo per liste
+/// Staggers a fade-in + upward slide for list items.
+///
+/// Each item's total animation duration is `500 + (index × delay)` ms, so
+/// higher-index items appear slightly later, creating a cascading entrance.
+/// [delay] defaults to 100 ms per index step.
 class StaggeredFadeIn extends StatelessWidget {
   final int index;
   final Widget child;

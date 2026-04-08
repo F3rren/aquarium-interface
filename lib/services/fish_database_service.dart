@@ -1,16 +1,35 @@
+/// Service that fetches and caches the fish species catalogue from the API.
+library;
+
 import '../models/fish_species.dart';
 import 'api_service.dart';
 
-/// Servizio per gestire il database delle specie di pesci disponibili
+/// Singleton that provides read-only access to the fish species database.
+///
+/// The full catalogue is fetched from `GET /species/fishs` on the first call
+/// and held in [_cachedFish] for the lifetime of the app. Call [clearCache] to
+/// force a re-fetch on the next request.
+///
+/// **Water-type filtering:** [getFishByWaterType] normalises Italian and English
+/// water-type strings before comparing so that both `'Marino'` and `'saltwater'`
+/// match the same set of fish.
+///
+/// **Error handling:** all public methods return an empty list on network or
+/// parse errors so the UI degrades gracefully.
 class FishDatabaseService {
   static final FishDatabaseService _instance = FishDatabaseService._internal();
   factory FishDatabaseService() => _instance;
   FishDatabaseService._internal();
 
   final _apiService = ApiService();
+
+  /// In-memory cache; `null` means the catalogue has not been loaded yet.
   List<FishSpecies>? _cachedFish;
 
-  /// Carica il database dei pesci dall'API
+  /// Returns all fish species from the backend catalogue.
+  ///
+  /// Results are cached after the first successful fetch. Accepts both a
+  /// direct JSON array and wrapper objects keyed by `"data"` or `"fishs"`.
   Future<List<FishSpecies>> getAllFish() async {
     if (_cachedFish != null) {
       return _cachedFish!;
@@ -19,22 +38,15 @@ class FishDatabaseService {
     try {
       final response = await _apiService.get('/species/fishs');
 
-      // Gestisci sia formato array diretto che con wrapper
+      // Normalise the two possible response shapes.
       List<dynamic> fishList;
       if (response is List) {
         fishList = response;
       } else if (response is Map<String, dynamic>) {
-        // Controlla prima 'data'
         if (response.containsKey('data')) {
           var dataField = response['data'];
-          // Se data è già una lista, usala direttamente
-          if (dataField is List) {
-            fishList = dataField;
-          } else {
-            fishList = [];
-          }
+          fishList = dataField is List ? dataField : [];
         } else if (response.containsKey('fishs')) {
-          // Altrimenti prova 'fishs'
           fishList = response['fishs'] as List? ?? [];
         } else {
           fishList = [];
@@ -46,14 +58,17 @@ class FishDatabaseService {
       _cachedFish = fishList
           .map((json) => FishSpecies.fromJson(json as Map<String, dynamic>))
           .toList();
-      
+
       return _cachedFish!;
     } catch (e) {
       return [];
     }
   }
 
-  /// Cerca pesci per nome comune o scientifico
+  /// Returns fish whose [FishSpecies.commonName], [FishSpecies.scientificName],
+  /// or [FishSpecies.family] contains [query] (case-insensitive).
+  ///
+  /// Returns the full catalogue when [query] is empty.
   Future<List<FishSpecies>> searchFish(String query) async {
     final allFish = await getAllFish();
     if (query.isEmpty) return allFish;
@@ -66,19 +81,20 @@ class FishDatabaseService {
     }).toList();
   }
 
-  /// Filtra pesci per difficoltà
+  /// Returns fish whose [FishSpecies.difficulty] exactly matches [difficulty]
+  /// (e.g. `'easy'`, `'moderate'`, `'expert'`).
   Future<List<FishSpecies>> getFishByDifficulty(String difficulty) async {
     final allFish = await getAllFish();
     return allFish.where((fish) => fish.difficulty == difficulty).toList();
   }
 
-  /// Filtra pesci sicuri per reef
+  /// Returns only reef-safe fish ([FishSpecies.reefSafe] == `true`).
   Future<List<FishSpecies>> getReefSafeFish() async {
     final allFish = await getAllFish();
     return allFish.where((fish) => fish.reefSafe).toList();
   }
 
-  /// Filtra pesci per dimensione vasca minima
+  /// Returns fish whose [FishSpecies.minTankSize] is ≤ [tankSizeInLiters].
   Future<List<FishSpecies>> getFishByTankSize(int tankSizeInLiters) async {
     final allFish = await getAllFish();
     return allFish
@@ -86,7 +102,7 @@ class FishDatabaseService {
         .toList();
   }
 
-  /// Ottieni un pesce per ID
+  /// Looks up a fish species by its string [id]. Returns `null` when not found.
   Future<FishSpecies?> getFishById(String id) async {
     final allFish = await getAllFish();
     try {
@@ -96,13 +112,15 @@ class FishDatabaseService {
     }
   }
 
-  /// Filtra per temperamento
+  /// Returns fish whose [FishSpecies.temperament] exactly matches
+  /// [temperament] (e.g. `'peaceful'`, `'aggressive'`).
   Future<List<FishSpecies>> getFishByTemperament(String temperament) async {
     final allFish = await getAllFish();
     return allFish.where((fish) => fish.temperament == temperament).toList();
   }
 
-  /// Filtra per famiglia
+  /// Returns fish whose [FishSpecies.family] contains [family]
+  /// (case-insensitive substring match).
   Future<List<FishSpecies>> getFishByFamily(String family) async {
     final allFish = await getAllFish();
     return allFish
@@ -112,36 +130,37 @@ class FishDatabaseService {
         .toList();
   }
 
-  /// Filtra pesci per tipo d'acqua (es. "Marino", "Dolce")
+  /// Returns fish compatible with [waterType].
+  ///
+  /// Fish with a `null` or empty [FishSpecies.waterType] are excluded. The
+  /// comparison uses [_normalizeWaterType] so that Italian and English
+  /// water-type strings are treated as equivalent:
+  /// - Saltwater: `'marino'`, `'reef'`, `'salata'`, `'marine'`, `'saltwater'` → `'salata'`
+  /// - Freshwater: `'dolce'`, `'freshwater'` → `'dolce'`
   Future<List<FishSpecies>> getFishByWaterType(String waterType) async {
     final allFish = await getAllFish();
-    
+
     if (waterType.isEmpty) return allFish;
 
-    // Normalizza il tipo d'acqua per il confronto
-    String normalizedWaterType = _normalizeWaterType(waterType);
+    final String normalizedWaterType = _normalizeWaterType(waterType);
 
-    final filtered = allFish.where((fish) {
-      // Se il pesce non ha un waterType specificato, NON lo mostra
+    return allFish.where((fish) {
       if (fish.waterType == null || fish.waterType!.isEmpty) {
         return false;
       }
-
-      // Normalizza e confronta
-      String fishWaterType = _normalizeWaterType(fish.waterType!);
-      return fishWaterType == normalizedWaterType;
+      return _normalizeWaterType(fish.waterType!) == normalizedWaterType;
     }).toList();
-    
-    return filtered;
   }
 
-  /// Normalizza il tipo d'acqua per il confronto
-  /// "Marino" / "Reef" / "salata" / "marino" / "reef" / "Marine" -> "salata"
-  /// "Dolce" / "dolce" / "Freshwater" / "freshwater" -> "dolce"
+  /// Normalises a water-type string to `'salata'` (saltwater) or `'dolce'`
+  /// (freshwater) using exact lowercase matches.
+  ///
+  /// Accepted saltwater variants: `'marino'`, `'reef'`, `'salata'`, `'marine'`,
+  /// `'saltwater'`.
+  /// Accepted freshwater variants: `'dolce'`, `'freshwater'`.
   String _normalizeWaterType(String waterType) {
     final normalized = waterType.toLowerCase().trim();
 
-    // Mappa tutte le varianti di acqua salata (Marino, Reef, Marine, Salata sono tutti salati)
     if (normalized == 'marino' ||
         normalized == 'reef' ||
         normalized == 'salata' ||
@@ -150,16 +169,14 @@ class FishDatabaseService {
       return 'salata';
     }
 
-    // Mappa tutte le varianti di acqua dolce
-    if (normalized == 'dolce' ||
-        normalized == 'freshwater') {
+    if (normalized == 'dolce' || normalized == 'freshwater') {
       return 'dolce';
     }
 
     return normalized;
   }
 
-  /// Ottieni tutte le famiglie disponibili
+  /// Returns a sorted, deduplicated list of all fish families in the catalogue.
   Future<List<String>> getAllFamilies() async {
     final allFish = await getAllFish();
     final families = allFish.map((fish) => fish.family).toSet().toList();
@@ -167,7 +184,8 @@ class FishDatabaseService {
     return families;
   }
 
-  /// Ricarica cache
+  /// Clears the in-memory cache so that the next call to [getAllFish] will
+  /// re-fetch from the backend.
   void clearCache() {
     _cachedFish = null;
   }

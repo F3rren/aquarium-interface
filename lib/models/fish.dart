@@ -1,20 +1,60 @@
+/// Domain model representing a fish specimen kept in a user's aquarium.
+library;
+
+/// A fish specimen added by the user to one of their aquariums.
+///
+/// Like [Coral], fields are split into two groups:
+/// - **Core fields** — always present: [id], [name], [species], [size],
+///   [addedDate].
+/// - **Species-detail fields** — denormalised from [FishSpecies] at insertion
+///   time so the record stays self-contained if the catalogue changes.
 class Fish {
+  /// Client-generated UUID uniquely identifying this specimen.
   final String id;
+
+  /// User-chosen display name (e.g. `"Nemo"`).
   final String name;
+
+  /// Scientific or common species name (e.g. `"Amphiprioninae"`).
   final String species;
-  final double size; // cm
+
+  /// Current size of the fish in centimetres.
+  final double size;
+
+  /// Date the fish was added to the aquarium.
   final DateTime addedDate;
+
+  /// Optional free-text notes from the user.
   final String? notes;
+
+  /// Optional URL to a photo of this specific fish.
   final String? imageUrl;
 
-  // Dettagli specie
+  // ── Species-detail fields (denormalised from FishSpecies) ─────────────────
+
+  /// Taxonomic family name (e.g. `"Pomacentridae"`).
   final String? family;
+
+  /// Minimum recommended tank size in litres.
   final int? minTankSize;
+
+  /// Maximum expected adult size in centimetres.
   final double? maxSize;
+
+  /// Care difficulty: `'beginner'`, `'intermediate'`, or `'expert'`.
   final String? difficulty;
+
+  /// Behaviour toward tank mates: `'peaceful'`, `'semi-aggressive'`,
+  /// or `'aggressive'`.
   final String? temperament;
+
+  /// Dietary category: `'herbivore'`, `'carnivore'`, or `'omnivore'`.
   final String? diet;
+
+  /// General description of the species.
   final String? description;
+
+  /// Whether this species is considered safe for reef tanks with corals.
   final bool? reefSafe;
 
   Fish({
@@ -35,6 +75,7 @@ class Fish {
     this.reefSafe,
   });
 
+  /// Serialises this fish to a JSON map for local storage or API requests.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -55,6 +96,7 @@ class Fish {
     };
   }
 
+  /// Deserialises a [Fish] from a JSON map.
   factory Fish.fromJson(Map<String, dynamic> json) {
     return Fish(
       id: json['id'],
@@ -75,6 +117,7 @@ class Fish {
     );
   }
 
+  /// Returns a copy of this fish with the specified fields replaced.
   Fish copyWith({
     String? id,
     String? name,

@@ -1,20 +1,50 @@
+/// User-configurable notification preferences and parameter alert thresholds.
+library;
+
+/// Top-level configuration for all app notifications.
+///
+/// Contains three global toggle switches and per-parameter threshold objects.
+/// Default values reflect typical healthy ranges for a marine reef aquarium.
 class NotificationSettings {
+  /// Master switch for parameter out-of-range alert notifications.
   final bool enabledAlerts;
+
+  /// Master switch for maintenance reminder notifications.
   final bool enabledMaintenance;
+
+  /// Master switch for optional daily summary notifications (off by default).
   final bool enabledDaily;
 
-  // Soglie parametri
+  // ── Per-parameter thresholds ───────────────────────────────────────────────
+
+  /// Alert thresholds for water temperature (°C). Default: 24–26 °C.
   final ParameterThresholds temperature;
+
+  /// Alert thresholds for pH. Default: 8.0–8.4.
   final ParameterThresholds ph;
+
+  /// Alert thresholds for salinity (specific gravity). Default: 1.020–1.028.
   final ParameterThresholds salinity;
+
+  /// Alert thresholds for ORP (mV). Default: 300–400 mV.
   final ParameterThresholds orp;
+
+  /// Alert thresholds for dissolved calcium (mg/L). Default: 400–450 mg/L.
   final ParameterThresholds calcium;
+
+  /// Alert thresholds for dissolved magnesium (mg/L). Default: 1250–1350 mg/L.
   final ParameterThresholds magnesium;
+
+  /// Alert thresholds for carbonate hardness (dKH). Default: 7–9 dKH.
   final ParameterThresholds kh;
+
+  /// Alert thresholds for nitrates (mg/L). Default: 0–10 mg/L.
   final ParameterThresholds nitrate;
+
+  /// Alert thresholds for phosphates (mg/L). Default: 0–0.1 mg/L.
   final ParameterThresholds phosphate;
 
-  // Notifiche ricorrenti
+  /// Reminder schedules for the four built-in maintenance task types.
   final MaintenanceReminders maintenanceReminders;
 
   NotificationSettings({
@@ -42,6 +72,7 @@ class NotificationSettings {
        phosphate = phosphate ?? ParameterThresholds(min: 0.0, max: 0.1),
        maintenanceReminders = maintenanceReminders ?? MaintenanceReminders();
 
+  /// Returns a copy with the specified fields replaced.
   NotificationSettings copyWith({
     bool? enabledAlerts,
     bool? enabledMaintenance,
@@ -74,6 +105,7 @@ class NotificationSettings {
     );
   }
 
+  /// Serialises to JSON for persistence.
   Map<String, dynamic> toJson() {
     return {
       'enabledAlerts': enabledAlerts,
@@ -92,6 +124,7 @@ class NotificationSettings {
     };
   }
 
+  /// Deserialises from a JSON map. Missing fields use constructor defaults.
   factory NotificationSettings.fromJson(Map<String, dynamic> json) {
     return NotificationSettings(
       enabledAlerts: json['enabledAlerts'] ?? true,
@@ -127,9 +160,19 @@ class NotificationSettings {
   }
 }
 
+/// Minimum/maximum acceptable range for a single water parameter.
+///
+/// When [enabled] is `false` the threshold is inactive and [isOutOfRange]
+/// always returns `false`.
 class ParameterThresholds {
+  /// Lower bound of the acceptable range (inclusive).
   final double min;
+
+  /// Upper bound of the acceptable range (inclusive).
   final double max;
+
+  /// Whether this threshold is currently active. Disabled thresholds never
+  /// fire notifications.
   final bool enabled;
 
   ParameterThresholds({
@@ -138,10 +181,13 @@ class ParameterThresholds {
     this.enabled = true,
   });
 
+  /// Returns `true` when [value] falls outside [min]–[max] and [enabled] is
+  /// `true`.
   bool isOutOfRange(double value) {
     return enabled && (value < min || value > max);
   }
 
+  /// Returns a copy with the specified fields replaced.
   ParameterThresholds copyWith({double? min, double? max, bool? enabled}) {
     return ParameterThresholds(
       min: min ?? this.min,
@@ -163,10 +209,22 @@ class ParameterThresholds {
   }
 }
 
+/// Reminder schedules for the four built-in maintenance task types.
+///
+/// Default frequencies: water change weekly (7 days), filter cleaning monthly
+/// (30 days), parameter testing every 3 days, light maintenance every 180 days
+/// (disabled by default).
 class MaintenanceReminders {
+  /// Schedule for the weekly water-change reminder.
   final ReminderSchedule waterChange;
+
+  /// Schedule for the monthly filter-cleaning reminder.
   final ReminderSchedule filterCleaning;
+
+  /// Schedule for the parameter-testing reminder (every 3 days).
   final ReminderSchedule parameterTesting;
+
+  /// Schedule for the light-maintenance reminder (disabled by default).
   final ReminderSchedule lightMaintenance;
 
   MaintenanceReminders({
@@ -226,10 +284,19 @@ class MaintenanceReminders {
   }
 }
 
+/// Defines the timing of a single maintenance reminder notification.
 class ReminderSchedule {
+  /// Whether this reminder is currently active.
   final bool enabled;
+
+  /// How often (in days) the reminder repeats.
   final int frequencyDays;
+
+  /// Hour of the day (0–23) at which the notification is delivered.
+  /// Defaults to 10 (10:00 AM).
   final int hour;
+
+  /// Minute (0–59) at which the notification is delivered. Defaults to 0.
   final int minute;
 
   ReminderSchedule({

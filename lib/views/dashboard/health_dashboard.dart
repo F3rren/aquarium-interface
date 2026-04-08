@@ -1,3 +1,6 @@
+/// Real-time health dashboard showing parameter status and alert history.
+library;
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +13,20 @@ import 'package:acquariumfe/widgets/responsive_builder.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Dashboard screen that displays the current health status of the active
+/// aquarium with real-time parameter cards and a recent alert log.
+///
+/// **Auto-refresh:** [currentParametersProvider] is invalidated every 5 seconds
+/// via a [Timer], triggering a re-fetch and re-render of all parameter cards.
+///
+/// **Alert card:** reads from [AlertManager.getAlertHistory] and renders the
+/// most-recent alerts grouped by [AlertSeverity].
+///
+/// **Settings:** loaded from [NotificationPreferencesService] at startup to
+/// keep [AlertManager] in sync with the latest user preferences.
+///
+/// Uses [ResponsiveBuilder] to switch between a single-column and two-column
+/// grid layout based on [ResponsiveBreakpoints].
 class HealthDashboard extends ConsumerStatefulWidget {
   const HealthDashboard({super.key});
 
