@@ -1,6 +1,7 @@
 /// Service that fetches and caches the coral species catalogue from the API.
 library;
 
+import 'package:species_service/api.dart';
 import '../models/coral_species.dart';
 import 'api_service.dart';
 
@@ -62,7 +63,7 @@ class CoralDatabaseService {
       _cachedCorals = [];
       for (var i = 0; i < coralList.length; i++) {
         try {
-          final coral = CoralSpecies.fromJson(coralList[i] as Map<String, dynamic>);
+          final coral = CoralSpecies.fromDto(CoralResponseDTO.fromJson(coralList[i])!);
           _cachedCorals!.add(coral);
         } catch (e) {
           // Skip malformed entries silently.

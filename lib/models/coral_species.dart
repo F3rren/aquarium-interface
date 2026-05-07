@@ -2,6 +2,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:species_service/api.dart';
 
 /// Represents one coral species as returned by the backend species catalogue.
 ///
@@ -74,6 +75,25 @@ class CoralSpecies {
     this.imageUrl,
     required this.description,
   });
+
+  /// Creates a [CoralSpecies] from a generated [CoralResponseDTO].
+  factory CoralSpecies.fromDto(CoralResponseDTO dto) {
+    return CoralSpecies(
+      id: dto.id?.toString() ?? '',
+      commonName: dto.commonName ?? '',
+      scientificName: dto.scientificName ?? '',
+      type: dto.type ?? '',
+      minTankSize: dto.minTankSize ?? 0,
+      maxSize: dto.maxSize ?? 0,
+      difficulty: dto.difficulty ?? '',
+      lightRequirement: dto.lightRequirement ?? '',
+      flowRequirement: dto.flowRequirement ?? '',
+      placement: dto.placement ?? '',
+      aggressive: dto.aggressive ?? false,
+      feeding: dto.feeding ?? '',
+      description: dto.description ?? '',
+    );
+  }
 
   /// Deserialises a [CoralSpecies] from a backend JSON map.
   ///

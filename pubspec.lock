@@ -33,6 +33,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  aquariums_service:
+    dependency: "direct main"
+    description:
+      path: "lib/api/generated/aquariums_service"
+      relative: true
+    source: path
+    version: "1.0.0"
   archive:
     dependency: transitive
     description:
@@ -591,6 +598,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.4"
+  inhabitants_service:
+    dependency: "direct main"
+    description:
+      path: "lib/api/generated/inhabitants_service"
+      relative: true
+    source: path
+    version: "1.0.0"
   integration_test:
     dependency: "direct dev"
     description: flutter
@@ -676,6 +690,20 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
+  maintenance_service:
+    dependency: "direct main"
+    description:
+      path: "lib/api/generated/maintenance_service"
+      relative: true
+    source: path
+    version: "1.0.0"
+  manual_parameters_service:
+    dependency: "direct main"
+    description:
+      path: "lib/api/generated/manual_parameters_service"
+      relative: true
+    source: path
+    version: "1.0.0"
   matcher:
     dependency: transitive
     description:
@@ -740,6 +768,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  parameters_service:
+    dependency: "direct main"
+    description:
+      path: "lib/api/generated/parameters_service"
+      relative: true
+    source: path
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -1057,6 +1092,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.1"
+  species_service:
+    dependency: "direct main"
+    description:
+      path: "lib/api/generated/species_service"
+      relative: true
+    source: path
+    version: "1.0.0"
   stack_trace:
     dependency: transitive
     description:
@@ -1105,6 +1147,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+  target_parameter_service:
+    dependency: "direct main"
+    description:
+      path: "lib/api/generated/target_parameter_service"
+      relative: true
+    source: path
+    version: "1.0.0"
   term_glyph:
     dependency: transitive
     description:

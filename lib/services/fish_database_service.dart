@@ -1,6 +1,7 @@
 /// Service that fetches and caches the fish species catalogue from the API.
 library;
 
+import 'package:species_service/api.dart';
 import '../models/fish_species.dart';
 import 'api_service.dart';
 
@@ -56,7 +57,7 @@ class FishDatabaseService {
       }
 
       _cachedFish = fishList
-          .map((json) => FishSpecies.fromJson(json as Map<String, dynamic>))
+          .map((json) => FishSpecies.fromDto(FishResponseDTO.fromJson(json)!))
           .toList();
 
       return _cachedFish!;

@@ -1,6 +1,8 @@
 /// Domain model representing a fish specimen kept in a user's aquarium.
 library;
 
+import 'package:inhabitants_service/api.dart';
+
 /// A fish specimen added by the user to one of their aquariums.
 ///
 /// Like [Coral], fields are split into two groups:
@@ -74,6 +76,23 @@ class Fish {
     this.description,
     this.reefSafe,
   });
+
+  /// Creates a [Fish] from a generated [InhabitantDetailsDTO] with type `'fish'`.
+  factory Fish.fromInhabitantDto(InhabitantDetailsDTO dto) {
+    return Fish(
+      id: dto.id?.toString() ?? '',
+      name: dto.customName ?? dto.commonName ?? '',
+      species: dto.scientificName ?? dto.commonName ?? '',
+      size: (dto.currentSize ?? 0).toDouble(),
+      addedDate: dto.addedDate ?? DateTime.now(),
+      notes: dto.notes,
+      difficulty: dto.customDifficulty,
+      temperament: dto.customTemperament,
+      diet: dto.customDiet,
+      reefSafe: dto.isReefSafe,
+      minTankSize: dto.customMinTankSize,
+    );
+  }
 
   /// Serialises this fish to a JSON map for local storage or API requests.
   Map<String, dynamic> toJson() {

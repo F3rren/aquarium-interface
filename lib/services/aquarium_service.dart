@@ -1,6 +1,7 @@
 /// CRUD service for aquariums and their water-parameter records.
 library;
 
+import 'package:aquariums_service/api.dart';
 import '../models/aquarium.dart';
 import '../models/aquarium_parameters.dart';
 import '../utils/exceptions.dart';
@@ -47,7 +48,7 @@ class AquariumsService {
     }
 
     return aquariumsJson
-        .map((json) => Aquarium.fromJson(json as Map<String, dynamic>))
+        .map((json) => Aquarium.fromDto(AquariumResponseDTO.fromJson(json)!))
         .toList();
   }
 
@@ -60,7 +61,7 @@ class AquariumsService {
     final response = await _apiService.get('/aquariums/$id');
     if (response is Map<String, dynamic>) {
       final aquariumData = response['data'] ?? response;
-      return Aquarium.fromJson(aquariumData as Map<String, dynamic>);
+      return Aquarium.fromDto(AquariumResponseDTO.fromJson(aquariumData)!);
     } else {
       throw DataFormatException(
         'Formato risposta non valido: attesa mappa',
@@ -74,16 +75,16 @@ class AquariumsService {
   Future<Aquarium> createAquarium(Aquarium aquarium) async {
     final response = await _apiService.post('/aquariums', aquarium.toJson());
     if (response is Map<String, dynamic> && response.containsKey('data')) {
-      return Aquarium.fromJson(response['data'] as Map<String, dynamic>);
+      return Aquarium.fromDto(AquariumResponseDTO.fromJson(response['data'])!);
     }
-    return Aquarium.fromJson(response as Map<String, dynamic>);
+    return Aquarium.fromDto(AquariumResponseDTO.fromJson(response)!);
   }
 
   /// Replaces the aquarium identified by [id] with the supplied [aquarium]
   /// data and returns the updated entity.
   Future<Aquarium> updateAquarium(int id, Aquarium aquarium) async {
     final response = await _apiService.put('/aquariums/$id', aquarium.toJson());
-    return Aquarium.fromJson(response);
+    return Aquarium.fromDto(AquariumResponseDTO.fromJson(response)!);
   }
 
   /// Permanently deletes the aquarium with the given [id].
@@ -112,7 +113,9 @@ class AquariumsService {
       );
     }
 
-    return AquariumParameters.fromJson(parametersData);
+    return AquariumParameters.fromWaterParameterDto(
+      WaterParameterDTO.fromJson(parametersData)!,
+    );
   }
 
   /// Fetches historical parameter snapshots for aquarium [aquariumId].
@@ -164,9 +167,9 @@ class AquariumsService {
     }
 
     return historyJson
-        .map(
-          (json) => AquariumParameters.fromJson(json as Map<String, dynamic>),
-        )
+        .map((json) => AquariumParameters.fromWaterParameterDto(
+              WaterParameterDTO.fromJson(json)!,
+            ))
         .toList();
   }
 }

@@ -1,6 +1,7 @@
 /// Service for managing the fish and coral inhabitants of an aquarium.
 library;
 
+import 'package:inhabitants_service/api.dart';
 import '../models/fish.dart';
 import '../models/coral.dart';
 import 'api_service.dart';
@@ -56,26 +57,32 @@ class InhabitantsService {
       final List<dynamic> inhabitants = response['data'] as List;
 
       return inhabitants.where((item) => item['type'] == 'fish').map((item) {
-        final size =
-            item['details']?['size'] ?? item['details']?['maxSize'] ?? 10.0;
+        final dto = InhabitantDetailsDTO.fromJson(item)!;
+        final details = dto.details is Map
+            ? (dto.details as Map).cast<String, dynamic>()
+            : <String, dynamic>{};
+        final rawSize = details['size'] ?? details['maxSize'] ?? dto.currentSize;
+        final size = rawSize is int
+            ? rawSize.toDouble()
+            : (rawSize as num?)?.toDouble() ?? 10.0;
 
-        return Fish.fromJson({
-          'id': item['id'].toString(),
-          'name': item['commonName'] ?? '',
-          'species': item['scientificName'] ?? '',
-          'size': size is int ? size.toDouble() : (size as double),
-          'addedDate': item['addedDate'] ?? DateTime.now().toIso8601String(),
-          'notes': item['details']?['notes'] ?? '',
-          'imageUrl': item['details']?['imageUrl'],
-          'family': item['details']?['family'],
-          'minTankSize': item['details']?['minTankSize'],
-          'maxSize': item['details']?['maxSize']?.toDouble(),
-          'difficulty': item['details']?['difficulty'],
-          'temperament': item['details']?['temperament'],
-          'diet': item['details']?['diet'],
-          'description': item['details']?['description'],
-          'reefSafe': item['details']?['reefSafe'],
-        });
+        return Fish(
+          id: dto.id?.toString() ?? '',
+          name: dto.customName ?? dto.commonName ?? '',
+          species: dto.scientificName ?? dto.commonName ?? '',
+          size: size,
+          addedDate: dto.addedDate ?? DateTime.now(),
+          notes: details['notes'] as String? ?? dto.notes,
+          imageUrl: details['imageUrl'] as String?,
+          family: details['family'] as String?,
+          minTankSize: details['minTankSize'] as int? ?? dto.customMinTankSize,
+          maxSize: (details['maxSize'] as num?)?.toDouble(),
+          difficulty: details['difficulty'] as String? ?? dto.customDifficulty,
+          temperament: details['temperament'] as String? ?? dto.customTemperament,
+          diet: details['diet'] as String? ?? dto.customDiet,
+          description: details['description'] as String?,
+          reefSafe: details['reefSafe'] as bool? ?? dto.isReefSafe,
+        );
       }).toList();
     } catch (e) {
       return [];
@@ -153,28 +160,33 @@ class InhabitantsService {
       final List<dynamic> inhabitants = response['data'] as List;
 
       return inhabitants.where((item) => item['type'] == 'coral').map((item) {
-        final size =
-            item['details']?['size'] ?? item['details']?['maxSize'] ?? 5.0;
+        final dto = InhabitantDetailsDTO.fromJson(item)!;
+        final details = dto.details is Map
+            ? (dto.details as Map).cast<String, dynamic>()
+            : <String, dynamic>{};
+        final rawSize = details['size'] ?? details['maxSize'] ?? dto.currentSize;
+        final size = rawSize is int
+            ? rawSize.toDouble()
+            : (rawSize as num?)?.toDouble() ?? 5.0;
 
-        return Coral.fromJson({
-          'id': item['id'].toString(),
-          'name': item['commonName'] ?? '',
-          'species': item['scientificName'] ?? '',
-          'type': item['details']?['type'] ?? 'SPS',
-          'size': size is int ? size.toDouble() : (size as double),
-          'addedDate': item['addedDate'] ?? DateTime.now().toIso8601String(),
-          'placement': item['details']?['placement'] ?? 'Medio',
-          'notes': item['details']?['notes'] ?? '',
-          'imageUrl': null,
-          'difficulty': item['details']?['difficulty'],
-          'lightRequirement': item['details']?['lightRequirement'],
-          'flowRequirement': item['details']?['flowRequirement'],
-          'feeding': item['details']?['feeding'],
-          'description': item['details']?['description'],
-          'aggressive': item['details']?['aggressive'],
-          'minTankSize': item['details']?['minTankSize'],
-          'maxSize': item['details']?['maxSize'],
-        });
+        return Coral(
+          id: dto.id?.toString() ?? '',
+          name: dto.customName ?? dto.commonName ?? '',
+          species: dto.scientificName ?? dto.commonName ?? '',
+          type: details['type'] as String? ?? 'SPS',
+          size: size,
+          addedDate: dto.addedDate ?? DateTime.now(),
+          placement: details['placement'] as String? ?? 'Medio',
+          notes: details['notes'] as String? ?? dto.notes,
+          difficulty: details['difficulty'] as String? ?? dto.customDifficulty,
+          lightRequirement: details['lightRequirement'] as String?,
+          flowRequirement: details['flowRequirement'] as String?,
+          feeding: details['feeding'] as String?,
+          description: details['description'] as String?,
+          aggressive: details['aggressive'] as bool?,
+          minTankSize: details['minTankSize'] as int? ?? dto.customMinTankSize,
+          maxSize: details['maxSize'] as int?,
+        );
       }).toList();
     } catch (e) {
       return [];

@@ -1,6 +1,7 @@
 /// Service for managing aquarium maintenance tasks via the backend API.
 library;
 
+import 'package:maintenance_service/api.dart';
 import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:acquariumfe/services/api_service.dart';
 
@@ -55,7 +56,7 @@ class MaintenanceTaskService {
       }
 
       return tasksJson
-          .map((json) => MaintenanceTask.fromJson(json as Map<String, dynamic>))
+          .map((json) => MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(json)!))
           .toList();
     } catch (e) {
       rethrow;
@@ -100,7 +101,7 @@ class MaintenanceTaskService {
         throw Exception('Formato risposta non valido');
       }
 
-      return MaintenanceTask.fromJson(taskJson);
+      return MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(taskJson)!);
     } catch (e) {
       rethrow;
     }
@@ -131,7 +132,7 @@ class MaintenanceTaskService {
         throw Exception('Formato risposta non valido');
       }
 
-      return MaintenanceTask.fromJson(taskJson);
+      return MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(taskJson)!);
     } catch (e) {
       rethrow;
     }
@@ -172,7 +173,7 @@ class MaintenanceTaskService {
         throw Exception('Formato risposta non valido');
       }
 
-      return MaintenanceTask.fromJson(taskJson);
+      return MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(taskJson)!);
     } catch (e) {
       rethrow;
     }

@@ -1,6 +1,8 @@
 /// Domain model representing a coral specimen kept in a user's aquarium.
 library;
 
+import 'package:inhabitants_service/api.dart';
+
 /// A coral specimen added by the user to one of their aquariums.
 ///
 /// Fields are split into two groups:
@@ -82,6 +84,25 @@ class Coral {
     this.minTankSize,
     this.maxSize,
   });
+
+  /// Creates a [Coral] from a generated [InhabitantDetailsDTO] with type `'coral'`.
+  ///
+  /// [type] and [placement] are not present in the DTO and default to empty
+  /// strings; they should be enriched from the species catalogue if needed.
+  factory Coral.fromInhabitantDto(InhabitantDetailsDTO dto) {
+    return Coral(
+      id: dto.id?.toString() ?? '',
+      name: dto.customName ?? dto.commonName ?? '',
+      species: dto.scientificName ?? dto.commonName ?? '',
+      type: '',
+      size: (dto.currentSize ?? 0).toDouble(),
+      addedDate: dto.addedDate ?? DateTime.now(),
+      placement: '',
+      notes: dto.notes,
+      difficulty: dto.customDifficulty,
+      minTankSize: dto.customMinTankSize,
+    );
+  }
 
   /// Serialises this coral to a JSON map for local storage or API requests.
   Map<String, dynamic> toJson() {

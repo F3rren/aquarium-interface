@@ -58,6 +58,22 @@ dependencies:
   # Persistent storage for user preferences
   shared_preferences: ^2.3.3
   
+  # Generated API clients (openapi-generator dart)
+  aquariums_service:
+    path: lib/api/generated/aquariums_service
+  inhabitants_service:
+    path: lib/api/generated/inhabitants_service
+  species_service:
+    path: lib/api/generated/species_service
+  maintenance_service:
+    path: lib/api/generated/maintenance_service
+  parameters_service:
+    path: lib/api/generated/parameters_service
+  manual_parameters_service:
+    path: lib/api/generated/manual_parameters_service
+  target_parameter_service:
+    path: lib/api/generated/target_parameter_service
+
   # HTTP client for API calls
   http: ^1.2.2
 

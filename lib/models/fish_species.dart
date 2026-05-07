@@ -1,6 +1,8 @@
 /// Model for a fish species entry in the ReefLife species catalogue.
 library;
 
+import 'package:species_service/api.dart';
+
 /// Represents one fish species as returned by the backend species catalogue.
 ///
 /// Instances are read-only catalogue entries used to pre-fill the "Add Fish"
@@ -65,6 +67,25 @@ class FishSpecies {
     this.description,
     this.waterType,
   });
+
+  /// Creates a [FishSpecies] from a generated [FishResponseDTO].
+  factory FishSpecies.fromDto(FishResponseDTO dto) {
+    return FishSpecies(
+      id: dto.id?.toString() ?? '',
+      commonName: dto.commonName ?? '',
+      scientificName: dto.scientificName ?? '',
+      family: dto.family ?? '',
+      minTankSize: dto.minTankSize ?? 0,
+      maxSize: (dto.maxSize ?? 0).toDouble(),
+      difficulty: dto.difficulty ?? 'intermediate',
+      reefSafe: dto.reefSafe ?? true,
+      temperament: dto.temperament ?? 'peaceful',
+      diet: dto.diet ?? 'omnivore',
+      imageUrl: dto.imageUrl,
+      description: dto.description,
+      waterType: dto.waterType,
+    );
+  }
 
   /// Deserialises a [FishSpecies] from a backend JSON map.
   ///

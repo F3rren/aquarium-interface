@@ -2,6 +2,7 @@
 library;
 
 import 'dart:async';
+import 'package:aquariums_service/api.dart';
 import 'package:acquariumfe/models/aquarium_parameters.dart';
 import 'package:acquariumfe/models/aquarium_parameter.dart';
 import 'package:acquariumfe/services/api_service.dart';
@@ -173,7 +174,9 @@ class ParameterService {
         );
       }
 
-      final parameters = AquariumParameters.fromJson(parametersData);
+      final parameters = AquariumParameters.fromWaterParameterDto(
+        WaterParameterDTO.fromJson(parametersData)!,
+      );
 
       // Merge manual parameters on top of sensor values.
       final manualParams = await _manualService.loadManualParameters();
@@ -313,9 +316,9 @@ class ParameterService {
       }
 
       return historyJson
-          .map(
-            (json) => AquariumParameters.fromJson(json as Map<String, dynamic>),
-          )
+          .map((json) => AquariumParameters.fromWaterParameterDto(
+                WaterParameterDTO.fromJson(json)!,
+              ))
           .toList();
     } on AppException catch (e) {
       _logger.e('Errore recupero storico parametri', error: e);
