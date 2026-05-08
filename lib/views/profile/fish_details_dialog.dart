@@ -1,8 +1,17 @@
+/// Read-only dialog that shows the full details of a fish inhabitant.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/fish.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// A read-only details dialog for a [Fish] inhabitant.
+///
+/// Rendered as a [Dialog] with a gradient header showing the fish icon, name,
+/// and scientific name. The body lists all available attributes: size, diet,
+/// difficulty, temperament, reef-safe status, and notes. Optional fields are
+/// hidden when `null`.
 class FishDetailsDialog extends StatelessWidget {
   final Fish fish;
 

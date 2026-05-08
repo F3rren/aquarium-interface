@@ -1,11 +1,28 @@
+/// Tabbed view for maintenance tasks and product inventory.
+library;
+
 import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:acquariumfe/services/maintenance_task_service.dart';
+import 'package:acquariumfe/utils/task_localizer.dart';
 import 'package:acquariumfe/views/maintenance/products_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Two-tab screen for the active aquarium's maintenance tasks and product
+/// inventory.
+///
+/// **Tab 0 — Tasks:** shows all [MaintenanceTask] records loaded from
+/// [MaintenanceTaskService]. Tasks can be filtered by [MaintenanceCategory]
+/// chip and toggled between "in-progress" and "completed" with [_showCompleted].
+/// Each task card has an action button for marking the task done. The tab also
+/// renders a horizontal summary bar (overdue / pending / done counts).
+///
+/// **Tab 1 — Products:** delegates to [ProductsView] for the product inventory.
+///
+/// [aquariumId] is injected by the parent screen; the service is configured
+/// with [MaintenanceTaskService.setCurrentAquarium] before the first fetch.
 class MaintenanceView extends StatefulWidget {
   final int? aquariumId;
 
@@ -482,14 +499,14 @@ class _MaintenanceViewState extends State<MaintenanceView>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          task.title,
+                          localizedTaskTitle(task, l10n),
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         if (task.description != null)
                           Text(
-                            task.description!,
+                            localizedTaskDescription(task, l10n) ?? '',
                             style: theme.textTheme.bodySmall,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -1011,7 +1028,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.completeTask),
-        content: Text(l10n.confirmCompleteTask(task.title)),
+        content: Text(l10n.confirmCompleteTask(localizedTaskTitle(task, l10n))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -1037,7 +1054,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
         await _loadTasks();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.taskCompletedSuccess(task.title)),
+            content: Text(l10n.taskCompletedSuccess(localizedTaskTitle(task, l10n))),
             backgroundColor: const Color(0xFF10b981),
           ),
         );
@@ -1087,7 +1104,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        task.title,
+                        localizedTaskTitle(task, l10n),
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       Text(
@@ -1116,7 +1133,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
             ),
             if (task.description != null) ...[
               const SizedBox(height: 16),
-              Text(task.description!),
+              Text(localizedTaskDescription(task, l10n) ?? ''),
             ],
             if (task.notes != null) ...[
               const SizedBox(height: 16),
@@ -1221,7 +1238,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.deleteTask),
-        content: Text(l10n.confirmDeleteTask(task.title)),
+        content: Text(l10n.confirmDeleteTask(localizedTaskTitle(task, l10n))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -1272,7 +1289,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
       case MaintenanceCategory.cleaning:
         return l10n.cleaning;
       case MaintenanceCategory.dosing:
-        return 'Dosaggio'; // TODO: add to ARB if needed
+        return l10n.categoryDosing;
       case MaintenanceCategory.feeding:
         return l10n.feeding;
       case MaintenanceCategory.other:

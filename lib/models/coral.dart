@@ -1,22 +1,68 @@
+/// Domain model representing a coral specimen kept in a user's aquarium.
+library;
+
+import 'package:inhabitants_service/api.dart';
+
+/// A coral specimen added by the user to one of their aquariums.
+///
+/// Fields are split into two groups:
+/// - **Core fields** — always present: [id], [name], [species], [type],
+///   [size], [addedDate], [placement].
+/// - **Species-detail fields** — denormalised from [CoralSpecies] at insertion
+///   time so the record remains self-contained even if the species catalogue
+///   changes later.
 class Coral {
+  /// Client-generated UUID uniquely identifying this specimen.
   final String id;
+
+  /// User-chosen display name for this coral (e.g. `"Elegance"`).
   final String name;
+
+  /// Scientific or common species name (e.g. `"Catalaphyllia jardinei"`).
   final String species;
-  final String type; // SPS, LPS, Molle
-  final double size; // cm
+
+  /// Coral classification: `'SPS'`, `'LPS'`, or `'Molle'` (soft).
+  final String type;
+
+  /// Current size of the specimen in centimetres.
+  final double size;
+
+  /// Date the coral was added to the aquarium.
   final DateTime addedDate;
-  final String placement; // Alto, Medio, Basso
+
+  /// Preferred placement zone in the tank: `'Alto'`, `'Medio'`, or `'Basso'`.
+  final String placement;
+
+  /// Optional free-text notes from the user.
   final String? notes;
+
+  /// Optional URL to a photo of this specific specimen.
   final String? imageUrl;
 
-  // Dettagli aggiuntivi dalla specie
+  // ── Species-detail fields (denormalised from CoralSpecies) ──────────────
+
+  /// Care difficulty: `'beginner'`, `'intermediate'`, or `'expert'`.
   final String? difficulty;
+
+  /// Required light intensity: `'low'`, `'medium'`, or `'high'`.
   final String? lightRequirement;
+
+  /// Required water flow: `'low'`, `'medium'`, or `'high'`.
   final String? flowRequirement;
+
+  /// Feeding mode: `'photosynthetic'`, `'filter_feeder'`, or `'both'`.
   final String? feeding;
+
+  /// General description of the species from the catalogue.
   final String? description;
+
+  /// Whether this coral is aggressive toward tank mates.
   final bool? aggressive;
+
+  /// Minimum recommended tank size in litres.
   final int? minTankSize;
+
+  /// Maximum expected growth size in centimetres.
   final int? maxSize;
 
   Coral({
@@ -39,6 +85,26 @@ class Coral {
     this.maxSize,
   });
 
+  /// Creates a [Coral] from a generated [InhabitantDetailsDTO] with type `'coral'`.
+  ///
+  /// [type] and [placement] are not present in the DTO and default to empty
+  /// strings; they should be enriched from the species catalogue if needed.
+  factory Coral.fromInhabitantDto(InhabitantDetailsDTO dto) {
+    return Coral(
+      id: dto.id?.toString() ?? '',
+      name: dto.customName ?? dto.commonName ?? '',
+      species: dto.scientificName ?? dto.commonName ?? '',
+      type: '',
+      size: (dto.currentSize ?? 0).toDouble(),
+      addedDate: dto.addedDate ?? DateTime.now(),
+      placement: '',
+      notes: dto.notes,
+      difficulty: dto.customDifficulty,
+      minTankSize: dto.customMinTankSize,
+    );
+  }
+
+  /// Serialises this coral to a JSON map for local storage or API requests.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -61,6 +127,7 @@ class Coral {
     };
   }
 
+  /// Deserialises a [Coral] from a JSON map.
   factory Coral.fromJson(Map<String, dynamic> json) {
     return Coral(
       id: json['id'],
@@ -83,6 +150,7 @@ class Coral {
     );
   }
 
+  /// Returns a copy of this coral with the specified fields replaced.
   Coral copyWith({
     String? id,
     String? name,

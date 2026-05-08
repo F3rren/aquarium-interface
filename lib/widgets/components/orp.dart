@@ -1,3 +1,6 @@
+/// ORP/Redox sensor display card widget.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
@@ -6,6 +9,17 @@ import 'package:acquariumfe/widgets/tap_effect_card.dart';
 import 'package:acquariumfe/widgets/components/target_progress_bar.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Displays the current ORP/Redox value with status colour coding and an
+/// optional [TargetProgressBar].
+///
+/// Colour logic:
+/// - < 300 mV → red (low)
+/// - 300–400 mV → green (optimal)
+/// - > 400 mV → red (high)
+///
+/// Tapping the card opens a dialog to update the target ORP, which is
+/// persisted via [TargetParametersService.saveTarget] with key `'orp'` and
+/// triggers [onTargetChanged] so the parent can refresh.
 class OrpMeter extends StatelessWidget {
   final double currentOrp;
   final double? targetOrp;

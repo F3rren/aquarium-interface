@@ -1,3 +1,10 @@
+/// Riverpod providers that expose singleton service instances to the widget tree.
+///
+/// Each provider returns the shared singleton of its respective service.
+/// Using Riverpod providers (rather than direct instantiation) makes services
+/// easily mockable in tests and ensures a single instance per app lifecycle.
+library;
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:acquariumfe/services/api_service.dart';
 import 'package:acquariumfe/services/aquarium_service.dart';
@@ -7,29 +14,28 @@ import 'package:acquariumfe/services/alert_manager.dart';
 
 part 'service_providers.g.dart';
 
-/// Provider per ApiService (singleton)
-/// Gestisce tutte le chiamate HTTP al backend
+/// Provides the [ApiService] singleton responsible for all HTTP calls to the
+/// Spring Boot backend. All other service providers depend on this indirectly.
 @riverpod
 ApiService apiService(ApiServiceRef ref) {
   return ApiService();
 }
 
-/// Provider per AquariumsService
-/// Gestisce CRUD acquari
+/// Provides the [AquariumsService] singleton for CRUD operations on aquariums.
 @riverpod
 AquariumsService aquariumsService(AquariumsServiceRef ref) {
   return AquariumsService();
 }
 
-/// Provider per ParameterService
-/// Gestisce parametri acquario e storico
+/// Provides the [ParameterService] singleton for fetching current and
+/// historical water parameter readings.
 @riverpod
 ParameterService parameterService(ParameterServiceRef ref) {
   return ParameterService();
 }
 
-/// Provider per TargetParametersService
-/// Gestisce i parametri target dell'acquario
+/// Provides the [TargetParametersService] singleton for reading and writing
+/// the user-defined target (ideal) ranges for each water parameter.
 @riverpod
 TargetParametersService targetParametersService(
   TargetParametersServiceRef ref,
@@ -37,8 +43,9 @@ TargetParametersService targetParametersService(
   return TargetParametersService();
 }
 
-/// Provider per AlertManager
-/// Gestisce notifiche e alert
+/// Provides the [AlertManager] singleton that evaluates parameter readings
+/// against configured thresholds and fires local notifications when a value
+/// falls outside its acceptable range.
 @riverpod
 AlertManager alertManager(AlertManagerRef ref) {
   return AlertManager();

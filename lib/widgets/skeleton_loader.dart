@@ -1,6 +1,14 @@
+/// Generic shimmer skeleton loader and pre-built composite skeletons.
+library;
+
 import 'package:flutter/material.dart';
 
-/// Widget skeleton loader generico e riutilizzabile
+/// A single animated shimmer block used as a loading placeholder.
+///
+/// Renders a rectangle (or circle when [isCircle] is true) filled with a
+/// sweeping left-to-right highlight gradient that repeats every 1.5 s.
+/// Dark-mode colours: grey 800 → 700 → 800.
+/// Light-mode colours: grey 300 → 200 → 300.
 class SkeletonLoader extends StatefulWidget {
   final double? height;
   final double? width;
@@ -78,7 +86,7 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
   }
 }
 
-/// Skeleton per una card di acquario
+/// Composite skeleton that mimics the layout of an aquarium list card.
 class AquariumCardSkeleton extends StatelessWidget {
   const AquariumCardSkeleton({super.key});
 
@@ -147,7 +155,10 @@ class AquariumCardSkeleton extends StatelessWidget {
   }
 }
 
-/// Skeleton per lista di parametri
+/// Composite skeleton for a scrollable list of parameter rows.
+///
+/// Renders [itemCount] (default 5) placeholder rows, each with an icon block
+/// on the left, two text lines in the centre, and a chip on the right.
 class ParameterListSkeleton extends StatelessWidget {
   final int itemCount;
 
@@ -199,7 +210,7 @@ class ParameterListSkeleton extends StatelessWidget {
   }
 }
 
-/// Skeleton per chart/grafico
+/// Composite skeleton that mimics a bar chart with axis labels.
 class ChartSkeleton extends StatelessWidget {
   final double height;
 
@@ -261,7 +272,10 @@ class ChartSkeleton extends StatelessWidget {
   }
 }
 
-/// Skeleton per grid di card (pesci/coralli)
+/// Composite skeleton for a 2-column grid of fish/coral cards.
+///
+/// Renders [itemCount] (default 6) placeholder cards in a 2-column grid with
+/// a large image block and two text lines per card.
 class GridCardSkeleton extends StatelessWidget {
   final int itemCount;
 
@@ -319,7 +333,10 @@ class GridCardSkeleton extends StatelessWidget {
   }
 }
 
-/// Skeleton per dettaglio acquario (dashboard)
+/// Full-page skeleton for the health dashboard while data is loading.
+///
+/// Renders a header row, two stat cards side by side, a chart skeleton,
+/// and four parameter-row placeholders.
 class DashboardSkeleton extends StatelessWidget {
   const DashboardSkeleton({super.key});
 

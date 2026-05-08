@@ -1,7 +1,23 @@
+/// Service that loads historical parameter data and computes basic statistics
+/// for the charts view.
+library;
+
 import 'package:acquariumfe/services/parameter_service.dart';
 import 'package:acquariumfe/models/parameter_data_point.dart';
 
-/// Service per gestire i dati storici dei grafici
+/// Singleton that acts as a thin adapter between the charts view and
+/// [ParameterService].
+///
+/// Responsibilities:
+/// - Translates Italian parameter display names (as shown in the UI) to the
+///   backend camelCase keys expected by [ParameterService.getParameterHistoryForChart].
+/// - Converts the raw `List<Map<String, dynamic>>` returned by the backend
+///   into typed [ParameterDataPoint] objects.
+/// - Computes min / max / average / current statistics from a list of data
+///   points.
+///
+/// On network or parse errors [loadHistoricalData] returns an empty list
+/// rather than throwing, so the charts view can render gracefully without data.
 class ChartDataService {
   static final ChartDataService _instance = ChartDataService._internal();
   factory ChartDataService() => _instance;
@@ -9,23 +25,27 @@ class ChartDataService {
 
   final ParameterService _parameterService = ParameterService();
 
-  /// Carica dati storici dal backend per un parametro specifico
+  /// Fetches historical data for [parameter] over the last [hours] hours.
+  ///
+  /// [parameter] must be one of the Italian display names used in the UI
+  /// (e.g. `'Temperatura'`, `'Salinità'`, `'Nitrati'`). It is translated
+  /// internally to the backend key via [_mapParameterName].
+  ///
+  /// Returns an empty list if the network request fails or if [ParameterService]
+  /// returns no data for the requested range.
   Future<List<ParameterDataPoint>> loadHistoricalData({
     required String parameter,
     required int hours,
   }) async {
     try {
-      // Mappa il nome parametro italiano a quello del backend
       final paramName = _mapParameterName(parameter);
 
-      // Carica dati specifici del parametro dal backend
       final historyData = await _parameterService.getParameterHistoryForChart(
         aquariumId: 1,
         parameterName: paramName,
         hours: Duration(hours: hours),
       );
 
-      // Converti in ParameterDataPoint
       final dataPoints = historyData.map((item) {
         return ParameterDataPoint(
           timestamp: DateTime.parse(item['timestamp'] as String),
@@ -36,12 +56,25 @@ class ChartDataService {
 
       return dataPoints;
     } catch (e) {
-      // Ritorna lista vuota invece di mock
       return [];
     }
   }
 
-  /// Mappa i nomi dei parametri italiani a quelli del backend
+  /// Maps an Italian UI display name to the backend parameter key.
+  ///
+  /// | UI name (Italian) | Backend key   |
+  /// |-------------------|---------------|
+  /// | `'Temperatura'`   | `'temperature'` |
+  /// | `'pH'`            | `'ph'`        |
+  /// | `'Salinità'`      | `'salinity'`  |
+  /// | `'ORP'`           | `'orp'`       |
+  /// | `'Calcio'`        | `'calcium'`   |
+  /// | `'Magnesio'`      | `'magnesium'` |
+  /// | `'KH'`            | `'kh'`        |
+  /// | `'Nitrati'`       | `'nitrate'`   |
+  /// | `'Fosfati'`       | `'phosphate'` |
+  ///
+  /// Unrecognised names fall back to `italianName.toLowerCase()`.
   String _mapParameterName(String italianName) {
     switch (italianName) {
       case 'Temperatura':
@@ -67,7 +100,10 @@ class ChartDataService {
     }
   }
 
-  /// Calcola statistiche dai dati
+  /// Computes basic statistics from a list of [ParameterDataPoint]s.
+  ///
+  /// Returns a map with keys `'min'`, `'max'`, `'avg'`, and `'current'` (the
+  /// value of the last data point). All values are `0.0` when [data] is empty.
   Map<String, double> calculateStats(List<ParameterDataPoint> data) {
     if (data.isEmpty) {
       return {'min': 0.0, 'max': 0.0, 'avg': 0.0, 'current': 0.0};

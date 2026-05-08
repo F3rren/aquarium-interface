@@ -1,3 +1,6 @@
+/// Tabbed page listing the fish and corals inhabiting an aquarium.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,6 +18,22 @@ import 'coral_details_dialog.dart';
 import 'fish_details_dialog.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Two-tab page (Fish / Corals) for managing the inhabitants of [aquariumId].
+///
+/// **Data loading:** both lists are fetched in parallel from
+/// [InhabitantsService]. The aquarium's water type is read from
+/// [aquariumsProvider] to filter the species database shown in the add dialogs
+/// (e.g. corals are not offered for freshwater aquariums).
+///
+/// **Filtering:** the [InhabitantsFilterPanel] allows filtering by difficulty,
+/// date added, reef-safe flag, and a search query. Active filters are tracked
+/// in [_filter] ([InhabitantsFilter]).
+///
+/// **CRUD:** FAB opens [AddFishDialog] or [AddCoralDialog] depending on the
+/// active tab. Tapping an item opens [FishDetailsDialog] or
+/// [CoralDetailsDialog]. Long-pressing shows an edit / delete action sheet.
+///
+/// **Stats bar:** animated counters showing total fish and coral counts.
 class InhabitantsPage extends ConsumerStatefulWidget {
   final int? aquariumId;
 

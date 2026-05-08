@@ -1,9 +1,17 @@
+/// Static helper for resolving localised notification strings from
+/// [AquariumParameter] enum values.
+library;
+
 import 'package:acquariumfe/l10n/app_localizations.dart';
 import 'package:acquariumfe/models/aquarium_parameter.dart';
 
-/// Helper class per ottenere i testi tradotti delle notifiche
+/// Provides localised notification copy (parameter names, alert titles,
+/// alert body messages) driven by [AppLocalizations].
+///
+/// All methods are static so callers do not need to instantiate this class.
 class NotificationL10nHelper {
-  /// Ottiene il nome tradotto di un parametro
+  /// Returns the localised display name for [parameter]
+  /// (e.g. `"Temperature"`, `"pH"`, `"Salinity"`).
   static String getParameterName(
     AppLocalizations l10n,
     AquariumParameter parameter,
@@ -30,7 +38,8 @@ class NotificationL10nHelper {
     }
   }
 
-  /// Ottiene il titolo tradotto dell'alert per un parametro
+  /// Returns the localised notification title for an out-of-range alert on
+  /// [parameter] (e.g. `"Temperature Anomaly"`, `"pH Out of Range"`).
   static String getAlertTitle(
     AppLocalizations l10n,
     AquariumParameter parameter,
@@ -57,7 +66,11 @@ class NotificationL10nHelper {
     }
   }
 
-  /// Ottiene il messaggio tradotto dell'alert per un parametro
+  /// Returns the localised notification body for [parameter] given whether the
+  /// value is too high ([isHigh] == `true`) or too low ([isHigh] == `false`).
+  ///
+  /// Example: `getAlertMessage(l10n, AquariumParameter.temperature, true)`
+  /// → `"Temperature is too high."`
   static String getAlertMessage(
     AppLocalizations l10n,
     AquariumParameter parameter,

@@ -1,3 +1,6 @@
+/// Salinity sensor display card widget.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
@@ -6,6 +9,18 @@ import 'package:acquariumfe/widgets/tap_effect_card.dart';
 import 'package:acquariumfe/widgets/components/target_progress_bar.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Displays the current salinity value (in PPT/1000) with target-relative
+/// colour coding and an optional [TargetProgressBar].
+///
+/// Colour logic (relative to [targetSalinity]):
+/// - Difference ≤ 4 → green (optimal)
+/// - Difference ≤ 8 → amber (attention)
+/// - Difference > 8 → red (low/high)
+/// - No target set → green (monitoring mode)
+///
+/// Tapping the card opens a dialog to update the target salinity, which is
+/// persisted via [TargetParametersService.saveTarget] with key `'salinity'`
+/// and triggers [onTargetChanged] so the parent can refresh.
 class SalinityMeter extends StatelessWidget {
   final double currentSalinity;
   final double? targetSalinity;

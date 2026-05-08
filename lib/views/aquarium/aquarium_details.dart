@@ -1,3 +1,9 @@
+/// Aquarium details screen that hosts the main per-aquarium navigation.
+///
+/// This file defines [AquariumDetails], a [StatefulWidget] that acts as the
+/// shell for all aquarium-specific sub-sections: Dashboard, Parameters, Charts,
+/// Maintenance, and Profile. It renders a custom bottom navigation bar and
+/// applies a fade-in animation when the screen first loads.
 import 'package:acquariumfe/views/dashboard/health_dashboard.dart';
 import 'package:acquariumfe/views/parameters/parameters_view.dart';
 import 'package:acquariumfe/views/charts/charts_view.dart';
@@ -10,9 +16,22 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Screen that provides the per-aquarium navigation shell.
+///
+/// Hosts five tabs: Dashboard ([HealthDashboard]), Parameters
+/// ([ParametersView]), Charts ([ChartsView]), Maintenance ([MaintenanceView])
+/// and Profile ([ProfilePage]). While the initial data loads a skeleton
+/// placeholder is shown; afterwards the active tab is revealed with a fade
+/// animation. A header bar provides back-navigation and quick access to
+/// [NotificationsPage].
 class AquariumDetails extends StatefulWidget {
+  /// The unique identifier of the aquarium to display.
+  ///
+  /// Passed down to [MaintenanceView] and [ProfilePage] so each sub-view
+  /// scopes its data to the correct aquarium.
   final int? aquariumId;
 
+  /// Creates an [AquariumDetails] screen for the given [aquariumId].
   const AquariumDetails({super.key, this.aquariumId});
 
   @override
@@ -21,19 +40,21 @@ class AquariumDetails extends StatefulWidget {
 
 class _AquariumDetailsState extends State<AquariumDetails>
     with SingleTickerProviderStateMixin {
+  /// Index of the currently selected bottom navigation tab (0–4).
   int _selectedBottomIndex = 0;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+
+  /// Whether the initial loading delay is still in progress.
   bool _isLoading = true;
 
-  // Lista delle pagine da mostrare
+  /// Pages corresponding to each of the five navigation tabs.
   late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
 
-    // Inizializza le pagine con aquariumId
     _pages = [
       const HealthDashboard(),
       const ParametersView(),
@@ -78,6 +99,7 @@ class _AquariumDetailsState extends State<AquariumDetails>
     });
   }
 
+  /// Builds the complete screen with header, page body, and bottom nav bar.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -256,6 +278,11 @@ class _AquariumDetailsState extends State<AquariumDetails>
     );
   }
 
+  /// Builds a single animated navigation item for the bottom bar.
+  ///
+  /// [icon] is the FontAwesome icon to display.
+  /// [label] is the localized text shown below the icon.
+  /// [index] is the tab index this item represents.
   Widget _buildNavItem(IconData icon, String label, int index) {
     final isSelected = _selectedBottomIndex == index;
     final theme = Theme.of(context);

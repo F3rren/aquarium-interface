@@ -1,10 +1,18 @@
+/// Language selection widgets backed by [localeProvider].
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:acquariumfe/providers/locale_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
-/// Widget per selezionare la lingua dell'applicazione
+/// A compact popup-menu button for selecting the app language.
+///
+/// Reads [localeProvider] and [supportedLocalesProvider] from Riverpod.
+/// The currently active locale is highlighted with a filled circle icon and
+/// bold text; selecting a locale calls `localeProvider.notifier.setLocale`.
+/// Intended for use inside an [AppBar] or toolbar.
 class LanguageSelector extends ConsumerWidget {
   const LanguageSelector({super.key});
 
@@ -52,7 +60,13 @@ class LanguageSelector extends ConsumerWidget {
   }
 }
 
-/// Dialog per selezionare la lingua
+/// A full [AlertDialog] listing all supported locales for selection.
+///
+/// Highlights the active locale and dismisses itself after the user picks one.
+/// Use the static [LanguageDialog.show] helper to display it:
+/// ```dart
+/// await LanguageDialog.show(context);
+/// ```
 class LanguageDialog extends ConsumerWidget {
   const LanguageDialog({super.key});
 
@@ -117,7 +131,9 @@ class LanguageDialog extends ConsumerWidget {
   }
 }
 
-/// Tile per le impostazioni con icona lingua
+/// A [ListTile] that shows the current language and opens [LanguageDialog] on tap.
+///
+/// Suitable for placement in a settings/profile page.
 class LanguageSettingTile extends ConsumerWidget {
   const LanguageSettingTile({super.key});
 

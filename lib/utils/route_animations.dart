@@ -1,8 +1,21 @@
+/// A collection of pre-built [PageRouteBuilder] factory methods for common
+/// screen transition animations.
+///
+/// All routes use [PageRouteBuilder] so they are compatible with
+/// [Navigator.push]. Choose the method that best matches the navigation intent:
+/// - Forward navigation → [slideFromRight] or [slideAndFade]
+/// - Modal/overlay → [slideFromBottom]
+/// - Subtle transitions → [fade] or [fadeSlide] (via [CustomPageRoute])
+/// - Special actions → [scale] or [rotateAndFade]
+library;
+
 import 'package:flutter/material.dart';
 
-/// Collezione di animazioni personalizzate per le transizioni tra schermate
+/// Provides static factory methods that each return a configured [Route]
+/// for the given destination [Widget].
 class RouteAnimations {
-  /// Animazione slide da destra (default Android)
+  /// Slides the new page in from the right — the standard forward-navigation
+  /// feel on Android. Uses [Curves.easeInOutCubic] at 350 ms.
   static Route<T> slideFromRight<T>(Widget page) {
     return PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -22,7 +35,8 @@ class RouteAnimations {
     );
   }
 
-  /// Animazione slide da sinistra (back navigation feel)
+  /// Slides the new page in from the left — gives a "back" feel and can be
+  /// used for lateral sibling navigation.
   static Route<T> slideFromLeft<T>(Widget page) {
     return PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -42,7 +56,8 @@ class RouteAnimations {
     );
   }
 
-  /// Animazione slide dal basso (per modal/bottom sheet feel)
+  /// Slides the new page up from the bottom — suitable for modals, action
+  /// sheets, and detail overlays. Uses [Curves.easeOutCubic] at 400 ms.
   static Route<T> slideFromBottom<T>(Widget page) {
     return PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -62,7 +77,9 @@ class RouteAnimations {
     );
   }
 
-  /// Animazione fade (elegante e discreta)
+  /// Cross-fades between the current and new page.
+  ///
+  /// [duration] defaults to 300 ms but can be overridden.
   static Route<T> fade<T>(Widget page, {Duration? duration}) {
     return PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -73,7 +90,8 @@ class RouteAnimations {
     );
   }
 
-  /// Animazione scale (zoom in/out)
+  /// Scales the new page from 80 % to 100 % combined with a fade.
+  /// Useful for drill-down transitions (e.g. card → detail).
   static Route<T> scale<T>(Widget page) {
     return PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -91,7 +109,8 @@ class RouteAnimations {
     );
   }
 
-  /// Animazione rotation + fade (per azioni speciali)
+  /// Combines a slight rotation (-2 °), scale, and fade. Designed for
+  /// high-emphasis actions or celebratory moments.
   static Route<T> rotateAndFade<T>(Widget page) {
     return PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -115,7 +134,10 @@ class RouteAnimations {
     );
   }
 
-  /// Animazione slide + fade combinata (smooth)
+  /// Slides and fades simultaneously in the given [direction].
+  ///
+  /// This is the most versatile option — smooth without being distracting.
+  /// Defaults to [SlideDirection.right] (standard forward navigation).
   static Route<T> slideAndFade<T>(
     Widget page, {
     SlideDirection direction = SlideDirection.right,
@@ -156,7 +178,10 @@ class RouteAnimations {
     );
   }
 
-  /// Animazione shared element style (per dettagli)
+  /// Mimics the Material shared-axis pattern in one of three axes.
+  ///
+  /// Horizontal and vertical axes slide + fade; scaled axis zooms + fades.
+  /// Use [SharedAxisTransitionType] to select the axis.
   static Route<T> sharedAxis<T>(
     Widget page, {
     SharedAxisTransitionType type = SharedAxisTransitionType.horizontal,
@@ -166,7 +191,6 @@ class RouteAnimations {
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const curve = Curves.easeInOutCubic;
 
-        // Animazione in entrata della nuova pagina
         final enterAnimation = CurvedAnimation(parent: animation, curve: curve);
 
         switch (type) {
@@ -200,7 +224,9 @@ class RouteAnimations {
     );
   }
 
-  /// Animazione nativa iOS style
+  /// Replicates the native iOS push animation: page slides from the right
+  /// using [Curves.linearToEaseOut] (forward) and [Curves.easeInToLinear]
+  /// (reverse), at 400 ms.
   static Route<T> cupertinoStyle<T>(Widget page) {
     return PageRouteBuilder<T>(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -225,8 +251,29 @@ class RouteAnimations {
   }
 }
 
-/// Direzione dello slide
-enum SlideDirection { right, left, up, down }
+/// The four cardinal directions a slide transition can originate from.
+enum SlideDirection {
+  /// Page enters from the right (default forward navigation).
+  right,
 
-/// Tipo di transizione shared axis
-enum SharedAxisTransitionType { horizontal, vertical, scaled }
+  /// Page enters from the left (back navigation feel).
+  left,
+
+  /// Page enters from above.
+  up,
+
+  /// Page enters from below (modal feel).
+  down,
+}
+
+/// Axis type for [RouteAnimations.sharedAxis].
+enum SharedAxisTransitionType {
+  /// Horizontal slide + fade (most common).
+  horizontal,
+
+  /// Vertical slide + fade.
+  vertical,
+
+  /// Scale zoom + fade.
+  scaled,
+}

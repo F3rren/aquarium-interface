@@ -1,8 +1,22 @@
+/// Generic empty-state widget and domain-specific convenience variants.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
-/// Widget riutilizzabile per stati vuoti con illustrazione
+/// A centred empty-state illustration with title, message, and optional CTA.
+///
+/// The icon bounces in via an elasticOut tween (800 ms); the title and message
+/// fade + slide up (600 ms each).  If both [actionLabel] and [onAction] are
+/// provided an ElevatedButton scales in below the message.
+///
+/// Convenience subclasses pre-configure icon, colours, and localised strings
+/// for the most common empty states in the app:
+/// [NoAquariumsEmptyState], [NoFishEmptyState], [NoCoralsEmptyState],
+/// [NoHistoryEmptyState], [NoMaintenanceTasksEmptyState],
+/// [NoAlertsEmptyState], [NoSearchResultsEmptyState],
+/// [ErrorEmptyState], [OfflineEmptyState].
 class EmptyState extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -146,7 +160,7 @@ class EmptyState extends StatelessWidget {
   }
 }
 
-/// Empty state specifico per lista acquari
+/// Empty state shown when the user has no aquariums configured yet.
 class NoAquariumsEmptyState extends StatelessWidget {
   final VoidCallback? onAddAquarium;
 
@@ -166,7 +180,7 @@ class NoAquariumsEmptyState extends StatelessWidget {
   }
 }
 
-/// Empty state per lista pesci
+/// Empty state shown when the fish list for an aquarium is empty.
 class NoFishEmptyState extends StatelessWidget {
   final VoidCallback? onAddFish;
 
@@ -186,7 +200,7 @@ class NoFishEmptyState extends StatelessWidget {
   }
 }
 
-/// Empty state per lista coralli
+/// Empty state shown when the coral list for an aquarium is empty.
 class NoCoralsEmptyState extends StatelessWidget {
   final VoidCallback? onAddCoral;
 
@@ -206,7 +220,7 @@ class NoCoralsEmptyState extends StatelessWidget {
   }
 }
 
-/// Empty state per storico parametri
+/// Empty state shown when no parameter history is available.
 class NoHistoryEmptyState extends StatelessWidget {
   const NoHistoryEmptyState({super.key});
 
@@ -222,7 +236,7 @@ class NoHistoryEmptyState extends StatelessWidget {
   }
 }
 
-/// Empty state per task di manutenzione
+/// Empty state shown when an aquarium has no maintenance tasks.
 class NoMaintenanceTasksEmptyState extends StatelessWidget {
   final VoidCallback? onAddTask;
 
@@ -242,7 +256,7 @@ class NoMaintenanceTasksEmptyState extends StatelessWidget {
   }
 }
 
-/// Empty state per notifiche/alert
+/// Empty state shown in the alerts tab when all parameters are within range.
 class NoAlertsEmptyState extends StatelessWidget {
   const NoAlertsEmptyState({super.key});
 
@@ -258,7 +272,7 @@ class NoAlertsEmptyState extends StatelessWidget {
   }
 }
 
-/// Empty state per risultati ricerca
+/// Empty state shown when a search query returns no matching results.
 class NoSearchResultsEmptyState extends StatelessWidget {
   final String searchQuery;
 
@@ -276,7 +290,7 @@ class NoSearchResultsEmptyState extends StatelessWidget {
   }
 }
 
-/// Empty state generico con errore
+/// Empty state for generic error conditions with an optional retry action.
 class ErrorEmptyState extends StatelessWidget {
   final String? message;
   final VoidCallback? onRetry;
@@ -297,7 +311,7 @@ class ErrorEmptyState extends StatelessWidget {
   }
 }
 
-/// Empty state per modalità offline
+/// Empty state displayed when the device appears to be offline.
 class OfflineEmptyState extends StatelessWidget {
   final VoidCallback? onRetry;
 

@@ -1000,5 +1000,34 @@
     "placeholders": {
       "error": {"type": "String"}
     }
-  }
+  },
+
+  "taskWaterChangeTitle": "Changement d'eau",
+  "taskWaterChangeDesc": "Changement d'eau hebdomadaire (10-20%)",
+  "taskFilterCleaningTitle": "Nettoyage des filtres",
+  "taskFilterCleaningDesc": "Nettoyage mécanique des filtres et éponges",
+  "taskParameterTestingTitle": "Test des paramètres",
+  "taskParameterTestingDesc": "Contrôle des principaux paramètres de l'eau",
+  "taskGlassCleaningTitle": "Nettoyage des vitres",
+  "taskGlassCleaningDesc": "Retirer les algues du verre",
+  "taskSubstrateCleaningTitle": "Nettoyage du substrat",
+  "taskSubstrateCleaningDesc": "Nettoyer les débris du substrat",
+  "taskPumpMaintenanceTitle": "Entretien des pompes",
+  "taskPumpMaintenanceDesc": "Nettoyer les rotors et turbines des pompes",
+  "taskProteinSkimmerTitle": "Vider l'écumeur",
+  "taskProteinSkimmerDesc": "Vider et nettoyer la coupe de l'écumeur",
+  "taskCalciumDosingTitle": "Dosage Calcium/KH",
+  "taskCalciumDosingDesc": "Contrôler et doser le calcium/alcalinité",
+  "taskTraceElementsTitle": "Oligoéléments",
+  "taskTraceElementsDesc": "Doser les oligoéléments et additifs",
+  "taskLightMaintenanceTitle": "Entretien des lumières",
+  "taskLightMaintenanceDesc": "Nettoyer les LED et vérifier le fonctionnement",
+
+  "categoryWater": "Eau",
+  "categoryEquipment": "Équipement",
+  "categoryTesting": "Tests",
+  "categoryCleaning": "Nettoyage",
+  "categoryDosing": "Dosage",
+  "categoryFeeding": "Alimentation",
+  "categoryOther": "Autre"
 }

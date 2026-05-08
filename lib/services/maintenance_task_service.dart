@@ -1,7 +1,19 @@
+/// Service for managing aquarium maintenance tasks via the backend API.
+library;
+
+import 'package:maintenance_service/api.dart';
 import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:acquariumfe/services/api_service.dart';
 
-/// Service per gestire i task di manutenzione tramite API
+/// Singleton that performs CRUD operations on [MaintenanceTask] records and
+/// provides convenience accessors for task subsets (pending, overdue, etc.).
+///
+/// [setCurrentAquarium] must be called when the active aquarium changes. All
+/// task operations target the endpoint
+/// `…/aquariums/{currentAquariumId}/tasks`.
+///
+/// **Response normalisation:** the backend may return `{"data": [...]}` or a
+/// bare JSON array; both shapes are handled consistently.
 class MaintenanceTaskService {
   static final MaintenanceTaskService _instance =
       MaintenanceTaskService._internal();
@@ -10,13 +22,19 @@ class MaintenanceTaskService {
 
   final ApiService _apiService = ApiService();
 
+  /// ID of the currently selected aquarium.
   int? _currentAquariumId;
 
+  /// Sets the aquarium context for all subsequent task operations.
   void setCurrentAquarium(int id) {
     _currentAquariumId = id;
   }
 
-  /// Ottieni tutti i task
+  /// Returns all tasks for the current aquarium, optionally filtered by
+  /// [status] (`'pending'` or `'completed'`).
+  ///
+  /// Throws if no aquarium has been set. Propagates API exceptions so the
+  /// caller can display an error.
   Future<List<MaintenanceTask>> getAllTasks({String? status}) async {
     if (_currentAquariumId == null) {
       throw Exception('Nessun acquario selezionato');
@@ -38,30 +56,31 @@ class MaintenanceTaskService {
       }
 
       return tasksJson
-          .map((json) => MaintenanceTask.fromJson(json as Map<String, dynamic>))
+          .map((json) => MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(json)!))
           .toList();
     } catch (e) {
       rethrow;
     }
   }
 
-  /// Ottieni solo task pendenti
+  /// Returns tasks in the `'pending'` status.
   Future<List<MaintenanceTask>> getPendingTasks() async {
     return getAllTasks(status: 'pending');
   }
 
-  /// Ottieni solo task completati
+  /// Returns tasks in the `'completed'` status.
   Future<List<MaintenanceTask>> getCompletedTasks() async {
     return getAllTasks(status: 'completed');
   }
 
-  /// Ottieni task in scadenza (oggi o in ritardo)
+  /// Returns pending tasks that are either due today or already overdue.
   Future<List<MaintenanceTask>> getUpcomingTasks() async {
     final tasks = await getPendingTasks();
     return tasks.where((task) => task.isDueToday || task.isOverdue).toList();
   }
 
-  /// Crea nuovo task
+  /// Creates a new task in the current aquarium and returns the persisted
+  /// entity (with its backend-assigned [MaintenanceTask.id]).
   Future<MaintenanceTask> createTask(MaintenanceTask task) async {
     if (_currentAquariumId == null) {
       throw Exception('Nessun acquario selezionato');
@@ -82,13 +101,14 @@ class MaintenanceTaskService {
         throw Exception('Formato risposta non valido');
       }
 
-      return MaintenanceTask.fromJson(taskJson);
+      return MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(taskJson)!);
     } catch (e) {
       rethrow;
     }
   }
 
-  /// Aggiorna task esistente
+  /// Replaces the task identified by [taskId] with [task] and returns the
+  /// updated entity.
   Future<MaintenanceTask> updateTask(
     String taskId,
     MaintenanceTask task,
@@ -112,13 +132,13 @@ class MaintenanceTaskService {
         throw Exception('Formato risposta non valido');
       }
 
-      return MaintenanceTask.fromJson(taskJson);
+      return MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(taskJson)!);
     } catch (e) {
       rethrow;
     }
   }
 
-  /// Elimina task
+  /// Permanently deletes the task identified by [taskId].
   Future<void> deleteTask(String taskId) async {
     if (_currentAquariumId == null) {
       throw Exception('Nessun acquario selezionato');
@@ -131,7 +151,8 @@ class MaintenanceTaskService {
     }
   }
 
-  /// Marca task come completato
+  /// Marks the task [taskId] as completed by calling the backend
+  /// `POST …/tasks/{id}/complete` endpoint and returns the updated entity.
   Future<MaintenanceTask> completeTask(String taskId) async {
     if (_currentAquariumId == null) {
       throw Exception('Nessun acquario selezionato');
@@ -152,32 +173,31 @@ class MaintenanceTaskService {
         throw Exception('Formato risposta non valido');
       }
 
-      return MaintenanceTask.fromJson(taskJson);
+      return MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(taskJson)!);
     } catch (e) {
       rethrow;
     }
   }
 
-  /// Abilita/disabilita task
+  /// Enables or disables the task [taskId] without modifying any other field.
   Future<MaintenanceTask> toggleTaskEnabled(String taskId, bool enabled) async {
     final tasks = await getAllTasks();
     final task = tasks.firstWhere((t) => t.id == taskId);
-
     return updateTask(taskId, task.copyWith(enabled: enabled));
   }
 
-  /// Aggiorna frequenza task
+  /// Updates the recurrence interval of task [taskId] to [frequencyDays] days.
   Future<MaintenanceTask> updateFrequency(
     String taskId,
     int frequencyDays,
   ) async {
     final tasks = await getAllTasks();
     final task = tasks.firstWhere((t) => t.id == taskId);
-
     return updateTask(taskId, task.copyWith(frequencyDays: frequencyDays));
   }
 
-  /// Aggiorna orario reminder
+  /// Updates the reminder time of task [taskId] to the specified [hour] and
+  /// [minute] (24-hour clock).
   Future<MaintenanceTask> updateReminder(
     String taskId,
     int hour,
@@ -185,33 +205,45 @@ class MaintenanceTaskService {
   ) async {
     final tasks = await getAllTasks();
     final task = tasks.firstWhere((t) => t.id == taskId);
-
     return updateTask(
       taskId,
       task.copyWith(reminderHour: hour, reminderMinute: minute),
     );
   }
 
-  /// Inizializza task predefiniti per un nuovo acquario
-  Future<void> initializeDefaultTasks() async {
+  /// Creates the default set of maintenance tasks for the current aquarium.
+  ///
+  /// [type] must be `'saltwater'` (default) or `'freshwater'`. Saltwater tanks
+  /// get 10 tasks; freshwater tanks get 6 (the saltwater-specific tasks are
+  /// omitted). Duplicate-creation errors from the backend are silently ignored
+  /// so this method is safe to call on an already-initialised aquarium.
+  Future<void> initializeDefaultTasks({String type = 'saltwater'}) async {
     if (_currentAquariumId == null) {
       throw Exception('Nessun acquario selezionato');
     }
 
     final defaultTasks = MaintenanceTask.getDefaultTasks(
       _currentAquariumId.toString(),
+      type: type,
     );
 
     for (final task in defaultTasks) {
       try {
         await createTask(task);
       } catch (e) {
-        // Ignora errori se task già esistono
+        // Silently skip if the task already exists.
       }
     }
   }
 
-  /// Ottieni statistiche task
+  /// Returns task counts grouped by status.
+  ///
+  /// The returned map contains:
+  /// - `'total'` — all tasks
+  /// - `'pending'` — enabled tasks that are not overdue
+  /// - `'overdue'` — enabled tasks that are past their due date
+  /// - `'dueToday'` — enabled tasks due today
+  /// - `'disabled'` — tasks with [MaintenanceTask.enabled] == `false`
   Future<Map<String, int>> getTaskStatistics() async {
     final allTasks = await getAllTasks();
 

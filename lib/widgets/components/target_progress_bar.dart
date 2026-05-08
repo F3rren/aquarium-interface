@@ -1,8 +1,22 @@
+/// Progress bar and circular gauge widgets showing distance from a target value.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
-/// Barra di progresso che mostra la distanza dal valore target
+/// An animated horizontal progress bar showing how close [currentValue] is to
+/// [targetValue] within the [minValue]–[maxValue] range.
+///
+/// A vertical marker pin is drawn at the target position on the track.  The
+/// fill colour follows distance-from-target thresholds:
+/// - ≤ 5 % of range → green (optimal)
+/// - ≤ 15 % of range → amber (acceptable)
+/// - > 15 % of range → red (to correct)
+///
+/// The bar fill animates with `easeOutCubic` on each [currentValue] change
+/// over [animationDuration] (default 800 ms).  Min/max labels are shown below
+/// the track.
 class TargetProgressBar extends StatefulWidget {
   final double currentValue;
   final double targetValue;
@@ -240,7 +254,13 @@ class _TargetProgressBarState extends State<TargetProgressBar>
   }
 }
 
-/// Barra di progresso circolare per spazi ridotti
+/// A compact circular gauge for tight layouts.
+///
+/// Draws a full-circle track with a progress arc painted from the top using
+/// [_CircularProgressPainter].  Colour thresholds are the same as
+/// [TargetProgressBar].  The arc animates from 0 to the normalised progress
+/// over 1 second on first build; it does **not** re-animate on subsequent
+/// value changes.
 class CircularTargetProgress extends StatefulWidget {
   final double currentValue;
   final double targetValue;

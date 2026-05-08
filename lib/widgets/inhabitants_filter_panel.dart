@@ -1,8 +1,25 @@
+/// Bottom-sheet filter and sort panel for the inhabitants list.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../models/inhabitants_filter.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// A scrollable bottom-sheet panel for filtering and sorting aquarium inhabitants.
+///
+/// Exposes four filter dimensions:
+/// - **Text search** — free-text match on name.
+/// - **Difficulty** — chip selection among Facile / Intermedio / Difficile.
+/// - **Date added** — a [DateFilterType] dropdown (before/after/on) paired
+///   with a date picker.
+/// - **Sort** — radio selection over [SortType] values plus ascending/descending
+///   toggle.
+///
+/// Every change is propagated immediately via [onFilterChanged] so the parent
+/// list updates live.  "Clear all" resets the entire [InhabitantsFilter] when
+/// any filter is active ([InhabitantsFilter.hasActiveFilters]).
+/// [onClose] is called when the user taps the close ×.
 class InhabitantsFilterPanel extends StatefulWidget {
   final InhabitantsFilter currentFilter;
   final Function(InhabitantsFilter) onFilterChanged;

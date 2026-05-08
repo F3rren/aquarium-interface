@@ -2095,4 +2095,80 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorLoadingProducts(String error) {
     return 'Error loading products: $error';
   }
+
+  @override
+  String get taskWaterChangeTitle => 'Water Change';
+
+  @override
+  String get taskWaterChangeDesc => 'Weekly water change (10-20%)';
+
+  @override
+  String get taskFilterCleaningTitle => 'Filter Cleaning';
+
+  @override
+  String get taskFilterCleaningDesc =>
+      'Mechanical cleaning of filters and sponges';
+
+  @override
+  String get taskParameterTestingTitle => 'Parameter Testing';
+
+  @override
+  String get taskParameterTestingDesc => 'Check main water parameters';
+
+  @override
+  String get taskGlassCleaningTitle => 'Glass Cleaning';
+
+  @override
+  String get taskGlassCleaningDesc => 'Remove algae from glass';
+
+  @override
+  String get taskSubstrateCleaningTitle => 'Substrate Cleaning';
+
+  @override
+  String get taskSubstrateCleaningDesc => 'Clean debris from substrate';
+
+  @override
+  String get taskPumpMaintenanceTitle => 'Pump Maintenance';
+
+  @override
+  String get taskPumpMaintenanceDesc => 'Clean pump rotors and impellers';
+
+  @override
+  String get taskProteinSkimmerTitle => 'Empty Protein Skimmer';
+
+  @override
+  String get taskProteinSkimmerDesc => 'Empty and clean protein skimmer cup';
+
+  @override
+  String get taskCalciumDosingTitle => 'Calcium/KH Dosing';
+
+  @override
+  String get taskCalciumDosingDesc => 'Check and dose calcium/alkalinity';
+
+  @override
+  String get taskTraceElementsTitle => 'Trace Elements';
+
+  @override
+  String get taskTraceElementsDesc => 'Dose trace elements and additives';
+
+  @override
+  String get taskLightMaintenanceTitle => 'Light Maintenance';
+
+  @override
+  String get taskLightMaintenanceDesc => 'Clean LEDs and check operation';
+
+  @override
+  String get categoryWater => 'Water';
+
+  @override
+  String get categoryTesting => 'Testing';
+
+  @override
+  String get categoryCleaning => 'Cleaning';
+
+  @override
+  String get categoryDosing => 'Dosing';
+
+  @override
+  String get categoryFeeding => 'Feeding';
 }

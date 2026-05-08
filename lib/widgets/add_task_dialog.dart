@@ -1,8 +1,21 @@
+/// Dialog widget for creating custom maintenance tasks.
+library;
+
 import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// A modal dialog that lets the user define a new custom [MaintenanceTask].
+///
+/// The form collects: title (required), optional description, category
+/// (dropdown over [MaintenanceCategory] values), frequency in days
+/// (1–90, with quick-select chips for 1/3/7/14/30), and an optional daily
+/// reminder time (defaults to 09:00, toggled by a switch).
+///
+/// On confirmation the dialog pops with the constructed [MaintenanceTask]
+/// whose [MaintenanceTask.id] is `'task_custom_<millisecondsSinceEpoch>'`
+/// and [MaintenanceTask.isCustom] is `true`.  Cancelling pops with `null`.
 class AddTaskDialog extends StatefulWidget {
   final String aquariumId;
 

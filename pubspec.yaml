@@ -30,11 +30,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   flutter_localizations:
     sdk: flutter
-  
+
   intl: any
+
+  # Environment variables — reads from .env, generates obfuscated Dart code
+  envied: ^1.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -55,8 +58,27 @@ dependencies:
   # Persistent storage for user preferences
   shared_preferences: ^2.3.3
   
+  # Generated API clients (openapi-generator dart)
+  aquariums_service:
+    path: lib/api/generated/aquariums_service
+  inhabitants_service:
+    path: lib/api/generated/inhabitants_service
+  species_service:
+    path: lib/api/generated/species_service
+  maintenance_service:
+    path: lib/api/generated/maintenance_service
+  parameters_service:
+    path: lib/api/generated/parameters_service
+  manual_parameters_service:
+    path: lib/api/generated/manual_parameters_service
+  target_parameter_service:
+    path: lib/api/generated/target_parameter_service
+
   # HTTP client for API calls
   http: ^1.2.2
+
+  # Secure encrypted storage for JWT tokens (Android Keystore / iOS Keychain)
+  flutter_secure_storage: ^9.2.2
   
   # JSON serialization
   json_annotation: ^4.9.0
@@ -88,6 +110,7 @@ dev_dependencies:
   # Testing packages
   mockito: ^5.4.4
   build_runner: ^2.4.13
+  envied_generator: ^1.0.0
   riverpod_generator: ^2.6.2
   riverpod_lint: ^2.6.2
   custom_lint: ^0.7.0

@@ -2121,4 +2121,85 @@ class AppLocalizationsFr extends AppLocalizations {
   String errorLoadingProducts(String error) {
     return 'Erreur lors du chargement des produits : $error';
   }
+
+  @override
+  String get taskWaterChangeTitle => 'Changement d\'eau';
+
+  @override
+  String get taskWaterChangeDesc => 'Changement d\'eau hebdomadaire (10-20%)';
+
+  @override
+  String get taskFilterCleaningTitle => 'Nettoyage des filtres';
+
+  @override
+  String get taskFilterCleaningDesc =>
+      'Nettoyage mécanique des filtres et éponges';
+
+  @override
+  String get taskParameterTestingTitle => 'Test des paramètres';
+
+  @override
+  String get taskParameterTestingDesc =>
+      'Contrôle des principaux paramètres de l\'eau';
+
+  @override
+  String get taskGlassCleaningTitle => 'Nettoyage des vitres';
+
+  @override
+  String get taskGlassCleaningDesc => 'Retirer les algues du verre';
+
+  @override
+  String get taskSubstrateCleaningTitle => 'Nettoyage du substrat';
+
+  @override
+  String get taskSubstrateCleaningDesc => 'Nettoyer les débris du substrat';
+
+  @override
+  String get taskPumpMaintenanceTitle => 'Entretien des pompes';
+
+  @override
+  String get taskPumpMaintenanceDesc =>
+      'Nettoyer les rotors et turbines des pompes';
+
+  @override
+  String get taskProteinSkimmerTitle => 'Vider l\'écumeur';
+
+  @override
+  String get taskProteinSkimmerDesc =>
+      'Vider et nettoyer la coupe de l\'écumeur';
+
+  @override
+  String get taskCalciumDosingTitle => 'Dosage Calcium/KH';
+
+  @override
+  String get taskCalciumDosingDesc =>
+      'Contrôler et doser le calcium/alcalinité';
+
+  @override
+  String get taskTraceElementsTitle => 'Oligoéléments';
+
+  @override
+  String get taskTraceElementsDesc => 'Doser les oligoéléments et additifs';
+
+  @override
+  String get taskLightMaintenanceTitle => 'Entretien des lumières';
+
+  @override
+  String get taskLightMaintenanceDesc =>
+      'Nettoyer les LED et vérifier le fonctionnement';
+
+  @override
+  String get categoryWater => 'Eau';
+
+  @override
+  String get categoryTesting => 'Tests';
+
+  @override
+  String get categoryCleaning => 'Nettoyage';
+
+  @override
+  String get categoryDosing => 'Dosage';
+
+  @override
+  String get categoryFeeding => 'Alimentation';
 }

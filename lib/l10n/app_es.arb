@@ -1113,5 +1113,34 @@
     "placeholders": {
       "error": {"type": "String"}
     }
-  }
+  },
+
+  "taskWaterChangeTitle": "Cambio de Agua",
+  "taskWaterChangeDesc": "Cambio de agua semanal (10-20%)",
+  "taskFilterCleaningTitle": "Limpieza de Filtros",
+  "taskFilterCleaningDesc": "Limpieza mecánica de filtros y esponjas",
+  "taskParameterTestingTitle": "Prueba de Parámetros",
+  "taskParameterTestingDesc": "Control de los principales parámetros del agua",
+  "taskGlassCleaningTitle": "Limpieza de Vidrios",
+  "taskGlassCleaningDesc": "Eliminar algas del vidrio",
+  "taskSubstrateCleaningTitle": "Limpieza del Sustrato",
+  "taskSubstrateCleaningDesc": "Limpiar residuos del sustrato",
+  "taskPumpMaintenanceTitle": "Mantenimiento de Bombas",
+  "taskPumpMaintenanceDesc": "Limpiar rotores e impulsores de bombas",
+  "taskProteinSkimmerTitle": "Vaciar el Skimmer",
+  "taskProteinSkimmerDesc": "Vaciar y limpiar la copa del skimmer",
+  "taskCalciumDosingTitle": "Dosificación de Calcio/KH",
+  "taskCalciumDosingDesc": "Controlar y dosificar calcio/alcalinidad",
+  "taskTraceElementsTitle": "Oligoelementos",
+  "taskTraceElementsDesc": "Dosificar oligoelementos y aditivos",
+  "taskLightMaintenanceTitle": "Mantenimiento de Luces",
+  "taskLightMaintenanceDesc": "Limpiar LED y verificar funcionamiento",
+
+  "categoryWater": "Agua",
+  "categoryEquipment": "Equipo",
+  "categoryTesting": "Pruebas",
+  "categoryCleaning": "Limpieza",
+  "categoryDosing": "Dosificación",
+  "categoryFeeding": "Alimentación",
+  "categoryOther": "Otro"
 }

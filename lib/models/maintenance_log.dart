@@ -1,11 +1,31 @@
-/// Log di completamento di un task di manutenzione
+/// Domain model representing a single maintenance task completion event.
+library;
+
+/// Records that a [MaintenanceTask] was completed at a specific point in time.
+///
+/// Logs are append-only: every time the user marks a task as done, a new
+/// [MaintenanceLog] is created rather than mutating the task itself. This
+/// provides a full audit trail of maintenance history.
+///
+/// The [metadata] map is intentionally open-ended: callers may store any
+/// task-specific data (e.g. `{'litresChanged': 25}` for a water change, or
+/// `{'testKit': 'Salifert', 'ph': 8.2}` for a parameter test).
 class MaintenanceLog {
+  /// Unique identifier for this log entry.
   final String id;
-  final String taskId; // ID del task completato
+
+  /// ID of the [MaintenanceTask] that was completed.
+  final String taskId;
+
+  /// UTC timestamp of when the task was marked complete.
   final DateTime completedAt;
-  final String? notes; // Note facoltative dell'utente
-  final Map<String, dynamic>?
-  metadata; // Dati extra (es. litri cambiati, valori test)
+
+  /// Optional free-text notes entered by the user at completion time.
+  final String? notes;
+
+  /// Optional task-specific data. Schema varies per task type — consumers
+  /// should check for key presence before reading.
+  final Map<String, dynamic>? metadata;
 
   MaintenanceLog({
     required this.id,
@@ -15,6 +35,7 @@ class MaintenanceLog {
     this.metadata,
   });
 
+  /// Returns a copy of this log with the specified fields replaced.
   MaintenanceLog copyWith({
     String? id,
     String? taskId,
@@ -31,6 +52,7 @@ class MaintenanceLog {
     );
   }
 
+  /// Serialises this log entry to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -41,6 +63,7 @@ class MaintenanceLog {
     };
   }
 
+  /// Deserialises a [MaintenanceLog] from a JSON map.
   factory MaintenanceLog.fromJson(Map<String, dynamic> json) {
     return MaintenanceLog(
       id: json['id'].toString(),

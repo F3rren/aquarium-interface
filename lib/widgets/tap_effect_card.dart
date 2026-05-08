@@ -1,7 +1,14 @@
+/// Tap-feedback wrapper widgets: scale, press, and bounce variants.
+library;
+
 import 'package:flutter/material.dart';
 
-/// Widget che aggiunge effetti di tap alle card
-/// Combina scale animation e ripple effect per feedback tattile
+/// Wraps a child with configurable scale + ripple tap feedback.
+///
+/// When [enableScale] is true the child scales down to [scaleAmount] (default
+/// 0.97) on `onTapDown` and bounces back on release.  When [enableRipple] is
+/// true an [InkWell] with [rippleColor] is placed over the child.
+/// Both effects can be independently disabled.  Tapping calls [onTap].
 class TapEffectCard extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
@@ -111,7 +118,11 @@ class _TapEffectCardState extends State<TapEffectCard>
   }
 }
 
-/// Card con effetto press (solo scale, senza ripple)
+/// A lighter press widget: scale + opacity without a ripple effect.
+///
+/// Scales to [pressedScale] (default 0.98) and dims to [pressedOpacity]
+/// (default 0.8) for the press duration using implicit [AnimatedScale] and
+/// [AnimatedOpacity] widgets (no explicit [AnimationController] needed).
 class PressableCard extends StatefulWidget {
   final Widget child;
   final VoidCallback? onPressed;
@@ -158,7 +169,11 @@ class _PressableCardState extends State<PressableCard> {
   }
 }
 
-/// Card con bounce effect (ritorna oltre la scala originale)
+/// A tap wrapper that plays a three-phase bounce animation on tap.
+///
+/// The sequence animates: 1.0 → 0.95 (compress) → 1.02 (overshoot) → 1.0
+/// (settle) over [duration] (default 200 ms).  Calls [onTap] immediately when
+/// tapped while the animation runs independently.
 class BounceCard extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;

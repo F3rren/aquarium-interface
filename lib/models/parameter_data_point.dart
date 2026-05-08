@@ -1,10 +1,20 @@
-/// Rappresenta un singolo punto dati per un parametro dell'acquario
+/// Models for historical parameter data points and derived statistics.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// A single timestamped measurement for one water parameter.
+///
+/// Used by [ChartDataService] and the charts view to plot historical trends.
 class ParameterDataPoint {
+  /// UTC timestamp of when this measurement was recorded.
   final DateTime timestamp;
+
+  /// The measured value (units depend on [parameterName]).
   final double value;
+
+  /// The parameter being measured (e.g. `'temperature'`, `'ph'`).
   final String parameterName;
 
   ParameterDataPoint({
@@ -13,7 +23,7 @@ class ParameterDataPoint {
     required this.parameterName,
   });
 
-  /// Crea un punto dati da JSON
+  /// Deserialises a [ParameterDataPoint] from a JSON map.
   factory ParameterDataPoint.fromJson(Map<String, dynamic> json) {
     return ParameterDataPoint(
       timestamp: DateTime.parse(json['timestamp']),
@@ -22,7 +32,7 @@ class ParameterDataPoint {
     );
   }
 
-  /// Converte il punto dati in JSON
+  /// Serialises this data point to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'timestamp': timestamp.toIso8601String(),
@@ -36,13 +46,26 @@ class ParameterDataPoint {
       'ParameterDataPoint($parameterName: $value @ ${timestamp.toLocal()})';
 }
 
-/// Statistiche per un set di dati storici
+/// Derived statistical summary computed from a set of [ParameterDataPoint]s.
+///
+/// Typically returned by [ChartDataService] alongside the raw data points.
 class ParameterStats {
+  /// Minimum value observed in the dataset.
   final double min;
+
+  /// Maximum value observed in the dataset.
   final double max;
+
+  /// Mean (arithmetic average) of all values.
   final double average;
+
+  /// Most recent (latest) value in the dataset.
   final double current;
+
+  /// Direction of the short-term trend derived from the last few readings.
   final TrendDirection trend;
+
+  /// Total number of data points used to compute these statistics.
   final int dataPoints;
 
   ParameterStats({
@@ -54,21 +77,32 @@ class ParameterStats {
     required this.dataPoints,
   });
 
-  /// Calcola la variazione percentuale dal valore medio
+  /// Returns the percentage deviation of [current] from [average].
+  ///
+  /// Positive values mean the current reading is above average; negative
+  /// values mean it is below average.
   double get variationFromAverage => ((current - average) / average) * 100;
 
-  /// Indica se il valore corrente è stabile (entro ±5% dalla media)
+  /// Returns `true` when [current] is within ±5 % of [average], indicating
+  /// the parameter is effectively stable.
   bool get isStable => variationFromAverage.abs() < 5;
 }
 
-/// Direzione del trend di un parametro
+/// Describes the direction of a parameter's short-term trend.
 enum TrendDirection {
-  rising, // ↗️ In aumento
-  falling, // ↘️ In diminuzione
-  stable, // ➡️ Stabile
+  /// The parameter is increasing over recent readings.
+  rising,
+
+  /// The parameter is decreasing over recent readings.
+  falling,
+
+  /// The parameter has remained roughly constant.
+  stable,
 }
 
+/// Adds display helpers to [TrendDirection].
 extension TrendDirectionExtension on TrendDirection {
+  /// Unicode arrow emoji representing the trend direction.
   String get emoji {
     switch (this) {
       case TrendDirection.rising:
@@ -80,18 +114,23 @@ extension TrendDirectionExtension on TrendDirection {
     }
   }
 
+  /// Non-localised Italian fallback label.
+  ///
+  /// Prefer [getLocalizedLabel] when a [BuildContext] is available.
   String get label {
     switch (this) {
       case TrendDirection.rising:
-        return 'In Aumento'; // Fallback, usa getLocalizedLabel(context)
+        return 'In Aumento';
       case TrendDirection.falling:
-        return 'In Diminuzione'; // Fallback, usa getLocalizedLabel(context)
+        return 'In Diminuzione';
       case TrendDirection.stable:
-        return 'Stabile'; // Fallback, usa getLocalizedLabel(context)
+        return 'Stabile';
     }
   }
 
-  /// Ottiene l'etichetta localizzata per il trend
+  /// Returns the ARB-localised label for the trend direction.
+  ///
+  /// Requires a valid [BuildContext] with [AppLocalizations] present.
   String getLocalizedLabel(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     switch (this) {

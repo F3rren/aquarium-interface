@@ -1,23 +1,36 @@
+/// CRUD service for aquariums and their water-parameter records.
+library;
+
+import 'package:aquariums_service/api.dart';
 import '../models/aquarium.dart';
 import '../models/aquarium_parameters.dart';
 import '../utils/exceptions.dart';
 import 'api_service.dart';
 
-/// Service per gestire le operazioni CRUD sugli acquari
+/// Handles all backend operations related to aquariums and their water
+/// parameters.
+///
+/// Every method delegates to [ApiService] and normalises the two response
+/// shapes the backend may return:
+/// - **direct array** – `[{...}, {...}]`
+/// - **wrapper object** – `{"data": [...]}` or `{"aquariums": [...]}`
+///
+/// [DataFormatException] is thrown when neither shape is recognised.
 class AquariumsService {
   final ApiService _apiService = ApiService();
 
+  /// Fetches all aquariums belonging to the authenticated user.
+  ///
+  /// Handles both a direct JSON array and wrapper objects keyed by
+  /// `"aquariums"` or `"data"`.
   Future<List<Aquarium>> getAquariums() async {
     final response = await _apiService.get('/aquariums');
 
-    // La risposta può essere un oggetto con una chiave 'aquariums' o 'data', oppure un array diretto
     final List<dynamic> aquariumsJson;
 
     if (response is List) {
-      // Risposta diretta come array
       aquariumsJson = response;
     } else if (response is Map<String, dynamic>) {
-      // Risposta con wrapper object
       if (response.containsKey('aquariums')) {
         aquariumsJson = response['aquariums'] as List<dynamic>;
       } else if (response.containsKey('data')) {
@@ -35,17 +48,20 @@ class AquariumsService {
     }
 
     return aquariumsJson
-        .map((json) => Aquarium.fromJson(json as Map<String, dynamic>))
+        .map((json) => Aquarium.fromDto(AquariumResponseDTO.fromJson(json)!))
         .toList();
   }
 
-  /// Recupera un singolo acquario per ID
+  /// Fetches a single aquarium by its integer [id].
+  ///
+  /// Unwraps a `"data"` wrapper if present. Returns `null` only when the
+  /// response body cannot be parsed; HTTP 404 propagates as a [NetworkException]
+  /// from [ApiService].
   Future<Aquarium?> getAquariumById(int id) async {
     final response = await _apiService.get('/aquariums/$id');
     if (response is Map<String, dynamic>) {
-      // Estrai i dati dall'oggetto wrapper se presente
       final aquariumData = response['data'] ?? response;
-      return Aquarium.fromJson(aquariumData as Map<String, dynamic>);
+      return Aquarium.fromDto(AquariumResponseDTO.fromJson(aquariumData)!);
     } else {
       throw DataFormatException(
         'Formato risposta non valido: attesa mappa',
@@ -54,29 +70,35 @@ class AquariumsService {
     }
   }
 
-  /// Crea un nuovo acquario
+  /// Creates a new aquarium and returns the backend-persisted entity (with its
+  /// assigned [Aquarium.id]).
   Future<Aquarium> createAquarium(Aquarium aquarium) async {
-    // Non serve più rimuovere l'ID, toJson() lo gestisce automaticamente
     final response = await _apiService.post('/aquariums', aquarium.toJson());
-    return Aquarium.fromJson(response);
+    if (response is Map<String, dynamic> && response.containsKey('data')) {
+      return Aquarium.fromDto(AquariumResponseDTO.fromJson(response['data'])!);
+    }
+    return Aquarium.fromDto(AquariumResponseDTO.fromJson(response)!);
   }
 
-  /// Aggiorna un acquario esistente
+  /// Replaces the aquarium identified by [id] with the supplied [aquarium]
+  /// data and returns the updated entity.
   Future<Aquarium> updateAquarium(int id, Aquarium aquarium) async {
     final response = await _apiService.put('/aquariums/$id', aquarium.toJson());
-    return Aquarium.fromJson(response);
+    return Aquarium.fromDto(AquariumResponseDTO.fromJson(response)!);
   }
 
-  /// Elimina un acquario
+  /// Permanently deletes the aquarium with the given [id].
   Future<void> deleteAquarium(int id) async {
     await _apiService.delete('/aquariums/$id');
   }
 
-  /// Recupera i parametri attuali di una vasca specifica
+  /// Fetches the most-recent water-parameter snapshot for aquarium [aquariumId].
+  ///
+  /// Unwraps a `"data"` wrapper if present. The backend endpoint is
+  /// `GET /aquariums/{id}/parameters`.
   Future<AquariumParameters> getAquariumParameters(int aquariumId) async {
     final response = await _apiService.get('/aquariums/$aquariumId/parameters');
 
-    // Gestisci il caso in cui la risposta abbia un wrapper "data"
     final Map<String, dynamic> parametersData;
     if (response is Map<String, dynamic>) {
       if (response.containsKey('data')) {
@@ -91,17 +113,26 @@ class AquariumsService {
       );
     }
 
-    return AquariumParameters.fromJson(parametersData);
+    return AquariumParameters.fromWaterParameterDto(
+      WaterParameterDTO.fromJson(parametersData)!,
+    );
   }
 
-  /// Recupera lo storico dei parametri di una vasca specifica
+  /// Fetches historical parameter snapshots for aquarium [aquariumId].
+  ///
+  /// Optional filters:
+  /// - [from] / [to] — ISO-8601 date range
+  /// - [limit] — maximum number of records to return
+  ///
+  /// Accepts direct arrays as well as wrapper objects keyed by `"history"` or
+  /// `"data"`. The backend endpoint is
+  /// `GET /aquariums/{id}/parameters/history`.
   Future<List<AquariumParameters>> getAquariumParameterHistory({
     required int aquariumId,
     DateTime? from,
     DateTime? to,
     int? limit,
   }) async {
-    // Costruisci query parameters
     final queryParams = <String, String>{};
     if (from != null) queryParams['from'] = from.toIso8601String();
     if (to != null) queryParams['to'] = to.toIso8601String();
@@ -115,13 +146,10 @@ class AquariumsService {
 
     final response = await _apiService.get(endpoint);
 
-    // Gestisci diversi formati di risposta
     final List<dynamic> historyJson;
     if (response is List) {
-      // Risposta diretta come array
       historyJson = response;
     } else if (response is Map<String, dynamic>) {
-      // Risposta con wrapper object
       if (response.containsKey('history')) {
         historyJson = response['history'] as List<dynamic>;
       } else if (response.containsKey('data')) {
@@ -139,9 +167,9 @@ class AquariumsService {
     }
 
     return historyJson
-        .map(
-          (json) => AquariumParameters.fromJson(json as Map<String, dynamic>),
-        )
+        .map((json) => AquariumParameters.fromWaterParameterDto(
+              WaterParameterDTO.fromJson(json)!,
+            ))
         .toList();
   }
 }

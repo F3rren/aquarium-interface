@@ -1,19 +1,61 @@
-import 'dart:convert';
+/// Service for managing aquarium product inventory via the backend API.
+library;
+
+import 'package:maintenance_service/api.dart';
+import 'package:logger/logger.dart';
 import 'package:acquariumfe/models/product.dart';
 import 'api_service.dart';
 
+/// Non-singleton service that performs CRUD operations on [Product] records and
+/// computes inventory statistics.
+///
+/// Unlike most other services, `ProductService` is **not** a singleton — it is
+/// instantiated normally and each instance maintains its own state. The Riverpod
+/// provider in `service_providers.dart` controls lifetime.
+///
+/// **Caching:** [_cachedProducts] is populated by the most-recent unfiltered
+/// `getAllProducts()` call. Any mutation (add, update, delete, recordUsage,
+/// toggleFavorite, updateQuantity) invalidates the cache. Filtered queries do
+/// not update the cache.
+///
+/// **Response normalisation:** accepts both a direct JSON array and wrapper
+/// objects keyed by `"data"`.
+///
+/// **Error handling:** [getAllProducts] falls back to the cache on network
+/// errors; all mutation methods propagate exceptions so callers can display
+/// feedback.
 class ProductService {
   final _apiService = ApiService();
+  final _logger = Logger();
+
+  /// ID of the currently active aquarium.
   int? _currentAquariumId;
+
+  /// Cache of the last unfiltered product list; `null` after any mutation.
   List<Product>? _cachedProducts;
 
-  // Imposta l'acquario corrente
+  /// Sets the active aquarium and invalidates the product cache.
   void setCurrentAquarium(int aquariumId) {
     _currentAquariumId = aquariumId;
-    _cachedProducts = null; // Invalida cache quando cambia acquario
+    _cachedProducts = null;
   }
 
-  // Ottieni tutti i prodotti
+  /// Returns all products, optionally filtered by one or more criteria.
+  ///
+  /// Supported filters (all optional):
+  /// - [category] — [ProductCategory] enum value
+  /// - [brand] — exact brand string
+  /// - [search] — free-text search across name / brand
+  /// - [favorites] — only starred products when `true`
+  /// - [expired] — only expired products when `true`
+  /// - [expiringSoon] — only products expiring within 30 days when `true`
+  /// - [lowStock] — only products below the low-stock threshold when `true`
+  /// - [shouldUseAgain] — only products past their usage interval when `true`
+  ///
+  /// When called without filters, updates [_cachedProducts]. On network error,
+  /// returns the cached list (or an empty list if no cache exists).
+  ///
+  /// Throws when no aquarium has been set.
   Future<List<Product>> getAllProducts({
     ProductCategory? category,
     String? brand,
@@ -28,7 +70,6 @@ class ProductService {
       throw Exception('Aquarium ID not set');
     }
 
-    // Costruisci query parameters
     Map<String, dynamic> queryParams = {};
     if (category != null) {
       queryParams['category'] = category.name.toUpperCase();
@@ -58,11 +99,7 @@ class ProductService {
       } else if (response is Map<String, dynamic>) {
         if (response.containsKey('data')) {
           var dataField = response['data'];
-          if (dataField is List) {
-            productList = dataField;
-          } else {
-            productList = [];
-          }
+          productList = dataField is List ? dataField : [];
         } else {
           productList = [];
         }
@@ -71,42 +108,44 @@ class ProductService {
       }
 
       final products = productList
-          .map((json) => Product.fromJson(json as Map<String, dynamic>))
+          .map((json) => Product.fromDto(ProductDTO.fromJson(json)!))
           .toList();
 
-      // Aggiorna cache se è una chiamata senza filtri
+      // Only cache unfiltered results.
       if (queryParams.isEmpty) {
         _cachedProducts = products;
       }
 
       return products;
     } catch (e) {
-      print('Errore nel caricamento dei prodotti: $e');
+      _logger.e('Errore nel caricamento dei prodotti', error: e);
       return _cachedProducts ?? [];
     }
   }
 
-  // Ottieni prodotti per categoria
+  /// Returns products filtered by [category].
   Future<List<Product>> getProductsByCategory(ProductCategory category) async {
     return await getAllProducts(category: category);
   }
 
-  // Ottieni prodotti preferiti
+  /// Returns only products marked as favourites.
   Future<List<Product>> getFavoriteProducts() async {
     return await getAllProducts(favorites: true);
   }
 
-  // Ottieni prodotti in scadenza
+  /// Returns products that are expiring within the next 30 days.
   Future<List<Product>> getExpiringProducts() async {
     return await getAllProducts(expiringSoon: true);
   }
 
-  // Ottieni prodotti con scorte basse
+  /// Returns products below the low-stock threshold (< 20 units).
   Future<List<Product>> getLowStockProducts() async {
     return await getAllProducts(lowStock: true);
   }
 
-  // Ottieni prodotto per ID
+  /// Fetches a single product by [id] from `GET /products/{id}`.
+  ///
+  /// Returns `null` on error or when the backend response cannot be parsed.
   Future<Product?> getProductById(String id) async {
     if (_currentAquariumId == null) {
       throw Exception('Aquarium ID not set');
@@ -114,20 +153,20 @@ class ProductService {
 
     try {
       final response = await _apiService.get('/products/$id');
-      
+
       if (response is Map<String, dynamic>) {
         if (response.containsKey('data')) {
-          return Product.fromJson(response['data'] as Map<String, dynamic>);
+          return Product.fromDto(ProductDTO.fromJson(response['data'])!);
         }
       }
       return null;
     } catch (e) {
-      print('Errore nel recupero del prodotto: $e');
+      _logger.e('Errore nel recupero del prodotto', error: e);
       return null;
     }
   }
 
-  // Aggiungi prodotto
+  /// Creates a new product via `POST /products` and invalidates the cache.
   Future<void> addProduct(Product product) async {
     if (_currentAquariumId == null) {
       throw Exception('Aquarium ID not set');
@@ -135,14 +174,15 @@ class ProductService {
 
     try {
       await _apiService.post('/products', product.toJson());
-      _cachedProducts = null; // Invalida cache
+      _cachedProducts = null;
     } catch (e) {
-      print('Errore nell\'aggiunta del prodotto: $e');
+      _logger.e("Errore nell'aggiunta del prodotto", error: e);
       rethrow;
     }
   }
 
-  // Aggiorna prodotto
+  /// Updates an existing product via `PUT /products/{id}` and invalidates the
+  /// cache.
   Future<void> updateProduct(Product product) async {
     if (_currentAquariumId == null) {
       throw Exception('Aquarium ID not set');
@@ -150,14 +190,15 @@ class ProductService {
 
     try {
       await _apiService.put('/products/${product.id}', product.toJson());
-      _cachedProducts = null; // Invalida cache
+      _cachedProducts = null;
     } catch (e) {
-      print('Errore nell\'aggiornamento del prodotto: $e');
+      _logger.e("Errore nell'aggiornamento del prodotto", error: e);
       rethrow;
     }
   }
 
-  // Elimina prodotto
+  /// Permanently deletes the product with [id] via `DELETE /products/{id}` and
+  /// invalidates the cache.
   Future<void> deleteProduct(String id) async {
     if (_currentAquariumId == null) {
       throw Exception('Aquarium ID not set');
@@ -165,38 +206,42 @@ class ProductService {
 
     try {
       await _apiService.delete('/products/$id');
-      _cachedProducts = null; // Invalida cache
+      _cachedProducts = null;
     } catch (e) {
-      print('Errore nell\'eliminazione del prodotto: $e');
+      _logger.e("Errore nell'eliminazione del prodotto", error: e);
       rethrow;
     }
   }
 
-  // Registra utilizzo prodotto (PATCH /products/{id}/mark-used)
+  /// Records a product usage event via two PATCH requests:
+  /// 1. `PATCH /products/{id}/mark-used` — updates [Product.lastUsed].
+  /// 2. `PATCH /products/{id}/quantity` with `{"change": -quantityUsed}` if
+  ///    [quantityUsed] is non-null.
+  ///
+  /// Invalidates the cache on success.
   Future<void> recordUsage(String productId, {double? quantityUsed}) async {
     if (_currentAquariumId == null) {
       throw Exception('Aquarium ID not set');
     }
 
     try {
-      // Prima marca come usato
       await _apiService.patch('/products/$productId/mark-used', {});
-      
-      // Poi aggiorna la quantità se specificata
+
       if (quantityUsed != null) {
         await _apiService.patch('/products/$productId/quantity', {
           'change': -quantityUsed,
         });
       }
-      
-      _cachedProducts = null; // Invalida cache
+
+      _cachedProducts = null;
     } catch (e) {
-      print('Errore nella registrazione dell\'uso: $e');
+      _logger.e("Errore nella registrazione dell'uso", error: e);
       rethrow;
     }
   }
 
-  // Toggle preferito (PATCH /products/{id}/toggle-favorite)
+  /// Toggles the [Product.isFavorite] flag via
+  /// `PATCH /products/{id}/toggle-favorite` and invalidates the cache.
   Future<void> toggleFavorite(String productId) async {
     if (_currentAquariumId == null) {
       throw Exception('Aquarium ID not set');
@@ -204,14 +249,17 @@ class ProductService {
 
     try {
       await _apiService.patch('/products/$productId/toggle-favorite', {});
-      _cachedProducts = null; // Invalida cache
+      _cachedProducts = null;
     } catch (e) {
-      print('Errore nel toggle preferito: $e');
+      _logger.e('Errore nel toggle preferito', error: e);
       rethrow;
     }
   }
 
-  // Aggiorna quantità (PATCH /products/{id}/quantity)
+  /// Adjusts [Product.quantity] by [change] units (positive to add stock,
+  /// negative to reduce) via `PATCH /products/{id}/quantity`.
+  ///
+  /// Invalidates the cache on success.
   Future<void> updateQuantity(String productId, double change) async {
     if (_currentAquariumId == null) {
       throw Exception('Aquarium ID not set');
@@ -221,14 +269,23 @@ class ProductService {
       await _apiService.patch('/products/$productId/quantity', {
         'change': change,
       });
-      _cachedProducts = null; // Invalida cache
+      _cachedProducts = null;
     } catch (e) {
-      print('Errore nell\'aggiornamento della quantità: $e');
+      _logger.e("Errore nell'aggiornamento della quantità", error: e);
       rethrow;
     }
   }
 
-  // Calcola statistiche (usa dati locali dalla cache)
+  /// Computes inventory statistics from the current (unfiltered) product list.
+  ///
+  /// All calculations are performed locally from the fetched data. Returns a
+  /// map with:
+  /// - `'totalProducts'` (int)
+  /// - `'totalCost'` (double) — sum of [Product.cost] for products with a cost
+  /// - `'expiringCount'` (int) — products that are expired or expiring soon
+  /// - `'lowStockCount'` (int) — products below the low-stock threshold
+  /// - `'categoryCounts'` ([Map<ProductCategory, int>]) — per-category counts
+  /// - `'favoriteCount'` (int) — starred products
   Future<Map<String, dynamic>> getStatistics() async {
     final products = await getAllProducts();
 
@@ -238,22 +295,18 @@ class ProductService {
     Map<ProductCategory, int> categoryCounts = {};
 
     for (var product in products) {
-      // Costi totali
       if (product.cost != null) {
         totalCost += product.cost!;
       }
 
-      // Conteggio in scadenza
       if (product.isExpiringSoon || product.isExpired) {
         expiringCount++;
       }
 
-      // Conteggio scorte basse
       if (product.isLowStock) {
         lowStockCount++;
       }
 
-      // Conteggio per categoria
       categoryCounts[product.category] =
           (categoryCounts[product.category] ?? 0) + 1;
     }
@@ -268,7 +321,7 @@ class ProductService {
     };
   }
 
-  // Pulisci cache
+  /// Clears the in-memory product cache without making a network call.
   void clearCache() {
     _cachedProducts = null;
   }

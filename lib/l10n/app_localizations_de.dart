@@ -2043,7 +2043,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get categoryWaterTreatment => 'Wasseraufbereitung';
 
   @override
-  String get categoryEquipment => 'Ausrüstung';
+  String get categoryEquipment => 'Ausstattung';
 
   @override
   String get categoryMedicine => 'Medikamente';
@@ -2116,4 +2116,82 @@ class AppLocalizationsDe extends AppLocalizations {
   String errorLoadingProducts(String error) {
     return 'Fehler beim Laden der Produkte: $error';
   }
+
+  @override
+  String get taskWaterChangeTitle => 'Wasserwechsel';
+
+  @override
+  String get taskWaterChangeDesc => 'Wöchentlicher Wasserwechsel (10-20%)';
+
+  @override
+  String get taskFilterCleaningTitle => 'Filterreinigung';
+
+  @override
+  String get taskFilterCleaningDesc =>
+      'Mechanische Reinigung von Filtern und Schwämmen';
+
+  @override
+  String get taskParameterTestingTitle => 'Parametertests';
+
+  @override
+  String get taskParameterTestingDesc =>
+      'Überprüfung der wichtigsten Wasserparameter';
+
+  @override
+  String get taskGlassCleaningTitle => 'Glassreinigung';
+
+  @override
+  String get taskGlassCleaningDesc => 'Algen vom Glas entfernen';
+
+  @override
+  String get taskSubstrateCleaningTitle => 'Bodenreinigung';
+
+  @override
+  String get taskSubstrateCleaningDesc => 'Ablagerungen vom Substrat entfernen';
+
+  @override
+  String get taskPumpMaintenanceTitle => 'Pumpenwartung';
+
+  @override
+  String get taskPumpMaintenanceDesc => 'Pumpenrotoren und Laufräder reinigen';
+
+  @override
+  String get taskProteinSkimmerTitle => 'Abschäumer leeren';
+
+  @override
+  String get taskProteinSkimmerDesc => 'Abschäumerbecher leeren und reinigen';
+
+  @override
+  String get taskCalciumDosingTitle => 'Kalzium/KH Dosierung';
+
+  @override
+  String get taskCalciumDosingDesc =>
+      'Kalzium/Alkalinität kontrollieren und dosieren';
+
+  @override
+  String get taskTraceElementsTitle => 'Spurenelemente';
+
+  @override
+  String get taskTraceElementsDesc => 'Spurenelemente und Zusätze dosieren';
+
+  @override
+  String get taskLightMaintenanceTitle => 'Lichtwartung';
+
+  @override
+  String get taskLightMaintenanceDesc => 'LEDs reinigen und Betrieb prüfen';
+
+  @override
+  String get categoryWater => 'Wasser';
+
+  @override
+  String get categoryTesting => 'Tests';
+
+  @override
+  String get categoryCleaning => 'Reinigung';
+
+  @override
+  String get categoryDosing => 'Dosierung';
+
+  @override
+  String get categoryFeeding => 'Fütterung';
 }

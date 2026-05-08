@@ -1,8 +1,12 @@
+/// Home-tab view listing all of the user's aquariums.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/widgets/animated_value.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
+import 'package:acquariumfe/utils/task_localizer.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 import 'package:acquariumfe/widgets/skeleton_loader.dart';
@@ -13,6 +17,17 @@ import 'package:acquariumfe/providers/aquarium_providers.dart';
 import 'package:acquariumfe/widgets/responsive_builder.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 
+/// Scrollable list of the user's aquariums, each shown as a card with its
+/// name, type, volume, and current water parameters.
+///
+/// Pulls data from [aquariumsProvider] and shows:
+/// - **Loading state** — three [AquariumCardSkeleton] placeholders
+/// - **Error state** — error message with a retry button
+/// - **Empty state** — [EmptyState] widget prompting the user to add an aquarium
+/// - **Data state** — animated fade + slide-up list of aquarium cards
+///
+/// Tapping a card navigates to [AquariumDetails] using a [CustomPageRoute].
+/// Pull-to-refresh calls `aquariumsProvider.notifier.refresh()`.
 class AquariumView extends ConsumerStatefulWidget {
   const AquariumView({super.key});
 
@@ -289,10 +304,8 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                               ),
                             ),
                             child: Icon(
-                              aquarium.type == 'Marino'
+                              aquarium.type == 'saltwater'
                                   ? FontAwesomeIcons.droplet
-                                  : aquarium.type == 'Reef'
-                                  ? FontAwesomeIcons.atom
                                   : FontAwesomeIcons.water,
                               color: const Color(0xFF60a5fa),
                               size: 20,
@@ -322,7 +335,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                                           .withValues(alpha: 0.5),
                                     ),
                                     const SizedBox(width: 4),
-                                    Text("${aquarium.volume.toInt()} L • ${aquarium.type}",
+                                    Text("${aquarium.volume.toInt()} L • ${localizedAquariumType(aquarium.type, l10n)}",
                                       style: TextStyle(
                                         color: theme.colorScheme.onSurface
                                             .withValues(alpha: 0.5),

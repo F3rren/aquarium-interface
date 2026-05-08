@@ -1,6 +1,17 @@
-/// Testi e messaggi delle notifiche
+/// Static notification copy for use in background isolates and contexts where
+/// [BuildContext] is unavailable.
+///
+/// This class intentionally uses hard-coded Italian strings rather than
+/// [AppLocalizations] because local notification callbacks run in a background
+/// isolate that has no access to the widget tree or locale.
+/// For widget-tree contexts prefer [NotificationTextsL10n] instead.
+library;
+
+/// Fallback (non-localised) notification titles, messages, and suggestions
+/// for every monitored water parameter and maintenance reminder type.
 class NotificationTexts {
-  // Titoli delle notifiche per parametro
+  /// Maps parameter names (Italian keys matching the backend schema) to their
+  /// out-of-range notification titles.
   static const Map<String, String> parameterTitles = {
     'Temperatura': 'Temperatura Anomala',
     'pH': 'pH Fuori Range',
@@ -13,7 +24,7 @@ class NotificationTexts {
     'Fosfati': 'Fosfati Elevati',
   };
 
-  // Messaggi per stato alto
+  /// Notification body text when a parameter value is too high.
   static const Map<String, String> highMessages = {
     'Temperatura': 'La temperatura è troppo alta.',
     'pH': 'Il pH è troppo alto.',
@@ -26,7 +37,7 @@ class NotificationTexts {
     'Fosfati': 'I fosfati sono troppo alti.',
   };
 
-  // Messaggi per stato basso
+  /// Notification body text when a parameter value is too low.
   static const Map<String, String> lowMessages = {
     'Temperatura': 'La temperatura è troppo bassa.',
     'pH': 'Il pH è troppo basso.',
@@ -39,7 +50,7 @@ class NotificationTexts {
     'Fosfati': 'I fosfati sono troppo bassi.',
   };
 
-  // Suggerimenti per stato alto
+  /// Corrective action suggestions shown when a parameter is too high.
   static const Map<String, String> highSuggestions = {
     'Temperatura': 'Verifica il riscaldatore e la temperatura ambiente.',
     'pH': 'Controlla l\'aerazione e riduci l\'illuminazione.',
@@ -52,7 +63,7 @@ class NotificationTexts {
     'Fosfati': 'Effettua un cambio d\'acqua e usa resine anti-fosfati.',
   };
 
-  // Suggerimenti per stato basso
+  /// Corrective action suggestions shown when a parameter is too low.
   static const Map<String, String> lowSuggestions = {
     'Temperatura': 'Verifica il funzionamento del riscaldatore.',
     'pH': 'Aumenta l\'aerazione e controlla il KH.',
@@ -65,28 +76,46 @@ class NotificationTexts {
     'Fosfati': 'Normale per acquari ben bilanciati',
   };
 
-  // Manutenzione
+  // ── Maintenance reminder strings ──────────────────────────────────────────
+
+  /// Generic title for maintenance reminder notifications.
   static const String maintenanceTitle = 'Promemoria Manutenzione';
+
+  /// Body for a weekly maintenance reminder.
   static const String maintenanceWeekly = 'Manutenzione settimanale prevista';
+
+  /// Body for a monthly maintenance reminder.
   static const String maintenanceMonthly = 'Manutenzione mensile prevista';
 
-  // Titoli manutenzione specifici
+  /// Title for a water-change reminder notification.
   static const String waterChangeTitle = 'Promemoria: Cambio Acqua';
+
+  /// Body for a water-change reminder notification.
   static const String waterChangeBody =
       'È tempo di cambiare l\'acqua dell\'acquario';
 
+  /// Title for a filter-cleaning reminder notification.
   static const String filterCleaningTitle = 'Promemoria: Pulizia Filtro';
+
+  /// Body for a filter-cleaning reminder notification.
   static const String filterCleaningBody =
       'Controlla e pulisci il filtro dell\'acquario';
 
+  /// Title for a parameter-testing reminder notification.
   static const String parameterTestingTitle = 'Promemoria: Test Parametri';
+
+  /// Body for a parameter-testing reminder notification.
   static const String parameterTestingBody =
       'Esegui i test dei parametri dell\'acqua';
 
+  /// Title for a light-maintenance reminder notification.
   static const String lightMaintenanceTitle = 'Promemoria: Manutenzione Luci';
+
+  /// Body for a light-maintenance reminder notification.
   static const String lightMaintenanceBody =
       'Controlla e pulisci le luci dell\'acquario';
 
+  /// Detailed weekly maintenance checklist shown in the notification body.
   static const String maintenanceWeeklyDetails =
       'È ora di effettuare la manutenzione settimanale:\n'
       '• Cambio acqua 10-15%\n'
@@ -94,6 +123,7 @@ class NotificationTexts {
       '• Test parametri\n'
       '• Controllo attrezzature';
 
+  /// Detailed monthly maintenance checklist shown in the notification body.
   static const String maintenanceMonthlyDetails =
       'È ora di effettuare la manutenzione mensile:\n'
       '• Cambio acqua 20-25%\n'
@@ -102,7 +132,9 @@ class NotificationTexts {
       '• Verifica luci e timer\n'
       '• Test completo parametri';
 
-  // Severità
+  // ── Severity labels ────────────────────────────────────────────────────────
+
+  /// Human-readable Italian labels for alert severity levels.
   static const Map<String, String> severityLabels = {
     'CRITICAL': 'CRITICO',
     'HIGH': 'ALTO',
@@ -110,6 +142,7 @@ class NotificationTexts {
     'LOW': 'BASSO',
   };
 
+  /// Short descriptions explaining what each severity level requires.
   static const Map<String, String> severityDescriptions = {
     'CRITICAL': 'Richiede intervento immediato',
     'HIGH': 'Richiede attenzione prioritaria',
@@ -117,26 +150,40 @@ class NotificationTexts {
     'LOW': 'Situazione sotto controllo',
   };
 
-  // Helper methods
+  // ── Helper methods ─────────────────────────────────────────────────────────
+
+  /// Returns the notification title for [parameter], falling back to a generic
+  /// label if the parameter is not in [parameterTitles].
   static String getTitle(String parameter) {
     return parameterTitles[parameter] ?? 'Parametro Anomalo';
   }
 
+  /// Returns the notification body for [parameter].
+  ///
+  /// [isHigh] selects between [highMessages] and [lowMessages].
+  /// Falls back to a generic out-of-range message.
   static String getMessage(String parameter, bool isHigh) {
     final messages = isHigh ? highMessages : lowMessages;
     return messages[parameter] ?? 'Il parametro $parameter è fuori range';
   }
 
+  /// Returns the corrective-action suggestion for [parameter].
+  ///
+  /// [isHigh] selects between [highSuggestions] and [lowSuggestions].
   static String getSuggestion(String parameter, bool isHigh) {
     final suggestions = isHigh ? highSuggestions : lowSuggestions;
     return suggestions[parameter] ??
         'Controlla il parametro e verifica le impostazioni';
   }
 
+  /// Returns the Italian label for a severity level string (e.g. `'HIGH'`).
+  /// Returns [severity] unchanged if not found in [severityLabels].
   static String getSeverityLabel(String severity) {
     return severityLabels[severity] ?? severity;
   }
 
+  /// Returns the description for [severity]. Returns an empty string if not
+  /// found in [severityDescriptions].
   static String getSeverityDescription(String severity) {
     return severityDescriptions[severity] ?? '';
   }

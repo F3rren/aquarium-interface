@@ -1,3 +1,6 @@
+/// Dialog for adding or editing a coral inhabitant.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -6,6 +9,20 @@ import '../../models/coral_species.dart';
 import '../../services/coral_database_service.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Modal dialog for adding a new coral or editing an existing one.
+///
+/// When [coral] is non-null the form is pre-populated for an edit; otherwise
+/// it starts empty for a new coral.
+///
+/// **Species lookup:** loads the coral catalogue from [CoralDatabaseService]
+/// on open. Selecting a species auto-fills name, type, placement, and notes.
+///
+/// **Type / placement:** dropdown selectors for coral type (SPS, LPS, Soft,
+/// Other) and tank placement (Low, Medium, High, Top).
+///
+/// **Bulk add:** if [onSaveMultiple] is provided and quantity > 1, the
+/// callback is called with multiple [Coral] copies; otherwise [onSave] is
+/// called with a single coral.
 class AddCoralDialog extends StatefulWidget {
   final Coral? coral;
   final Function(Coral, String? speciesId) onSave;

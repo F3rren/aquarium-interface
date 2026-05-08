@@ -45,7 +45,7 @@ final aquariumsWithAlertsCountProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AquariumsWithAlertsCountRef = AutoDisposeProviderRef<int>;
-String _$aquariumsHash() => r'a550c5afc7ee66569db0f4f91ecbb6774ecba619';
+String _$aquariumsHash() => r'680c009ee0247f450013e1486252652673b0ad8f';
 
 /// Provider per lista acquari con parametri
 /// Gestisce automaticamente loading/error/data

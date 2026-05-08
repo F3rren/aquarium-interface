@@ -1,3 +1,6 @@
+/// Notification settings and alert-history page.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
@@ -5,6 +8,22 @@ import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/notification_preferences_service.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// Three-tab page for managing notifications.
+///
+/// **Tab 0 — Alerts:** toggle switches for alert notifications per parameter,
+/// plus per-parameter min/max threshold editors. Changes are persisted via
+/// [NotificationPreferencesService].
+///
+/// **Tab 1 — Reminders:** toggle switches and frequency sliders for the four
+/// built-in maintenance reminders (water change, filter cleaning, parameter
+/// testing, light maintenance).
+///
+/// **Tab 2 — History:** scrollable log of past alerts from
+/// [AlertManager.getAlertHistory], grouped by severity badge.
+///
+/// Settings are loaded from [NotificationPreferencesService] at startup and
+/// passed to [AlertManager.updateSettings] so that real-time alert evaluation
+/// reflects the current preferences.
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
 

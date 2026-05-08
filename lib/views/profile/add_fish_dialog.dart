@@ -1,3 +1,6 @@
+/// Dialog for adding or editing a fish inhabitant.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -5,7 +8,23 @@ import '../../models/fish.dart';
 import '../../models/fish_species.dart';
 import '../../services/fish_database_service.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
+import 'package:acquariumfe/utils/task_localizer.dart';
 
+/// Modal dialog for adding a new fish or editing an existing one.
+///
+/// When [fish] is non-null the form is pre-populated for an edit operation;
+/// otherwise the form starts empty for a new fish.
+///
+/// **Species lookup:** on open, the dialog loads the full fish catalogue from
+/// [FishDatabaseService] filtered by [aquariumWaterType] (e.g. only marine
+/// fish for a saltwater tank). Selecting a species auto-fills the name, size,
+/// and notes fields.
+///
+/// **Bulk add:** if [onSaveMultiple] is provided and the quantity field is > 1,
+/// the callback is called with a list of [Fish] copies sharing the same
+/// species; otherwise [onSave] is called with a single fish.
+///
+/// The generated [Fish.id] is a UUID when creating a new fish.
 class AddFishDialog extends StatefulWidget {
   final Fish? fish;
   final Function(Fish, String? speciesId) onSave;
@@ -326,7 +345,7 @@ class _AddFishDialogState extends State<AddFishDialog> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(widget.aquariumWaterType != null
-                                ? l10n.noCompatibleFish(widget.aquariumWaterType!)
+                                ? l10n.noCompatibleFish(localizedAquariumType(widget.aquariumWaterType!, l10n))
                                 : l10n.noDatabaseFish,
                             style: TextStyle(
                               color: theme.colorScheme.onErrorContainer,

@@ -1,8 +1,17 @@
+/// Read-only dialog that shows the full details of a coral inhabitant.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/coral.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
+/// A read-only details dialog for a [Coral] inhabitant.
+///
+/// The header colour is derived from [Coral.type]: pink for SPS, primary blue
+/// for LPS, and the theme's secondary colour for all other types. The body
+/// lists placement, size, light and flow requirements, feeding notes, and any
+/// user notes.
 class CoralDetailsDialog extends StatelessWidget {
   final Coral coral;
 

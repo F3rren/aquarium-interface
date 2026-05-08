@@ -1,64 +1,78 @@
+/// Service that persists notification settings to local device storage.
+library;
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/notification_settings.dart';
 
-/// Servizio singleton per gestire la persistenza delle impostazioni notifiche
+/// Singleton that reads and writes [NotificationSettings] to
+/// [SharedPreferences] under the key `'notification_settings'`.
+///
+/// This is the **local** persistence layer — it stores the user's alert and
+/// reminder configuration on the device without a network round-trip.
+/// [NotificationSettingsService] is its backend-synced counterpart.
+///
+/// All methods silently handle errors: [loadSettings] and [getStats] return
+/// safe defaults, [saveSettings] and [resetToDefaults] return a boolean
+/// success flag rather than throwing.
 class NotificationPreferencesService {
   static final NotificationPreferencesService _instance =
       NotificationPreferencesService._internal();
   factory NotificationPreferencesService() => _instance;
   NotificationPreferencesService._internal();
 
+  /// SharedPreferences key under which [NotificationSettings] JSON is stored.
   static const String _keySettings = 'notification_settings';
 
-  /// Carica le impostazioni salvate o restituisce quelle di default
+  /// Loads and deserialises the stored [NotificationSettings].
+  ///
+  /// Returns a new [NotificationSettings] with default values when:
+  /// - no settings have been saved yet
+  /// - the stored JSON is empty or cannot be parsed
   Future<NotificationSettings> loadSettings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final jsonString = prefs.getString(_keySettings);
 
       if (jsonString != null && jsonString.isNotEmpty) {
-        // Carica impostazioni salvate
         final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
-        final settings = NotificationSettings.fromJson(jsonMap);
-        return settings;
+        return NotificationSettings.fromJson(jsonMap);
       }
     } catch (e) {
-      // In caso di errore, restituisci impostazioni di default
       return NotificationSettings();
     }
 
-    // Restituisce impostazioni di default se non trovate
     return NotificationSettings();
   }
 
-  /// Salva le impostazioni correnti
+  /// Serialises [settings] to JSON and stores it under [_keySettings].
+  ///
+  /// Returns `true` on success, `false` on any error.
   Future<bool> saveSettings(NotificationSettings settings) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonMap = settings.toJson();
-      final jsonString = jsonEncode(jsonMap);
-      final success = await prefs.setString(_keySettings, jsonString);
-
-      return success;
+      final jsonString = jsonEncode(settings.toJson());
+      return await prefs.setString(_keySettings, jsonString);
     } catch (e) {
       return false;
     }
   }
 
-  /// Resetta le impostazioni ai valori di default
+  /// Removes the stored settings key, causing the next [loadSettings] call to
+  /// return defaults.
+  ///
+  /// Returns `true` on success, `false` on any error.
   Future<bool> resetToDefaults() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final success = await prefs.remove(_keySettings);
-
-      return success;
+      return await prefs.remove(_keySettings);
     } catch (e) {
       return false;
     }
   }
 
-  /// Verifica se esistono impostazioni salvate
+  /// Returns `true` if custom notification settings have been saved, `false`
+  /// if the user is still on defaults.
   Future<bool> hasCustomSettings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -68,7 +82,14 @@ class NotificationPreferencesService {
     }
   }
 
-  /// Salva una singola soglia parametro (helper per aggiornamenti rapidi)
+  /// Helper that patches a single parameter threshold within [currentSettings]
+  /// and saves the result.
+  ///
+  /// [parameterName] must be one of the Italian display names used in the UI:
+  /// `'Temperatura'`, `'pH'`, `'Salinità'`, `'ORP'`, `'Calcio'`,
+  /// `'Magnesio'`, `'KH'`, `'Nitrati'`, `'Fosfati'`.
+  ///
+  /// Returns `false` (without saving) when [parameterName] is unrecognised.
   Future<bool> updateParameterThreshold(
     NotificationSettings currentSettings,
     String parameterName,
@@ -111,7 +132,19 @@ class NotificationPreferencesService {
     return await saveSettings(updatedSettings);
   }
 
-  /// Ottiene statistiche sull'utilizzo delle notifiche
+  /// Returns a summary map describing the current notification configuration.
+  ///
+  /// Keys returned:
+  /// - `'hasCustomSettings'` (bool) — whether non-default settings are stored
+  /// - `'enabledAlerts'` (bool)
+  /// - `'enabledMaintenance'` (bool)
+  /// - `'enabledDaily'` (bool)
+  /// - `'parametersMonitored'` (int) — count of parameters with enabled thresholds (0–9)
+  /// - `'remindersActive'` (int) — count of active maintenance reminders (0–4)
+  /// - `'totalParameters'` (int) — always 9
+  /// - `'totalReminders'` (int) — always 4
+  ///
+  /// Returns all-zero/false values on error.
   Future<Map<String, dynamic>> getStats() async {
     try {
       final settings = await loadSettings();
@@ -130,12 +163,15 @@ class NotificationPreferencesService {
 
       int enabledReminders = 0;
       if (settings.maintenanceReminders.waterChange.enabled) enabledReminders++;
-      if (settings.maintenanceReminders.filterCleaning.enabled)
+      if (settings.maintenanceReminders.filterCleaning.enabled) {
         enabledReminders++;
-      if (settings.maintenanceReminders.parameterTesting.enabled)
+      }
+      if (settings.maintenanceReminders.parameterTesting.enabled) {
         enabledReminders++;
-      if (settings.maintenanceReminders.lightMaintenance.enabled)
+      }
+      if (settings.maintenanceReminders.lightMaintenance.enabled) {
         enabledReminders++;
+      }
 
       return {
         'hasCustomSettings': hasCustom,

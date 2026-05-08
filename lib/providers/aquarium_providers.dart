@@ -1,27 +1,57 @@
+/// Riverpod providers for aquarium management in the ReefLife app.
+///
+/// Exposes [aquariumsProvider] as the primary async provider that loads the
+/// full list of aquariums together with their current water parameters.
+/// Derived providers ([currentAquariumProvider], [aquariumCountProvider],
+/// [aquariumsWithAlertsCountProvider]) compose on top of it for common UI
+/// queries.
+library;
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:acquariumfe/models/aquarium.dart';
 import 'package:acquariumfe/models/aquarium_parameters.dart';
 import 'package:acquariumfe/providers/service_providers.dart';
+import 'package:acquariumfe/services/maintenance_task_service.dart';
 import 'package:acquariumfe/utils/exceptions.dart';
 
 part 'aquarium_providers.g.dart';
 
-/// Classe helper per combinare acquario + parametri
+/// Aggregate that pairs an [Aquarium] with its most-recent [AquariumParameters].
+///
+/// Used internally by providers to carry aquarium data and parameters together
+/// as a single immutable value, avoiding redundant state reads.
 class AquariumWithParams {
+  /// The aquarium this aggregate refers to.
   final Aquarium aquarium;
+
+  /// Most-recent water parameters for this aquarium.
+  ///
+  /// `null` when parameters have not been loaded yet or when the last fetch
+  /// returned an error.
   final AquariumParameters? parameters;
+
+  /// Timestamp of the most-recent successful parameter fetch.
   final DateTime? lastUpdate;
 
+  /// Creates an [AquariumWithParams] with the required [aquarium] and optional
+  /// [parameters] / [lastUpdate].
   AquariumWithParams({
     required this.aquarium,
     this.parameters,
     this.lastUpdate,
   });
 
+  /// Whether at least one monitored parameter is outside its acceptable range.
+  ///
+  /// Reference ranges used (typical marine aquarium values):
+  /// - Temperature: 24–27 °C
+  /// - pH: 7.8–8.5
+  /// - Salinity: 1.023–1.026
+  ///
+  /// Returns `false` when [parameters] is `null`.
   bool get hasAlert {
     if (parameters == null) return false;
 
-    // Verifica parametri fuori range (valori tipici per acquario marino)
     final tempOk =
         parameters!.temperature >= 24.0 && parameters!.temperature <= 27.0;
     final phOk = parameters!.ph >= 7.8 && parameters!.ph <= 8.5;
@@ -31,6 +61,7 @@ class AquariumWithParams {
     return !tempOk || !phOk || !salinityOk;
   }
 
+  /// Returns a copy of this aggregate with the specified fields replaced.
   AquariumWithParams copyWith({
     Aquarium? aquarium,
     AquariumParameters? parameters,
@@ -44,33 +75,41 @@ class AquariumWithParams {
   }
 }
 
-/// Provider per lista acquari con parametri
-/// Gestisce automaticamente loading/error/data
+/// Async provider for the full list of aquariums and their current parameters.
+///
+/// Manages loading / error / data states automatically via [AsyncValue].
+/// During the initial fetch, automatic alert checking is temporarily disabled
+/// to prevent spurious notifications; it is re-enabled once loading completes.
 @riverpod
 class Aquariums extends _$Aquariums {
   @override
   Future<List<AquariumWithParams>> build() async {
-    // Carica acquari iniziali
     return await _loadAquariums();
   }
 
-  /// Carica tutti gli acquari con i loro parametri
+  /// Fetches all aquariums from the backend and resolves their current
+  /// parameters in a single pass.
+  ///
+  /// If parameter loading fails for an individual aquarium, that aquarium is
+  /// still included in the result with [AquariumWithParams.parameters] == `null`
+  /// so the UI degrades gracefully rather than failing entirely.
+  ///
+  /// After all aquariums are loaded the first aquarium is set as the active one
+  /// in both [ParameterService] and [TargetParametersService].
   Future<List<AquariumWithParams>> _loadAquariums() async {
     final aquariumService = ref.read(aquariumsServiceProvider);
     final parameterService = ref.read(parameterServiceProvider);
 
-    // Carica lista acquari
     final aquariums = await aquariumService.getAquariums();
 
-    // Carica parametri per ogni acquario
     final aquariumsWithParams = <AquariumWithParams>[];
     for (final aquarium in aquariums) {
       AquariumParameters? params;
       DateTime? lastUpdate;
 
       try {
-        // Carica parametri senza trigger di alert (primo caricamento)
-        // Gli alert saranno gestiti dal polling successivo
+        // Disable alert checks during initial load to avoid spurious
+        // notifications; polling after load re-enables them.
         parameterService.setAutoCheckAlerts(false);
 
         params = await parameterService.getCurrentParameters(
@@ -79,9 +118,9 @@ class Aquariums extends _$Aquariums {
         );
         lastUpdate = DateTime.now();
       } on AppException {
-        // Ignora errori per parametri singoli
+        // Silently ignore per-aquarium parameter errors.
       } catch (e) {
-        // Ignora errori generici
+        // Silently ignore unexpected errors.
       }
 
       aquariumsWithParams.add(
@@ -93,10 +132,10 @@ class Aquariums extends _$Aquariums {
       );
     }
 
-    // Riabilita alert dopo il caricamento iniziale
+    // Re-enable alert checking now that the initial load is complete.
     parameterService.setAutoCheckAlerts(true);
 
-    // Imposta il primo acquario come corrente se disponibile
+    // Set the first aquarium as the active one across services.
     if (aquariumsWithParams.isNotEmpty &&
         aquariumsWithParams.first.aquarium.id != null) {
       final firstId = aquariumsWithParams.first.aquarium.id!;
@@ -107,7 +146,8 @@ class Aquariums extends _$Aquariums {
     return aquariumsWithParams;
   }
 
-  /// Ricarica la lista (per pull-to-refresh)
+  /// Triggers a full reload of the aquarium list, typically called by
+  /// pull-to-refresh gestures.
   Future<void> refresh() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
@@ -115,17 +155,33 @@ class Aquariums extends _$Aquariums {
     });
   }
 
-  /// Aggiunge un nuovo acquario
+  /// Creates a new aquarium on the backend and initialises its default
+  /// maintenance tasks based on the tank type specified in [aquarium].
+  ///
+  /// If task initialisation fails the aquarium is still persisted; the error
+  /// is swallowed so the user is not blocked.
   Future<void> addAquarium(Aquarium aquarium) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final aquariumService = ref.read(aquariumsServiceProvider);
-      await aquariumService.createAquarium(aquarium);
+      final created = await aquariumService.createAquarium(aquarium);
+
+      if (created.id != null) {
+        final taskService = MaintenanceTaskService();
+        taskService.setCurrentAquarium(created.id!);
+        try {
+          await taskService.initializeDefaultTasks(type: aquarium.type);
+        } catch (_) {
+          // Do not block aquarium creation when task initialisation fails.
+        }
+      }
+
       return await _loadAquariums();
     });
   }
 
-  /// Aggiorna un acquario esistente
+  /// Updates the backend record for the aquarium identified by [id] with the
+  /// data in [aquarium], then reloads the list.
   Future<void> updateAquarium(int id, Aquarium aquarium) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
@@ -135,7 +191,8 @@ class Aquariums extends _$Aquariums {
     });
   }
 
-  /// Elimina un acquario
+  /// Deletes the aquarium identified by [id] from the backend and reloads the
+  /// list.
   Future<void> deleteAquarium(int id) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
@@ -145,7 +202,11 @@ class Aquariums extends _$Aquariums {
     });
   }
 
-  /// Aggiorna i parametri di un acquario specifico
+  /// Refreshes the parameters for a single aquarium identified by [aquariumId]
+  /// without triggering a full list reload.
+  ///
+  /// The existing state is preserved when the fetch fails, so the UI continues
+  /// to show the last known values.
   Future<void> refreshParameters(int aquariumId) async {
     final currentState = state.value;
     if (currentState == null) return;
@@ -158,7 +219,7 @@ class Aquariums extends _$Aquariums {
         useMock: false,
       );
 
-      // Aggiorna solo l'acquario specifico
+      // Patch only the affected item in the list.
       final updatedList = currentState.map((item) {
         if (item.aquarium.id == aquariumId) {
           return item.copyWith(parameters: params, lastUpdate: DateTime.now());
@@ -168,17 +229,20 @@ class Aquariums extends _$Aquariums {
 
       state = AsyncValue.data(updatedList);
     } on AppException {
-      // Ignora errori, mantieni stato corrente
+      // Preserve current state on error.
     }
   }
 }
 
-/// Provider per l'acquario correntemente selezionato
+/// Provider that tracks the ID of the aquarium currently selected in the UI.
+///
+/// The initial value is derived from the first entry in [aquariumsProvider].
+/// Use [setAquarium] to change the selection; this also synchronises the
+/// underlying [ParameterService] and [TargetParametersService] singletons.
 @riverpod
 class CurrentAquarium extends _$CurrentAquarium {
   @override
   int? build() {
-    // Cerca di leggere l'ID del primo acquario se disponibile
     final aquariums = ref.watch(aquariumsProvider);
     return aquariums.when(
       data: (list) => list.isNotEmpty ? list.first.aquarium.id : null,
@@ -187,17 +251,19 @@ class CurrentAquarium extends _$CurrentAquarium {
     );
   }
 
-  /// Imposta l'acquario corrente
+  /// Selects the aquarium with [id] and propagates the change to
+  /// [ParameterService] and [TargetParametersService].
   void setAquarium(int id) {
     state = id;
 
-    // Aggiorna anche i servizi
     ref.read(parameterServiceProvider).setCurrentAquarium(id);
     ref.read(targetParametersServiceProvider).setCurrentAquarium(id);
   }
 }
 
-/// Provider per contare gli acquari
+/// Provides the total number of registered aquariums.
+///
+/// Returns `0` while loading or when an error occurred.
 @riverpod
 int aquariumCount(AquariumCountRef ref) {
   final aquariums = ref.watch(aquariumsProvider);
@@ -208,7 +274,10 @@ int aquariumCount(AquariumCountRef ref) {
   );
 }
 
-/// Provider per acquari con alert
+/// Provides the number of aquariums that have at least one parameter outside
+/// its acceptable range (i.e. [AquariumWithParams.hasAlert] is `true`).
+///
+/// Returns `0` while loading or when an error occurred.
 @riverpod
 int aquariumsWithAlertsCount(AquariumsWithAlertsCountRef ref) {
   final aquariums = ref.watch(aquariumsProvider);

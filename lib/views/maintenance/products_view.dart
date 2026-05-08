@@ -1,9 +1,21 @@
+/// Product inventory view for a specific aquarium.
+library;
+
 import 'package:acquariumfe/models/product.dart';
 import 'package:acquariumfe/services/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 
+/// Scrollable grid/list of aquarium products with filtering and CRUD actions.
+///
+/// Loads all products via [ProductService] when [aquariumId] is non-null.
+/// Supports filtering by [ProductCategory] (chip row) and a "favourites only"
+/// toggle. Each product card shows stock level, expiry status, and favourite
+/// icon.
+///
+/// A FAB opens a bottom sheet for adding a new product. Long-pressing a card
+/// opens an edit / delete action sheet.
 class ProductsView extends StatefulWidget {
   final int? aquariumId;
 

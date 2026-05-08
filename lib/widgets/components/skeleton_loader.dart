@@ -1,5 +1,17 @@
+/// Component-specific skeleton loader and pre-built composite skeletons.
+///
+/// This file contains a lightweight [SkeletonLoader] tailored to the
+/// parameter/inhabitants UI colour palette, distinct from the generic
+/// [SkeletonLoader] in `lib/widgets/skeleton_loader.dart`.
+library;
+
 import 'package:flutter/material.dart';
 
+/// A shimmer placeholder block for parameter and inhabitants component layouts.
+///
+/// Sweeps a highlight gradient left-to-right at 1.5 s per cycle using
+/// `easeInOutSine`.  Dark colours: `#1e293b` → `#334155` → `#1e293b`.
+/// Light colours: `#e2e8f0` → `#f1f5f9` → `#e2e8f0`.
 class SkeletonLoader extends StatefulWidget {
   final double? width;
   final double? height;
@@ -75,7 +87,7 @@ class _SkeletonLoaderState extends State<SkeletonLoader>
   }
 }
 
-// Card acquario skeleton
+/// Skeleton card matching the aquarium list item layout (110 px tall).
 class AquariumCardSkeleton extends StatelessWidget {
   const AquariumCardSkeleton({super.key});
 
@@ -123,7 +135,7 @@ class AquariumCardSkeleton extends StatelessWidget {
   }
 }
 
-// Parameter card skeleton
+/// Skeleton card matching the parameter sensor card layout.
 class ParameterCardSkeleton extends StatelessWidget {
   const ParameterCardSkeleton({super.key});
 
@@ -174,7 +186,7 @@ class ParameterCardSkeleton extends StatelessWidget {
   }
 }
 
-// List item skeleton (fish/coral)
+/// Skeleton row matching a fish or coral list item.
 class ListItemSkeleton extends StatelessWidget {
   const ListItemSkeleton({super.key});
 

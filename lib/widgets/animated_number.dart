@@ -1,6 +1,14 @@
+/// Animated number display widgets with smooth value-change transitions.
+library;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+/// Smoothly animates a [double] value change using an easeOutCubic tween.
+///
+/// Each time [value] changes the number rolls from the previous value to the
+/// new one over [duration] (default 800 ms).  Optional [prefix] and [suffix]
+/// strings are rendered around the formatted number.
 class AnimatedNumber extends StatefulWidget {
   final double value;
   final int decimals;
@@ -82,7 +90,10 @@ class _AnimatedNumberState extends State<AnimatedNumber>
   }
 }
 
-// Variante per numeri interi
+/// Integer variant of [AnimatedNumber].
+///
+/// Animates an [int] value by tweening through a `double` internally and
+/// rounding at each frame, so the displayed counter increments whole numbers.
 class AnimatedIntNumber extends StatefulWidget {
   final int value;
   final TextStyle? style;
@@ -164,7 +175,13 @@ class _AnimatedIntNumberState extends State<AnimatedIntNumber>
   }
 }
 
-// Widget per mostrare il cambio di valore con indicatore up/down
+/// Animated number that shows a directional arrow when the value changes.
+///
+/// Extends the rolling-number behaviour of [AnimatedNumber] with a small
+/// up/down arrow (FontAwesome) that fades and slides upward over 1.5 s after
+/// each update.  The arrow colour defaults to green for increases and red for
+/// decreases, but can be overridden via [increaseColor] and [decreaseColor].
+/// Set [showIndicator] to `false` to suppress the arrow entirely.
 class AnimatedNumberWithIndicator extends StatefulWidget {
   final double value;
   final int decimals;
