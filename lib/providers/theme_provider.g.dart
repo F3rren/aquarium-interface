@@ -8,7 +8,13 @@ part of 'theme_provider.dart';
 
 String _$darkThemeHash() => r'583861951ed760e4856ab9ba294b110f74f1cfd6';
 
-/// Provider per il tema dark
+/// Material 3 dark [ThemeData] using an ocean-inspired deep-blue palette.
+///
+/// Key colour decisions:
+/// - Primary `#3b82f6` — ocean blue
+/// - Secondary `#06b6d4` — aqua cyan
+/// - Tertiary `#8b5cf6` — coral purple
+/// - Scaffold background `#0a0e27` — deep-sea navy
 ///
 /// Copied from [darkTheme].
 @ProviderFor(darkTheme)
@@ -27,7 +33,12 @@ final darkThemeProvider = AutoDisposeProvider<ThemeData>.internal(
 typedef DarkThemeRef = AutoDisposeProviderRef<ThemeData>;
 String _$lightThemeHash() => r'1990c18a92050889429ab16ac30ca0d8a0ef0bf8';
 
-/// Provider per il tema light
+/// Material 3 light [ThemeData] using a sky-blue aquatic palette.
+///
+/// Key colour decisions:
+/// - Primary `#0284c7` — sky blue
+/// - Secondary `#06b6d4` — cyan
+/// - Scaffold background `#f0f9ff` — near-white with a blue tint
 ///
 /// Copied from [lightTheme].
 @ProviderFor(lightTheme)
@@ -46,7 +57,11 @@ final lightThemeProvider = AutoDisposeProvider<ThemeData>.internal(
 typedef LightThemeRef = AutoDisposeProviderRef<ThemeData>;
 String _$appThemeModeHash() => r'a162b27c7326a9989ce0b1d450dac21b5404c16f';
 
-/// Provider per gestire il tema dell'app (dark/light mode)
+/// Persistent Riverpod notifier that tracks whether dark mode is active.
+///
+/// The boolean state is saved under the key `'theme_mode'` in
+/// [SharedPreferences] so the user's preference survives app restarts.
+/// Default on first launch: **dark mode** (`true`).
 ///
 /// Copied from [AppThemeMode].
 @ProviderFor(AppThemeMode)
