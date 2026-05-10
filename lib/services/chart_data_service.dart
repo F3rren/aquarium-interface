@@ -19,11 +19,13 @@ import 'package:acquariumfe/models/parameter_data_point.dart';
 /// On network or parse errors [loadHistoricalData] returns an empty list
 /// rather than throwing, so the charts view can render gracefully without data.
 class ChartDataService {
-  static final ChartDataService _instance = ChartDataService._internal();
-  factory ChartDataService() => _instance;
-  ChartDataService._internal();
+  /// Creates a [ChartDataService] backed by [parameterService].
+  ///
+  /// Obtain the shared instance via Riverpod ([chartDataServiceProvider])
+  /// rather than constructing directly.
+  ChartDataService(this._parameterService);
 
-  final ParameterService _parameterService = ParameterService();
+  final ParameterService _parameterService;
 
   /// Fetches historical data for [parameter] over the last [hours] hours.
   ///

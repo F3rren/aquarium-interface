@@ -2,7 +2,9 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/providers/service_providers.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/widgets/animated_number.dart';
 import 'package:acquariumfe/widgets/tap_effect_card.dart';
@@ -21,7 +23,7 @@ import 'package:acquariumfe/l10n/app_localizations.dart';
 /// blue down-arrow on decrease.  Tapping the card opens a dialog to update
 /// the target temperature, persisted via [TargetParametersService.saveTarget]
 /// with key `'temperature'` and triggering [onTargetChanged].
-class Thermometer extends StatelessWidget {
+class Thermometer extends ConsumerWidget {
   final double currentTemperature;
   final double? targetTemperature;
   final VoidCallback? onTargetChanged;
@@ -49,14 +51,15 @@ class Thermometer extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final color = _getTemperatureColor();
     final status = _getStatus(context);
 
     return TapEffectCard(
-      onTap: () => _showEditTargetDialog(context),
+      onTap: () => _showEditTargetDialog(context, ref),
       rippleColor: color,
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -163,7 +166,7 @@ class Thermometer extends StatelessWidget {
     );
   }
 
-  void _showEditTargetDialog(BuildContext context) async {
+  void _showEditTargetDialog(BuildContext context, WidgetRef ref) async {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(
@@ -263,7 +266,7 @@ class Thermometer extends StatelessWidget {
     );
 
     if (result != null) {
-      await TargetParametersService().saveTarget('temperature', result);
+      await ref.read(targetParametersServiceProvider).saveTarget('temperature', result);
       onTargetChanged?.call();
     }
   }

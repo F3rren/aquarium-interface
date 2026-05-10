@@ -2,6 +2,7 @@
 library;
 
 import 'package:species_service/api.dart';
+import '../constants/api_endpoints.dart';
 import '../models/fish_species.dart';
 import 'api_service.dart';
 
@@ -37,7 +38,7 @@ class FishDatabaseService {
     }
 
     try {
-      final response = await _apiService.get('/species/fishs');
+      final response = await _apiService.get(ApiEndpoints.fishSpecies);
 
       // Normalise the two possible response shapes.
       List<dynamic> fishList;

@@ -2,6 +2,7 @@
 library;
 
 import 'package:maintenance_service/api.dart';
+import 'package:acquariumfe/constants/api_endpoints.dart';
 import 'package:acquariumfe/models/maintenance_task.dart';
 import 'package:acquariumfe/services/api_service.dart';
 
@@ -41,10 +42,9 @@ class MaintenanceTaskService {
     }
 
     try {
+      final base = ApiEndpoints.tasks(_currentAquariumId!);
       final queryParam = status != null ? '?status=$status' : '';
-      final response = await _apiService.get(
-        '/aquariums/$_currentAquariumId/tasks$queryParam',
-      );
+      final response = await _apiService.get('$base$queryParam');
 
       final List<dynamic> tasksJson;
       if (response is Map<String, dynamic> && response.containsKey('data')) {
@@ -88,7 +88,7 @@ class MaintenanceTaskService {
 
     try {
       final response = await _apiService.post(
-        '/aquariums/$_currentAquariumId/tasks',
+        ApiEndpoints.tasks(_currentAquariumId!),
         task.toJson(),
       );
 
@@ -119,7 +119,7 @@ class MaintenanceTaskService {
 
     try {
       final response = await _apiService.put(
-        '/aquariums/$_currentAquariumId/tasks/$taskId',
+        ApiEndpoints.task(_currentAquariumId!, taskId),
         task.toJson(),
       );
 
@@ -145,7 +145,7 @@ class MaintenanceTaskService {
     }
 
     try {
-      await _apiService.delete('/aquariums/$_currentAquariumId/tasks/$taskId');
+      await _apiService.delete(ApiEndpoints.task(_currentAquariumId!, taskId));
     } catch (e) {
       rethrow;
     }
@@ -160,7 +160,7 @@ class MaintenanceTaskService {
 
     try {
       final response = await _apiService.post(
-        '/aquariums/$_currentAquariumId/tasks/$taskId/complete',
+        ApiEndpoints.completeTask(_currentAquariumId!, taskId),
         {},
       );
 

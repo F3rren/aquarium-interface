@@ -1,6 +1,7 @@
 /// Service that persists notification settings to the backend API.
 library;
 
+import 'package:acquariumfe/constants/api_endpoints.dart';
 import 'package:acquariumfe/models/notification_settings.dart';
 import 'package:acquariumfe/services/api_service.dart';
 
@@ -47,7 +48,7 @@ class NotificationSettingsService {
 
     try {
       await _apiService.post(
-        '/aquariums/$_currentAquariumId/settings/notifications',
+        ApiEndpoints.notificationSettings(_currentAquariumId!),
         settings.toJson(),
       );
 
@@ -75,7 +76,7 @@ class NotificationSettingsService {
 
     try {
       final response = await _apiService.get(
-        '/aquariums/$_currentAquariumId/settings/notifications',
+        ApiEndpoints.notificationSettings(_currentAquariumId!),
       );
 
       final Map<String, dynamic> data;
@@ -185,7 +186,7 @@ class NotificationSettingsService {
 
     try {
       await _apiService.delete(
-        '/aquariums/$_currentAquariumId/settings/notifications',
+        ApiEndpoints.notificationSettings(_currentAquariumId!),
       );
       _cachedSettings = null;
     } catch (e) {

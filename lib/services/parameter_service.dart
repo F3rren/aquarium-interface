@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:aquariums_service/api.dart';
 import 'package:acquariumfe/models/aquarium_parameters.dart';
 import 'package:acquariumfe/models/aquarium_parameter.dart';
+import 'package:acquariumfe/constants/api_endpoints.dart';
 import 'package:acquariumfe/services/api_service.dart';
 import 'package:acquariumfe/services/alert_manager.dart';
 import 'package:acquariumfe/services/manual_parameters_service.dart';
@@ -16,7 +17,7 @@ import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:acquariumfe/utils/retry_policy.dart';
 import 'package:logger/logger.dart';
 
-/// Singleton that is the single source of truth for aquarium water parameters.
+/// Single source of truth for aquarium water parameters.
 ///
 /// **Responsibilities:**
 /// - Fetches the current sensor parameters from
@@ -44,18 +45,24 @@ import 'package:logger/logger.dart';
 /// [MaintenanceTaskService], [TargetParametersService]) and invalidates the
 /// cache.
 class ParameterService {
-  static final ParameterService _instance = ParameterService._internal();
-  factory ParameterService() => _instance;
-  ParameterService._internal();
+  /// Creates a [ParameterService] with its two Riverpod-managed dependencies.
+  ///
+  /// [ManualParametersService], [NotificationSettingsService], and
+  /// [MaintenanceTaskService] are still self-managed Singletons and will be
+  /// migrated to Riverpod in a follow-up refactor.
+  ///
+  /// Obtain the shared instance via Riverpod ([parameterServiceProvider])
+  /// rather than constructing directly.
+  ParameterService(this._apiService, this._targetService);
 
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
+  final TargetParametersService _targetService;
   final AlertManager _alertManager = AlertManager();
   final Logger _logger = Logger();
   final ManualParametersService _manualService = ManualParametersService();
   final NotificationSettingsService _notificationService =
       NotificationSettingsService();
   final MaintenanceTaskService _maintenanceService = MaintenanceTaskService();
-  final TargetParametersService _targetService = TargetParametersService();
 
   /// ID of the currently selected aquarium.
   int? _currentid;
@@ -145,7 +152,7 @@ class ParameterService {
 
     try {
       final response = await _apiService.get(
-        '/aquariums/$targetid/parameters',
+        ApiEndpoints.parameters(targetid),
         retry: RetryPolicies.critical,
       );
 
@@ -266,8 +273,8 @@ class ParameterService {
       final query = queryParams.entries
           .map((e) => '${e.key}=${e.value}')
           .join('&');
-      final endpoint =
-          '/aquariums/$targetid/parameters/history${query.isNotEmpty ? '?$query' : ''}';
+      final base = ApiEndpoints.parameterHistory(int.parse(targetid.toString()));
+      final endpoint = query.isNotEmpty ? '$base?$query' : base;
 
       final response = await _apiService.get(endpoint);
 
@@ -372,7 +379,7 @@ class ParameterService {
       final query = queryParams.entries
           .map((e) => '${e.key}=${e.value}')
           .join('&');
-      final endpoint = '/aquariums/$aquariumId/parameters/history?$query';
+      final endpoint = '${ApiEndpoints.parameterHistory(aquariumId)}?$query';
       final response = await _apiService.get(endpoint);
 
       if (response is Map<String, dynamic> && response.containsKey('data')) {
@@ -403,7 +410,7 @@ class ParameterService {
   /// Pushes a new [parameters] snapshot to the backend at `POST /parameters`
   /// and updates the cache and stream.
   Future<void> updateParameters(AquariumParameters parameters) async {
-    await _apiService.post('/parameters', parameters.toJson());
+    await _apiService.post(ApiEndpoints.submitParameters, parameters.toJson());
 
     _cachedParameters = parameters;
     _parametersController.add(parameters);

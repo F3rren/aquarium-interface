@@ -3,6 +3,7 @@ library;
 
 import 'package:maintenance_service/api.dart';
 import 'package:logger/logger.dart';
+import 'package:acquariumfe/constants/api_endpoints.dart';
 import 'package:acquariumfe/models/product.dart';
 import 'api_service.dart';
 
@@ -83,7 +84,7 @@ class ProductService {
     if (shouldUseAgain == true) queryParams['shouldUseAgain'] = 'true';
 
     try {
-      String endpoint = '/products';
+      String endpoint = ApiEndpoints.products;
       if (queryParams.isNotEmpty) {
         final queryString = queryParams.entries
             .map((e) => '${e.key}=${Uri.encodeComponent(e.value.toString())}')
@@ -152,7 +153,7 @@ class ProductService {
     }
 
     try {
-      final response = await _apiService.get('/products/$id');
+      final response = await _apiService.get(ApiEndpoints.product(id));
 
       if (response is Map<String, dynamic>) {
         if (response.containsKey('data')) {
@@ -173,7 +174,7 @@ class ProductService {
     }
 
     try {
-      await _apiService.post('/products', product.toJson());
+      await _apiService.post(ApiEndpoints.products, product.toJson());
       _cachedProducts = null;
     } catch (e) {
       _logger.e("Errore nell'aggiunta del prodotto", error: e);
@@ -189,7 +190,7 @@ class ProductService {
     }
 
     try {
-      await _apiService.put('/products/${product.id}', product.toJson());
+      await _apiService.put(ApiEndpoints.product(product.id), product.toJson());
       _cachedProducts = null;
     } catch (e) {
       _logger.e("Errore nell'aggiornamento del prodotto", error: e);
@@ -205,7 +206,7 @@ class ProductService {
     }
 
     try {
-      await _apiService.delete('/products/$id');
+      await _apiService.delete(ApiEndpoints.product(id));
       _cachedProducts = null;
     } catch (e) {
       _logger.e("Errore nell'eliminazione del prodotto", error: e);
@@ -225,10 +226,10 @@ class ProductService {
     }
 
     try {
-      await _apiService.patch('/products/$productId/mark-used', {});
+      await _apiService.patch(ApiEndpoints.markProductUsed(productId), {});
 
       if (quantityUsed != null) {
-        await _apiService.patch('/products/$productId/quantity', {
+        await _apiService.patch(ApiEndpoints.productQuantity(productId), {
           'change': -quantityUsed,
         });
       }
@@ -248,7 +249,7 @@ class ProductService {
     }
 
     try {
-      await _apiService.patch('/products/$productId/toggle-favorite', {});
+      await _apiService.patch(ApiEndpoints.toggleProductFavorite(productId), {});
       _cachedProducts = null;
     } catch (e) {
       _logger.e('Errore nel toggle preferito', error: e);
@@ -266,7 +267,7 @@ class ProductService {
     }
 
     try {
-      await _apiService.patch('/products/$productId/quantity', {
+      await _apiService.patch(ApiEndpoints.productQuantity(productId), {
         'change': change,
       });
       _cachedProducts = null;

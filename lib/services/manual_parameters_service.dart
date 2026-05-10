@@ -1,6 +1,7 @@
 /// Service for saving and loading manually-entered water parameters.
 library;
 
+import 'package:acquariumfe/constants/api_endpoints.dart';
 import 'package:acquariumfe/services/api_service.dart';
 
 /// Singleton that persists the five parameters that are entered manually by the
@@ -57,7 +58,7 @@ class ManualParametersService {
       };
 
       await _apiService.post(
-        '/aquariums/$_currentAquariumId/parameters/manual',
+        ApiEndpoints.manualParameters(_currentAquariumId!),
         body,
       );
     } catch (e) {
@@ -85,7 +86,7 @@ class ManualParametersService {
 
     try {
       final response = await _apiService.get(
-        '/aquariums/$_currentAquariumId/parameters/manual',
+        ApiEndpoints.manualParameters(_currentAquariumId!),
       );
 
       final Map<String, dynamic> data;
@@ -148,7 +149,7 @@ class ManualParametersService {
 
     try {
       final response = await _apiService.get(
-        '/aquariums/$_currentAquariumId/parameters/manual',
+        ApiEndpoints.manualParameters(_currentAquariumId!),
       );
 
       if (response is Map<String, dynamic> && response.containsKey('data')) {
@@ -184,7 +185,7 @@ class ManualParametersService {
 
     try {
       await _apiService.delete(
-        '/aquariums/$_currentAquariumId/parameters/manual',
+        ApiEndpoints.manualParameters(_currentAquariumId!),
       );
     } catch (e) {
       rethrow;
