@@ -15,7 +15,7 @@
 library;
 
 import 'dart:convert';
-import 'dart:async';
+import 'dart:async' as da;
 import 'dart:io' show SocketException;
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -78,7 +78,7 @@ class ApiService {
   ///
   /// The value is XOR-obfuscated in the binary — it cannot be extracted with
   /// `strings` on the APK/IPA.
-  static final String baseUrl = Env.apiBaseUrl;
+  static final String baseUrl = '${Env.apiHost}:${Env.apiPort}';
 
   // ---------------------------------------------------------------------------
   // Token management
@@ -140,6 +140,21 @@ class ApiService {
   // HTTP verbs
   // ---------------------------------------------------------------------------
 
+  NetworkException _toNetworkException(SocketException e, String endpoint) {
+    final code = e.osError?.errorCode;
+    final msg = e.osError?.message ?? e.message;
+    // ECONNREFUSED (111 Linux, 61 macOS/iOS, 10061 Windows): server up but port not open.
+    final isRefused = code == 111 || code == 61 || code == 10061 ||
+        msg.toLowerCase().contains('connection refused');
+    return NetworkException(
+      isRefused
+          ? 'Connection refused at $endpoint — check server port'
+          : 'Cannot reach server at $endpoint',
+      details: endpoint,
+      originalError: e,
+    );
+  }
+
   /// Sends an HTTP GET request to [endpoint] and returns the decoded response.
   ///
   /// The request is automatically retried according to [retry] (defaults to
@@ -181,12 +196,8 @@ class ApiService {
 
           return _handleResponse(response);
         } on SocketException catch (e) {
-          throw NetworkException(
-            'Impossibile connettersi al server',
-            details: endpoint,
-            originalError: e,
-          );
-        } on TimeoutException catch (e) {
+          throw _toNetworkException(e, endpoint);
+        } on da.TimeoutException catch (e) {
           throw TimeoutException(
             'La richiesta ha impiegato troppo tempo',
             timeout: effectiveTimeout,
@@ -250,12 +261,8 @@ class ApiService {
 
         return _handleResponse(response);
       } on SocketException catch (e) {
-        throw NetworkException(
-          'Impossibile connettersi al server',
-          details: endpoint,
-          originalError: e,
-        );
-      } on TimeoutException catch (e) {
+        throw _toNetworkException(e, endpoint);
+      } on da.TimeoutException catch (e) {
         throw TimeoutException(
           'La richiesta ha impiegato troppo tempo',
           timeout: effectiveTimeout,
@@ -306,12 +313,8 @@ class ApiService {
 
         return _handleResponse(response);
       } on SocketException catch (e) {
-        throw NetworkException(
-          'Impossibile connettersi al server',
-          details: endpoint,
-          originalError: e,
-        );
-      } on TimeoutException catch (e) {
+        throw _toNetworkException(e, endpoint);
+      } on da.TimeoutException catch (e) {
         throw TimeoutException(
           'La richiesta ha impiegato troppo tempo',
           timeout: effectiveTimeout,
@@ -363,12 +366,8 @@ class ApiService {
 
         return _handleResponse(response);
       } on SocketException catch (e) {
-        throw NetworkException(
-          'Impossibile connettersi al server',
-          details: endpoint,
-          originalError: e,
-        );
-      } on TimeoutException catch (e) {
+        throw _toNetworkException(e, endpoint);
+      } on da.TimeoutException catch (e) {
         throw TimeoutException(
           'La richiesta ha impiegato troppo tempo',
           timeout: effectiveTimeout,
@@ -418,12 +417,8 @@ class ApiService {
 
         return _handleResponse(response);
       } on SocketException catch (e) {
-        throw NetworkException(
-          'Impossibile connettersi al server',
-          details: endpoint,
-          originalError: e,
-        );
-      } on TimeoutException catch (e) {
+        throw _toNetworkException(e, endpoint);
+      } on da.TimeoutException catch (e) {
         throw TimeoutException(
           'La richiesta ha impiegato troppo tempo',
           timeout: effectiveTimeout,

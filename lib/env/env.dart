@@ -23,16 +23,17 @@ part 'env.g.dart';
 ///
 /// Access individual variables through their static fields, e.g.:
 /// ```dart
-/// final baseUrl = Env.apiBaseUrl;
+/// final host = Env.apiHost;
+/// final port = Env.apiPort;
 /// ```
 @Envied(path: '.env')
 abstract class Env {
-  /// Base URL of the Spring Boot backend (AWS ALB endpoint or custom domain).
-  ///
-  /// Annotated with `obfuscate: true` so that the value is XOR-encoded in the
-  /// compiled output, reducing the risk of accidental exposure in distributed
-  /// binaries.  The generated `_Env.apiBaseUrl` getter performs the decoding
-  /// at runtime.
-  @EnviedField(varName: 'API_BASE_URL', obfuscate: true)
-  static final String apiBaseUrl = _Env.apiBaseUrl;
+  /// Hostname (with protocol) of the Spring Boot backend.
+  /// Examples: `http://192.168.178.146` (dev), `https://api.reeflife.com` (prod).
+  @EnviedField(varName: 'API_HOST', obfuscate: true)
+  static final String apiHost = _Env.apiHost;
+
+  /// Port of the Spring Boot backend, e.g. `8080` (dev) or `443` (prod).
+  @EnviedField(varName: 'API_PORT', obfuscate: true)
+  static final String apiPort = _Env.apiPort;
 }

@@ -7,6 +7,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/widgets/animated_value.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/utils/task_localizer.dart';
+import 'package:acquariumfe/utils/exception_localizer.dart';
+import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 import 'package:acquariumfe/widgets/skeleton_loader.dart';
@@ -109,7 +111,10 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                     style: theme.textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
-                  Text(error.toString(),
+                  Text(
+                    error is AppException
+                        ? ExceptionLocalizer.getLocalizedMessage(context, error)
+                        : error.toString(),
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
