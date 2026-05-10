@@ -7,13 +7,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/widgets/animated_value.dart';
 import 'package:acquariumfe/utils/custom_page_route.dart';
 import 'package:acquariumfe/utils/task_localizer.dart';
+import 'package:acquariumfe/utils/exception_localizer.dart';
+import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:acquariumfe/views/aquarium/aquarium_details.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 import 'package:acquariumfe/widgets/skeleton_loader.dart';
 import 'package:acquariumfe/widgets/empty_state.dart';
-import 'package:acquariumfe/services/parameter_service.dart';
-import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/providers/aquarium_providers.dart';
+import 'package:acquariumfe/providers/service_providers.dart';
 import 'package:acquariumfe/widgets/responsive_builder.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 
@@ -109,7 +110,10 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                     style: theme.textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
-                  Text(error.toString(),
+                  Text(
+                    error is AppException
+                        ? ExceptionLocalizer.getLocalizedMessage(context, error)
+                        : error.toString(),
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -129,10 +133,10 @@ class _AquariumViewState extends ConsumerState<AquariumView>
           // Imposta prima vasca come corrente
           if (aquariumsWithParams.isNotEmpty &&
               aquariumsWithParams.first.aquarium.id != null) {
-            ParameterService().setCurrentAquarium(
+            ref.read(parameterServiceProvider).setCurrentAquarium(
               aquariumsWithParams.first.aquarium.id!,
             );
-            TargetParametersService().setCurrentAquarium(
+            ref.read(targetParametersServiceProvider).setCurrentAquarium(
               aquariumsWithParams.first.aquarium.id!,
             );
 
@@ -230,8 +234,8 @@ class _AquariumViewState extends ConsumerState<AquariumView>
       onTap: () {
         // Imposta questa vasca come vasca corrente per i parametri
         if (aquarium.id != null) {
-          ParameterService().setCurrentAquarium(aquarium.id!);
-          TargetParametersService().setCurrentAquarium(aquarium.id!);
+          ref.read(parameterServiceProvider).setCurrentAquarium(aquarium.id!);
+          ref.read(targetParametersServiceProvider).setCurrentAquarium(aquarium.id!);
         }
 
         Navigator.push(

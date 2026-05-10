@@ -2,7 +2,9 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/providers/service_providers.dart';
 import 'package:acquariumfe/services/target_parameters_service.dart';
 import 'package:acquariumfe/widgets/animated_number.dart';
 import 'package:acquariumfe/widgets/tap_effect_card.dart';
@@ -20,7 +22,7 @@ import 'package:acquariumfe/l10n/app_localizations.dart';
 /// Tapping the card opens a dialog to update the target ORP, which is
 /// persisted via [TargetParametersService.saveTarget] with key `'orp'` and
 /// triggers [onTargetChanged] so the parent can refresh.
-class OrpMeter extends StatelessWidget {
+class OrpMeter extends ConsumerWidget {
   final double currentOrp;
   final double? targetOrp;
   final VoidCallback? onTargetChanged;
@@ -46,14 +48,15 @@ class OrpMeter extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final color = _getOrpColor();
     final status = _getStatus(context);
 
     return TapEffectCard(
-      onTap: () => _showEditTargetDialog(context),
+      onTap: () => _showEditTargetDialog(context, ref),
       rippleColor: color,
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -154,7 +157,7 @@ class OrpMeter extends StatelessWidget {
     );
   }
 
-  void _showEditTargetDialog(BuildContext context) async {
+  void _showEditTargetDialog(BuildContext context, WidgetRef ref) async {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController(
@@ -249,7 +252,7 @@ class OrpMeter extends StatelessWidget {
     );
 
     if (result != null) {
-      await TargetParametersService().saveTarget('orp', result);
+      await ref.read(targetParametersServiceProvider).saveTarget('orp', result);
       onTargetChanged?.call();
     }
   }

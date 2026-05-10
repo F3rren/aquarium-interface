@@ -2,6 +2,7 @@
 library;
 
 import 'package:aquariums_service/api.dart';
+import '../constants/api_endpoints.dart';
 import '../models/aquarium.dart';
 import '../models/aquarium_parameters.dart';
 import '../utils/exceptions.dart';
@@ -17,14 +18,20 @@ import 'api_service.dart';
 ///
 /// [DataFormatException] is thrown when neither shape is recognised.
 class AquariumsService {
-  final ApiService _apiService = ApiService();
+  /// Creates an [AquariumsService] backed by [apiService].
+  ///
+  /// Obtain the shared instance via Riverpod ([aquariumsServiceProvider])
+  /// rather than constructing directly.
+  AquariumsService(this._apiService);
+
+  final ApiService _apiService;
 
   /// Fetches all aquariums belonging to the authenticated user.
   ///
   /// Handles both a direct JSON array and wrapper objects keyed by
   /// `"aquariums"` or `"data"`.
   Future<List<Aquarium>> getAquariums() async {
-    final response = await _apiService.get('/aquariums');
+    final response = await _apiService.get(ApiEndpoints.aquariums);
 
     final List<dynamic> aquariumsJson;
 
@@ -58,7 +65,7 @@ class AquariumsService {
   /// response body cannot be parsed; HTTP 404 propagates as a [NetworkException]
   /// from [ApiService].
   Future<Aquarium?> getAquariumById(int id) async {
-    final response = await _apiService.get('/aquariums/$id');
+    final response = await _apiService.get(ApiEndpoints.aquarium(id));
     if (response is Map<String, dynamic>) {
       final aquariumData = response['data'] ?? response;
       return Aquarium.fromDto(AquariumResponseDTO.fromJson(aquariumData)!);
@@ -73,7 +80,7 @@ class AquariumsService {
   /// Creates a new aquarium and returns the backend-persisted entity (with its
   /// assigned [Aquarium.id]).
   Future<Aquarium> createAquarium(Aquarium aquarium) async {
-    final response = await _apiService.post('/aquariums', aquarium.toJson());
+    final response = await _apiService.post(ApiEndpoints.aquariums, aquarium.toJson());
     if (response is Map<String, dynamic> && response.containsKey('data')) {
       return Aquarium.fromDto(AquariumResponseDTO.fromJson(response['data'])!);
     }
@@ -83,13 +90,13 @@ class AquariumsService {
   /// Replaces the aquarium identified by [id] with the supplied [aquarium]
   /// data and returns the updated entity.
   Future<Aquarium> updateAquarium(int id, Aquarium aquarium) async {
-    final response = await _apiService.put('/aquariums/$id', aquarium.toJson());
+    final response = await _apiService.put(ApiEndpoints.aquarium(id), aquarium.toJson());
     return Aquarium.fromDto(AquariumResponseDTO.fromJson(response)!);
   }
 
   /// Permanently deletes the aquarium with the given [id].
   Future<void> deleteAquarium(int id) async {
-    await _apiService.delete('/aquariums/$id');
+    await _apiService.delete(ApiEndpoints.aquarium(id));
   }
 
   /// Fetches the most-recent water-parameter snapshot for aquarium [aquariumId].
@@ -97,7 +104,7 @@ class AquariumsService {
   /// Unwraps a `"data"` wrapper if present. The backend endpoint is
   /// `GET /aquariums/{id}/parameters`.
   Future<AquariumParameters> getAquariumParameters(int aquariumId) async {
-    final response = await _apiService.get('/aquariums/$aquariumId/parameters');
+    final response = await _apiService.get(ApiEndpoints.parameters(aquariumId));
 
     final Map<String, dynamic> parametersData;
     if (response is Map<String, dynamic>) {
@@ -141,8 +148,8 @@ class AquariumsService {
     final query = queryParams.entries
         .map((e) => '${e.key}=${e.value}')
         .join('&');
-    final endpoint =
-        '/aquariums/$aquariumId/parameters/history${query.isNotEmpty ? '?$query' : ''}';
+    final base = ApiEndpoints.parameterHistory(aquariumId);
+    final endpoint = query.isNotEmpty ? '$base?$query' : base;
 
     final response = await _apiService.get(endpoint);
 

@@ -6,14 +6,17 @@ part of 'service_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$apiServiceHash() => r'ce72c4f572ea14a273b01086cdc8905a2e469468';
+String _$apiServiceHash() => r'03cbd33147a7058d56175e532ac47e1aa4858c6d';
 
-/// Provider per ApiService (singleton)
-/// Gestisce tutte le chiamate HTTP al backend
+/// Provides the shared [ApiService] instance for all HTTP calls.
+///
+/// Marked `keepAlive: true` so the in-memory JWT cache and retry state persist
+/// for the full app lifetime. Pass the returned instance into every service
+/// that needs HTTP access instead of calling `ApiService()` directly.
 ///
 /// Copied from [apiService].
 @ProviderFor(apiService)
-final apiServiceProvider = AutoDisposeProvider<ApiService>.internal(
+final apiServiceProvider = Provider<ApiService>.internal(
   apiService,
   name: r'apiServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -25,15 +28,14 @@ final apiServiceProvider = AutoDisposeProvider<ApiService>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ApiServiceRef = AutoDisposeProviderRef<ApiService>;
-String _$aquariumsServiceHash() => r'99d14b8a40682e51b01d7c65296ec0f395aa8322';
+typedef ApiServiceRef = ProviderRef<ApiService>;
+String _$aquariumsServiceHash() => r'b161035fedafdfd8c0a7e211c31100fdfdb9629a';
 
-/// Provider per AquariumsService
-/// Gestisce CRUD acquari
+/// Provides the [AquariumsService] instance for aquarium CRUD operations.
 ///
 /// Copied from [aquariumsService].
 @ProviderFor(aquariumsService)
-final aquariumsServiceProvider = AutoDisposeProvider<AquariumsService>.internal(
+final aquariumsServiceProvider = Provider<AquariumsService>.internal(
   aquariumsService,
   name: r'aquariumsServiceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -45,37 +47,17 @@ final aquariumsServiceProvider = AutoDisposeProvider<AquariumsService>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AquariumsServiceRef = AutoDisposeProviderRef<AquariumsService>;
-String _$parameterServiceHash() => r'b6d4eb47ef4be4c8a2ecf601f5024d64e950f485';
-
-/// Provider per ParameterService
-/// Gestisce parametri acquario e storico
-///
-/// Copied from [parameterService].
-@ProviderFor(parameterService)
-final parameterServiceProvider = AutoDisposeProvider<ParameterService>.internal(
-  parameterService,
-  name: r'parameterServiceProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$parameterServiceHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ParameterServiceRef = AutoDisposeProviderRef<ParameterService>;
+typedef AquariumsServiceRef = ProviderRef<AquariumsService>;
 String _$targetParametersServiceHash() =>
-    r'a25a5193f61337673679cac909c80fd04bd6893e';
+    r'e6882716b860412163e070d5a1e381c681fa0148';
 
-/// Provider per TargetParametersService
-/// Gestisce i parametri target dell'acquario
+/// Provides the [TargetParametersService] instance for reading and writing
+/// user-defined target (ideal) ranges for each water parameter.
 ///
 /// Copied from [targetParametersService].
 @ProviderFor(targetParametersService)
 final targetParametersServiceProvider =
-    AutoDisposeProvider<TargetParametersService>.internal(
+    Provider<TargetParametersService>.internal(
       targetParametersService,
       name: r'targetParametersServiceProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -87,16 +69,56 @@ final targetParametersServiceProvider =
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef TargetParametersServiceRef =
-    AutoDisposeProviderRef<TargetParametersService>;
-String _$alertManagerHash() => r'a2aa43328ae16a6bff51e9a7565bb4bf0ab0b127';
+typedef TargetParametersServiceRef = ProviderRef<TargetParametersService>;
+String _$parameterServiceHash() => r'5043ebb75abb705630fa4c1b18db778677d7d367';
 
-/// Provider per AlertManager
-/// Gestisce notifiche e alert
+/// Provides the [ParameterService] instance for fetching current and
+/// historical water parameter readings.
+///
+/// Copied from [parameterService].
+@ProviderFor(parameterService)
+final parameterServiceProvider = Provider<ParameterService>.internal(
+  parameterService,
+  name: r'parameterServiceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$parameterServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ParameterServiceRef = ProviderRef<ParameterService>;
+String _$chartDataServiceHash() => r'2035136424299721b4ca137113989978936eef26';
+
+/// Provides the [ChartDataService] instance for loading historical parameter
+/// data and computing chart statistics.
+///
+/// Copied from [chartDataService].
+@ProviderFor(chartDataService)
+final chartDataServiceProvider = Provider<ChartDataService>.internal(
+  chartDataService,
+  name: r'chartDataServiceProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$chartDataServiceHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ChartDataServiceRef = ProviderRef<ChartDataService>;
+String _$alertManagerHash() => r'67fd8ac338f94e4e44ccb2937202c8fdd3a01189';
+
+/// Provides the [AlertManager] instance that evaluates parameter readings
+/// against configured thresholds and fires local notifications when a value
+/// falls outside its acceptable range.
 ///
 /// Copied from [alertManager].
 @ProviderFor(alertManager)
-final alertManagerProvider = AutoDisposeProvider<AlertManager>.internal(
+final alertManagerProvider = Provider<AlertManager>.internal(
   alertManager,
   name: r'alertManagerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -108,6 +130,6 @@ final alertManagerProvider = AutoDisposeProvider<AlertManager>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AlertManagerRef = AutoDisposeProviderRef<AlertManager>;
+typedef AlertManagerRef = ProviderRef<AlertManager>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

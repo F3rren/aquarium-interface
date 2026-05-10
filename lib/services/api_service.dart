@@ -1,7 +1,7 @@
 /// HTTP access layer for the ReefLife Spring Boot backend.
 ///
-/// Implements the **Singleton** pattern and provides the fundamental HTTP
-/// methods (GET, POST, PUT, PATCH, DELETE) with centralised handling of:
+/// Provides the fundamental HTTP methods (GET, POST, PUT, PATCH, DELETE) with
+/// centralised handling of:
 /// - JWT authentication via [FlutterSecureStorage] (Android Keystore /
 ///   iOS Keychain);
 /// - configurable per-request timeout ([defaultTimeout]);
@@ -12,43 +12,45 @@
 /// The base URL is read at compile-time from `Env.apiBaseUrl` (envied with
 /// XOR obfuscation), so it cannot be extracted with `strings` from the
 /// released APK/IPA binary.
+///
+/// Instantiate once and share via Riverpod ([apiServiceProvider]) so that the
+/// in-memory token cache and retry state are shared across all callers.
 library;
 
 import 'dart:convert';
-import 'dart:async';
+import 'dart:async' as da;
 import 'dart:io' show SocketException;
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:acquariumfe/constants/api_endpoints.dart';
 import 'package:acquariumfe/env/env.dart';
 import 'package:acquariumfe/utils/exceptions.dart';
 import 'package:acquariumfe/utils/retry_policy.dart';
 
-/// Singleton HTTP client for all calls to the ReefLife backend
-/// (Spring Boot on AWS ALB).
+/// HTTP client for all calls to the ReefLife backend (Spring Boot on AWS ALB).
 ///
 /// Exposes typed REST methods with timeout, automatic retry, and mapping of
-/// HTTP errors to [AppException] subclasses.  The JWT token is kept in
+/// HTTP errors to [AppException] subclasses. The JWT token is kept in
 /// encrypted storage and cached in memory to minimise I/O reads.
 ///
-/// Obtain the single instance via the default factory constructor:
+/// Obtain via Riverpod — do not instantiate directly in service classes:
 /// ```dart
-/// final api = ApiService();
+/// final api = ref.read(apiServiceProvider);
 /// ```
 class ApiService {
-  /// Private singleton instance, created once at class load time.
-  static final ApiService _instance = ApiService._internal();
+  /// Creates an [ApiService] with an optional custom [storage] backend.
+  ///
+  /// Production code should omit [storage] to use the default
+  /// [FlutterSecureStorage] backed by Android Keystore / iOS Keychain.
+  /// Tests may pass a mock storage to avoid filesystem side-effects.
+  ApiService({FlutterSecureStorage? storage})
+      : _storage = storage ??
+            const FlutterSecureStorage(
+              aOptions: AndroidOptions(encryptedSharedPreferences: true),
+            );
 
-  /// Returns the unique singleton instance of [ApiService].
-  factory ApiService() => _instance;
-
-  /// Private named constructor used by the singleton initialiser.
-  ApiService._internal();
-
-  /// Encrypted key-value storage backed by Android Keystore /
-  /// iOS Keychain, used to persist the JWT token across app restarts.
-  static const _storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
+  /// Encrypted key-value storage backed by Android Keystore / iOS Keychain.
+  final FlutterSecureStorage _storage;
 
   /// Key used to read/write the JWT token in [FlutterSecureStorage].
   static const _tokenKey = 'jwt_token';
@@ -78,7 +80,7 @@ class ApiService {
   ///
   /// The value is XOR-obfuscated in the binary — it cannot be extracted with
   /// `strings` on the APK/IPA.
-  static final String baseUrl = Env.apiBaseUrl;
+  static final String baseUrl = '${Env.apiHost}:${Env.apiPort}';
 
   // ---------------------------------------------------------------------------
   // Token management
@@ -140,6 +142,21 @@ class ApiService {
   // HTTP verbs
   // ---------------------------------------------------------------------------
 
+  NetworkException _toNetworkException(SocketException e, String endpoint) {
+    final code = e.osError?.errorCode;
+    final msg = e.osError?.message ?? e.message;
+    // ECONNREFUSED (111 Linux, 61 macOS/iOS, 10061 Windows): server up but port not open.
+    final isRefused = code == 111 || code == 61 || code == 10061 ||
+        msg.toLowerCase().contains('connection refused');
+    return NetworkException(
+      isRefused
+          ? 'Connection refused at $endpoint — check server port'
+          : 'Cannot reach server at $endpoint',
+      details: endpoint,
+      originalError: e,
+    );
+  }
+
   /// Sends an HTTP GET request to [endpoint] and returns the decoded response.
   ///
   /// The request is automatically retried according to [retry] (defaults to
@@ -181,12 +198,8 @@ class ApiService {
 
           return _handleResponse(response);
         } on SocketException catch (e) {
-          throw NetworkException(
-            'Impossibile connettersi al server',
-            details: endpoint,
-            originalError: e,
-          );
-        } on TimeoutException catch (e) {
+          throw _toNetworkException(e, endpoint);
+        } on da.TimeoutException catch (e) {
           throw TimeoutException(
             'La richiesta ha impiegato troppo tempo',
             timeout: effectiveTimeout,
@@ -250,12 +263,8 @@ class ApiService {
 
         return _handleResponse(response);
       } on SocketException catch (e) {
-        throw NetworkException(
-          'Impossibile connettersi al server',
-          details: endpoint,
-          originalError: e,
-        );
-      } on TimeoutException catch (e) {
+        throw _toNetworkException(e, endpoint);
+      } on da.TimeoutException catch (e) {
         throw TimeoutException(
           'La richiesta ha impiegato troppo tempo',
           timeout: effectiveTimeout,
@@ -306,12 +315,8 @@ class ApiService {
 
         return _handleResponse(response);
       } on SocketException catch (e) {
-        throw NetworkException(
-          'Impossibile connettersi al server',
-          details: endpoint,
-          originalError: e,
-        );
-      } on TimeoutException catch (e) {
+        throw _toNetworkException(e, endpoint);
+      } on da.TimeoutException catch (e) {
         throw TimeoutException(
           'La richiesta ha impiegato troppo tempo',
           timeout: effectiveTimeout,
@@ -363,12 +368,8 @@ class ApiService {
 
         return _handleResponse(response);
       } on SocketException catch (e) {
-        throw NetworkException(
-          'Impossibile connettersi al server',
-          details: endpoint,
-          originalError: e,
-        );
-      } on TimeoutException catch (e) {
+        throw _toNetworkException(e, endpoint);
+      } on da.TimeoutException catch (e) {
         throw TimeoutException(
           'La richiesta ha impiegato troppo tempo',
           timeout: effectiveTimeout,
@@ -418,12 +419,8 @@ class ApiService {
 
         return _handleResponse(response);
       } on SocketException catch (e) {
-        throw NetworkException(
-          'Impossibile connettersi al server',
-          details: endpoint,
-          originalError: e,
-        );
-      } on TimeoutException catch (e) {
+        throw _toNetworkException(e, endpoint);
+      } on da.TimeoutException catch (e) {
         throw TimeoutException(
           'La richiesta ha impiegato troppo tempo',
           timeout: effectiveTimeout,
@@ -453,13 +450,9 @@ class ApiService {
   /// backend.
   ///
   /// Throws any exception that [get] may throw.
-  Future<Map<String, dynamic>> getMaintenanceData(String aquariumId) async {
-    try {
-      final response = await get('/aquariums/$aquariumId/maintenance');
-      return response as Map<String, dynamic>;
-    } catch (e) {
-      rethrow;
-    }
+  Future<Map<String, dynamic>> getMaintenanceData(int aquariumId) async {
+    final response = await get(ApiEndpoints.maintenance(aquariumId));
+    return response as Map<String, dynamic>;
   }
 
   // ---------------------------------------------------------------------------

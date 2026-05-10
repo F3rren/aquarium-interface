@@ -20,23 +20,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
 
-/// Application entry point.
+/// Shared initialisation logic called by every flavor entry point.
 ///
-/// Performs async service initialisation before calling [runApp]:
-/// - [NotificationService.initialize] — registers local notification channels
-///   and requests platform permissions.
-/// - [AlertManager.initialize] — seeds default alert thresholds used when no
-///   persisted [NotificationSettings] are available yet.
-///
-/// The entire widget tree is wrapped in [ProviderScope] so that Riverpod
-/// providers are accessible from any widget.
-void main() async {
+/// [flavor] is one of `'dev'`, `'staging'`, or `'prod'`. It controls the
+/// debug banner visibility and the app title suffix shown in non-production
+/// builds.
+Future<void> bootstrap(String flavor) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inizializza il servizio notifiche
   await NotificationService().initialize();
 
-  // Inizializza l'alert manager con impostazioni di default
   AlertManager().initialize(
     NotificationSettings(
       enabledAlerts: true,
@@ -45,11 +38,16 @@ void main() async {
     ),
   );
 
-  runApp(
-    // ProviderScope è il root di Riverpod
-    const ProviderScope(child: MyApp()),
-  );
+  runApp(ProviderScope(child: MyApp(flavor: flavor)));
 }
+
+/// Default entry point — uses the dev flavor.
+///
+/// Use flavor-specific entry points for targeted builds:
+/// - `lib/main_dev.dart`     → `flutter run --flavor dev`
+/// - `lib/main_staging.dart` → `flutter run --flavor staging`
+/// - `lib/main_prod.dart`    → `flutter build appbundle --flavor prod`
+void main() => bootstrap('dev');
 
 /// Root widget of the ReefLife application.
 ///
@@ -68,8 +66,10 @@ void main() async {
 /// non-widget code (e.g. notification text builders) can access the current
 /// locale without a [BuildContext].
 class MyApp extends ConsumerWidget {
-  /// Creates the root application widget.
-  const MyApp({super.key});
+  const MyApp({super.key, required this.flavor});
+
+  /// Current build flavor: `'dev'`, `'staging'`, or `'prod'`.
+  final String flavor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -82,8 +82,8 @@ class MyApp extends ConsumerWidget {
     }
 
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'ReefLife',
+      debugShowCheckedModeBanner: flavor != 'prod',
+      title: flavor == 'prod' ? 'ReefLife' : 'ReefLife (${flavor.toUpperCase()})',
       theme: ref.watch(lightThemeProvider),
       darkTheme: ref.watch(darkThemeProvider),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,

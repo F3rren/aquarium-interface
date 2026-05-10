@@ -2,6 +2,7 @@
 library;
 
 import 'package:inhabitants_service/api.dart';
+import '../constants/api_endpoints.dart';
 import '../models/fish.dart';
 import '../models/coral.dart';
 import 'api_service.dart';
@@ -49,7 +50,7 @@ class InhabitantsService {
 
     try {
       final response = await _apiService.get(
-        '/aquariums/$_currentAquariumId/inhabitants',
+        ApiEndpoints.inhabitants(_currentAquariumId!),
       );
 
       if (response['data'] == null) return [];
@@ -110,7 +111,7 @@ class InhabitantsService {
       'notes': fish.notes ?? '',
     };
 
-    await _apiService.post('/aquariums/$_currentAquariumId/inhabitants', body);
+    await _apiService.post(ApiEndpoints.inhabitants(_currentAquariumId!), body);
   }
 
   /// Updates [fish] (size and notes) via
@@ -123,7 +124,7 @@ class InhabitantsService {
     final body = {'quantity': fish.size.toInt(), 'notes': fish.notes ?? ''};
 
     await _apiService.put(
-      '/aquariums/$_currentAquariumId/inhabitants/${fish.id}',
+      ApiEndpoints.inhabitant(_currentAquariumId!, int.parse(fish.id)),
       body,
     );
   }
@@ -134,7 +135,9 @@ class InhabitantsService {
       throw Exception('No aquarium selected');
     }
 
-    await _apiService.delete('/aquariums/$_currentAquariumId/inhabitants/$id');
+    await _apiService.delete(
+      ApiEndpoints.inhabitant(_currentAquariumId!, int.parse(id)),
+    );
   }
 
   // ── Corals ────────────────────────────────────────────────────────────────
@@ -152,7 +155,7 @@ class InhabitantsService {
 
     try {
       final response = await _apiService.get(
-        '/aquariums/$_currentAquariumId/inhabitants',
+        ApiEndpoints.inhabitants(_currentAquariumId!),
       );
 
       if (response['data'] == null) return [];
@@ -213,7 +216,7 @@ class InhabitantsService {
       'notes': coral.notes ?? '',
     };
 
-    await _apiService.post('/aquariums/$_currentAquariumId/inhabitants', body);
+    await _apiService.post(ApiEndpoints.inhabitants(_currentAquariumId!), body);
   }
 
   /// Updates [coral] (size and notes) via
@@ -226,7 +229,7 @@ class InhabitantsService {
     final body = {'quantity': coral.size.toInt(), 'notes': coral.notes ?? ''};
 
     await _apiService.put(
-      '/aquariums/$_currentAquariumId/inhabitants/${coral.id}',
+      ApiEndpoints.inhabitant(_currentAquariumId!, int.parse(coral.id)),
       body,
     );
   }
@@ -238,7 +241,9 @@ class InhabitantsService {
       throw Exception('No aquarium selected');
     }
 
-    await _apiService.delete('/aquariums/$_currentAquariumId/inhabitants/$id');
+    await _apiService.delete(
+      ApiEndpoints.inhabitant(_currentAquariumId!, int.parse(id)),
+    );
   }
 
   // ── Statistics ────────────────────────────────────────────────────────────

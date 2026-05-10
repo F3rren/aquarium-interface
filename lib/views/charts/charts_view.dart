@@ -3,9 +3,10 @@ library;
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:acquariumfe/services/chart_data_service.dart';
+import 'package:acquariumfe/providers/service_providers.dart';
 import 'package:acquariumfe/models/parameter_data_point.dart';
 import 'package:acquariumfe/utils/responsive_breakpoints.dart';
 import 'package:acquariumfe/l10n/app_localizations.dart';
@@ -26,16 +27,15 @@ import 'package:acquariumfe/l10n/app_localizations.dart';
 ///
 /// Uses the `fl_chart` package for rendering. The chart animates in
 /// (duration 400 ms) whenever new data is loaded.
-class ChartsView extends StatefulWidget {
+class ChartsView extends ConsumerStatefulWidget {
   const ChartsView({super.key});
 
   @override
-  State<ChartsView> createState() => _ChartsViewState();
+  ConsumerState<ChartsView> createState() => _ChartsViewState();
 }
 
-class _ChartsViewState extends State<ChartsView>
+class _ChartsViewState extends ConsumerState<ChartsView>
     with SingleTickerProviderStateMixin {
-  final ChartDataService _chartService = ChartDataService();
   Timer? _refreshTimer;
   int _selectedHours = 24; // 24 ore come default
   String _selectedParameter = 'Temperatura';
@@ -77,12 +77,12 @@ class _ChartsViewState extends State<ChartsView>
       setState(() => _isLoading = true);
     }
 
-    final data = await _chartService.loadHistoricalData(
+    final data = await ref.read(chartDataServiceProvider).loadHistoricalData(
       parameter: _selectedParameter,
       hours: _selectedHours,
     );
 
-    final stats = _chartService.calculateStats(data);
+    final stats = ref.read(chartDataServiceProvider).calculateStats(data);
 
     setState(() {
       _chartData = data;

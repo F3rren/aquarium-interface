@@ -1,9 +1,10 @@
 /// Service for managing user-defined target values for water parameters.
 library;
 
+import '../constants/api_endpoints.dart';
 import 'api_service.dart';
 
-/// Singleton that persists and retrieves the four target parameter values
+/// Persists and retrieves the four target parameter values
 /// (temperature, pH, salinity, ORP) for the current aquarium.
 ///
 /// Target values represent the ideal set-points the user is aiming for, as
@@ -25,12 +26,13 @@ import 'api_service.dart';
 /// - salinity: 1024.0 (specific gravity × 1000)
 /// - orp: 360.0 mV
 class TargetParametersService {
-  static final TargetParametersService _instance =
-      TargetParametersService._internal();
-  factory TargetParametersService() => _instance;
-  TargetParametersService._internal();
+  /// Creates a [TargetParametersService] backed by [apiService].
+  ///
+  /// Obtain the shared instance via Riverpod ([targetParametersServiceProvider])
+  /// rather than constructing directly.
+  TargetParametersService(this._apiService);
 
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
 
   /// ID of the currently active aquarium.
   int? _currentAquariumId;
@@ -88,7 +90,7 @@ class TargetParametersService {
 
     try {
       final response = await _apiService.get(
-        '/aquariums/$_currentAquariumId/settings/targets',
+        ApiEndpoints.targetSettings(_currentAquariumId!),
       );
 
       if (response is Map<String, dynamic> && response.containsKey('data')) {
@@ -121,20 +123,15 @@ class TargetParametersService {
       throw Exception('Nessun acquario selezionato');
     }
 
-    try {
-      final allTargets = await loadAllTargets();
+    final allTargets = await loadAllTargets();
+    allTargets[parameter.toLowerCase()] = value;
 
-      allTargets[parameter.toLowerCase()] = value;
+    await _apiService.post(
+      ApiEndpoints.targetSettings(_currentAquariumId!),
+      allTargets,
+    );
 
-      await _apiService.post(
-        '/aquariums/$_currentAquariumId/settings/targets',
-        allTargets,
-      );
-
-      _cachedTargets = allTargets;
-    } catch (e) {
-      rethrow;
-    }
+    _cachedTargets = allTargets;
   }
 
   /// Returns the target temperature, falling back to [defaultTemperature].
@@ -172,7 +169,7 @@ class TargetParametersService {
     }
 
     await _apiService.post(
-      '/aquariums/$_currentAquariumId/settings/targets',
+      ApiEndpoints.targetSettings(_currentAquariumId!),
       _getDefaults(),
     );
 

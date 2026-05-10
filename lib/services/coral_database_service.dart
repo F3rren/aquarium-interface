@@ -2,6 +2,7 @@
 library;
 
 import 'package:species_service/api.dart';
+import '../constants/api_endpoints.dart';
 import '../models/coral_species.dart';
 import 'api_service.dart';
 
@@ -40,7 +41,7 @@ class CoralDatabaseService {
     }
 
     try {
-      final response = await _apiService.get('/species/corals');
+      final response = await _apiService.get(ApiEndpoints.coralSpecies);
 
       // Normalise the two possible response shapes.
       List<dynamic> coralList;

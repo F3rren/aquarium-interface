@@ -8,7 +8,9 @@ part of 'aquarium_providers.dart';
 
 String _$aquariumCountHash() => r'aa7716d0dafdf646cb90e7fc2a28eb94c14deb84';
 
-/// Provider per contare gli acquari
+/// Provides the total number of registered aquariums.
+///
+/// Returns `0` while loading or when an error occurred.
 ///
 /// Copied from [aquariumCount].
 @ProviderFor(aquariumCount)
@@ -28,7 +30,10 @@ typedef AquariumCountRef = AutoDisposeProviderRef<int>;
 String _$aquariumsWithAlertsCountHash() =>
     r'2c4f9fe7df4b405b5d465f395f669ad75d3bd67c';
 
-/// Provider per acquari con alert
+/// Provides the number of aquariums that have at least one parameter outside
+/// its acceptable range (i.e. [AquariumWithParams.hasAlert] is `true`).
+///
+/// Returns `0` while loading or when an error occurred.
 ///
 /// Copied from [aquariumsWithAlertsCount].
 @ProviderFor(aquariumsWithAlertsCount)
@@ -47,8 +52,11 @@ final aquariumsWithAlertsCountProvider = AutoDisposeProvider<int>.internal(
 typedef AquariumsWithAlertsCountRef = AutoDisposeProviderRef<int>;
 String _$aquariumsHash() => r'680c009ee0247f450013e1486252652673b0ad8f';
 
-/// Provider per lista acquari con parametri
-/// Gestisce automaticamente loading/error/data
+/// Async provider for the full list of aquariums and their current parameters.
+///
+/// Manages loading / error / data states automatically via [AsyncValue].
+/// During the initial fetch, automatic alert checking is temporarily disabled
+/// to prevent spurious notifications; it is re-enabled once loading completes.
 ///
 /// Copied from [Aquariums].
 @ProviderFor(Aquariums)
@@ -69,7 +77,11 @@ final aquariumsProvider =
 typedef _$Aquariums = AutoDisposeAsyncNotifier<List<AquariumWithParams>>;
 String _$currentAquariumHash() => r'029dbdd9f7bef8b62d3036d7d831b6499d8c8235';
 
-/// Provider per l'acquario correntemente selezionato
+/// Provider that tracks the ID of the aquarium currently selected in the UI.
+///
+/// The initial value is derived from the first entry in [aquariumsProvider].
+/// Use [setAquarium] to change the selection; this also synchronises the
+/// underlying [ParameterService] and [TargetParametersService] singletons.
 ///
 /// Copied from [CurrentAquarium].
 @ProviderFor(CurrentAquarium)
