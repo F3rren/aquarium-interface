@@ -108,6 +108,8 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   
   # Testing packages
+  mocktail: ^1.0.4          # mock without code generation
+  fake_async: ^1.3.1        # control Timer/Future in tests
   mockito: ^5.4.4
   build_runner: ^2.4.13
   envied_generator: ^1.0.0
