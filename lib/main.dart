@@ -1,4 +1,4 @@
-/// Entry point and root widget tree for the ReefLife application.
+﻿/// Entry point and root widget tree for the ReefLife application.
 ///
 /// Initialises essential services (push notifications, alert manager) before
 /// handing control to Flutter's widget tree.  The Riverpod [ProviderScope] is
@@ -6,19 +6,19 @@
 /// providers without additional setup.
 library;
 
-import 'package:acquariumfe/routes/app_routes.dart';
-import 'package:acquariumfe/views/home/acquariums_view.dart';
-import 'package:acquariumfe/views/shared/navbar/navbar.dart';
-import 'package:acquariumfe/services/notification_service.dart';
-import 'package:acquariumfe/services/alert_manager.dart';
-import 'package:acquariumfe/services/app_locale_service.dart';
-import 'package:acquariumfe/models/notification_settings.dart';
-import 'package:acquariumfe/providers/theme_provider.dart';
-import 'package:acquariumfe/providers/locale_provider.dart';
+import 'package:acquariumfe/core/routing/app_routes.dart';
+import 'package:acquariumfe/features/aquarium/presentation/views/acquariums_view.dart';
+import 'package:acquariumfe/core/widgets/navbar/navbar.dart';
+import 'package:acquariumfe/features/settings/data/notification_service.dart';
+import 'package:acquariumfe/features/settings/data/alert_manager.dart';
+import 'package:acquariumfe/features/settings/data/app_locale_service.dart';
+import 'package:acquariumfe/features/settings/domain/models/notification_settings.dart';
+import 'package:acquariumfe/features/settings/presentation/providers/theme_provider.dart';
+import 'package:acquariumfe/features/settings/presentation/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:acquariumfe/l10n/app_localizations.dart';
+import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// Shared initialisation logic called by every flavor entry point.
 ///
