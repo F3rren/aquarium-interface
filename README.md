@@ -1,7 +1,8 @@
 # ReefLife
 
 ![Flutter](https://img.shields.io/badge/flutter-3.x-blue.svg)
-![Dart SDK](https://img.shields.io/badge/dart-^3.9.2-blue.svg)
+![Dart SDK](https://img.shields.io/badge/dart-%5E3.9.2-blue.svg)
+![Tests](https://img.shields.io/badge/tests-126%20passing-brightgreen.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
 ![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS-lightgrey.svg)
@@ -10,10 +11,22 @@
 > This app requires the companion backend [Aquarium Monitor](https://github.com/F3rren/aquarium-monitor) to operate.  
 > Without the backend, data persistence, authentication, and most features will not be available.
 
-A cross-platform app for smart aquarium management. Track water parameters, manage tank inhabitants, schedule maintenance tasks, and keep a full activity history over time.
+A cross-platform Flutter app for smart aquarium management. Track water parameters, manage tank inhabitants, schedule maintenance tasks, and keep a full activity history over time.
 
 ![Dashboard Demo](./assets/app.gif)
 ![Inhabitants Management Demo](./assets/inhabitant.gif)
+
+---
+
+## Features
+
+- **Aquarium management** — Create, edit, and delete marine, freshwater, and reef tanks. Default maintenance tasks are automatically initialized based on the tank type.
+- **Water parameters** — View temperature, pH, ORP, and salinity with interactive historical charts. Sensor integration (Arduino / Raspberry Pi) in progress.
+- **Species database** — Fish and coral catalogue with filtering by water-type compatibility.
+- **Maintenance** — Schedule and track recurring tasks (water change, filter cleaning, dosing, etc.) with persistent history and product inventory.
+- **Notifications** — Local alerts when critical parameter thresholds are exceeded. User-configurable alert ranges per aquarium.
+- **Multilingual** — Fully localized UI in 5 languages: Italian, English, German, Spanish, French. Default tasks are translated automatically based on device locale.
+- **Theme** — Light and dark mode, user-selectable and persisted across sessions.
 
 ---
 
@@ -21,21 +34,7 @@ A cross-platform app for smart aquarium management. Track water parameters, mana
 
 - Core features fully operational with complete database persistence.
 - IoT sensor integration (Arduino + Raspberry Pi) in progress.
-- Full UI with selectable light/dark theme.
-- Localized in 5 languages: Italian, English, German, Spanish, French.
 - Local notifications active; remote push notifications not yet implemented.
-
----
-
-## Features
-
-- **Aquarium management** — Create, edit, and delete marine, freshwater, and reef tanks. Default maintenance tasks are automatically initialized based on the tank type.
-- **Species database** — Fish and coral catalog with filtering by water type compatibility.
-- **Maintenance** — Schedule and track recurring tasks (water change, filter cleaning, dosing, etc.) with persistent history.
-- **Water parameters** — View temperature, pH, ORP, and salinity with interactive historical charts (sensor integration in progress).
-- **Notifications** — Local alerts when critical parameter thresholds are exceeded.
-- **Multilingual** — Fully localized UI; default tasks are translated automatically based on the device language.
-- **Theme** — Light and dark mode selectable by the user.
 
 ---
 
@@ -44,27 +43,92 @@ A cross-platform app for smart aquarium management. Track water parameters, mana
 - [ ] Arduino / Raspberry Pi integration for real-time sensor readings
 - [ ] User authentication and profile management
 - [ ] Remote push notifications for parameter alerts
-- [ ] Data export and multi-parameter charts
+- [ ] Data export and multi-parameter chart comparisons
 - [ ] Cloud backup and cross-device sync
 - [ ] Species database expansion (community contributions)
+- [x] Feature-first architecture (`core/` + `features/`)
+- [x] Dependency injection via Riverpod (`keepAlive` providers, constructor injection)
+- [x] Comprehensive test suite (126 tests — unit, provider, widget)
 - [x] Multilingual support (IT, EN, DE, ES, FR)
 - [x] Default maintenance tasks differentiated by tank type
 - [x] Light/dark theme
+- [x] Multi-flavor builds (dev / staging / prod)
 
 ---
 
 ## Architecture
 
+### Tech stack
+
 | Layer | Technology |
 |---|---|
-| UI | Flutter 3.x |
-| State management | Riverpod |
-| HTTP client | `package:http` |
+| UI | Flutter 3.x + Material 3 |
+| State management | Riverpod 2 (code-generated, `keepAlive` providers) |
+| HTTP client | `package:http` with JWT, retry, and typed exceptions |
 | Token storage | `flutter_secure_storage` (Android Keystore / iOS Keychain) |
 | Local notifications | `flutter_local_notifications` |
 | Charts | `fl_chart` |
 | Icons | Font Awesome Flutter |
 | Backend | Java (Spring Boot) on AWS |
+| API contracts | OpenAPI-generated DTOs |
+
+### Key patterns
+
+| Pattern | Where |
+|---|---|
+| **Feature-first** | `lib/core/` + `lib/features/<name>/{data,domain,presentation}` |
+| **Dependency injection** | All services injected via Riverpod constructor — no hidden Singletons |
+| **Result\<T\>** | `core/utils/result.dart` — `Ok`/`Err` sealed class, `guardResult()` helper |
+| **ApiEndpoints** | `core/constants/api_endpoints.dart` — single source of truth for all URLs |
+| **Retry policy** | `core/utils/retry_policy.dart` — exponential back-off, configurable per call |
+| **Typed exceptions** | `core/utils/exceptions.dart` — `NetworkException`, `AuthException`, etc. |
+
+---
+
+## Project Structure
+
+```
+lib/
+├── main.dart               # Entry point (delegates to bootstrap())
+├── main_dev.dart           # Dev flavor
+├── main_staging.dart       # Staging flavor
+├── main_prod.dart          # Production flavor
+│
+├── core/                   # Shared across all features
+│   ├── constants/          # ApiEndpoints, AppColors, notification texts
+│   ├── env/                # Envied-generated env vars (XOR-obfuscated)
+│   ├── l10n/               # ARB files + generated AppLocalizations
+│   ├── network/            # ApiService — HTTP client with JWT + retry
+│   ├── providers/          # service_providers.dart — Riverpod DI root
+│   ├── routing/            # AppRoutes, route names, page transitions
+│   ├── utils/              # exceptions, result, retry_policy, localizers
+│   └── widgets/            # Shared widgets (SkeletonLoader, EmptyState, …)
+│
+└── features/
+    ├── aquarium/           # Tank CRUD + dashboard
+    │   ├── data/           # AquariumsService
+    │   ├── domain/models/  # Aquarium
+    │   └── presentation/   # providers/, views/
+    ├── parameters/         # Water parameter readings + charts
+    │   ├── data/           # ParameterService, TargetParametersService, …
+    │   ├── domain/models/  # AquariumParameters, AquariumParameter, …
+    │   └── presentation/   # providers/, views/, widgets/
+    ├── charts/             # Historical data charts
+    │   ├── data/           # ChartDataService
+    │   └── presentation/   # views/
+    ├── maintenance/        # Tasks + product inventory
+    │   ├── data/           # MaintenanceTaskService, ProductService
+    │   ├── domain/models/  # MaintenanceTask, Product, MaintenanceLog
+    │   └── presentation/   # views/, widgets/
+    ├── inhabitants/        # Fish + coral management
+    │   ├── data/           # InhabitantsService, FishDatabaseService, …
+    │   ├── domain/models/  # Fish, Coral, FishSpecies, CoralSpecies, …
+    │   └── presentation/   # views/, widgets/
+    └── settings/           # Theme, locale, notifications
+        ├── data/           # AlertManager, NotificationService, …
+        ├── domain/models/  # NotificationSettings
+        └── presentation/   # providers/, views/
+```
 
 ---
 
@@ -72,8 +136,8 @@ A cross-platform app for smart aquarium management. Track water parameters, mana
 
 ### Prerequisites
 
-- Flutter SDK (^3.9.2)
-- Dart SDK (^3.9.2)
+- Flutter SDK `^3.9.2`
+- Dart SDK `^3.9.2`
 - [Aquarium Monitor](https://github.com/F3rren/aquarium-monitor) backend running
 
 ### Installation
@@ -84,46 +148,107 @@ cd aquarium-interface
 flutter pub get
 ```
 
-### API Configuration
+### Environment configuration
 
-The backend URL is injected at compile-time via `--dart-define`:
+The backend URL is injected at compile-time via `--dart-define`. Copy the example file first:
 
 ```bash
-# Development
-flutter run --dart-define=API_BASE_URL=http://<IP>:<PORT>
-
-# Android release build
-flutter build apk --dart-define=API_BASE_URL=http://<IP>:<PORT>
+cp .env.example .env
 ```
 
-If `API_BASE_URL` is not specified, the default value defined in `lib/services/api_service.dart` is used.
+Then run with the env vars:
 
-> **Android note:** For plain HTTP connections (non-HTTPS), the IP/domain must be listed in `android/app/src/main/res/xml/network_security_config.xml`.
+```bash
+# Development — plain HTTP (physical device or emulator)
+flutter run \
+  --flavor dev \
+  --target lib/main_dev.dart \
+  --dart-define=API_HOST=http://<IP> \
+  --dart-define=API_PORT=<PORT>
 
-### Running on a physical device
+# Staging
+flutter run \
+  --flavor staging \
+  --target lib/main_staging.dart \
+  --dart-define=API_HOST=https://staging.example.com \
+  --dart-define=API_PORT=443
+
+# Production release build
+flutter build apk \
+  --flavor prod \
+  --target lib/main_prod.dart \
+  --dart-define=API_HOST=https://api.example.com \
+  --dart-define=API_PORT=443
+```
+
+> **Android plain HTTP:** For non-HTTPS connections the IP/domain must be listed in  
+> `android/app/src/main/res/xml/network_security_config.xml`.
+
+### Run on a physical device
 
 ```bash
 flutter devices          # list connected devices
-flutter run -d <device>  # launch on the selected device
+flutter run --flavor dev --target lib/main_dev.dart -d <device-id>
 ```
 
 ---
 
-## Project Structure
+## Testing
+
+The project has **126 tests** covering unit, provider, and widget layers.
 
 ```
-lib/
-├── l10n/           # ARB localization files (it, en, de, es, fr)
-├── models/         # Data models (Aquarium, Fish, MaintenanceTask, ...)
-├── providers/      # Riverpod providers
-├── services/       # Business logic and API calls
-├── utils/          # Helpers (task_localizer, custom_page_route, ...)
-└── views/          # Screens and widgets
+test/
+├── helpers/
+│   ├── mocks.dart             # MockApiService + service mocks (mocktail)
+│   ├── fixtures.dart          # Reusable domain objects + JSON payloads
+│   └── provider_container.dart # makeContainer() with auto-dispose
+│
+├── core/utils/
+│   ├── result_test.dart       # Ok, Err, guardResult, map, fold
+│   ├── exceptions_test.dart   # Exception hierarchy + userMessage
+│   └── retry_policy_test.dart # Retry behavior, shouldRetry, presets
+│
+└── features/
     ├── aquarium/
-    ├── dashboard/
-    ├── home/
-    ├── maintenance/
-    └── profile/
+    │   ├── data/              # AquariumsService CRUD + error paths
+    │   ├── domain/            # Aquarium fromJson/toJson/copyWith roundtrip
+    │   └── presentation/      # aquariumsProvider states, AquariumView UI
+    ├── parameters/
+    │   ├── data/              # TargetParametersService cache + persistence
+    │   ├── domain/            # AquariumParameters fromJson/toJson/toMap
+    │   └── presentation/      # Thermometer widget rendering
+    └── settings/
+        └── presentation/      # AppThemeMode toggle + SharedPreferences
+```
+
+### Run the tests
+
+```bash
+# Full suite
+flutter test
+
+# Single feature
+flutter test test/features/aquarium/
+
+# With coverage report
+flutter test --coverage
+genhtml coverage/lcov.info -o coverage/html
+open coverage/html/index.html   # macOS / Linux
+```
+
+### Add a new test
+
+Follow the existing pattern: place the test file at the same path as its source file, replacing `lib/` with `test/`. Use `makeContainer()` from `test/helpers/provider_container.dart` for Riverpod tests and `MockApiService` from `test/helpers/mocks.dart` for service tests.
+
+---
+
+## Code generation
+
+Riverpod providers and OpenAPI DTOs use code generation. Re-run after modifying any `@riverpod` annotation or the OpenAPI spec:
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 ---
