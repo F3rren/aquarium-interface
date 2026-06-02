@@ -15,7 +15,6 @@ package-lock.json
 .svn/
 .swiftpm/
 migrate_working_dir/
-.md
 # IntelliJ related
 *.iml
 *.ipr
@@ -58,6 +57,6 @@ android/key.properties
 *.jks
 *.keystore
 
-# Generated Dart code — regenerate with: flutter pub run build_runner build
-*.g.dart
+# Generated Dart code (Riverpod *.g.dart, l10n delegates) IS committed so the
+# project builds from a clean checkout without running build_runner first.
 

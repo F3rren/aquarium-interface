@@ -7,11 +7,11 @@
 /// - configurable per-request timeout ([defaultTimeout]);
 /// - automatic retry via [RetryPolicy];
 /// - decoding and normalisation of HTTP errors into typed exceptions
-///   (see `lib/utils/exceptions.dart`).
+///   (see `core/utils/exceptions.dart`).
 ///
-/// The base URL is read at compile-time from `Env.apiBaseUrl` (envied with
-/// XOR obfuscation), so it cannot be extracted with `strings` from the
-/// released APK/IPA binary.
+/// The base URL is composed from [Env.apiHost] / [Env.apiPort], injected at
+/// build time via `--dart-define` (see `core/env/env.dart`). It is a public
+/// endpoint, not a secret.
 ///
 /// Instantiate once and share via Riverpod ([apiServiceProvider]) so that the
 /// in-memory token cache and retry state are shared across all callers.
@@ -75,11 +75,11 @@ class ApiService {
   /// [RetryPolicies.none] to avoid accidental duplicate mutations.
   RetryPolicy retryPolicy = RetryPolicies.network;
 
-  /// Base URL for the backend API, read at compile-time from the envied
-  /// generated class.
+  /// Base URL for the backend API, composed from [Env.apiHost] and
+  /// [Env.apiPort] (injected at build time via `--dart-define`).
   ///
-  /// The value is XOR-obfuscated in the binary — it cannot be extracted with
-  /// `strings` on the APK/IPA.
+  /// This is a public endpoint, not a secret: it is visible in every TLS
+  /// handshake and packet capture, so do not rely on obfuscation to hide it.
   static final String baseUrl = '${Env.apiHost}:${Env.apiPort}';
 
   // ---------------------------------------------------------------------------
