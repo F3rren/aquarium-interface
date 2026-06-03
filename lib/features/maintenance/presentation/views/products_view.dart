@@ -844,7 +844,6 @@ class _AddEditProductViewState extends State<AddEditProductView> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isEdit = widget.product != null;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 

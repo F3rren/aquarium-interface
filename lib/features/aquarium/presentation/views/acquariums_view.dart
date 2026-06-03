@@ -524,22 +524,4 @@ class _AquariumViewState extends ConsumerState<AquariumView>
       ),
     );
   }
-
-  /// Formatta un timestamp in formato relativo (es. "5 min fa", "2 ore fa")
-  String _formatRelativeTime(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    if (difference.inSeconds < 60) {
-      return 'adesso';
-    } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes} min fa';
-    } else if (difference.inHours < 24) {
-      return '${difference.inHours} ${difference.inHours == 1 ? 'ora' : 'ore'} fa';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} ${difference.inDays == 1 ? 'giorno' : 'giorni'} fa';
-    } else {
-      return '${(difference.inDays / 7).floor()} ${(difference.inDays / 7).floor() == 1 ? 'settimana' : 'settimane'} fa';
-    }
-  }
 }

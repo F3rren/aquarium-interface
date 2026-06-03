@@ -1144,7 +1144,6 @@ class _NotificationsPageState extends State<NotificationsPage>
           ),
           ElevatedButton(
             onPressed: () async {
-              final l10n = AppLocalizations.of(context)!;
               final newMin = double.tryParse(minController.text);
               final newMax = double.tryParse(maxController.text);
 
@@ -1420,7 +1419,6 @@ class _NotificationsPageState extends State<NotificationsPage>
           ),
           ElevatedButton(
             onPressed: () async {
-              final l10n = AppLocalizations.of(context)!;
               setState(() {
                 _settings = NotificationSettings(); // Reset a default
               });
