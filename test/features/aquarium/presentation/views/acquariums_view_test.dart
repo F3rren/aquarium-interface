@@ -102,8 +102,14 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Error state renders an ElevatedButton.icon with a retry label
-      expect(find.byType(ElevatedButton), findsOneWidget);
+      // Error state renders an ElevatedButton.icon with a retry label.
+      // Use a subtype-tolerant predicate: ElevatedButton.icon can return a
+      // private _ElevatedButtonWithIcon subclass on some Flutter versions,
+      // which find.byType(ElevatedButton) (exact runtime-type match) misses.
+      expect(
+        find.byWidgetPredicate((w) => w is ElevatedButton),
+        findsOneWidget,
+      );
     });
   });
 }
