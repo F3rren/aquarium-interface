@@ -803,31 +803,6 @@ class _MaintenanceViewState extends State<MaintenanceView>
     }
   }
 
-  void _showAddProductDialog() {
-    if (widget.aquariumId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('ID acquario non disponibile'),
-          backgroundColor: Color(0xFFef4444),
-        ),
-      );
-      return;
-    }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddEditProductView(
-          aquariumId: widget.aquariumId!,
-          onSaved: () {
-            // Ricarica i dati se necessario
-            setState(() {});
-          },
-        ),
-      ),
-    );
-  }
-
   Future<void> _showEditTaskDialog(MaintenanceTask task) async {
     final TextEditingController titleController = TextEditingController(
       text: task.title,

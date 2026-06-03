@@ -42,12 +42,12 @@ jobs:
         run: flutter pub get
 
       - name: Static analysis
-        # Errors-only gate for now: `flutter analyze` treats BOTH infos and
-        # warnings as fatal by default, and the legacy app code still carries
-        # ~45 warning/info findings (unused elements, deprecated_member_use,
-        # use_build_context_synchronously, ...). TODO: burn it down, then drop
-        # these two flags to re-tighten the gate.
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        # Warnings are fatal (dead code etc. must not regress). Infos remain
+        # non-fatal for now: the app still carries ~37 info-level findings
+        # (deprecated_member_use: withOpacity / Radio / FormField, and
+        # use_build_context_synchronously). TODO: burn those down, then drop
+        # --no-fatal-infos too.
+        run: flutter analyze --no-fatal-infos
 
       - name: Unit & widget tests
         run: flutter test --reporter expanded
