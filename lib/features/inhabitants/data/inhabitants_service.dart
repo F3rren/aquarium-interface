@@ -2,6 +2,7 @@
 library;
 
 import 'package:inhabitants_service/api.dart';
+import 'package:acquariumfe/core/utils/dto_parsing.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/fish.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral.dart';
@@ -58,7 +59,7 @@ class InhabitantsService {
       final List<dynamic> inhabitants = response['data'] as List;
 
       return inhabitants.where((item) => item['type'] == 'fish').map((item) {
-        final dto = InhabitantDetailsDTO.fromJson(item)!;
+        final dto = requireParsed(InhabitantDetailsDTO.fromJson(item), context: 'InhabitantDetailsDTO');
         final details = dto.details is Map
             ? (dto.details as Map).cast<String, dynamic>()
             : <String, dynamic>{};
@@ -163,7 +164,7 @@ class InhabitantsService {
       final List<dynamic> inhabitants = response['data'] as List;
 
       return inhabitants.where((item) => item['type'] == 'coral').map((item) {
-        final dto = InhabitantDetailsDTO.fromJson(item)!;
+        final dto = requireParsed(InhabitantDetailsDTO.fromJson(item), context: 'InhabitantDetailsDTO');
         final details = dto.details is Map
             ? (dto.details as Map).cast<String, dynamic>()
             : <String, dynamic>{};

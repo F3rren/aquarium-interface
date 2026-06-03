@@ -3,6 +3,7 @@ library;
 
 import 'dart:async';
 import 'package:aquariums_service/api.dart';
+import 'package:acquariumfe/core/utils/dto_parsing.dart';
 import 'package:acquariumfe/features/parameters/domain/models/aquarium_parameters.dart';
 import 'package:acquariumfe/features/parameters/domain/models/aquarium_parameter.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
@@ -196,7 +197,7 @@ class ParameterService {
       }
 
       final parameters = AquariumParameters.fromWaterParameterDto(
-        WaterParameterDTO.fromJson(parametersData)!,
+        requireParsed(WaterParameterDTO.fromJson(parametersData), context: 'WaterParameterDTO'),
       );
 
       // Merge manual parameters on top of sensor values.
@@ -338,7 +339,7 @@ class ParameterService {
 
       return historyJson
           .map((json) => AquariumParameters.fromWaterParameterDto(
-                WaterParameterDTO.fromJson(json)!,
+                requireParsed(WaterParameterDTO.fromJson(json), context: 'WaterParameterDTO'),
               ))
           .toList();
     } on AppException catch (e) {
