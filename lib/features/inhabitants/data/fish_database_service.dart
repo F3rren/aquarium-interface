@@ -2,6 +2,7 @@
 library;
 
 import 'package:species_service/api.dart';
+import 'package:acquariumfe/core/utils/dto_parsing.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/fish_species.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
@@ -58,7 +59,7 @@ class FishDatabaseService {
       }
 
       _cachedFish = fishList
-          .map((json) => FishSpecies.fromDto(FishResponseDTO.fromJson(json)!))
+          .map((json) => FishSpecies.fromDto(requireParsed(FishResponseDTO.fromJson(json), context: 'FishResponseDTO')))
           .toList();
 
       return _cachedFish!;

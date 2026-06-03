@@ -2,6 +2,7 @@
 library;
 
 import 'package:maintenance_service/api.dart';
+import 'package:acquariumfe/core/utils/dto_parsing.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/maintenance/domain/models/maintenance_task.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
@@ -56,7 +57,7 @@ class MaintenanceTaskService {
       }
 
       return tasksJson
-          .map((json) => MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(json)!))
+          .map((json) => MaintenanceTask.fromDto(requireParsed(MaintenanceTaskDTO.fromJson(json), context: 'MaintenanceTaskDTO')))
           .toList();
     } catch (e) {
       rethrow;
@@ -101,7 +102,7 @@ class MaintenanceTaskService {
         throw Exception('Formato risposta non valido');
       }
 
-      return MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(taskJson)!);
+      return MaintenanceTask.fromDto(requireParsed(MaintenanceTaskDTO.fromJson(taskJson), context: 'MaintenanceTaskDTO'));
     } catch (e) {
       rethrow;
     }
@@ -132,7 +133,7 @@ class MaintenanceTaskService {
         throw Exception('Formato risposta non valido');
       }
 
-      return MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(taskJson)!);
+      return MaintenanceTask.fromDto(requireParsed(MaintenanceTaskDTO.fromJson(taskJson), context: 'MaintenanceTaskDTO'));
     } catch (e) {
       rethrow;
     }
@@ -173,7 +174,7 @@ class MaintenanceTaskService {
         throw Exception('Formato risposta non valido');
       }
 
-      return MaintenanceTask.fromDto(MaintenanceTaskDTO.fromJson(taskJson)!);
+      return MaintenanceTask.fromDto(requireParsed(MaintenanceTaskDTO.fromJson(taskJson), context: 'MaintenanceTaskDTO'));
     } catch (e) {
       rethrow;
     }
