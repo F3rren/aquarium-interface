@@ -46,24 +46,37 @@ import 'package:logger/logger.dart';
 /// [MaintenanceTaskService], [TargetParametersService]) and invalidates the
 /// cache.
 class ParameterService {
-  /// Creates a [ParameterService] with its two Riverpod-managed dependencies.
+  /// Creates a [ParameterService].
   ///
-  /// [ManualParametersService], [NotificationSettingsService], and
-  /// [MaintenanceTaskService] are still self-managed Singletons and will be
-  /// migrated to Riverpod in a follow-up refactor.
+  /// [apiService] and [targetService] are the Riverpod-managed dependencies.
+  /// The remaining collaborators ([alertManager], [manualService],
+  /// [notificationService], [maintenanceService]) default to their shared
+  /// singletons in production but can be injected in tests to isolate this
+  /// service from global state.
   ///
   /// Obtain the shared instance via Riverpod ([parameterServiceProvider])
   /// rather than constructing directly.
-  ParameterService(this._apiService, this._targetService);
+  ParameterService(
+    this._apiService,
+    this._targetService, {
+    AlertManager? alertManager,
+    ManualParametersService? manualService,
+    NotificationSettingsService? notificationService,
+    MaintenanceTaskService? maintenanceService,
+  })  : _alertManager = alertManager ?? AlertManager(),
+        _manualService = manualService ?? ManualParametersService(),
+        _notificationService =
+            notificationService ?? NotificationSettingsService(),
+        _maintenanceService =
+            maintenanceService ?? MaintenanceTaskService();
 
   final ApiService _apiService;
   final TargetParametersService _targetService;
-  final AlertManager _alertManager = AlertManager();
+  final AlertManager _alertManager;
   final Logger _logger = Logger();
-  final ManualParametersService _manualService = ManualParametersService();
-  final NotificationSettingsService _notificationService =
-      NotificationSettingsService();
-  final MaintenanceTaskService _maintenanceService = MaintenanceTaskService();
+  final ManualParametersService _manualService;
+  final NotificationSettingsService _notificationService;
+  final MaintenanceTaskService _maintenanceService;
 
   /// ID of the currently selected aquarium.
   int? _currentid;
