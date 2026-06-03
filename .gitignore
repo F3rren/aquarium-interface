@@ -60,3 +60,7 @@ android/key.properties
 # Generated Dart code (Riverpod *.g.dart, l10n delegates) IS committed so the
 # project builds from a clean checkout without running build_runner first.
 
+# Claude Code session worktrees — never commit (a stray gitlink here breaks
+# `actions/checkout` submodule cleanup in CI).
+.claude/worktrees/
+
