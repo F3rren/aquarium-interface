@@ -35,9 +35,10 @@ import 'package:logger/logger.dart';
 ///   [_checkAllParametersForAlerts] (can be disabled with
 ///   [setAutoCheckAlerts]).
 ///
-/// **Mock fallback:** when `useMock: true` (the default) and the network
-/// request fails, [getCurrentParameters] returns pre-defined typical reef
-/// values rather than propagating the error.
+/// **Mock fallback (opt-in):** [getCurrentParameters] propagates errors by
+/// default. Pass `useMock: true` (dev/demo only) to return pre-defined typical
+/// reef values instead of throwing — never enable it in production, as it
+/// hides a dead backend behind plausible-looking "all good" data.
 ///
 /// Call [setCurrentAquarium] before any fetch. Changing the aquarium
 /// automatically propagates the ID to all dependent services
@@ -130,16 +131,16 @@ class ParameterService {
   /// [ManualParametersService] and overlay the sensor values for the five
   /// manually-tested parameters.
   ///
-  /// When [useMock] is `true` (default) and any exception occurs, a hardcoded
-  /// fallback with typical reef values is returned instead of propagating the
-  /// error. Set `useMock: false` in unit tests or when the caller wants to
-  /// handle errors explicitly.
+  /// Errors are propagated by default so the UI can show a real error state.
+  /// Pass [useMock] `true` (dev/demo only) to return a hardcoded fallback with
+  /// typical reef values instead of throwing — do not use it in production, as
+  /// it masks a failing backend with plausible "all good" readings.
   ///
   /// Throws [NoAquariumSelectedException] when no aquarium is active and [id]
   /// is also `null`.
   Future<AquariumParameters> getCurrentParameters({
     int? id,
-    bool useMock = true,
+    bool useMock = false,
   }) async {
     final targetid = id ?? _currentid;
 
@@ -426,11 +427,24 @@ class ParameterService {
 
     _isAutoRefreshEnabled = true;
 
-    getCurrentParameters();
+    unawaited(_autoRefreshTick());
 
-    _refreshTimer = Timer.periodic(interval, (timer) {
-      getCurrentParameters();
-    });
+    _refreshTimer = Timer.periodic(
+      interval,
+      (_) => unawaited(_autoRefreshTick()),
+    );
+  }
+
+  /// Performs a single auto-refresh fetch. Errors are logged and swallowed so a
+  /// transient backend failure neither crashes the app with an unhandled async
+  /// error nor pushes stale/fake data onto [parametersStream] — the last known
+  /// values simply remain until the next successful tick.
+  Future<void> _autoRefreshTick() async {
+    try {
+      await getCurrentParameters();
+    } catch (e) {
+      _logger.w('Auto-refresh failed; keeping last known values', error: e);
+    }
   }
 
   /// Stops and cancels the auto-refresh timer.
