@@ -1,39 +1,42 @@
-/// Compile-time environment variable bindings for the ReefLife app.
+/// Compile-time backend configuration for the ReefLife app.
 ///
-/// Values are injected at build time from a `.env` file (local development) or
-/// from OS-level environment variables / `--dart-define` flags (CI/CD and
-/// release builds).  The companion generated file `env.g.dart` is produced by
-/// running:
+/// Values are injected at build time with `--dart-define` /
+/// `--dart-define-from-file`, paired with the matching flavor entry point:
 ///
 /// ```bash
-/// flutter pub run build_runner build --delete-conflicting-outputs
+/// flutter run   --flavor dev     -t lib/main_dev.dart     --dart-define-from-file=.env.dev
+/// flutter run   --flavor staging -t lib/main_staging.dart --dart-define-from-file=.env.staging
+/// flutter build apk --flavor prod -t lib/main_prod.dart   --dart-define-from-file=.env.prod
 /// ```
 ///
-/// **Security note:** Every field annotated with `obfuscate: true` is
-/// XOR-obfuscated in the compiled binary, making trivial string-scanning
-/// attacks (e.g. `strings` on the APK/IPA) ineffective.  Do **not** commit
-/// the `.env` file to version control — use `.env.example` as a template.
+/// The defaults target the Android emulator loopback (`http://10.0.2.2:8080`)
+/// so that `flutter analyze`, `flutter test`, and a bare `flutter run` work
+/// without any extra flags.
+///
+/// **Security note:** the API base URL is *not* a secret — it is visible in
+/// every TLS handshake and packet capture, and any client-side "obfuscation"
+/// of it is trivially reversible (the key ships next to the data). Do not treat
+/// build-time injection as a secrecy mechanism. The only real secret — the JWT
+/// — lives at runtime in `flutter_secure_storage`, never baked into the binary.
 library;
 
-import 'package:envied/envied.dart';
-
-part 'env.g.dart';
-
-/// Static container for all compile-time environment variables.
+/// Static holder for compile-time environment configuration.
 ///
-/// Access individual variables through their static fields, e.g.:
+/// Access the values through the static fields, e.g.:
 /// ```dart
 /// final host = Env.apiHost;
 /// final port = Env.apiPort;
 /// ```
-@Envied(path: '.env')
 abstract class Env {
-  /// Hostname (with protocol) of the Spring Boot backend.
-  /// Examples: `http://192.168.178.146` (dev), `https://api.reeflife.com` (prod).
-  @EnviedField(varName: 'API_HOST', obfuscate: true)
-  static final String apiHost = _Env.apiHost;
+  /// Backend host including scheme, e.g. `https://api.reeflife.com`.
+  ///
+  /// Overridden at build time via `--dart-define=API_HOST=...`.
+  static const String apiHost =
+      String.fromEnvironment('API_HOST', defaultValue: 'http://10.0.2.2');
 
-  /// Port of the Spring Boot backend, e.g. `8080` (dev) or `443` (prod).
-  @EnviedField(varName: 'API_PORT', obfuscate: true)
-  static final String apiPort = _Env.apiPort;
+  /// Backend port, e.g. `8080` (dev) or `443` (prod).
+  ///
+  /// Overridden at build time via `--dart-define=API_PORT=...`.
+  static const String apiPort =
+      String.fromEnvironment('API_PORT', defaultValue: '8080');
 }

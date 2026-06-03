@@ -17,7 +17,7 @@ void main() {
     registerFallbackValue(0.0);
   });
 
-  Widget _wrap(Widget child) {
+  Widget wrap(Widget child) {
     return ProviderScope(
       overrides: [
         targetParametersServiceProvider.overrideWithValue(targetService),
@@ -38,7 +38,7 @@ void main() {
   group('Thermometer widget', () {
     testWidgets('renders current temperature', (tester) async {
       await tester.pumpWidget(
-        _wrap(const Thermometer(currentTemperature: 25.5)),
+        wrap(const Thermometer(currentTemperature: 25.5)),
       );
       await tester.pump();
 
@@ -48,7 +48,7 @@ void main() {
     testWidgets('shows green color for optimal temperature (24–26 °C)',
         (tester) async {
       await tester.pumpWidget(
-        _wrap(const Thermometer(currentTemperature: 25.0)),
+        wrap(const Thermometer(currentTemperature: 25.0)),
       );
       await tester.pump();
 
@@ -64,7 +64,7 @@ void main() {
           .thenAnswer((_) async => {'temperature': 25.0});
 
       await tester.pumpWidget(
-        _wrap(Thermometer(
+        wrap(Thermometer(
           currentTemperature: 25.0,
           targetTemperature: 25.0,
           onTargetChanged: () => callbackFired = true,
@@ -94,7 +94,7 @@ void main() {
   group('Thermometer._getTemperatureColor (via black-box test)', () {
     testWidgets('low temperature widget renders without error', (tester) async {
       await tester.pumpWidget(
-        _wrap(const Thermometer(currentTemperature: 20.0)), // below 24 → blue
+        wrap(const Thermometer(currentTemperature: 20.0)), // below 24 → blue
       );
       await tester.pump();
       expect(find.byType(Thermometer), findsOneWidget);
@@ -102,7 +102,7 @@ void main() {
 
     testWidgets('high temperature widget renders without error', (tester) async {
       await tester.pumpWidget(
-        _wrap(const Thermometer(currentTemperature: 30.0)), // above 26 → red
+        wrap(const Thermometer(currentTemperature: 30.0)), // above 26 → red
       );
       await tester.pump();
       expect(find.byType(Thermometer), findsOneWidget);

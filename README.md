@@ -2,6 +2,7 @@
 
 ![Flutter](https://img.shields.io/badge/flutter-3.x-blue.svg)
 ![Dart SDK](https://img.shields.io/badge/dart-%5E3.9.2-blue.svg)
+[![CI](https://github.com/F3rren/aquarium-interface/actions/workflows/ci.yml/badge.svg)](https://github.com/F3rren/aquarium-interface/actions/workflows/ci.yml)
 ![Tests](https://img.shields.io/badge/tests-126%20passing-brightgreen.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)
@@ -77,7 +78,7 @@ A cross-platform Flutter app for smart aquarium management. Track water paramete
 | Pattern | Where |
 |---|---|
 | **Feature-first** | `lib/core/` + `lib/features/<name>/{data,domain,presentation}` |
-| **Dependency injection** | All services injected via Riverpod constructor — no hidden Singletons |
+| **Dependency injection** | Core services (HTTP, aquariums, parameters, charts) wired via Riverpod `keepAlive` providers + constructor injection. A few legacy services are still self-managed singletons and are being migrated |
 | **Result\<T\>** | `core/utils/result.dart` — `Ok`/`Err` sealed class, `guardResult()` helper |
 | **ApiEndpoints** | `core/constants/api_endpoints.dart` — single source of truth for all URLs |
 | **Retry policy** | `core/utils/retry_policy.dart` — exponential back-off, configurable per call |
@@ -96,7 +97,7 @@ lib/
 │
 ├── core/                   # Shared across all features
 │   ├── constants/          # ApiEndpoints, AppColors, notification texts
-│   ├── env/                # Envied-generated env vars (XOR-obfuscated)
+│   ├── env/                # Compile-time config via --dart-define (Env.apiHost/apiPort)
 │   ├── l10n/               # ARB files + generated AppLocalizations
 │   ├── network/            # ApiService — HTTP client with JWT + retry
 │   ├── providers/          # service_providers.dart — Riverpod DI root
@@ -150,13 +151,17 @@ flutter pub get
 
 ### Environment configuration
 
-The backend URL is injected at compile-time via `--dart-define`. Copy the example file first:
+The backend URL is injected at **build time** via `--dart-define` (or
+`--dart-define-from-file=<file>`), paired with the matching flavor entry point.
+There is no runtime `.env`; if you omit the flags the app falls back to the dev
+defaults in `core/env/env.dart` (`http://10.0.2.2:8080`, the Android-emulator
+loopback). To use a file instead of inline flags, copy the template:
 
 ```bash
-cp .env.example .env
+cp .env.example .env.dev   # edit API_HOST / API_PORT, then pass --dart-define-from-file=.env.dev
 ```
 
-Then run with the env vars:
+Run with the values inline (or via the file above):
 
 ```bash
 # Development — plain HTTP (physical device or emulator)
