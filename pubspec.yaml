@@ -60,8 +60,6 @@ dependencies:
     path: lib/api/generated/aquariums_service
   inhabitants_service:
     path: lib/api/generated/inhabitants_service
-  species_service:
-    path: lib/api/generated/species_service
   maintenance_service:
     path: lib/api/generated/maintenance_service
 
