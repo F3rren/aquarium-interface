@@ -1,8 +1,6 @@
 /// Domain model for aquarium products tracked in the user's inventory.
 library;
 
-import 'package:maintenance_service/api.dart';
-
 /// Classifies an aquarium product for display, filtering, and backend mapping.
 ///
 /// Backend serialisation uses UPPERCASE strings (e.g. `'WATER_TREATMENT'`);
@@ -103,48 +101,6 @@ class Product {
     this.usageFrequency,
     this.lastUsed,
   });
-
-  /// Creates a [Product] from a generated [ProductDTO].
-  factory Product.fromDto(ProductDTO dto) {
-    ProductCategory parseCategory(String? raw) {
-      switch ((raw ?? '').toUpperCase()) {
-        case 'BACTERIA':
-          return ProductCategory.bacteria;
-        case 'FOOD':
-          return ProductCategory.food;
-        case 'TEST':
-          return ProductCategory.test;
-        case 'SUPPLEMENT':
-          return ProductCategory.supplement;
-        case 'WATER_TREATMENT':
-          return ProductCategory.waterTreatment;
-        case 'EQUIPMENT':
-          return ProductCategory.equipment;
-        case 'MEDICINE':
-          return ProductCategory.medicine;
-        default:
-          return ProductCategory.other;
-      }
-    }
-
-    return Product(
-      id: dto.id?.toString() ?? '',
-      name: dto.name ?? '',
-      category: parseCategory(dto.category?.value),
-      brand: dto.brand,
-      quantity: dto.quantity,
-      unit: dto.unit,
-      cost: dto.cost,
-      currency: dto.currency ?? '€',
-      purchaseDate: dto.purchaseDate,
-      expiryDate: dto.expiryDate,
-      notes: dto.notes,
-      imageUrl: dto.imageUrl,
-      isFavorite: dto.isFavorite ?? false,
-      usageFrequency: dto.usageFrequency,
-      lastUsed: dto.lastUsed,
-    );
-  }
 
   /// Returns a copy with the specified fields replaced.
   Product copyWith({

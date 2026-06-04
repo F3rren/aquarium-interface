@@ -1,8 +1,6 @@
 ﻿/// Service for managing aquarium product inventory via the backend API.
 library;
 
-import 'package:maintenance_service/api.dart';
-import 'package:acquariumfe/core/utils/dto_parsing.dart';
 import 'package:logger/logger.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/maintenance/domain/models/product.dart';
@@ -110,7 +108,7 @@ class ProductService {
       }
 
       final products = productList
-          .map((json) => Product.fromDto(requireParsed(ProductDTO.fromJson(json), context: 'ProductDTO')))
+          .map((json) => Product.fromJson(Map<String, dynamic>.from(json as Map)))
           .toList();
 
       // Only cache unfiltered results.
@@ -158,7 +156,7 @@ class ProductService {
 
       if (response is Map<String, dynamic>) {
         if (response.containsKey('data')) {
-          return Product.fromDto(requireParsed(ProductDTO.fromJson(response['data']), context: 'ProductDTO'));
+          return Product.fromJson(Map<String, dynamic>.from(response['data'] as Map));
         }
       }
       return null;
