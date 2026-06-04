@@ -1,8 +1,6 @@
 /// Domain model representing a fish specimen kept in a user's aquarium.
 library;
 
-import 'package:inhabitants_service/api.dart';
-
 /// A fish specimen added by the user to one of their aquariums.
 ///
 /// Like [Coral], fields are split into two groups:
@@ -77,20 +75,43 @@ class Fish {
     this.reefSafe,
   });
 
-  /// Creates a [Fish] from a generated [InhabitantDetailsDTO] with type `'fish'`.
-  factory Fish.fromInhabitantDto(InhabitantDetailsDTO dto) {
+  /// Creates a [Fish] from a backend inhabitants-API JSON record
+  /// (`type == 'fish'`).
+  ///
+  /// Top-level keys carry the user's customisations; the nested `details`
+  /// object carries the denormalised species data, which takes precedence.
+  /// Size falls back through `details.size` -> `details.maxSize` ->
+  /// `currentSize` -> 10.0 cm.
+  factory Fish.fromInhabitantJson(Map<String, dynamic> json) {
+    final details = json['details'] is Map
+        ? (json['details'] as Map).cast<String, dynamic>()
+        : <String, dynamic>{};
+    final rawSize = details['size'] ?? details['maxSize'] ?? json['currentSize'];
+    final size = rawSize is int
+        ? rawSize.toDouble()
+        : (rawSize as num?)?.toDouble() ?? 10.0;
+
     return Fish(
-      id: dto.id?.toString() ?? '',
-      name: dto.customName ?? dto.commonName ?? '',
-      species: dto.scientificName ?? dto.commonName ?? '',
-      size: (dto.currentSize ?? 0).toDouble(),
-      addedDate: dto.addedDate ?? DateTime.now(),
-      notes: dto.notes,
-      difficulty: dto.customDifficulty,
-      temperament: dto.customTemperament,
-      diet: dto.customDiet,
-      reefSafe: dto.isReefSafe,
-      minTankSize: dto.customMinTankSize,
+      id: json['id']?.toString() ?? '',
+      name: json['customName'] ?? json['commonName'] ?? '',
+      species: json['scientificName'] ?? json['commonName'] ?? '',
+      size: size,
+      addedDate:
+          DateTime.tryParse(json['addedDate']?.toString() ?? '') ??
+              DateTime.now(),
+      notes: details['notes'] as String? ?? json['notes'] as String?,
+      imageUrl: details['imageUrl'] as String?,
+      family: details['family'] as String?,
+      minTankSize:
+          details['minTankSize'] as int? ?? json['customMinTankSize'] as int?,
+      maxSize: (details['maxSize'] as num?)?.toDouble(),
+      difficulty:
+          details['difficulty'] as String? ?? json['customDifficulty'] as String?,
+      temperament: details['temperament'] as String? ??
+          json['customTemperament'] as String?,
+      diet: details['diet'] as String? ?? json['customDiet'] as String?,
+      description: details['description'] as String?,
+      reefSafe: details['reefSafe'] as bool? ?? json['isReefSafe'] as bool?,
     );
   }
 

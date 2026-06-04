@@ -1,8 +1,6 @@
 /// Domain model representing a coral specimen kept in a user's aquarium.
 library;
 
-import 'package:inhabitants_service/api.dart';
-
 /// A coral specimen added by the user to one of their aquariums.
 ///
 /// Fields are split into two groups:
@@ -85,22 +83,44 @@ class Coral {
     this.maxSize,
   });
 
-  /// Creates a [Coral] from a generated [InhabitantDetailsDTO] with type `'coral'`.
+  /// Creates a [Coral] from a backend inhabitants-API JSON record
+  /// (`type == 'coral'`).
   ///
-  /// [type] and [placement] are not present in the DTO and default to empty
-  /// strings; they should be enriched from the species catalogue if needed.
-  factory Coral.fromInhabitantDto(InhabitantDetailsDTO dto) {
+  /// Top-level keys carry the user's customisations; the nested `details`
+  /// object carries the denormalised species data, which takes precedence.
+  /// Size falls back through `details.size` -> `details.maxSize` ->
+  /// `currentSize` -> 5.0 cm. [type] and [placement] default to `'SPS'` /
+  /// `'Medio'` when absent.
+  factory Coral.fromInhabitantJson(Map<String, dynamic> json) {
+    final details = json['details'] is Map
+        ? (json['details'] as Map).cast<String, dynamic>()
+        : <String, dynamic>{};
+    final rawSize = details['size'] ?? details['maxSize'] ?? json['currentSize'];
+    final size = rawSize is int
+        ? rawSize.toDouble()
+        : (rawSize as num?)?.toDouble() ?? 5.0;
+
     return Coral(
-      id: dto.id?.toString() ?? '',
-      name: dto.customName ?? dto.commonName ?? '',
-      species: dto.scientificName ?? dto.commonName ?? '',
-      type: '',
-      size: (dto.currentSize ?? 0).toDouble(),
-      addedDate: dto.addedDate ?? DateTime.now(),
-      placement: '',
-      notes: dto.notes,
-      difficulty: dto.customDifficulty,
-      minTankSize: dto.customMinTankSize,
+      id: json['id']?.toString() ?? '',
+      name: json['customName'] ?? json['commonName'] ?? '',
+      species: json['scientificName'] ?? json['commonName'] ?? '',
+      type: details['type'] as String? ?? 'SPS',
+      size: size,
+      addedDate:
+          DateTime.tryParse(json['addedDate']?.toString() ?? '') ??
+              DateTime.now(),
+      placement: details['placement'] as String? ?? 'Medio',
+      notes: details['notes'] as String? ?? json['notes'] as String?,
+      difficulty:
+          details['difficulty'] as String? ?? json['customDifficulty'] as String?,
+      lightRequirement: details['lightRequirement'] as String?,
+      flowRequirement: details['flowRequirement'] as String?,
+      feeding: details['feeding'] as String?,
+      description: details['description'] as String?,
+      aggressive: details['aggressive'] as bool?,
+      minTankSize:
+          details['minTankSize'] as int? ?? json['customMinTankSize'] as int?,
+      maxSize: details['maxSize'] as int?,
     );
   }
 
