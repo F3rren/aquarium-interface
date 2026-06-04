@@ -121,9 +121,9 @@ class _ProductsViewState extends State<ProductsView> {
       margin: EdgeInsets.all(padding),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3)),
+        border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -457,10 +457,10 @@ class _ProductsViewState extends State<ProductsView> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: (color ?? theme.colorScheme.primary).withOpacity(0.1),
+        color: (color ?? theme.colorScheme.primary).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: (color ?? theme.colorScheme.primary).withOpacity(0.3),
+          color: (color ?? theme.colorScheme.primary).withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -494,9 +494,9 @@ class _ProductsViewState extends State<ProductsView> {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
+        color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+        border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
       ),
       child: Text(
         warnings.join(' • '),
@@ -516,7 +516,7 @@ class _ProductsViewState extends State<ProductsView> {
           FaIcon(
             FontAwesomeIcons.boxOpen,
             size: 64,
-            color: theme.colorScheme.primary.withOpacity(0.3),
+            color: theme.colorScheme.primary.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text('Nessun prodotto trovato', style: theme.textTheme.titleLarge),

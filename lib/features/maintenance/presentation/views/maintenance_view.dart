@@ -109,7 +109,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
             border: Border(
-              bottom: BorderSide(color: theme.dividerColor.withOpacity(0.1)),
+              bottom: BorderSide(color: theme.dividerColor.withValues(alpha: 0.1)),
             ),
           ),
           child: TabBar(
@@ -127,7 +127,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
             indicatorColor: theme.colorScheme.primary,
             labelColor: theme.colorScheme.primary,
             unselectedLabelColor: theme.textTheme.bodyMedium?.color
-                ?.withOpacity(0.6),
+                ?.withValues(alpha: 0.6),
           ),
         ),
       ),
