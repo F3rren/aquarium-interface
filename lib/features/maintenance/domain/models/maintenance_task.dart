@@ -1,8 +1,6 @@
 /// Domain model for recurring aquarium maintenance tasks.
 library;
 
-import 'package:maintenance_service/api.dart';
-
 /// A recurring maintenance task associated with a specific aquarium.
 ///
 /// Tasks can be **system-defined** (shipped with the app, [isCustom] == `false`)
@@ -196,46 +194,6 @@ class MaintenanceTask {
       reminderHour: reminderHour ?? this.reminderHour,
       reminderMinute: reminderMinute ?? this.reminderMinute,
       isCustom: isCustom ?? this.isCustom,
-    );
-  }
-
-  /// Creates a [MaintenanceTask] from a generated [MaintenanceTaskDTO].
-  ///
-  /// Fields absent from the DTO ([frequencyDays], [enabled], [reminderHour],
-  /// [reminderMinute], [isCustom]) fall back to their defaults. [category] is
-  /// inferred from keywords in [title] and [description].
-  factory MaintenanceTask.fromDto(MaintenanceTaskDTO dto) {
-    MaintenanceCategory parsedCategory = MaintenanceCategory.other;
-    final title = dto.title?.toLowerCase() ?? '';
-    final desc = dto.description?.toLowerCase() ?? '';
-    final text = '$title $desc';
-    if (text.contains('acqua') || text.contains('water') || text.contains('cambio')) {
-      parsedCategory = MaintenanceCategory.water;
-    } else if (text.contains('vetri') || text.contains('pulizia') || text.contains('clean') || text.contains('glass')) {
-      parsedCategory = MaintenanceCategory.cleaning;
-    } else if (text.contains('filtro') || text.contains('pompa') || text.contains('schiumatoio') || text.contains('filter') || text.contains('pump')) {
-      parsedCategory = MaintenanceCategory.equipment;
-    } else if (text.contains('test') || text.contains('parametr')) {
-      parsedCategory = MaintenanceCategory.testing;
-    } else if (text.contains('dosaggio') || text.contains('calcio') || text.contains('magnesio') || text.contains('kh')) {
-      parsedCategory = MaintenanceCategory.dosing;
-    } else if (text.contains('cibo') || text.contains('alimenta') || text.contains('feed')) {
-      parsedCategory = MaintenanceCategory.feeding;
-    }
-
-    return MaintenanceTask(
-      id: dto.id?.toString() ?? '',
-      aquariumId: dto.aquariumId?.toString() ?? '',
-      title: dto.title ?? '',
-      description: dto.description,
-      category: parsedCategory,
-      frequency: dto.frequency,
-      priority: dto.priority,
-      dueDate: dto.dueDate,
-      notes: dto.notes,
-      isCompleted: dto.isCompleted ?? false,
-      completedAt: dto.completedAt,
-      lastCompleted: dto.completedAt,
     );
   }
 

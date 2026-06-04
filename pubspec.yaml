@@ -58,8 +58,6 @@ dependencies:
   # Generated API clients (openapi-generator dart)
   aquariums_service:
     path: lib/api/generated/aquariums_service
-  maintenance_service:
-    path: lib/api/generated/maintenance_service
 
   # HTTP client for API calls
   http: ^1.2.2
