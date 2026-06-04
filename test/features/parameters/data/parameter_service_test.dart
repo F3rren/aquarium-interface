@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
@@ -86,6 +89,28 @@ void main() {
 
       expect(result.temperature, 25.5); // sensor value passes through
       expect(result.calcium, 999.0); // manual override wins
+    });
+  });
+
+  group('auto-refresh concurrency', () {
+    test('skips overlapping ticks while a fetch is still in flight', () {
+      fakeAsync((async) {
+        // The request never completes, so the first tick stays in flight.
+        final pending = Completer<dynamic>();
+        when(() => api.get(any(), retry: any(named: 'retry')))
+            .thenAnswer((_) => pending.future);
+        sut.setAutoCheckAlerts(false);
+        sut.setCurrentAquarium(1);
+
+        sut.startAutoRefresh(interval: const Duration(seconds: 1));
+        async.elapse(const Duration(seconds: 5));
+
+        // Only the immediate tick fired a request; the five timer ticks were
+        // skipped because the previous fetch had not finished.
+        verify(() => api.get(any(), retry: any(named: 'retry'))).called(1);
+
+        sut.stopAutoRefresh();
+      });
     });
   });
 }
