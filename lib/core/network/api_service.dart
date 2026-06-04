@@ -38,19 +38,25 @@ import 'package:acquariumfe/core/utils/retry_policy.dart';
 /// final api = ref.read(apiServiceProvider);
 /// ```
 class ApiService {
-  /// Creates an [ApiService] with an optional custom [storage] backend.
+  /// Creates an [ApiService] with optional custom [storage] and HTTP [client]
+  /// backends.
   ///
-  /// Production code should omit [storage] to use the default
-  /// [FlutterSecureStorage] backed by Android Keystore / iOS Keychain.
-  /// Tests may pass a mock storage to avoid filesystem side-effects.
-  ApiService({FlutterSecureStorage? storage})
+  /// Production code should omit both to use the default [FlutterSecureStorage]
+  /// (Android Keystore / iOS Keychain) and a real [http.Client]. Tests may pass
+  /// mocks to avoid filesystem and network side-effects.
+  ApiService({FlutterSecureStorage? storage, http.Client? client})
       : _storage = storage ??
             const FlutterSecureStorage(
               aOptions: AndroidOptions(encryptedSharedPreferences: true),
-            );
+            ),
+        _client = client ?? http.Client();
 
   /// Encrypted key-value storage backed by Android Keystore / iOS Keychain.
   final FlutterSecureStorage _storage;
+
+  /// HTTP client used for every request. Injectable so tests can supply a
+  /// `MockClient` instead of hitting the network.
+  final http.Client _client;
 
   /// Key used to read/write the JWT token in [FlutterSecureStorage].
   static const _tokenKey = 'jwt_token';
@@ -157,6 +163,68 @@ class ApiService {
     );
   }
 
+  /// Centralised request pipeline shared by [get], [post], [put], [patch] and
+  /// [delete]: builds the URL and headers, dispatches the HTTP [method], applies
+  /// the per-request [timeout] and [retry] policy, and maps transport failures
+  /// (socket errors, timeouts, malformed JSON) to typed [AppException]s.
+  Future<dynamic> _send(
+    String method,
+    String endpoint, {
+    Map<String, dynamic>? body,
+    Duration? timeout,
+    required RetryPolicy retry,
+    bool Function(dynamic error)? shouldRetry,
+  }) {
+    final effectiveTimeout = timeout ?? defaultTimeout;
+
+    return retry.execute(
+      () async {
+        try {
+          final url = Uri.parse('$baseUrl$endpoint');
+          final headers = await _headers;
+          final encodedBody = body == null ? null : jsonEncode(body);
+
+          final response = await (switch (method) {
+            'GET' => _client.get(url, headers: headers),
+            'POST' => _client.post(url, headers: headers, body: encodedBody),
+            'PUT' => _client.put(url, headers: headers, body: encodedBody),
+            'PATCH' => _client.patch(url, headers: headers, body: encodedBody),
+            'DELETE' => _client.delete(url, headers: headers),
+            _ => throw ArgumentError('Unsupported HTTP method: $method'),
+          }).timeout(effectiveTimeout);
+
+          return _handleResponse(response);
+        } on SocketException catch (e) {
+          throw _toNetworkException(e, endpoint);
+        } on da.TimeoutException catch (e) {
+          throw TimeoutException(
+            'La richiesta ha impiegato troppo tempo',
+            timeout: effectiveTimeout,
+            details: endpoint,
+            originalError: e,
+          );
+        } on FormatException catch (e) {
+          throw DataFormatException(
+            'Errore nel formato dei dati',
+            details: endpoint,
+            originalError: e,
+          );
+        }
+      },
+      shouldRetry: shouldRetry,
+    );
+  }
+
+  /// Retry predicate for transient failures: network errors, timeouts, and 5xx
+  /// server errors. 4xx client errors are never retried (they would fail again).
+  static bool _retryOnTransient(dynamic error) {
+    return error is NetworkException ||
+        error is TimeoutException ||
+        (error is ServerException &&
+            error.statusCode != null &&
+            error.statusCode! >= 500);
+  }
+
   /// Sends an HTTP GET request to [endpoint] and returns the decoded response.
   ///
   /// The request is automatically retried according to [retry] (defaults to
@@ -183,46 +251,13 @@ class ApiService {
     String endpoint, {
     Duration? timeout,
     RetryPolicy? retry,
-  }) async {
-    final effectiveTimeout = timeout ?? defaultTimeout;
-    final effectiveRetry = retry ?? retryPolicy;
-
-    return effectiveRetry.execute(
-      () async {
-        try {
-          final url = Uri.parse('$baseUrl$endpoint');
-
-          final response = await http
-              .get(url, headers: await _headers)
-              .timeout(effectiveTimeout);
-
-          return _handleResponse(response);
-        } on SocketException catch (e) {
-          throw _toNetworkException(e, endpoint);
-        } on da.TimeoutException catch (e) {
-          throw TimeoutException(
-            'La richiesta ha impiegato troppo tempo',
-            timeout: effectiveTimeout,
-            details: endpoint,
-            originalError: e,
-          );
-        } on FormatException catch (e) {
-          throw DataFormatException(
-            'Errore nel formato dei dati',
-            details: endpoint,
-            originalError: e,
-          );
-        }
-      },
-      shouldRetry: (error) {
-        // Retry only for network/timeout errors and 5xx server errors,
-        // never for 4xx client errors which would fail again.
-        return error is NetworkException ||
-            error is TimeoutException ||
-            (error is ServerException &&
-                error.statusCode != null &&
-                error.statusCode! >= 500);
-      },
+  }) {
+    return _send(
+      'GET',
+      endpoint,
+      timeout: timeout,
+      retry: retry ?? retryPolicy,
+      shouldRetry: _retryOnTransient,
     );
   }
 
@@ -248,37 +283,14 @@ class ApiService {
     Map<String, dynamic> body, {
     Duration? timeout,
     RetryPolicy? retry,
-  }) async {
-    final effectiveTimeout = timeout ?? defaultTimeout;
-    final effectiveRetry =
-        retry ?? RetryPolicies.none; // POST has no retry by default
-
-    return effectiveRetry.execute(() async {
-      try {
-        final url = Uri.parse('$baseUrl$endpoint');
-
-        final response = await http
-            .post(url, headers: await _headers, body: jsonEncode(body))
-            .timeout(effectiveTimeout);
-
-        return _handleResponse(response);
-      } on SocketException catch (e) {
-        throw _toNetworkException(e, endpoint);
-      } on da.TimeoutException catch (e) {
-        throw TimeoutException(
-          'La richiesta ha impiegato troppo tempo',
-          timeout: effectiveTimeout,
-          details: endpoint,
-          originalError: e,
-        );
-      } on FormatException catch (e) {
-        throw DataFormatException(
-          'Errore nel formato dei dati',
-          details: endpoint,
-          originalError: e,
-        );
-      }
-    });
+  }) {
+    return _send(
+      'POST',
+      endpoint,
+      body: body,
+      timeout: timeout,
+      retry: retry ?? RetryPolicies.none,
+    );
   }
 
   /// Sends an HTTP PUT request to [endpoint] with the JSON-encoded [body].
@@ -300,37 +312,14 @@ class ApiService {
     Map<String, dynamic> body, {
     Duration? timeout,
     RetryPolicy? retry,
-  }) async {
-    final effectiveTimeout = timeout ?? defaultTimeout;
-    final effectiveRetry =
-        retry ?? RetryPolicies.none; // PUT has no retry by default
-
-    return effectiveRetry.execute(() async {
-      try {
-        final url = Uri.parse('$baseUrl$endpoint');
-
-        final response = await http
-            .put(url, headers: await _headers, body: jsonEncode(body))
-            .timeout(effectiveTimeout);
-
-        return _handleResponse(response);
-      } on SocketException catch (e) {
-        throw _toNetworkException(e, endpoint);
-      } on da.TimeoutException catch (e) {
-        throw TimeoutException(
-          'La richiesta ha impiegato troppo tempo',
-          timeout: effectiveTimeout,
-          details: endpoint,
-          originalError: e,
-        );
-      } on FormatException catch (e) {
-        throw DataFormatException(
-          'Errore nel formato dei dati',
-          details: endpoint,
-          originalError: e,
-        );
-      }
-    });
+  }) {
+    return _send(
+      'PUT',
+      endpoint,
+      body: body,
+      timeout: timeout,
+      retry: retry ?? RetryPolicies.none,
+    );
   }
 
   /// Sends an HTTP PATCH request to [endpoint] with the JSON-encoded [body].
@@ -353,37 +342,14 @@ class ApiService {
     Map<String, dynamic> body, {
     Duration? timeout,
     RetryPolicy? retry,
-  }) async {
-    final effectiveTimeout = timeout ?? defaultTimeout;
-    final effectiveRetry =
-        retry ?? RetryPolicies.none; // PATCH has no retry by default
-
-    return effectiveRetry.execute(() async {
-      try {
-        final url = Uri.parse('$baseUrl$endpoint');
-
-        final response = await http
-            .patch(url, headers: await _headers, body: jsonEncode(body))
-            .timeout(effectiveTimeout);
-
-        return _handleResponse(response);
-      } on SocketException catch (e) {
-        throw _toNetworkException(e, endpoint);
-      } on da.TimeoutException catch (e) {
-        throw TimeoutException(
-          'La richiesta ha impiegato troppo tempo',
-          timeout: effectiveTimeout,
-          details: endpoint,
-          originalError: e,
-        );
-      } on FormatException catch (e) {
-        throw DataFormatException(
-          'Errore nel formato dei dati',
-          details: endpoint,
-          originalError: e,
-        );
-      }
-    });
+  }) {
+    return _send(
+      'PATCH',
+      endpoint,
+      body: body,
+      timeout: timeout,
+      retry: retry ?? RetryPolicies.none,
+    );
   }
 
   /// Sends an HTTP DELETE request to [endpoint].
@@ -404,37 +370,13 @@ class ApiService {
     String endpoint, {
     Duration? timeout,
     RetryPolicy? retry,
-  }) async {
-    final effectiveTimeout = timeout ?? defaultTimeout;
-    final effectiveRetry =
-        retry ?? RetryPolicies.none; // DELETE has no retry by default
-
-    return effectiveRetry.execute(() async {
-      try {
-        final url = Uri.parse('$baseUrl$endpoint');
-
-        final response = await http
-            .delete(url, headers: await _headers)
-            .timeout(effectiveTimeout);
-
-        return _handleResponse(response);
-      } on SocketException catch (e) {
-        throw _toNetworkException(e, endpoint);
-      } on da.TimeoutException catch (e) {
-        throw TimeoutException(
-          'La richiesta ha impiegato troppo tempo',
-          timeout: effectiveTimeout,
-          details: endpoint,
-          originalError: e,
-        );
-      } on FormatException catch (e) {
-        throw DataFormatException(
-          'Errore nel formato dei dati',
-          details: endpoint,
-          originalError: e,
-        );
-      }
-    });
+  }) {
+    return _send(
+      'DELETE',
+      endpoint,
+      timeout: timeout,
+      retry: retry ?? RetryPolicies.none,
+    );
   }
 
   // ---------------------------------------------------------------------------
