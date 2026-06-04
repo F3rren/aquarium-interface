@@ -90,6 +90,10 @@ class ParameterService {
   Timer? _refreshTimer;
   bool _isAutoRefreshEnabled = false;
 
+  /// Guards against overlapping auto-refresh ticks: while a fetch is still in
+  /// flight, the next timer tick is skipped instead of piling requests up.
+  bool _refreshInFlight = false;
+
   /// Broadcast stream that emits every time a fresh parameter set is received.
   final _parametersController =
       StreamController<AquariumParameters>.broadcast();
@@ -255,96 +259,6 @@ class ParameterService {
     return _cachedParameters;
   }
 
-  /// Returns historical parameter snapshots for the active aquarium (or [id]).
-  ///
-  /// Accepts optional [from] / [to] date range and a [limit] on the number of
-  /// records. Returns an empty list rather than throwing on any error.
-  ///
-  /// The backend response can take two shapes:
-  /// - `{"data": {"id": 1, "measurements": [...]}}` (new format)
-  /// - `{"data": [{...}]}` or a bare array (legacy format)
-  Future<List<AquariumParameters>> getParameterHistory({
-    String? id,
-    DateTime? from,
-    DateTime? to,
-    int? limit,
-  }) async {
-    final targetid = id ?? _currentid;
-
-    if (targetid == null) {
-      return [];
-    }
-
-    try {
-      final queryParams = <String, String>{};
-      if (from != null) queryParams['from'] = from.toIso8601String();
-      if (to != null) queryParams['to'] = to.toIso8601String();
-      if (limit != null) queryParams['limit'] = limit.toString();
-
-      final query = queryParams.entries
-          .map((e) => '${e.key}=${e.value}')
-          .join('&');
-      final base = ApiEndpoints.parameterHistory(int.parse(targetid.toString()));
-      final endpoint = query.isNotEmpty ? '$base?$query' : base;
-
-      final response = await _apiService.get(endpoint);
-
-      List<dynamic> historyJson;
-      if (response is Map<String, dynamic>) {
-        if (response.containsKey('data')) {
-          var dataValue = response['data'];
-
-          if (dataValue is Map<String, dynamic>) {
-            if (dataValue['id'].toString() == targetid &&
-                dataValue['measurements'] != null) {
-              historyJson = dataValue['measurements'] as List<dynamic>;
-            } else {
-              historyJson = [];
-            }
-          } else if (dataValue is List) {
-            final aquariumData = dataValue.firstWhere(
-              (item) => item['id'].toString() == targetid,
-              orElse: () => null,
-            );
-
-            if (aquariumData != null && aquariumData['measurements'] != null) {
-              historyJson = aquariumData['measurements'] as List<dynamic>;
-            } else {
-              historyJson = [];
-            }
-          } else {
-            historyJson = [];
-          }
-        } else {
-          historyJson = [];
-        }
-      } else if (response is List) {
-        final aquariumData = response.firstWhere(
-          (item) => item['id'].toString() == targetid,
-          orElse: () => null,
-        );
-
-        if (aquariumData != null && aquariumData['measurements'] != null) {
-          historyJson = aquariumData['measurements'] as List<dynamic>;
-        } else {
-          historyJson = [];
-        }
-      } else {
-        historyJson = [];
-      }
-
-      return historyJson
-          .map((json) => AquariumParameters.fromJson(Map<String, dynamic>.from(json as Map)))
-          .toList();
-    } on AppException catch (e) {
-      _logger.e('Errore recupero storico parametri', error: e);
-      return [];
-    } catch (e) {
-      _logger.e('Errore imprevisto in getParametersHistory', error: e);
-      return [];
-    }
-  }
-
   /// Returns `{timestamp, value}` pairs for a single [parameterName] over the
   /// requested [hours] duration, suitable for chart rendering.
   ///
@@ -448,10 +362,16 @@ class ParameterService {
   /// error nor pushes stale/fake data onto [parametersStream] — the last known
   /// values simply remain until the next successful tick.
   Future<void> _autoRefreshTick() async {
+    // Skip if the previous tick's fetch has not finished yet (avoid a stampede
+    // of overlapping requests when a fetch takes longer than the interval).
+    if (_refreshInFlight) return;
+    _refreshInFlight = true;
     try {
       await getCurrentParameters();
     } catch (e) {
       _logger.w('Auto-refresh failed; keeping last known values', error: e);
+    } finally {
+      _refreshInFlight = false;
     }
   }
 
