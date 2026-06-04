@@ -1,8 +1,6 @@
 ﻿/// CRUD service for aquariums and their water-parameter records.
 library;
 
-import 'package:aquariums_service/api.dart';
-import 'package:acquariumfe/core/utils/dto_parsing.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/aquarium/domain/models/aquarium.dart';
 import 'package:acquariumfe/features/parameters/domain/models/aquarium_parameters.dart';
@@ -56,7 +54,7 @@ class AquariumsService {
     }
 
     return aquariumsJson
-        .map((json) => Aquarium.fromDto(requireParsed(AquariumResponseDTO.fromJson(json), context: 'AquariumResponseDTO')))
+        .map((json) => Aquarium.fromJson(Map<String, dynamic>.from(json as Map)))
         .toList();
   }
 
@@ -69,7 +67,7 @@ class AquariumsService {
     final response = await _apiService.get(ApiEndpoints.aquarium(id));
     if (response is Map<String, dynamic>) {
       final aquariumData = response['data'] ?? response;
-      return Aquarium.fromDto(requireParsed(AquariumResponseDTO.fromJson(aquariumData), context: 'AquariumResponseDTO'));
+      return Aquarium.fromJson(Map<String, dynamic>.from(aquariumData as Map));
     } else {
       throw DataFormatException(
         'Formato risposta non valido: attesa mappa',
@@ -83,16 +81,16 @@ class AquariumsService {
   Future<Aquarium> createAquarium(Aquarium aquarium) async {
     final response = await _apiService.post(ApiEndpoints.aquariums, aquarium.toJson());
     if (response is Map<String, dynamic> && response.containsKey('data')) {
-      return Aquarium.fromDto(requireParsed(AquariumResponseDTO.fromJson(response['data']), context: 'AquariumResponseDTO'));
+      return Aquarium.fromJson(Map<String, dynamic>.from(response['data'] as Map));
     }
-    return Aquarium.fromDto(requireParsed(AquariumResponseDTO.fromJson(response), context: 'AquariumResponseDTO'));
+    return Aquarium.fromJson(Map<String, dynamic>.from(response as Map));
   }
 
   /// Replaces the aquarium identified by [id] with the supplied [aquarium]
   /// data and returns the updated entity.
   Future<Aquarium> updateAquarium(int id, Aquarium aquarium) async {
     final response = await _apiService.put(ApiEndpoints.aquarium(id), aquarium.toJson());
-    return Aquarium.fromDto(requireParsed(AquariumResponseDTO.fromJson(response), context: 'AquariumResponseDTO'));
+    return Aquarium.fromJson(Map<String, dynamic>.from(response as Map));
   }
 
   /// Permanently deletes the aquarium with the given [id].
@@ -121,9 +119,7 @@ class AquariumsService {
       );
     }
 
-    return AquariumParameters.fromWaterParameterDto(
-      requireParsed(WaterParameterDTO.fromJson(parametersData), context: 'WaterParameterDTO'),
-    );
+    return AquariumParameters.fromJson(parametersData);
   }
 
   /// Fetches historical parameter snapshots for aquarium [aquariumId].
@@ -175,9 +171,7 @@ class AquariumsService {
     }
 
     return historyJson
-        .map((json) => AquariumParameters.fromWaterParameterDto(
-              requireParsed(WaterParameterDTO.fromJson(json), context: 'WaterParameterDTO'),
-            ))
+        .map((json) => AquariumParameters.fromJson(Map<String, dynamic>.from(json as Map)))
         .toList();
   }
 }
