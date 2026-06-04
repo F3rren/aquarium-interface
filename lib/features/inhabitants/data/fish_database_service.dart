@@ -1,8 +1,6 @@
 ﻿/// Service that fetches and caches the fish species catalogue from the API.
 library;
 
-import 'package:species_service/api.dart';
-import 'package:acquariumfe/core/utils/dto_parsing.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/fish_species.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
@@ -59,7 +57,7 @@ class FishDatabaseService {
       }
 
       _cachedFish = fishList
-          .map((json) => FishSpecies.fromDto(requireParsed(FishResponseDTO.fromJson(json), context: 'FishResponseDTO')))
+          .map((json) => FishSpecies.fromJson(Map<String, dynamic>.from(json as Map)))
           .toList();
 
       return _cachedFish!;

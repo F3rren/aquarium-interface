@@ -1,8 +1,6 @@
 ﻿/// Service that fetches and caches the coral species catalogue from the API.
 library;
 
-import 'package:species_service/api.dart';
-import 'package:acquariumfe/core/utils/dto_parsing.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral_species.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
@@ -65,7 +63,7 @@ class CoralDatabaseService {
       _cachedCorals = [];
       for (var i = 0; i < coralList.length; i++) {
         try {
-          final coral = CoralSpecies.fromDto(requireParsed(CoralResponseDTO.fromJson(coralList[i]), context: 'CoralResponseDTO'));
+          final coral = CoralSpecies.fromJson(Map<String, dynamic>.from(coralList[i] as Map));
           _cachedCorals!.add(coral);
         } catch (e) {
           // Skip malformed entries silently.
