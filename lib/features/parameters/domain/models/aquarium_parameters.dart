@@ -1,8 +1,6 @@
 /// Snapshot of all water parameter readings for a single measurement event.
 library;
 
-import 'package:aquariums_service/api.dart';
-
 /// A complete set of water-quality readings taken at a specific [timestamp].
 ///
 /// The four core parameters ([temperature], [ph], [salinity], [orp]) are
@@ -55,49 +53,6 @@ class AquariumParameters {
     this.phosphate,
     required this.timestamp,
   });
-
-  /// Creates from a [WaterParameterDTO] (sensor readings: temp, ph, salinity).
-  factory AquariumParameters.fromWaterParameterDto(WaterParameterDTO dto) {
-    return AquariumParameters(
-      temperature: dto.temperature ?? 0.0,
-      ph: dto.ph ?? 0.0,
-      salinity: dto.salinity ?? 0.0,
-      orp: 0.0,
-      timestamp: dto.measuredAt ?? DateTime.now(),
-    );
-  }
-
-  /// Creates from a [ManualParameterDTO] (manually measured: calcium, kh, etc.).
-  factory AquariumParameters.fromManualParameterDto(ManualParameterDTO dto) {
-    return AquariumParameters(
-      temperature: 0.0,
-      ph: 0.0,
-      salinity: 0.0,
-      orp: 0.0,
-      calcium: dto.calcium,
-      magnesium: dto.magnesium,
-      kh: dto.kh,
-      nitrate: dto.nitrate,
-      phosphate: dto.phosphate,
-      timestamp: dto.measuredAt,
-    );
-  }
-
-  /// Creates from a [TargetParameterDTO] (all target values).
-  factory AquariumParameters.fromTargetParameterDto(TargetParameterDTO dto) {
-    return AquariumParameters(
-      temperature: dto.temperature ?? 0.0,
-      ph: dto.ph ?? 0.0,
-      salinity: dto.salinity ?? 0.0,
-      orp: dto.orp ?? 0.0,
-      calcium: dto.calcium,
-      magnesium: dto.magnesium,
-      kh: dto.kh,
-      nitrate: dto.nitrate,
-      phosphate: dto.phosphate,
-      timestamp: DateTime.now(),
-    );
-  }
 
   /// Deserialises an [AquariumParameters] snapshot from a backend JSON map.
   ///

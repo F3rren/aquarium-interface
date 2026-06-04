@@ -1,8 +1,6 @@
 /// Domain model representing a single user-owned aquarium.
 library;
 
-import 'package:aquariums_service/api.dart';
-
 /// Represents a registered aquarium.
 ///
 /// This is the primary domain entity of the app. Every aquarium owns its own
@@ -62,19 +60,6 @@ class Aquarium {
     if (imageUrl != null) json['imageUrl'] = imageUrl;
 
     return json;
-  }
-
-  /// Creates an [Aquarium] from a generated [AquariumResponseDTO].
-  factory Aquarium.fromDto(AquariumResponseDTO dto) {
-    return Aquarium(
-      id: dto.id,
-      name: dto.name ?? 'Senza nome',
-      volume: (dto.volume ?? 0).toDouble(),
-      type: dto.type ?? 'Marino',
-      createdAt: dto.createdAt,
-      description: dto.description,
-      imageUrl: dto.imageUrl,
-    );
   }
 
   /// Deserialises an [Aquarium] from a backend JSON map.
