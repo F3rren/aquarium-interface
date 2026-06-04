@@ -1,8 +1,6 @@
 ﻿/// Service for managing the fish and coral inhabitants of an aquarium.
 library;
 
-import 'package:inhabitants_service/api.dart';
-import 'package:acquariumfe/core/utils/dto_parsing.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/fish.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral.dart';
@@ -58,34 +56,11 @@ class InhabitantsService {
 
       final List<dynamic> inhabitants = response['data'] as List;
 
-      return inhabitants.where((item) => item['type'] == 'fish').map((item) {
-        final dto = requireParsed(InhabitantDetailsDTO.fromJson(item), context: 'InhabitantDetailsDTO');
-        final details = dto.details is Map
-            ? (dto.details as Map).cast<String, dynamic>()
-            : <String, dynamic>{};
-        final rawSize = details['size'] ?? details['maxSize'] ?? dto.currentSize;
-        final size = rawSize is int
-            ? rawSize.toDouble()
-            : (rawSize as num?)?.toDouble() ?? 10.0;
-
-        return Fish(
-          id: dto.id?.toString() ?? '',
-          name: dto.customName ?? dto.commonName ?? '',
-          species: dto.scientificName ?? dto.commonName ?? '',
-          size: size,
-          addedDate: dto.addedDate ?? DateTime.now(),
-          notes: details['notes'] as String? ?? dto.notes,
-          imageUrl: details['imageUrl'] as String?,
-          family: details['family'] as String?,
-          minTankSize: details['minTankSize'] as int? ?? dto.customMinTankSize,
-          maxSize: (details['maxSize'] as num?)?.toDouble(),
-          difficulty: details['difficulty'] as String? ?? dto.customDifficulty,
-          temperament: details['temperament'] as String? ?? dto.customTemperament,
-          diet: details['diet'] as String? ?? dto.customDiet,
-          description: details['description'] as String?,
-          reefSafe: details['reefSafe'] as bool? ?? dto.isReefSafe,
-        );
-      }).toList();
+      return inhabitants
+          .where((item) => item['type'] == 'fish')
+          .map((item) =>
+              Fish.fromInhabitantJson(Map<String, dynamic>.from(item as Map)))
+          .toList();
     } catch (e) {
       return [];
     }
@@ -163,35 +138,11 @@ class InhabitantsService {
 
       final List<dynamic> inhabitants = response['data'] as List;
 
-      return inhabitants.where((item) => item['type'] == 'coral').map((item) {
-        final dto = requireParsed(InhabitantDetailsDTO.fromJson(item), context: 'InhabitantDetailsDTO');
-        final details = dto.details is Map
-            ? (dto.details as Map).cast<String, dynamic>()
-            : <String, dynamic>{};
-        final rawSize = details['size'] ?? details['maxSize'] ?? dto.currentSize;
-        final size = rawSize is int
-            ? rawSize.toDouble()
-            : (rawSize as num?)?.toDouble() ?? 5.0;
-
-        return Coral(
-          id: dto.id?.toString() ?? '',
-          name: dto.customName ?? dto.commonName ?? '',
-          species: dto.scientificName ?? dto.commonName ?? '',
-          type: details['type'] as String? ?? 'SPS',
-          size: size,
-          addedDate: dto.addedDate ?? DateTime.now(),
-          placement: details['placement'] as String? ?? 'Medio',
-          notes: details['notes'] as String? ?? dto.notes,
-          difficulty: details['difficulty'] as String? ?? dto.customDifficulty,
-          lightRequirement: details['lightRequirement'] as String?,
-          flowRequirement: details['flowRequirement'] as String?,
-          feeding: details['feeding'] as String?,
-          description: details['description'] as String?,
-          aggressive: details['aggressive'] as bool?,
-          minTankSize: details['minTankSize'] as int? ?? dto.customMinTankSize,
-          maxSize: details['maxSize'] as int?,
-        );
-      }).toList();
+      return inhabitants
+          .where((item) => item['type'] == 'coral')
+          .map((item) =>
+              Coral.fromInhabitantJson(Map<String, dynamic>.from(item as Map)))
+          .toList();
     } catch (e) {
       return [];
     }
