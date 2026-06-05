@@ -876,7 +876,7 @@ class _AddEditProductViewState extends State<AddEditProductView> {
 
               // Categoria
               DropdownButtonFormField<ProductCategory>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: const InputDecoration(
                   labelText: 'Categoria *',
                   border: OutlineInputBorder(),

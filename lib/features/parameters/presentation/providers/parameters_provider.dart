@@ -84,7 +84,7 @@ class CurrentParameters extends _$CurrentParameters {
 ///
 /// Returns `false` while loading, on error, or when no aquarium is selected.
 @riverpod
-bool hasParameterAlerts(HasParameterAlertsRef ref) {
+bool hasParameterAlerts(Ref ref) {
   final parametersAsync = ref.watch(currentParametersProvider);
 
   return parametersAsync.when(
@@ -109,7 +109,7 @@ bool hasParameterAlerts(HasParameterAlertsRef ref) {
 ///
 /// Returns an empty map when no aquarium is selected or on fetch error.
 @riverpod
-Future<Map<String, double>> targetParameters(TargetParametersRef ref) async {
+Future<Map<String, double>> targetParameters(Ref ref) async {
   final currentAquariumId = ref.watch(currentAquariumProvider);
 
   if (currentAquariumId == null) {

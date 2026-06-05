@@ -265,7 +265,7 @@ class CurrentAquarium extends _$CurrentAquarium {
 ///
 /// Returns `0` while loading or when an error occurred.
 @riverpod
-int aquariumCount(AquariumCountRef ref) {
+int aquariumCount(Ref ref) {
   final aquariums = ref.watch(aquariumsProvider);
   return aquariums.when(
     data: (list) => list.length,
@@ -279,7 +279,7 @@ int aquariumCount(AquariumCountRef ref) {
 ///
 /// Returns `0` while loading or when an error occurred.
 @riverpod
-int aquariumsWithAlertsCount(AquariumsWithAlertsCountRef ref) {
+int aquariumsWithAlertsCount(Ref ref) {
   final aquariums = ref.watch(aquariumsProvider);
   return aquariums.when(
     data: (list) => list.where((a) => a.hasAlert).length,
