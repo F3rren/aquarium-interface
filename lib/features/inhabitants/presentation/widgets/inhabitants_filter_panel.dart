@@ -260,7 +260,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<DateFilterType>(
-                          value: _filter.dateFilter,
+                          initialValue: _filter.dateFilter,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: theme.colorScheme.surfaceContainerHighest

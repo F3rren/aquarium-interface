@@ -645,7 +645,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<MaintenanceCategory>(
-                    value: selectedCategory,
+                    initialValue: selectedCategory,
                     decoration: const InputDecoration(labelText: 'Categoria'),
                     items: MaintenanceCategory.values.map((cat) {
                       return DropdownMenuItem(
@@ -661,7 +661,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: selectedFrequency,
+                    initialValue: selectedFrequency,
                     decoration: InputDecoration(labelText: l10n.frequency),
                     items: [
                       DropdownMenuItem(value: 'daily', child: Text(l10n.daily)),
@@ -686,7 +686,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: selectedPriority,
+                    initialValue: selectedPriority,
                     decoration: const InputDecoration(labelText: 'Priorità'),
                     items: [
                       DropdownMenuItem(value: 'low', child: Text(l10n.low)),
@@ -842,7 +842,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<MaintenanceCategory>(
-                    value: selectedCategory,
+                    initialValue: selectedCategory,
                     decoration: const InputDecoration(labelText: 'Categoria'),
                     items: MaintenanceCategory.values.map((cat) {
                       return DropdownMenuItem(
@@ -858,7 +858,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: selectedFrequency,
+                    initialValue: selectedFrequency,
                     decoration: InputDecoration(labelText: l10n.frequency),
                     items: [
                       DropdownMenuItem(value: 'daily', child: Text(l10n.daily)),
@@ -883,7 +883,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: selectedPriority,
+                    initialValue: selectedPriority,
                     decoration: const InputDecoration(labelText: 'Priorità '),
                     items: [
                       DropdownMenuItem(value: 'low', child: Text(l10n.low)),

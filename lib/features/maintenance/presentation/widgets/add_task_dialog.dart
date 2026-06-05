@@ -165,7 +165,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
 
                   // Categoria
                   DropdownButtonFormField<MaintenanceCategory>(
-                    value: _selectedCategory,
+                    initialValue: _selectedCategory,
                     decoration: InputDecoration(
                       labelText: l10n.category,
                       prefixIcon: const FaIcon(FontAwesomeIcons.tag),
