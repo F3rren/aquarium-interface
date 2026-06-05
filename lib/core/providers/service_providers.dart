@@ -22,13 +22,13 @@ part 'service_providers.g.dart';
 /// for the full app lifetime. Pass the returned instance into every service
 /// that needs HTTP access instead of calling `ApiService()` directly.
 @Riverpod(keepAlive: true)
-ApiService apiService(Ref ref) {
+ApiService apiService(ApiServiceRef ref) {
   return ApiService();
 }
 
 /// Provides the [AquariumsService] instance for aquarium CRUD operations.
 @Riverpod(keepAlive: true)
-AquariumsService aquariumsService(Ref ref) {
+AquariumsService aquariumsService(AquariumsServiceRef ref) {
   return AquariumsService(ref.read(apiServiceProvider));
 }
 
@@ -36,7 +36,7 @@ AquariumsService aquariumsService(Ref ref) {
 /// user-defined target (ideal) ranges for each water parameter.
 @Riverpod(keepAlive: true)
 TargetParametersService targetParametersService(
-  Ref ref,
+  TargetParametersServiceRef ref,
 ) {
   return TargetParametersService(ref.read(apiServiceProvider));
 }
@@ -44,7 +44,7 @@ TargetParametersService targetParametersService(
 /// Provides the [ParameterService] instance for fetching current and
 /// historical water parameter readings.
 @Riverpod(keepAlive: true)
-ParameterService parameterService(Ref ref) {
+ParameterService parameterService(ParameterServiceRef ref) {
   return ParameterService(
     ref.read(apiServiceProvider),
     ref.read(targetParametersServiceProvider),
@@ -54,7 +54,7 @@ ParameterService parameterService(Ref ref) {
 /// Provides the [ChartDataService] instance for loading historical parameter
 /// data and computing chart statistics.
 @Riverpod(keepAlive: true)
-ChartDataService chartDataService(Ref ref) {
+ChartDataService chartDataService(ChartDataServiceRef ref) {
   return ChartDataService(ref.read(parameterServiceProvider));
 }
 
@@ -62,6 +62,6 @@ ChartDataService chartDataService(Ref ref) {
 /// against configured thresholds and fires local notifications when a value
 /// falls outside its acceptable range.
 @Riverpod(keepAlive: true)
-AlertManager alertManager(Ref ref) {
+AlertManager alertManager(AlertManagerRef ref) {
   return AlertManager();
 }

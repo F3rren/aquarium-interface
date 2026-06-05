@@ -52,7 +52,7 @@ class AppThemeMode extends _$AppThemeMode {
 /// - Tertiary `#8b5cf6` — coral purple
 /// - Scaffold background `#0a0e27` — deep-sea navy
 @riverpod
-ThemeData darkTheme(Ref ref) {
+ThemeData darkTheme(DarkThemeRef ref) {
   return ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
@@ -142,7 +142,7 @@ ThemeData darkTheme(Ref ref) {
 /// - Secondary `#06b6d4` — cyan
 /// - Scaffold background `#f0f9ff` — near-white with a blue tint
 @riverpod
-ThemeData lightTheme(Ref ref) {
+ThemeData lightTheme(LightThemeRef ref) {
   return ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
