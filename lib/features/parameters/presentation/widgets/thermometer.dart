@@ -37,16 +37,14 @@ class Thermometer extends ConsumerWidget {
 
   Color _getTemperatureColor() {
     if (currentTemperature < 24) return const Color(0xFF60a5fa);
-    if (currentTemperature >= 24 && currentTemperature <= 26)
-      return const Color(0xFF34d399);
+    if (currentTemperature >= 24 && currentTemperature <= 26) return const Color(0xFF34d399);
     return const Color(0xFFef4444);
   }
 
   String _getStatus(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     if (currentTemperature < 24) return l10n.low;
-    if (currentTemperature >= 24 && currentTemperature <= 26)
-      return l10n.optimal;
+    if (currentTemperature >= 24 && currentTemperature <= 26) return l10n.optimal;
     return l10n.high;
   }
 

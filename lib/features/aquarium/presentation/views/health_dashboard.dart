@@ -124,11 +124,9 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         int parametersInRange = 0;
         int totalParameters = 9;
 
-        if (!settings.temperature.isOutOfRange(currentTemperature))
-          parametersInRange++;
+        if (!settings.temperature.isOutOfRange(currentTemperature)) parametersInRange++;
         if (!settings.ph.isOutOfRange(currentPh)) parametersInRange++;
-        if (!settings.salinity.isOutOfRange(currentSalinity))
-          parametersInRange++;
+        if (!settings.salinity.isOutOfRange(currentSalinity)) parametersInRange++;
         if (!settings.orp.isOutOfRange(currentOrp)) parametersInRange++;
         if (!settings.calcium.isOutOfRange(calcium)) parametersInRange++;
         if (!settings.magnesium.isOutOfRange(magnesium)) parametersInRange++;
