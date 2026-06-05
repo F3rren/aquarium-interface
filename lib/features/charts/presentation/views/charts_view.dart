@@ -532,8 +532,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
   }
 
   Map<String, dynamic> _calculateStability() {
-    if (_chartData.isEmpty)
-      return {'text': '-', 'color': const Color(0xFF6b7280)};
+    if (_chartData.isEmpty) return {'text': '-', 'color': const Color(0xFF6b7280)};
 
     final values = _chartData.map((e) => e.value).toList();
     final avg = values.reduce((a, b) => a + b) / values.length;
@@ -949,8 +948,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
             showTitles: true,
             reservedSize: 30,
             getTitlesWidget: (value, meta) {
-              if (data.isEmpty || value.toInt() >= data.length)
-                return const SizedBox();
+              if (data.isEmpty || value.toInt() >= data.length) return const SizedBox();
               final interval = data.length > 6 ? (data.length ~/ 6) : 1;
               if (value.toInt() % interval != 0) return const SizedBox();
               final point = data[value.toInt()];

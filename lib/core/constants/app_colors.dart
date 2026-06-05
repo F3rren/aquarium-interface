@@ -4,6 +4,8 @@
 /// backgrounds, vibrant accent hues, and clearly differentiated status
 /// colours.  Use these constants instead of raw [Color] literals so that
 /// visual changes can be applied app-wide from a single location.
+library;
+
 import 'package:flutter/material.dart';
 
 /// Static colour palette used throughout the ReefLife UI.

@@ -4,6 +4,8 @@
 /// shell for all aquarium-specific sub-sections: Dashboard, Parameters, Charts,
 /// Maintenance, and Profile. It renders a custom bottom navigation bar and
 /// applies a fade-in animation when the screen first loads.
+library;
+
 import 'package:acquariumfe/features/aquarium/presentation/views/health_dashboard.dart';
 import 'package:acquariumfe/features/parameters/presentation/views/parameters_view.dart';
 import 'package:acquariumfe/features/charts/presentation/views/charts_view.dart';
