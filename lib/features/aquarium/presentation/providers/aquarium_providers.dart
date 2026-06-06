@@ -7,6 +7,7 @@
 /// queries.
 library;
 
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:acquariumfe/features/aquarium/domain/models/aquarium.dart';
 import 'package:acquariumfe/features/parameters/domain/models/aquarium_parameters.dart';
@@ -265,7 +266,7 @@ class CurrentAquarium extends _$CurrentAquarium {
 ///
 /// Returns `0` while loading or when an error occurred.
 @riverpod
-int aquariumCount(AquariumCountRef ref) {
+int aquariumCount(Ref ref) {
   final aquariums = ref.watch(aquariumsProvider);
   return aquariums.when(
     data: (list) => list.length,
@@ -279,7 +280,7 @@ int aquariumCount(AquariumCountRef ref) {
 ///
 /// Returns `0` while loading or when an error occurred.
 @riverpod
-int aquariumsWithAlertsCount(AquariumsWithAlertsCountRef ref) {
+int aquariumsWithAlertsCount(Ref ref) {
   final aquariums = ref.watch(aquariumsProvider);
   return aquariums.when(
     data: (list) => list.where((a) => a.hasAlert).length,

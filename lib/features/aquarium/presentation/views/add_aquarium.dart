@@ -107,7 +107,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
 
         setState(() => _isLoading = false);
 
-        if (context.mounted) {
+        if (mounted) {
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -136,7 +136,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
       } on AppException catch (error) {
         setState(() => _isLoading = false);
 
-        if (context.mounted) {
+        if (mounted) {
           // Usa il messaggio user-friendly delle nuove eccezioni
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -162,7 +162,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
       } catch (e) {
         setState(() => _isLoading = false);
 
-        if (context.mounted) {
+        if (mounted) {
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
