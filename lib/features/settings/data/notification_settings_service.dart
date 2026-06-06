@@ -4,6 +4,7 @@ library;
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/settings/domain/models/notification_settings.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
+import 'package:acquariumfe/core/utils/exceptions.dart';
 
 /// Singleton that reads and writes [NotificationSettings] for a specific
 /// aquarium via the REST endpoint
@@ -43,7 +44,7 @@ class NotificationSettingsService {
   /// caller can surface an error to the user.
   Future<void> saveSettings(NotificationSettings settings) async {
     if (_currentAquariumId == null) {
-      throw Exception('Nessun acquario selezionato');
+      throw NoAquariumSelectedException();
     }
 
     try {

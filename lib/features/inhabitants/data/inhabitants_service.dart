@@ -5,6 +5,7 @@ import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/fish.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
+import 'package:acquariumfe/core/utils/exceptions.dart';
 
 /// Singleton that performs CRUD operations on aquarium inhabitants and
 /// computes bio-load statistics.
@@ -74,10 +75,10 @@ class InhabitantsService {
   /// `quantity: 1`.
   Future<void> addFish(Fish fish, String? speciesId) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
     if (speciesId == null) {
-      throw Exception('Species ID is required');
+      throw ValidationException('Species ID is required');
     }
 
     final body = {
@@ -94,7 +95,7 @@ class InhabitantsService {
   /// `PUT /aquariums/{id}/inhabitants/{fishId}`.
   Future<void> updateFish(Fish fish) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
 
     final body = {'quantity': fish.size.toInt(), 'notes': fish.notes ?? ''};
@@ -108,7 +109,7 @@ class InhabitantsService {
   /// Permanently removes the fish with the given [id] from the current aquarium.
   Future<void> deleteFish(String id) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
 
     await _apiService.delete(
@@ -155,10 +156,10 @@ class InhabitantsService {
   /// `inhabitantType: 'coral'` and `quantity: 1`.
   Future<void> addCoral(Coral coral, String? speciesId) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
     if (speciesId == null) {
-      throw Exception('Species ID is required');
+      throw ValidationException('Species ID is required');
     }
 
     final body = {
@@ -175,7 +176,7 @@ class InhabitantsService {
   /// `PUT /aquariums/{id}/inhabitants/{coralId}`.
   Future<void> updateCoral(Coral coral) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
 
     final body = {'quantity': coral.size.toInt(), 'notes': coral.notes ?? ''};
@@ -190,7 +191,7 @@ class InhabitantsService {
   /// aquarium.
   Future<void> deleteCoral(String id) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
 
     await _apiService.delete(

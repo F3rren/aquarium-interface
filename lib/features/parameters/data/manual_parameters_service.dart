@@ -3,6 +3,7 @@ library;
 
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
+import 'package:acquariumfe/core/utils/exceptions.dart';
 
 /// Singleton that persists the five parameters that are entered manually by the
 /// user (i.e. not measured by electronic sensors): calcium, magnesium, KH,
@@ -44,7 +45,7 @@ class ManualParametersService {
     double? phosphate,
   }) async {
     if (_currentAquariumId == null) {
-      throw Exception('Nessun acquario selezionato');
+      throw NoAquariumSelectedException();
     }
 
     try {

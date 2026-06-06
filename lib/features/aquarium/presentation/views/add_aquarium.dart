@@ -85,7 +85,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
         final volume = double.tryParse(volumeText);
 
         if (volume == null || volume <= 0) {
-          throw Exception(l10n.volumeMustBePositive);
+          throw ValidationException(l10n.volumeMustBePositive);
         }
 
         // Mappa i tipi UI ai valori accettati dal backend

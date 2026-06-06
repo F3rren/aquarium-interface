@@ -198,14 +198,14 @@ class ApiService {
           throw _toNetworkException(e, endpoint);
         } on da.TimeoutException catch (e) {
           throw TimeoutException(
-            'La richiesta ha impiegato troppo tempo',
+            'Request timed out',
             timeout: effectiveTimeout,
             details: endpoint,
             originalError: e,
           );
         } on FormatException catch (e) {
           throw DataFormatException(
-            'Errore nel formato dei dati',
+            'Invalid data format',
             details: endpoint,
             originalError: e,
           );
@@ -425,14 +425,14 @@ class ApiService {
         return jsonDecode(response.body);
       } catch (e) {
         throw DataFormatException(
-          'Risposta dal server non in formato JSON valido',
+          'Server response is not valid JSON',
           originalError: e,
         );
       }
     }
 
     // HTTP error — attempt to extract a human-readable message from the body.
-    String errorMessage = 'Errore del server';
+    String errorMessage = 'Server error';
     Map<String, dynamic>? errorDetails;
 
     try {
@@ -442,13 +442,13 @@ class ApiService {
             errorBody['message'] ??
             errorBody['error'] ??
             errorBody['errorMessage'] ??
-            'Errore sconosciuto';
+            'Unknown error';
         errorDetails = errorBody;
       }
     } catch (e) {
       errorMessage = response.body.isNotEmpty
           ? response.body
-          : 'Errore sconosciuto';
+          : 'Unknown error';
     }
 
     final statusCode = response.statusCode;
@@ -470,7 +470,7 @@ class ApiService {
       throw ServerException(
         errorMessage,
         statusCode: statusCode,
-        details: 'Errore interno del server',
+        details: 'Internal server error',
       );
     } else {
       throw AppError(errorMessage, details: 'Status code: $statusCode');

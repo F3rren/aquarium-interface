@@ -8,7 +8,7 @@ library;
 
 import 'dart:async';
 
-import 'package:logger/logger.dart';
+import 'package:acquariumfe/core/utils/app_logger.dart';
 import 'package:acquariumfe/core/routing/app_routes.dart';
 import 'package:acquariumfe/features/aquarium/presentation/views/acquariums_view.dart';
 import 'package:acquariumfe/core/widgets/navbar/navbar.dart';
@@ -29,8 +29,6 @@ import 'package:acquariumfe/core/l10n/app_localizations.dart';
 /// debug banner visibility and the app title suffix shown in non-production
 /// builds.
 Future<void> bootstrap(String flavor) async {
-  final logger = Logger();
-
   // Run the whole app inside a guarded zone so uncaught async errors are
   // logged instead of vanishing (or, during startup, leaving a blank screen).
   runZonedGuarded(
@@ -39,7 +37,7 @@ Future<void> bootstrap(String flavor) async {
 
       // Forward Flutter framework (build/layout/paint) errors to the logger.
       FlutterError.onError = (details) {
-        logger.e(
+        AppLogger.e(
           'Flutter framework error',
           error: details.exception,
           stackTrace: details.stack,
@@ -59,7 +57,7 @@ Future<void> bootstrap(String flavor) async {
           ),
         );
       } catch (e, st) {
-        logger.e(
+        AppLogger.e(
           'Service initialisation failed; continuing',
           error: e,
           stackTrace: st,
@@ -69,7 +67,7 @@ Future<void> bootstrap(String flavor) async {
       runApp(ProviderScope(child: MyApp(flavor: flavor)));
     },
     (error, stack) {
-      logger.e('Uncaught zone error', error: error, stackTrace: stack);
+      AppLogger.e('Uncaught zone error', error: error, stackTrace: stack);
     },
   );
 }

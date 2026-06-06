@@ -3,6 +3,7 @@ library;
 
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
+import 'package:acquariumfe/core/utils/exceptions.dart';
 
 /// Persists and retrieves the four target parameter values
 /// (temperature, pH, salinity, ORP) for the current aquarium.
@@ -120,7 +121,7 @@ class TargetParametersService {
   /// Throws if no aquarium has been selected.
   Future<void> saveTarget(String parameter, double value) async {
     if (_currentAquariumId == null) {
-      throw Exception('Nessun acquario selezionato');
+      throw NoAquariumSelectedException();
     }
 
     final allTargets = await loadAllTargets();
@@ -165,7 +166,7 @@ class TargetParametersService {
   /// Throws if no aquarium has been selected.
   Future<void> resetToDefaults() async {
     if (_currentAquariumId == null) {
-      throw Exception('Nessun acquario selezionato');
+      throw NoAquariumSelectedException();
     }
 
     await _apiService.post(

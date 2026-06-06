@@ -4,6 +4,7 @@ library;
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/maintenance/domain/models/maintenance_task.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
+import 'package:acquariumfe/core/utils/exceptions.dart';
 
 /// Singleton that performs CRUD operations on [MaintenanceTask] records and
 /// provides convenience accessors for task subsets (pending, overdue, etc.).
@@ -37,7 +38,7 @@ class MaintenanceTaskService {
   /// caller can display an error.
   Future<List<MaintenanceTask>> getAllTasks({String? status}) async {
     if (_currentAquariumId == null) {
-      throw Exception('Nessun acquario selezionato');
+      throw NoAquariumSelectedException();
     }
 
     try {
@@ -82,7 +83,7 @@ class MaintenanceTaskService {
   /// entity (with its backend-assigned [MaintenanceTask.id]).
   Future<MaintenanceTask> createTask(MaintenanceTask task) async {
     if (_currentAquariumId == null) {
-      throw Exception('Nessun acquario selezionato');
+      throw NoAquariumSelectedException();
     }
 
     try {
@@ -97,7 +98,7 @@ class MaintenanceTaskService {
       } else if (response is Map<String, dynamic>) {
         taskJson = response;
       } else {
-        throw Exception('Formato risposta non valido');
+        throw DataFormatException('Invalid response format');
       }
 
       return MaintenanceTask.fromJson(taskJson);
@@ -113,7 +114,7 @@ class MaintenanceTaskService {
     MaintenanceTask task,
   ) async {
     if (_currentAquariumId == null) {
-      throw Exception('Nessun acquario selezionato');
+      throw NoAquariumSelectedException();
     }
 
     try {
@@ -128,7 +129,7 @@ class MaintenanceTaskService {
       } else if (response is Map<String, dynamic>) {
         taskJson = response;
       } else {
-        throw Exception('Formato risposta non valido');
+        throw DataFormatException('Invalid response format');
       }
 
       return MaintenanceTask.fromJson(taskJson);
@@ -140,7 +141,7 @@ class MaintenanceTaskService {
   /// Permanently deletes the task identified by [taskId].
   Future<void> deleteTask(String taskId) async {
     if (_currentAquariumId == null) {
-      throw Exception('Nessun acquario selezionato');
+      throw NoAquariumSelectedException();
     }
 
     try {
@@ -154,7 +155,7 @@ class MaintenanceTaskService {
   /// `POST …/tasks/{id}/complete` endpoint and returns the updated entity.
   Future<MaintenanceTask> completeTask(String taskId) async {
     if (_currentAquariumId == null) {
-      throw Exception('Nessun acquario selezionato');
+      throw NoAquariumSelectedException();
     }
 
     try {
@@ -169,7 +170,7 @@ class MaintenanceTaskService {
       } else if (response is Map<String, dynamic>) {
         taskJson = response;
       } else {
-        throw Exception('Formato risposta non valido');
+        throw DataFormatException('Invalid response format');
       }
 
       return MaintenanceTask.fromJson(taskJson);
@@ -218,7 +219,7 @@ class MaintenanceTaskService {
   /// so this method is safe to call on an already-initialised aquarium.
   Future<void> initializeDefaultTasks({String type = 'saltwater'}) async {
     if (_currentAquariumId == null) {
-      throw Exception('Nessun acquario selezionato');
+      throw NoAquariumSelectedException();
     }
 
     final defaultTasks = MaintenanceTask.getDefaultTasks(
