@@ -6,6 +6,8 @@ import 'package:acquariumfe/features/maintenance/data/product_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
+import 'package:acquariumfe/core/utils/exception_localizer.dart';
+import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// Scrollable grid/list of aquarium products with filtering and CRUD actions.
 ///
@@ -56,7 +58,11 @@ class _ProductsViewState extends State<ProductsView> {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Errore nel caricamento: $e'),
+            content: Text(
+              AppLocalizations.of(
+                context,
+              )!.errorLoadingProducts(ExceptionLocalizer.getMessage(context, e)),
+            ),
             backgroundColor: Colors.red,
           ),
         );

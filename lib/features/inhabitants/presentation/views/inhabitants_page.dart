@@ -8,6 +8,8 @@ import 'package:acquariumfe/features/inhabitants/domain/models/fish.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/inhabitants_filter.dart';
 import 'package:acquariumfe/features/inhabitants/data/inhabitants_service.dart';
+import 'package:acquariumfe/core/utils/app_logger.dart';
+import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/widgets/skeleton_loader_card.dart';
 import 'package:acquariumfe/core/widgets/animated_number.dart';
 import 'package:acquariumfe/features/inhabitants/presentation/widgets/inhabitants_filter_panel.dart';
@@ -116,18 +118,36 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       );
     }
 
-    _fishList = await _service.getFish();
-    _coralsList = await _service.getCorals();
-    setState(() => _isLoading = false);
+    try {
+      _fishList = await _service.getFish();
+      _coralsList = await _service.getCorals();
+    } catch (e) {
+      AppLogger.w('Failed to load inhabitants', error: e);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(ExceptionLocalizer.getMessage(context, e)),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+    if (mounted) setState(() => _isLoading = false);
   }
 
   Future<void> _reloadDataSilently() async {
-    final newFish = await _service.getFish();
-    final newCorals = await _service.getCorals();
-    setState(() {
-      _fishList = newFish;
-      _coralsList = newCorals;
-    });
+    try {
+      final newFish = await _service.getFish();
+      final newCorals = await _service.getCorals();
+      if (!mounted) return;
+      setState(() {
+        _fishList = newFish;
+        _coralsList = newCorals;
+      });
+    } catch (e) {
+      AppLogger.w('Silent inhabitants reload failed; keeping current data',
+          error: e);
+    }
   }
 
   Future<void> _refreshData() async {

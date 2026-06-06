@@ -6,6 +6,7 @@ import 'package:acquariumfe/features/inhabitants/domain/models/fish.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
+import 'package:acquariumfe/core/utils/app_logger.dart';
 
 /// Singleton that performs CRUD operations on aquarium inhabitants and
 /// computes bio-load statistics.
@@ -63,7 +64,10 @@ class InhabitantsService {
               Fish.fromInhabitantJson(Map<String, dynamic>.from(item as Map)))
           .toList();
     } catch (e) {
-      return [];
+      // Surface the failure: log it and let the caller decide how to react
+      // (the inhabitants page shows an error SnackBar and keeps last data).
+      AppLogger.w('Failed to load fish', error: e);
+      rethrow;
     }
   }
 
@@ -145,7 +149,8 @@ class InhabitantsService {
               Coral.fromInhabitantJson(Map<String, dynamic>.from(item as Map)))
           .toList();
     } catch (e) {
-      return [];
+      AppLogger.w('Failed to load corals', error: e);
+      rethrow;
     }
   }
 
@@ -210,8 +215,19 @@ class InhabitantsService {
   /// - `'totalBioLoad'` — sum of all fish sizes plus (coral count × 2.0),
   ///   representing the relative biological load on the filtration system
   Future<Map<String, dynamic>> getStatistics() async {
-    final fish = await getFish();
-    final corals = await getCorals();
+    // Statistics degrade gracefully: a fetch failure reports zeros rather than
+    // propagating, so a stats panel never breaks the surrounding screen.
+    List<Fish> fish;
+    List<Coral> corals;
+    try {
+      fish = await getFish();
+      corals = await getCorals();
+    } catch (e) {
+      AppLogger.w('getStatistics: inhabitant fetch failed; reporting zeros',
+          error: e);
+      fish = [];
+      corals = [];
+    }
 
     final totalFish = fish.length;
     final totalCorals = corals.length;

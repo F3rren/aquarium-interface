@@ -8,6 +8,7 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:acquariumfe/core/utils/app_logger.dart';
 import 'package:acquariumfe/features/parameters/domain/models/aquarium_parameters.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
@@ -18,8 +19,9 @@ part 'parameters_provider.g.dart';
 /// the currently selected aquarium.
 ///
 /// Automatically rebuilds whenever [currentAquariumProvider] changes.
-/// Returns `null` when no aquarium is selected or on fetch error (errors are
-/// swallowed here so the UI can display a graceful empty state).
+/// Returns `null` only when no aquarium is selected. Fetch errors are **not**
+/// swallowed — they propagate as [AsyncError] so the UI can show a real error
+/// state with a retry action instead of a misleading empty state.
 @riverpod
 class CurrentParameters extends _$CurrentParameters {
   @override
@@ -32,20 +34,16 @@ class CurrentParameters extends _$CurrentParameters {
 
     final parameterService = ref.watch(parameterServiceProvider);
 
-    try {
-      // Enable real-time alert checking so parameter thresholds are evaluated.
-      parameterService.setAutoCheckAlerts(true);
+    // Enable real-time alert checking so parameter thresholds are evaluated.
+    parameterService.setAutoCheckAlerts(true);
 
-      final parameters = await parameterService.getCurrentParameters(
-        id: currentAquariumId,
-        useMock: false,
-      );
-
-      return parameters;
-    } catch (e) {
-      // Return null instead of propagating — callers show an empty state.
-      return null;
-    }
+    // Let errors propagate as AsyncError so the parameters view and health
+    // dashboard can show a real error state with retry, instead of a
+    // misleading "no data" empty state.
+    return await parameterService.getCurrentParameters(
+      id: currentAquariumId,
+      useMock: false,
+    );
   }
 
   /// Forces a fresh fetch of the current parameters, resetting state to
@@ -122,6 +120,10 @@ Future<Map<String, double>> targetParameters(Ref ref) async {
   try {
     return await targetService.loadAllTargets();
   } catch (e) {
+    // Target ranges are an optional overlay; degrade gracefully to "no targets"
+    // but log so the failure is never silent.
+    AppLogger.w('Failed to load target parameters; using empty targets',
+        error: e);
     return {};
   }
 }

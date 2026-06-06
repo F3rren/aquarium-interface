@@ -12,6 +12,7 @@ import 'package:acquariumfe/features/parameters/presentation/widgets/manual_para
 import 'package:acquariumfe/features/parameters/presentation/providers/parameters_provider.dart';
 import 'package:acquariumfe/core/widgets/responsive_builder.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
+import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// Displays all water parameters for the currently selected aquarium in a
@@ -66,7 +67,7 @@ class ParametersView extends ConsumerWidget {
                 color: Colors.red,
               ),
               const SizedBox(height: 16),
-              Text('${l10n.error}: $error'),
+              Text(ExceptionLocalizer.getMessage(context, error)),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () =>

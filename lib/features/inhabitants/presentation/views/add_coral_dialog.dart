@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral_species.dart';
 import 'package:acquariumfe/features/inhabitants/data/coral_database_service.dart';
+import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// Modal dialog for adding a new coral or editing an existing one.
@@ -92,7 +93,13 @@ class _AddCoralDialogState extends State<AddCoralDialog> {
         final l10n = AppLocalizations.of(context);
         if (l10n != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.databaseLoadError(e.toString()))),
+            SnackBar(
+              content: Text(
+                l10n.databaseLoadError(
+                  ExceptionLocalizer.getMessage(context, e),
+                ),
+              ),
+            ),
           );
         }
       }

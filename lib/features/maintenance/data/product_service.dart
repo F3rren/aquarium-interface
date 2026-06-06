@@ -22,9 +22,9 @@ import 'package:acquariumfe/core/utils/exceptions.dart';
 /// **Response normalisation:** accepts both a direct JSON array and wrapper
 /// objects keyed by `"data"`.
 ///
-/// **Error handling:** [getAllProducts] falls back to the cache on network
-/// errors; all mutation methods propagate exceptions so callers can display
-/// feedback.
+/// **Error handling:** [getAllProducts] serves the cache when a fetch fails
+/// and a cache exists, otherwise it rethrows so the caller can show the error;
+/// all mutation methods propagate exceptions so callers can display feedback.
 class ProductService {
   final _apiService = ApiService();
 
@@ -118,8 +118,13 @@ class ProductService {
 
       return products;
     } catch (e) {
-      AppLogger.e('Errore nel caricamento dei prodotti', error: e);
-      return _cachedProducts ?? [];
+      AppLogger.e('Failed to load products', error: e);
+      // Serve the last good cache when offline; otherwise surface the error so
+      // the products view can show it instead of a misleading empty list.
+      if (_cachedProducts != null) {
+        return _cachedProducts!;
+      }
+      rethrow;
     }
   }
 

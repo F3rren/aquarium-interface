@@ -8,6 +8,7 @@ import 'package:acquariumfe/features/maintenance/presentation/views/products_vie
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
+import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// Two-tab screen for the active aquarium's maintenance tasks and product
@@ -76,7 +77,9 @@ class _MaintenanceViewState extends State<MaintenanceView>
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.errorLoadingTasks(e.toString())),
+            content: Text(
+              l10n.errorLoadingTasks(ExceptionLocalizer.getMessage(context, e)),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -794,7 +797,9 @@ class _MaintenanceViewState extends State<MaintenanceView>
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.errorWithMessage(e.toString())),
+              content: Text(
+                l10n.errorWithMessage(ExceptionLocalizer.getMessage(context, e)),
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -988,7 +993,9 @@ class _MaintenanceViewState extends State<MaintenanceView>
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.errorWithMessage(e.toString())),
+              content: Text(
+                l10n.errorWithMessage(ExceptionLocalizer.getMessage(context, e)),
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -1040,7 +1047,9 @@ class _MaintenanceViewState extends State<MaintenanceView>
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.errorWithMessage(e.toString())),
+            content: Text(
+              l10n.errorWithMessage(ExceptionLocalizer.getMessage(context, e)),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -1244,7 +1253,9 @@ class _MaintenanceViewState extends State<MaintenanceView>
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.errorWithMessage(e.toString())),
+              content: Text(
+                l10n.errorWithMessage(ExceptionLocalizer.getMessage(context, e)),
+              ),
               backgroundColor: Colors.red,
             ),
           );
