@@ -5,6 +5,8 @@ import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/fish.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
+import 'package:acquariumfe/core/utils/exceptions.dart';
+import 'package:acquariumfe/core/utils/app_logger.dart';
 
 /// Singleton that performs CRUD operations on aquarium inhabitants and
 /// computes bio-load statistics.
@@ -62,7 +64,10 @@ class InhabitantsService {
               Fish.fromInhabitantJson(Map<String, dynamic>.from(item as Map)))
           .toList();
     } catch (e) {
-      return [];
+      // Surface the failure: log it and let the caller decide how to react
+      // (the inhabitants page shows an error SnackBar and keeps last data).
+      AppLogger.w('Failed to load fish', error: e);
+      rethrow;
     }
   }
 
@@ -74,10 +79,10 @@ class InhabitantsService {
   /// `quantity: 1`.
   Future<void> addFish(Fish fish, String? speciesId) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
     if (speciesId == null) {
-      throw Exception('Species ID is required');
+      throw ValidationException('Species ID is required');
     }
 
     final body = {
@@ -94,7 +99,7 @@ class InhabitantsService {
   /// `PUT /aquariums/{id}/inhabitants/{fishId}`.
   Future<void> updateFish(Fish fish) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
 
     final body = {'quantity': fish.size.toInt(), 'notes': fish.notes ?? ''};
@@ -108,7 +113,7 @@ class InhabitantsService {
   /// Permanently removes the fish with the given [id] from the current aquarium.
   Future<void> deleteFish(String id) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
 
     await _apiService.delete(
@@ -144,7 +149,8 @@ class InhabitantsService {
               Coral.fromInhabitantJson(Map<String, dynamic>.from(item as Map)))
           .toList();
     } catch (e) {
-      return [];
+      AppLogger.w('Failed to load corals', error: e);
+      rethrow;
     }
   }
 
@@ -155,10 +161,10 @@ class InhabitantsService {
   /// `inhabitantType: 'coral'` and `quantity: 1`.
   Future<void> addCoral(Coral coral, String? speciesId) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
     if (speciesId == null) {
-      throw Exception('Species ID is required');
+      throw ValidationException('Species ID is required');
     }
 
     final body = {
@@ -175,7 +181,7 @@ class InhabitantsService {
   /// `PUT /aquariums/{id}/inhabitants/{coralId}`.
   Future<void> updateCoral(Coral coral) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
 
     final body = {'quantity': coral.size.toInt(), 'notes': coral.notes ?? ''};
@@ -190,7 +196,7 @@ class InhabitantsService {
   /// aquarium.
   Future<void> deleteCoral(String id) async {
     if (_currentAquariumId == null) {
-      throw Exception('No aquarium selected');
+      throw NoAquariumSelectedException();
     }
 
     await _apiService.delete(
@@ -209,8 +215,19 @@ class InhabitantsService {
   /// - `'totalBioLoad'` — sum of all fish sizes plus (coral count × 2.0),
   ///   representing the relative biological load on the filtration system
   Future<Map<String, dynamic>> getStatistics() async {
-    final fish = await getFish();
-    final corals = await getCorals();
+    // Statistics degrade gracefully: a fetch failure reports zeros rather than
+    // propagating, so a stats panel never breaks the surrounding screen.
+    List<Fish> fish;
+    List<Coral> corals;
+    try {
+      fish = await getFish();
+      corals = await getCorals();
+    } catch (e) {
+      AppLogger.w('getStatistics: inhabitant fetch failed; reporting zeros',
+          error: e);
+      fish = [];
+      corals = [];
+    }
 
     final totalFish = fish.length;
     final totalCorals = corals.length;

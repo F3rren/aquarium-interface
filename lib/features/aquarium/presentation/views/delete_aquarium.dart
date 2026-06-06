@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/core/utils/task_localizer.dart';
+import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// Displays a scrollable list of the user's aquariums; tapping one opens a
@@ -84,7 +85,9 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.errorLoading(error.toString())),
+              content: Text(
+                l10n.errorLoading(ExceptionLocalizer.getMessage(context, error)),
+              ),
               backgroundColor: const Color(0xFFef4444),
             ),
           );
@@ -260,7 +263,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                     color: Colors.white,
                   ),
                   const SizedBox(width: 12),
-                  Expanded(child: Text(l10n.errorWithMessage(e.toString()))),
+                  Expanded(child: Text(ExceptionLocalizer.getMessage(context, e))),
                 ],
               ),
               backgroundColor: const Color(0xFFef4444),

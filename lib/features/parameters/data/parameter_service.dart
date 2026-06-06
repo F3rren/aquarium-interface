@@ -14,7 +14,7 @@ import 'package:acquariumfe/features/parameters/data/target_parameters_service.d
 import 'package:acquariumfe/features/settings/data/app_locale_service.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
 import 'package:acquariumfe/core/utils/retry_policy.dart';
-import 'package:logger/logger.dart';
+import 'package:acquariumfe/core/utils/app_logger.dart';
 
 /// Single source of truth for aquarium water parameters.
 ///
@@ -72,7 +72,6 @@ class ParameterService {
   final ApiService _apiService;
   final TargetParametersService _targetService;
   final AlertManager _alertManager;
-  final Logger _logger = Logger();
   final ManualParametersService _manualService;
   final NotificationSettingsService _notificationService;
   final MaintenanceTaskService _maintenanceService;
@@ -234,7 +233,7 @@ class ParameterService {
         return _getMockParameters();
       }
       throw AppError(
-        'Errore imprevisto durante il recupero dei parametri',
+        'Unexpected error while fetching parameters',
         details: e.toString(),
         originalError: e,
       );
@@ -322,10 +321,10 @@ class ParameterService {
 
       return [];
     } on AppException catch (e) {
-      _logger.e('Errore recupero storico per grafico', error: e);
+      AppLogger.e('Errore recupero storico per grafico', error: e);
       return [];
     } catch (e) {
-      _logger.e('Errore imprevisto in getParameterHistoryForChart', error: e);
+      AppLogger.e('Errore imprevisto in getParameterHistoryForChart', error: e);
       return [];
     }
   }
@@ -369,7 +368,7 @@ class ParameterService {
     try {
       await getCurrentParameters();
     } catch (e) {
-      _logger.w('Auto-refresh failed; keeping last known values', error: e);
+      AppLogger.w('Auto-refresh failed; keeping last known values', error: e);
     } finally {
       _refreshInFlight = false;
     }

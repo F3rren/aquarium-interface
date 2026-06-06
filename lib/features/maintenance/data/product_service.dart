@@ -1,10 +1,11 @@
 ﻿/// Service for managing aquarium product inventory via the backend API.
 library;
 
-import 'package:logger/logger.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/maintenance/domain/models/product.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
+import 'package:acquariumfe/core/utils/app_logger.dart';
+import 'package:acquariumfe/core/utils/exceptions.dart';
 
 /// Non-singleton service that performs CRUD operations on [Product] records and
 /// computes inventory statistics.
@@ -21,12 +22,11 @@ import 'package:acquariumfe/core/network/api_service.dart';
 /// **Response normalisation:** accepts both a direct JSON array and wrapper
 /// objects keyed by `"data"`.
 ///
-/// **Error handling:** [getAllProducts] falls back to the cache on network
-/// errors; all mutation methods propagate exceptions so callers can display
-/// feedback.
+/// **Error handling:** [getAllProducts] serves the cache when a fetch fails
+/// and a cache exists, otherwise it rethrows so the caller can show the error;
+/// all mutation methods propagate exceptions so callers can display feedback.
 class ProductService {
   final _apiService = ApiService();
-  final _logger = Logger();
 
   /// ID of the currently active aquarium.
   int? _currentAquariumId;
@@ -67,7 +67,7 @@ class ProductService {
     bool? shouldUseAgain,
   }) async {
     if (_currentAquariumId == null) {
-      throw Exception('Aquarium ID not set');
+      throw NoAquariumSelectedException();
     }
 
     Map<String, dynamic> queryParams = {};
@@ -118,8 +118,13 @@ class ProductService {
 
       return products;
     } catch (e) {
-      _logger.e('Errore nel caricamento dei prodotti', error: e);
-      return _cachedProducts ?? [];
+      AppLogger.e('Failed to load products', error: e);
+      // Serve the last good cache when offline; otherwise surface the error so
+      // the products view can show it instead of a misleading empty list.
+      if (_cachedProducts != null) {
+        return _cachedProducts!;
+      }
+      rethrow;
     }
   }
 
@@ -148,7 +153,7 @@ class ProductService {
   /// Returns `null` on error or when the backend response cannot be parsed.
   Future<Product?> getProductById(String id) async {
     if (_currentAquariumId == null) {
-      throw Exception('Aquarium ID not set');
+      throw NoAquariumSelectedException();
     }
 
     try {
@@ -161,7 +166,7 @@ class ProductService {
       }
       return null;
     } catch (e) {
-      _logger.e('Errore nel recupero del prodotto', error: e);
+      AppLogger.e('Errore nel recupero del prodotto', error: e);
       return null;
     }
   }
@@ -169,14 +174,14 @@ class ProductService {
   /// Creates a new product via `POST /products` and invalidates the cache.
   Future<void> addProduct(Product product) async {
     if (_currentAquariumId == null) {
-      throw Exception('Aquarium ID not set');
+      throw NoAquariumSelectedException();
     }
 
     try {
       await _apiService.post(ApiEndpoints.products, product.toJson());
       _cachedProducts = null;
     } catch (e) {
-      _logger.e("Errore nell'aggiunta del prodotto", error: e);
+      AppLogger.e("Errore nell'aggiunta del prodotto", error: e);
       rethrow;
     }
   }
@@ -185,14 +190,14 @@ class ProductService {
   /// cache.
   Future<void> updateProduct(Product product) async {
     if (_currentAquariumId == null) {
-      throw Exception('Aquarium ID not set');
+      throw NoAquariumSelectedException();
     }
 
     try {
       await _apiService.put(ApiEndpoints.product(product.id), product.toJson());
       _cachedProducts = null;
     } catch (e) {
-      _logger.e("Errore nell'aggiornamento del prodotto", error: e);
+      AppLogger.e("Errore nell'aggiornamento del prodotto", error: e);
       rethrow;
     }
   }
@@ -201,14 +206,14 @@ class ProductService {
   /// invalidates the cache.
   Future<void> deleteProduct(String id) async {
     if (_currentAquariumId == null) {
-      throw Exception('Aquarium ID not set');
+      throw NoAquariumSelectedException();
     }
 
     try {
       await _apiService.delete(ApiEndpoints.product(id));
       _cachedProducts = null;
     } catch (e) {
-      _logger.e("Errore nell'eliminazione del prodotto", error: e);
+      AppLogger.e("Errore nell'eliminazione del prodotto", error: e);
       rethrow;
     }
   }
@@ -221,7 +226,7 @@ class ProductService {
   /// Invalidates the cache on success.
   Future<void> recordUsage(String productId, {double? quantityUsed}) async {
     if (_currentAquariumId == null) {
-      throw Exception('Aquarium ID not set');
+      throw NoAquariumSelectedException();
     }
 
     try {
@@ -235,7 +240,7 @@ class ProductService {
 
       _cachedProducts = null;
     } catch (e) {
-      _logger.e("Errore nella registrazione dell'uso", error: e);
+      AppLogger.e("Errore nella registrazione dell'uso", error: e);
       rethrow;
     }
   }
@@ -244,14 +249,14 @@ class ProductService {
   /// `PATCH /products/{id}/toggle-favorite` and invalidates the cache.
   Future<void> toggleFavorite(String productId) async {
     if (_currentAquariumId == null) {
-      throw Exception('Aquarium ID not set');
+      throw NoAquariumSelectedException();
     }
 
     try {
       await _apiService.patch(ApiEndpoints.toggleProductFavorite(productId), {});
       _cachedProducts = null;
     } catch (e) {
-      _logger.e('Errore nel toggle preferito', error: e);
+      AppLogger.e('Errore nel toggle preferito', error: e);
       rethrow;
     }
   }
@@ -262,7 +267,7 @@ class ProductService {
   /// Invalidates the cache on success.
   Future<void> updateQuantity(String productId, double change) async {
     if (_currentAquariumId == null) {
-      throw Exception('Aquarium ID not set');
+      throw NoAquariumSelectedException();
     }
 
     try {
@@ -271,7 +276,7 @@ class ProductService {
       });
       _cachedProducts = null;
     } catch (e) {
-      _logger.e("Errore nell'aggiornamento della quantità", error: e);
+      AppLogger.e("Errore nell'aggiornamento della quantità", error: e);
       rethrow;
     }
   }

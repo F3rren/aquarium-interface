@@ -10,6 +10,7 @@ import 'package:acquariumfe/features/settings/presentation/providers/theme_provi
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/features/settings/presentation/providers/locale_provider.dart';
 import 'package:acquariumfe/core/routing/custom_page_route.dart';
+import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 import 'package:acquariumfe/core/utils/task_localizer.dart';
 
@@ -648,7 +649,9 @@ class ProfilePage extends ConsumerWidget {
             title: Text(l10n.errorTitle,
               style: TextStyle(color: theme.colorScheme.error),
             ),
-            content: Text(l10n.unableToLoadInfo(error.toString())),
+            content: Text(
+              l10n.unableToLoadInfo(ExceptionLocalizer.getMessage(context, error)),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),

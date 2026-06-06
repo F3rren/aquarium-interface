@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/features/aquarium/domain/models/aquarium.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/core/utils/task_localizer.dart';
+import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// A two-phase screen for editing an aquarium's name, type, and volume.
@@ -89,7 +90,9 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.errorLoading(error.toString())),
+              content: Text(
+                l10n.errorLoading(ExceptionLocalizer.getMessage(context, error)),
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -192,7 +195,13 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                     color: Colors.white,
                   ),
                   const SizedBox(width: 12),
-                  Expanded(child: Text(l10n.errorSavingChanges(e.toString()))),
+                  Expanded(
+                    child: Text(
+                      l10n.errorSavingChanges(
+                        ExceptionLocalizer.getMessage(context, e),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               backgroundColor: Colors.red,
