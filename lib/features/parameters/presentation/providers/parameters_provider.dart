@@ -6,6 +6,7 @@
 /// [targetParameters] exposes the user-defined target ranges.
 library;
 
+import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:acquariumfe/features/parameters/domain/models/aquarium_parameters.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
@@ -84,7 +85,7 @@ class CurrentParameters extends _$CurrentParameters {
 ///
 /// Returns `false` while loading, on error, or when no aquarium is selected.
 @riverpod
-bool hasParameterAlerts(HasParameterAlertsRef ref) {
+bool hasParameterAlerts(Ref ref) {
   final parametersAsync = ref.watch(currentParametersProvider);
 
   return parametersAsync.when(
@@ -109,7 +110,7 @@ bool hasParameterAlerts(HasParameterAlertsRef ref) {
 ///
 /// Returns an empty map when no aquarium is selected or on fetch error.
 @riverpod
-Future<Map<String, double>> targetParameters(TargetParametersRef ref) async {
+Future<Map<String, double>> targetParameters(Ref ref) async {
   final currentAquariumId = ref.watch(currentAquariumProvider);
 
   if (currentAquariumId == null) {

@@ -371,38 +371,38 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                           .withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Column(
-                      children: [
-                        ...SortType.values.map((type) {
-                          final isLast = type == SortType.values.last;
-                          return Column(
-                            children: [
-                              RadioListTile<SortType>(
-                                title: Text(type.label),
-                                value: type,
-                                groupValue: _filter.sortBy,
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    _updateFilter(
-                                      _filter.copyWith(sortBy: value),
-                                    );
-                                  }
-                                },
-                                activeColor: theme.colorScheme.primary,
-                              ),
-                              if (!isLast)
-                                Divider(
-                                  height: 1,
-                                  indent: 16,
-                                  endIndent: 16,
-                                  color: theme.dividerColor.withValues(
-                                    alpha: 0.1,
-                                  ),
+                    child: RadioGroup<SortType>(
+                      groupValue: _filter.sortBy,
+                      onChanged: (value) {
+                        if (value != null) {
+                          _updateFilter(_filter.copyWith(sortBy: value));
+                        }
+                      },
+                      child: Column(
+                        children: [
+                          ...SortType.values.map((type) {
+                            final isLast = type == SortType.values.last;
+                            return Column(
+                              children: [
+                                RadioListTile<SortType>(
+                                  title: Text(type.label),
+                                  value: type,
+                                  activeColor: theme.colorScheme.primary,
                                 ),
-                            ],
-                          );
-                        }),
-                      ],
+                                if (!isLast)
+                                  Divider(
+                                    height: 1,
+                                    indent: 16,
+                                    endIndent: 16,
+                                    color: theme.dividerColor.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                  ),
+                              ],
+                            );
+                          }),
+                        ],
+                      ),
                     ),
                   ),
 
@@ -423,7 +423,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                     onChanged: (value) {
                       _updateFilter(_filter.copyWith(sortAscending: value));
                     },
-                    activeColor: theme.colorScheme.primary,
+                    activeThumbColor: theme.colorScheme.primary,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                   ),
 

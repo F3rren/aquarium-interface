@@ -1027,6 +1027,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         await _loadTasks();
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.taskCompletedSuccess(localizedTaskTitle(task, l10n))),

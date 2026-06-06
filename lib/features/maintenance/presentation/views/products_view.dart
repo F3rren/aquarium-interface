@@ -755,7 +755,7 @@ class _ProductsViewState extends State<ProductsView> {
                 await _service.recordUsage(product.id, quantityUsed: quantity);
                 if (context.mounted) Navigator.pop(context);
                 _loadProducts();
-                if (mounted) {
+                if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Utilizzo registrato')),
                   );
