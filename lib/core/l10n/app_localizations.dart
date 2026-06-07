@@ -1607,7 +1607,7 @@ abstract class AppLocalizations {
   /// No description provided for @typicalRangeSalinity.
   ///
   /// In it, this message translates to:
-  /// **'Range tipico: 1020-1028'**
+  /// **'Range tipico: 33-37 ppt'**
   String get typicalRangeSalinity;
 
   /// No description provided for @targetPh.
@@ -3347,7 +3347,7 @@ abstract class AppLocalizations {
   /// No description provided for @salinityDefault.
   ///
   /// In it, this message translates to:
-  /// **'• Salinità: 1020-1028'**
+  /// **'• Salinità: 33-37 ppt'**
   String get salinityDefault;
 
   /// No description provided for @andOtherParameters.

@@ -179,7 +179,7 @@ void main() {
       );
 
       final result = await sut.getAquariumParameters(1);
-      expect(result.salinity, equals(1.025));
+      expect(result.salinity, equals(35.0));
     });
 
     test('throws DataFormatException when response is not a map', () async {

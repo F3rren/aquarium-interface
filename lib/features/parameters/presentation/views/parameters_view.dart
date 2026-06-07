@@ -106,7 +106,7 @@ class ParametersView extends ConsumerWidget {
                 ),
                 SalinityMeter(
                   currentSalinity: currentParams.salinity,
-                  targetSalinity: targetParams['salinity'] ?? 1.025,
+                  targetSalinity: targetParams['salinity'] ?? 35.0,
                 ),
                 OrpMeter(
                   currentOrp: currentParams.orp,

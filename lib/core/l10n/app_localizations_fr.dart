@@ -807,7 +807,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get setDesiredSalinity => 'Définir la valeur de salinité souhaitée:';
 
   @override
-  String get typicalRangeSalinity => 'Plage typique: 1020-1028';
+  String get typicalRangeSalinity => 'Plage typique: 33-37 ppt';
 
   @override
   String get targetPh => 'pH Cible';
@@ -1783,7 +1783,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get phDefault => '• pH: 8.0-8.4';
 
   @override
-  String get salinityDefault => '• Salinité: 1020-1028';
+  String get salinityDefault => '• Salinité: 33-37 ppt';
 
   @override
   String get andOtherParameters => '• Et tous les autres paramètres...';

@@ -9,7 +9,7 @@ void main() {
 
       expect(p.temperature, equals(25.5));
       expect(p.ph, equals(8.2));
-      expect(p.salinity, equals(1.025));
+      expect(p.salinity, equals(35.0));
       expect(p.orp, equals(350.0));
     });
 
@@ -86,7 +86,7 @@ void main() {
 
       expect(json['temperature'], equals(25.5));
       expect(json['ph'], equals(8.2));
-      expect(json['salinity'], equals(1.025));
+      expect(json['salinity'], equals(35.0));
       expect(json['orp'], equals(350.0));
     });
 

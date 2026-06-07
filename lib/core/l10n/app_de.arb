@@ -304,7 +304,7 @@
   "typicalRangeTemperature": "Typischer Bereich: 24-26 °C",
   "targetSalinity": "Zielsalzgehalt",
   "setDesiredSalinity": "Gewünschten Salzgehalt einstellen:",
-  "typicalRangeSalinity": "Typischer Bereich: 1020-1028",
+  "typicalRangeSalinity": "Typischer Bereich: 33-37 ppt",
   "targetPh": "Ziel-pH",
   "setDesiredPh": "Gewünschten pH-Wert einstellen:",
   "typicalRangePh": "Typischer Bereich: 8.0-8.4",
@@ -885,7 +885,7 @@
   "restoreDefaultsMessage": "Diese Aktion setzt alle benutzerdefinierten Schwellenwerte auf die Standardwerte zur\u00fcck:",
   "temperatureDefault": "\u2022 Temperatur: 24-26\u00b0C",
   "phDefault": "\u2022 pH: 8.0-8.4",
-  "salinityDefault": "\u2022 Salzgehalt: 1020-1028",
+  "salinityDefault": "\u2022 Salzgehalt: 33-37 ppt",
   "andOtherParameters": "\u2022 Und alle anderen Parameter...",
   "updated": "Aktualisiert {time}",
   "@updated": {

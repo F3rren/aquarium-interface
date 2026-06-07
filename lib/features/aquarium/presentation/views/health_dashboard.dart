@@ -108,7 +108,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         // Usa dati di fallback se non ancora caricati
         final currentTemperature = currentParams?.temperature ?? 25.0;
         final currentPh = currentParams?.ph ?? 8.2;
-        final currentSalinity = currentParams?.salinity ?? 1024.0;
+        final currentSalinity = currentParams?.salinity ?? 35.0;
         final currentOrp = currentParams?.orp ?? 350.0;
         final calcium = currentParams?.calcium ?? 420.0;
         final magnesium = currentParams?.magnesium ?? 1280.0;

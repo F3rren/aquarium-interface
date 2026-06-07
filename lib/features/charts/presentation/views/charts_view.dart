@@ -1071,12 +1071,12 @@ class _ChartsViewState extends ConsumerState<ChartsView>
         };
       case 'Salinità':
         return {
-          'ideal_min': 1023.0,
-          'ideal_max': 1026.0,
-          'warning_min': 1021.0,
-          'warning_max': 1027.0,
-          'critical_min': 1019.0,
-          'critical_max': 1029.0,
+          'ideal_min': 33.0,
+          'ideal_max': 37.0,
+          'warning_min': 32.0,
+          'warning_max': 38.0,
+          'critical_min': 30.0,
+          'critical_max': 40.0,
         };
       case 'ORP':
         return {

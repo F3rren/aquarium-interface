@@ -11,13 +11,13 @@ import 'package:acquariumfe/core/widgets/tap_effect_card.dart';
 import 'package:acquariumfe/features/parameters/presentation/widgets/target_progress_bar.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
-/// Displays the current salinity value (in PPT/1000) with target-relative
-/// colour coding and an optional [TargetProgressBar].
+/// Displays the current salinity value (PSU/ppt) with target-relative colour
+/// coding and an optional [TargetProgressBar].
 ///
 /// Colour logic (relative to [targetSalinity]):
-/// - Difference ≤ 4 → green (optimal)
-/// - Difference ≤ 8 → amber (attention)
-/// - Difference > 8 → red (low/high)
+/// - Difference ≤ 1 ppt → green (optimal)
+/// - Difference ≤ 2 ppt → amber (attention)
+/// - Difference > 2 ppt → red (low/high)
 /// - No target set → green (monitoring mode)
 ///
 /// Tapping the card opens a dialog to update the target salinity, which is
@@ -30,7 +30,7 @@ class SalinityMeter extends ConsumerWidget {
 
   const SalinityMeter({
     super.key,
-    this.currentSalinity = 1024.0,
+    this.currentSalinity = 35.0,
     this.targetSalinity,
     this.onTargetChanged,
   });
@@ -39,8 +39,8 @@ class SalinityMeter extends ConsumerWidget {
     if (targetSalinity == null) return const Color(0xFF34d399);
 
     final diff = (currentSalinity - targetSalinity!).abs();
-    if (diff <= 4) return const Color(0xFF34d399); // Vicino al target (±4)
-    if (diff <= 8) return const Color(0xFFfbbf24); // Poco distante (±8)
+    if (diff <= 1) return const Color(0xFF34d399); // Vicino al target (±1 ppt)
+    if (diff <= 2) return const Color(0xFFfbbf24); // Poco distante (±2 ppt)
     return const Color(0xFFef4444); // Molto distante
   }
 
@@ -49,8 +49,8 @@ class SalinityMeter extends ConsumerWidget {
     if (targetSalinity == null) return l10n.monitoring;
 
     final diff = (currentSalinity - targetSalinity!).abs();
-    if (diff <= 4) return l10n.optimal;
-    if (diff <= 8) return l10n.attention;
+    if (diff <= 1) return l10n.optimal;
+    if (diff <= 2) return l10n.attention;
     return currentSalinity < targetSalinity! ? l10n.low : l10n.high;
   }
 
@@ -149,8 +149,8 @@ class SalinityMeter extends ConsumerWidget {
               TargetProgressBar(
                 currentValue: currentSalinity,
                 targetValue: targetSalinity!,
-                minValue: 1020,
-                maxValue: 1028,
+                minValue: 30,
+                maxValue: 40,
                 unit: ' PPT',
               ),
             ] else ...[
@@ -214,7 +214,7 @@ class SalinityMeter extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                hintText: '1024',
+                hintText: '35',
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                 ),

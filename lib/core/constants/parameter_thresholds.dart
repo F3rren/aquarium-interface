@@ -9,11 +9,8 @@
 /// so the two can never silently disagree. Before this existed the dashboard
 /// flagged a tank as healthy up to 27 °C while notifications fired above 26 °C.
 ///
-/// **Salinity is expressed in specific gravity (~1.02)**, matching the sensor
-/// readings carried by `AquariumParameters.salinity`. Note: parts of the UI
-/// (the salinity gauge) and the notification default still use a legacy ×1000
-/// scale (`1024`); unifying those is tracked separately as it also depends on
-/// the backend's target-salinity scale.
+/// **Salinity is expressed in PSU/ppt** (~35 = standard seawater), matching the
+/// sensor readings carried by `AquariumParameters.salinity`.
 library;
 
 /// An inclusive numeric `[min, max]` range for a water parameter.
@@ -44,8 +41,8 @@ abstract final class ParameterThresholdDefaults {
   /// pH (dimensionless).
   static const ParameterRange ph = ParameterRange(7.8, 8.5);
 
-  /// Salinity, **specific gravity** (~1.02), matching the sensor scale.
-  static const ParameterRange salinity = ParameterRange(1.023, 1.026);
+  /// Salinity, **PSU/ppt** (~35 = standard seawater), matching the sensor scale.
+  static const ParameterRange salinity = ParameterRange(33.0, 37.0);
 
   /// Oxidation-reduction potential, mV.
   static const ParameterRange orp = ParameterRange(300.0, 400.0);

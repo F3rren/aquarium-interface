@@ -304,7 +304,7 @@
   "typicalRangeTemperature": "Plage typique: 24-26 °C",
   "targetSalinity": "Salinité Cible",
   "setDesiredSalinity": "Définir la valeur de salinité souhaitée:",
-  "typicalRangeSalinity": "Plage typique: 1020-1028",
+  "typicalRangeSalinity": "Plage typique: 33-37 ppt",
   "targetPh": "pH Cible",
   "setDesiredPh": "Définir la valeur de pH souhaitée:",
   "typicalRangePh": "Plage typique: 8.0-8.4",
@@ -766,7 +766,7 @@
   "restoreDefaultsMessage": "Cette action r\u00e9initialisera tous les seuils personnalis\u00e9s aux valeurs par d\u00e9faut:",
   "temperatureDefault": "\u2022 Temp\u00e9rature: 24-26\u00b0C",
   "phDefault": "\u2022 pH: 8.0-8.4",
-  "salinityDefault": "\u2022 Salinit\u00e9: 1020-1028",
+  "salinityDefault": "\u2022 Salinit\u00e9: 33-37 ppt",
   "andOtherParameters": "\u2022 Et tous les autres param\u00e8tres...",
   "updated": "Mis \u00e0 jour {time}",
   "@updated": {

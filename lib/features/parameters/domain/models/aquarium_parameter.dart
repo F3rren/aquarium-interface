@@ -12,7 +12,7 @@ enum AquariumParameter {
   /// Potential of hydrogen — acidity/alkalinity scale (dimensionless).
   ph,
 
-  /// Salt concentration; stored as specific gravity (e.g. 1.025).
+  /// Salt concentration in PSU/ppt (e.g. 35).
   salinity,
 
   /// Oxidation-Reduction Potential in millivolts (mV).

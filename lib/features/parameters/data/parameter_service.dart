@@ -396,7 +396,7 @@ class ParameterService {
     return AquariumParameters(
       temperature: 25.0,
       ph: 8.20,
-      salinity: 1.024,
+      salinity: 35.0,
       orp: 350.0,
       calcium: 420.0,
       magnesium: 1280.0,
