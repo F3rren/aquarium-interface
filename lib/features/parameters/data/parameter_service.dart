@@ -79,6 +79,12 @@ class ParameterService {
   /// ID of the currently selected aquarium.
   int? _currentid;
 
+  /// ID of the currently selected aquarium, or `null` if none has been set.
+  ///
+  /// Exposed so adapters (e.g. [ChartDataService]) can target the active
+  /// aquarium instead of hard-coding an ID.
+  int? get currentAquariumId => _currentid;
+
   /// Most-recently fetched and merged parameter set.
   AquariumParameters? _cachedParameters;
 
