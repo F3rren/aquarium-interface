@@ -42,8 +42,14 @@ class ChartDataService {
     try {
       final paramName = _mapParameterName(parameter);
 
+      // Target the currently selected aquarium, not a hard-coded ID.
+      final aquariumId = _parameterService.currentAquariumId;
+      if (aquariumId == null) {
+        return [];
+      }
+
       final historyData = await _parameterService.getParameterHistoryForChart(
-        aquariumId: 1,
+        aquariumId: aquariumId,
         parameterName: paramName,
         hours: Duration(hours: hours),
       );

@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:acquariumfe/features/aquarium/domain/models/aquarium.dart';
 import 'package:acquariumfe/features/parameters/domain/models/aquarium_parameters.dart';
+import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/features/maintenance/data/maintenance_task_service.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
@@ -44,22 +45,18 @@ class AquariumWithParams {
 
   /// Whether at least one monitored parameter is outside its acceptable range.
   ///
-  /// Reference ranges used (typical marine aquarium values):
-  /// - Temperature: 24–27 °C
-  /// - pH: 7.8–8.5
-  /// - Salinity: 1.023–1.026
+  /// Ranges come from [ParameterThresholdDefaults] (the single source of truth
+  /// shared with the notification thresholds) so the dashboard alert dot and
+  /// the notifications never disagree.
   ///
   /// Returns `false` when [parameters] is `null`.
   bool get hasAlert {
     if (parameters == null) return false;
 
-    final tempOk =
-        parameters!.temperature >= 24.0 && parameters!.temperature <= 27.0;
-    final phOk = parameters!.ph >= 7.8 && parameters!.ph <= 8.5;
-    final salinityOk =
-        parameters!.salinity >= 1.023 && parameters!.salinity <= 1.026;
-
-    return !tempOk || !phOk || !salinityOk;
+    return ParameterThresholdDefaults.temperature
+            .isOutOfRange(parameters!.temperature) ||
+        ParameterThresholdDefaults.ph.isOutOfRange(parameters!.ph) ||
+        ParameterThresholdDefaults.salinity.isOutOfRange(parameters!.salinity);
   }
 
   /// Returns a copy of this aggregate with the specified fields replaced.

@@ -1,6 +1,8 @@
 /// User-configurable notification preferences and parameter alert thresholds.
 library;
 
+import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
+
 /// Top-level configuration for all app notifications.
 ///
 /// Contains three global toggle switches and per-parameter threshold objects.
@@ -17,13 +19,16 @@ class NotificationSettings {
 
   // ── Per-parameter thresholds ───────────────────────────────────────────────
 
-  /// Alert thresholds for water temperature (°C). Default: 24–26 °C.
+  /// Alert thresholds for water temperature (°C). Defaults from
+  /// [ParameterThresholdDefaults.temperature].
   final ParameterThresholds temperature;
 
-  /// Alert thresholds for pH. Default: 8.0–8.4.
+  /// Alert thresholds for pH. Defaults from [ParameterThresholdDefaults.ph].
   final ParameterThresholds ph;
 
-  /// Alert thresholds for salinity (specific gravity). Default: 1.020–1.028.
+  /// Alert thresholds for salinity. **Legacy ×1000 scale** (e.g. 1024), unlike
+  /// the sensor readings which are specific gravity (~1.024) — see the
+  /// FIXME in the constructor.
   final ParameterThresholds salinity;
 
   /// Alert thresholds for ORP (mV). Default: 300–400 mV.
@@ -61,15 +66,52 @@ class NotificationSettings {
     ParameterThresholds? nitrate,
     ParameterThresholds? phosphate,
     MaintenanceReminders? maintenanceReminders,
-  }) : temperature = temperature ?? ParameterThresholds(min: 24.0, max: 26.0),
-       ph = ph ?? ParameterThresholds(min: 8.0, max: 8.4),
+  }) : temperature = temperature ??
+           ParameterThresholds(
+             min: ParameterThresholdDefaults.temperature.min,
+             max: ParameterThresholdDefaults.temperature.max,
+           ),
+       ph = ph ??
+           ParameterThresholds(
+             min: ParameterThresholdDefaults.ph.min,
+             max: ParameterThresholdDefaults.ph.max,
+           ),
+       // FIXME(salinity-scale): legacy ×1000 default. Sensor readings are
+       // specific gravity (~1.024), so this 1020–1028 range never matches real
+       // data and salinity alerts misfire. Switch to
+       // ParameterThresholdDefaults.salinity once the backend target-salinity
+       // scale is confirmed (the salinity gauge/targets also use ×1000).
        salinity = salinity ?? ParameterThresholds(min: 1020.0, max: 1028.0),
-       orp = orp ?? ParameterThresholds(min: 300.0, max: 400.0),
-       calcium = calcium ?? ParameterThresholds(min: 400.0, max: 450.0),
-       magnesium = magnesium ?? ParameterThresholds(min: 1250.0, max: 1350.0),
-       kh = kh ?? ParameterThresholds(min: 7.0, max: 9.0),
-       nitrate = nitrate ?? ParameterThresholds(min: 0.0, max: 10.0),
-       phosphate = phosphate ?? ParameterThresholds(min: 0.0, max: 0.1),
+       orp = orp ??
+           ParameterThresholds(
+             min: ParameterThresholdDefaults.orp.min,
+             max: ParameterThresholdDefaults.orp.max,
+           ),
+       calcium = calcium ??
+           ParameterThresholds(
+             min: ParameterThresholdDefaults.calcium.min,
+             max: ParameterThresholdDefaults.calcium.max,
+           ),
+       magnesium = magnesium ??
+           ParameterThresholds(
+             min: ParameterThresholdDefaults.magnesium.min,
+             max: ParameterThresholdDefaults.magnesium.max,
+           ),
+       kh = kh ??
+           ParameterThresholds(
+             min: ParameterThresholdDefaults.kh.min,
+             max: ParameterThresholdDefaults.kh.max,
+           ),
+       nitrate = nitrate ??
+           ParameterThresholds(
+             min: ParameterThresholdDefaults.nitrate.min,
+             max: ParameterThresholdDefaults.nitrate.max,
+           ),
+       phosphate = phosphate ??
+           ParameterThresholds(
+             min: ParameterThresholdDefaults.phosphate.min,
+             max: ParameterThresholdDefaults.phosphate.max,
+           ),
        maintenanceReminders = maintenanceReminders ?? MaintenanceReminders();
 
   /// Returns a copy with the specified fields replaced.
