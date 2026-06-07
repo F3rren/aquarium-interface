@@ -160,7 +160,7 @@ void main() {
         parameters: AquariumParameters(
           temperature: 25.0,
           ph: 7.5, // below 7.8 minimum
-          salinity: 1.025,
+          salinity: 35.0,
           orp: 350.0,
           timestamp: DateTime(2024),
         ),

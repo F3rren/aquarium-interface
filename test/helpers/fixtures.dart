@@ -60,7 +60,7 @@ final aquariumListResponse = <String, dynamic>{
 final parametersHealthy = AquariumParameters(
   temperature: 25.5,
   ph: 8.2,
-  salinity: 1.025,
+  salinity: 35.0,
   orp: 350.0,
   calcium: 420.0,
   magnesium: 1300.0,
@@ -74,7 +74,7 @@ final parametersHealthy = AquariumParameters(
 final parametersHighTemp = AquariumParameters(
   temperature: 29.0,
   ph: 8.2,
-  salinity: 1.025,
+  salinity: 35.0,
   orp: 350.0,
   timestamp: DateTime(2024, 6, 1, 12, 0),
 );
@@ -83,7 +83,7 @@ final parametersHighTemp = AquariumParameters(
 final parametersJson = <String, dynamic>{
   'temperature': 25.5,
   'ph': 8.2,
-  'salinity': 1.025,
+  'salinity': 35.0,
   'orp': 350.0,
   'calcium': 420.0,
   'magnesium': 1300.0,
