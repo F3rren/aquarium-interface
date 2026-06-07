@@ -4117,6 +4117,64 @@ abstract class AppLocalizations {
   /// In it, this message translates to:
   /// **'Alimentazione'**
   String get categoryFeeding;
+
+  /// No description provided for @onlyFavorites.
+  String get onlyFavorites;
+
+  /// No description provided for @noProductsFound.
+  String get noProductsFound;
+
+  /// No description provided for @usageFrequencyDays.
+  String get usageFrequencyDays;
+
+  /// No description provided for @addToFavorites.
+  String get addToFavorites;
+
+
+  /// No description provided for @total.
+  String get total;
+
+  /// No description provided for @newProduct.
+  String get newProduct;
+
+  /// No description provided for @removeFavorite.
+  String get removeFavorite;
+
+  /// No description provided for @priority.
+  String get priority;
+
+  /// No description provided for @expiresInDays.
+  String expiresInDays(String days);
+
+
+  /// No description provided for @addFirstProductHint.
+  String get addFirstProductHint;
+
+  /// No description provided for @usageFrequencyHint.
+  String get usageFrequencyHint;
+
+
+  /// No description provided for @title.
+  String get title;
+
+  /// No description provided for @tasks.
+  String get tasks;
+
+  /// No description provided for @completedOnLabel.
+  String get completedOnLabel;
+
+  /// No description provided for @tomorrow.
+  String get tomorrow;
+
+  /// No description provided for @yesterday.
+  String get yesterday;
+
+  /// No description provided for @nextDue.
+  String get nextDue;
+
+  /// No description provided for @lastCompletion.
+  String get lastCompletion;
+
 }
 
 class _AppLocalizationsDelegate

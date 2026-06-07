@@ -1029,5 +1029,22 @@
   "categoryCleaning": "Nettoyage",
   "categoryDosing": "Dosage",
   "categoryFeeding": "Alimentation",
-  "categoryOther": "Autre"
+  "categoryOther": "Autre",
+  "onlyFavorites": "Favoris uniquement",
+  "noProductsFound": "Aucun produit trouvé",
+  "usageFrequencyDays": "Fréquence d'utilisation (jours)",
+  "addToFavorites": "Ajouter aux favoris",
+  "total": "Total",
+  "newProduct": "Nouveau produit",
+  "removeFavorite": "Retirer des favoris",
+  "priority": "Priorité",
+  "expiresInDays": "Expire dans {days} jours",
+  "addFirstProductHint": "Ajoute ton premier produit pour commencer à gérer ton inventaire",
+  "usageFrequencyHint": "Ex : 7 pour usage hebdomadaire",
+  "tasks": "Tâches",
+  "completedOnLabel": "Terminé le",
+  "tomorrow": "Demain",
+  "yesterday": "Hier",
+  "nextDue": "Prochaine échéance",
+  "lastCompletion": "Dernier achèvement"
 }

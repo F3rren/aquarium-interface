@@ -9,6 +9,66 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
+  String get title => 'Título';
+
+  @override
+  String get tasks => 'Tareas';
+
+  @override
+  String get completedOnLabel => 'Completado el';
+
+  @override
+  String get tomorrow => 'Mañana';
+
+  @override
+  String get yesterday => 'Ayer';
+
+  @override
+  String get nextDue => 'Próximo vencimiento';
+
+  @override
+  String get lastCompletion => 'Última finalización';
+
+
+  @override
+  String get addFirstProductHint => 'Añade tu primer producto para empezar a gestionar tu inventario';
+
+  @override
+  String get usageFrequencyHint => 'Ej: 7 para uso semanal';
+
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get newProduct => 'Nuevo Producto';
+
+  @override
+  String get removeFavorite => 'Quitar favorito';
+
+  @override
+  String get priority => 'Prioridad';
+
+  @override
+  String expiresInDays(String days) {
+    return 'Caduca en $days días';
+  }
+
+
+  @override
+  String get onlyFavorites => 'Solo Favoritos';
+
+  @override
+  String get noProductsFound => 'No se encontraron productos';
+
+  @override
+  String get usageFrequencyDays => 'Frecuencia de uso (días)';
+
+  @override
+  String get addToFavorites => 'Añadir a favoritos';
+
+
+  @override
   String get appTitle => 'ReefLife';
 
   @override

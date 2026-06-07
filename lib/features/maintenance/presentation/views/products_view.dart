@@ -115,7 +115,7 @@ class _ProductsViewState extends State<ProductsView> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddProductDialog(),
         icon: const FaIcon(FontAwesomeIcons.plus, size: 18),
-        label: const Text('Aggiungi Prodotto'),
+        label: Text(AppLocalizations.of(context)!.addProduct),
       ),
     );
   }
@@ -138,19 +138,19 @@ class _ProductsViewState extends State<ProductsView> {
             theme,
             FontAwesomeIcons.boxesStacked,
             '${stats['total']}',
-            'Prodotti',
+            AppLocalizations.of(context)!.products,
           ),
           _buildStatItem(
             theme,
             FontAwesomeIcons.euroSign,
             '${stats['totalCost'].toStringAsFixed(2)}',
-            'Totale',
+            AppLocalizations.of(context)!.total,
           ),
           _buildStatItem(
             theme,
             FontAwesomeIcons.triangleExclamation,
             '${stats['alerts']}',
-            'Avvisi',
+            AppLocalizations.of(context)!.alerts,
             color: stats['alerts'] > 0 ? Colors.orange : null,
           ),
         ],
@@ -191,7 +191,7 @@ class _ProductsViewState extends State<ProductsView> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildCategoryChip(theme, null, 'Tutte'),
+                _buildCategoryChip(theme, null, AppLocalizations.of(context)!.all),
                 ...ProductCategory.values.map(
                   (cat) =>
                       _buildCategoryChip(theme, cat, _getCategoryName(cat)),
@@ -204,7 +204,7 @@ class _ProductsViewState extends State<ProductsView> {
           Row(
             children: [
               FilterChip(
-                label: const Text('Solo Preferiti'),
+                label: Text(AppLocalizations.of(context)!.onlyFavorites),
                 selected: _showFavoritesOnly,
                 onSelected: (selected) {
                   setState(() => _showFavoritesOnly = selected);
@@ -339,8 +339,8 @@ class _ProductsViewState extends State<ProductsView> {
                             const SizedBox(width: 8),
                             Text(
                               product.isFavorite
-                                  ? 'Rimuovi preferito'
-                                  : 'Aggiungi a preferiti',
+                                  ? AppLocalizations.of(context)!.removeFavorite
+                                  : AppLocalizations.of(context)!.addToFavorites,
                             ),
                           ],
                         ),
@@ -350,11 +350,11 @@ class _ProductsViewState extends State<ProductsView> {
                           Duration.zero,
                           () => _editProduct(product),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
                             FaIcon(FontAwesomeIcons.penToSquare, size: 16),
                             SizedBox(width: 8),
-                            Text('Modifica'),
+                            Text(AppLocalizations.of(context)!.edit),
                           ],
                         ),
                       ),
@@ -363,14 +363,14 @@ class _ProductsViewState extends State<ProductsView> {
                           Duration.zero,
                           () => _recordUsage(product),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
                             FaIcon(
                               FontAwesomeIcons.handHoldingDroplet,
                               size: 16,
                             ),
                             SizedBox(width: 8),
-                            Text('Registra utilizzo'),
+                            Text(AppLocalizations.of(context)!.recordUsage),
                           ],
                         ),
                       ),
@@ -379,7 +379,7 @@ class _ProductsViewState extends State<ProductsView> {
                           Duration.zero,
                           () => _deleteProduct(product),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
                             FaIcon(
                               FontAwesomeIcons.trash,
@@ -388,7 +388,7 @@ class _ProductsViewState extends State<ProductsView> {
                             ),
                             SizedBox(width: 8),
                             Text(
-                              'Elimina',
+                              AppLocalizations.of(context)!.delete,
                               style: TextStyle(color: Colors.red),
                             ),
                           ],
@@ -429,7 +429,7 @@ class _ProductsViewState extends State<ProductsView> {
                     _buildInfoChip(
                       theme,
                       FontAwesomeIcons.clock,
-                      'Usato ${product.daysSinceLastUse} gg fa',
+                      AppLocalizations.of(context)!.usedDaysAgo(product.daysSinceLastUse.toString()),
                       isWarning: product.shouldUseAgain,
                     ),
                 ],
@@ -525,10 +525,10 @@ class _ProductsViewState extends State<ProductsView> {
             color: theme.colorScheme.primary.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
-          Text('Nessun prodotto trovato', style: theme.textTheme.titleLarge),
+          Text(AppLocalizations.of(context)!.noProductsFound, style: theme.textTheme.titleLarge),
           const SizedBox(height: 8),
           Text(
-            'Aggiungi il tuo primo prodotto\nper iniziare a gestire l\'inventario',
+            AppLocalizations.of(context)!.addFirstProductHint,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.textTheme.bodySmall?.color,
@@ -566,21 +566,21 @@ class _ProductsViewState extends State<ProductsView> {
   String _getCategoryName(ProductCategory category) {
     switch (category) {
       case ProductCategory.bacteria:
-        return 'Batteri';
+        return AppLocalizations.of(context)!.categoryBacteria;
       case ProductCategory.food:
-        return 'Cibo';
+        return AppLocalizations.of(context)!.categoryFood;
       case ProductCategory.test:
-        return 'Test';
+        return AppLocalizations.of(context)!.categoryTest;
       case ProductCategory.supplement:
-        return 'Integratori';
+        return AppLocalizations.of(context)!.categorySupplement;
       case ProductCategory.waterTreatment:
-        return 'Trattamento';
+        return AppLocalizations.of(context)!.categoryWaterTreatment;
       case ProductCategory.equipment:
-        return 'Attrezzatura';
+        return AppLocalizations.of(context)!.categoryEquipment;
       case ProductCategory.medicine:
-        return 'Medicinali';
+        return AppLocalizations.of(context)!.categoryMedicine;
       case ProductCategory.other:
-        return 'Altro';
+        return AppLocalizations.of(context)!.categoryOther;
     }
   }
 
@@ -610,11 +610,11 @@ class _ProductsViewState extends State<ProductsView> {
     final diff = date.difference(now).inDays;
 
     if (diff < 0) {
-      return 'Scaduto';
+      return AppLocalizations.of(context)!.expired;
     } else if (diff == 0) {
-      return 'Scade oggi';
+      return AppLocalizations.of(context)!.expiresToday;
     } else if (diff <= 30) {
-      return 'Scade tra $diff gg';
+      return AppLocalizations.of(context)!.expiresInDays(diff.toString());
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
@@ -632,22 +632,22 @@ class _ProductsViewState extends State<ProductsView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (product.brand != null) ...[
-                const Text(
-                  'Brand:',
+                Text(
+                  '${AppLocalizations.of(context)!.brand}:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(product.brand!),
                 const SizedBox(height: 8),
               ],
-              const Text(
-                'Categoria:',
+              Text(
+                '${AppLocalizations.of(context)!.category}:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(_getCategoryName(product.category)),
               if (product.notes != null) ...[
                 const SizedBox(height: 8),
-                const Text(
-                  'Note:',
+                Text(
+                  '${AppLocalizations.of(context)!.notes}:',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(product.notes!),
@@ -658,7 +658,7 @@ class _ProductsViewState extends State<ProductsView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Chiudi'),
+            child: Text(AppLocalizations.of(context)!.close),
           ),
         ],
       ),
@@ -695,16 +695,16 @@ class _ProductsViewState extends State<ProductsView> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Conferma eliminazione'),
-        content: Text('Vuoi eliminare "${product.name}"?'),
+        title: Text(AppLocalizations.of(context)!.confirmDeletion),
+        content: Text(AppLocalizations.of(context)!.confirmDeleteAquarium(product.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annulla'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Elimina', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -716,7 +716,7 @@ class _ProductsViewState extends State<ProductsView> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Prodotto eliminato')));
+        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.productDeleted)));
       }
     }
   }
@@ -733,15 +733,15 @@ class _ProductsViewState extends State<ProductsView> {
       builder: (context) {
         double? quantity;
         return AlertDialog(
-          title: const Text('Registra utilizzo'),
+          title: Text(AppLocalizations.of(context)!.recordUsage),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Prodotto: ${product.name}'),
+              Text('${AppLocalizations.of(context)!.product}: ${product.name}'),
               const SizedBox(height: 16),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Quantità utilizzata (${product.unit ?? 'unità'})',
+                  labelText: '${AppLocalizations.of(context)!.quantity} (${product.unit ?? AppLocalizations.of(context)!.unit})',
                   border: const OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
@@ -754,7 +754,7 @@ class _ProductsViewState extends State<ProductsView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Annulla'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () async {
@@ -763,11 +763,11 @@ class _ProductsViewState extends State<ProductsView> {
                 _loadProducts();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Utilizzo registrato')),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.usageRecorded)),
                   );
                 }
               },
-              child: const Text('Registra'),
+              child: Text(AppLocalizations.of(context)!.recordUsage),
             ),
           ],
         );
@@ -855,7 +855,7 @@ class _AddEditProductViewState extends State<AddEditProductView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEdit ? 'Modifica Prodotto' : 'Nuovo Prodotto'),
+        title: Text(isEdit ? AppLocalizations.of(context)!.editProduct : AppLocalizations.of(context)!.newProduct),
       ),
       body: SafeArea(
         child: Form(
@@ -866,14 +866,14 @@ class _AddEditProductViewState extends State<AddEditProductView> {
               // Nome
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nome prodotto *',
+                decoration: InputDecoration(
+                  labelText: '${AppLocalizations.of(context)!.productName} *',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.label),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Inserisci il nome';
+                    return AppLocalizations.of(context)!.enterName;
                   }
                   return null;
                 },
@@ -883,8 +883,8 @@ class _AddEditProductViewState extends State<AddEditProductView> {
               // Categoria
               DropdownButtonFormField<ProductCategory>(
                 initialValue: _selectedCategory,
-                decoration: const InputDecoration(
-                  labelText: 'Categoria *',
+                decoration: InputDecoration(
+                  labelText: '${AppLocalizations.of(context)!.category} *',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.category),
                 ),
@@ -905,8 +905,8 @@ class _AddEditProductViewState extends State<AddEditProductView> {
               // Brand
               TextFormField(
                 controller: _brandController,
-                decoration: const InputDecoration(
-                  labelText: 'Marca',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.brand,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.business),
                 ),
@@ -920,8 +920,8 @@ class _AddEditProductViewState extends State<AddEditProductView> {
                     flex: 2,
                     child: TextFormField(
                       controller: _quantityController,
-                      decoration: const InputDecoration(
-                        labelText: 'Quantità',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.quantity,
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.inventory),
                       ),
@@ -932,8 +932,8 @@ class _AddEditProductViewState extends State<AddEditProductView> {
                   Expanded(
                     child: TextFormField(
                       controller: _unitController,
-                      decoration: const InputDecoration(
-                        labelText: 'Unità',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.unit,
                         border: OutlineInputBorder(),
                         hintText: 'ml, g, pz',
                       ),
@@ -946,8 +946,8 @@ class _AddEditProductViewState extends State<AddEditProductView> {
               // Costo
               TextFormField(
                 controller: _costController,
-                decoration: const InputDecoration(
-                  labelText: 'Costo (€)',
+                decoration: InputDecoration(
+                  labelText: '${AppLocalizations.of(context)!.cost} (€)',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.euro),
                 ),
@@ -974,8 +974,8 @@ class _AddEditProductViewState extends State<AddEditProductView> {
                       icon: const Icon(Icons.calendar_today),
                       label: Text(
                         _purchaseDate != null
-                            ? 'Acquisto: ${_purchaseDate!.day}/${_purchaseDate!.month}/${_purchaseDate!.year}'
-                            : 'Data acquisto',
+                            ? '${AppLocalizations.of(context)!.purchaseDate}: ${_purchaseDate!.day}/${_purchaseDate!.month}/${_purchaseDate!.year}'
+                            : AppLocalizations.of(context)!.purchaseDate,
                       ),
                     ),
                   ),
@@ -996,8 +996,8 @@ class _AddEditProductViewState extends State<AddEditProductView> {
                       icon: const Icon(Icons.event_busy),
                       label: Text(
                         _expiryDate != null
-                            ? 'Scadenza: ${_expiryDate!.day}/${_expiryDate!.month}/${_expiryDate!.year}'
-                            : 'Data scadenza',
+                            ? '${AppLocalizations.of(context)!.expiryDate}: ${_expiryDate!.day}/${_expiryDate!.month}/${_expiryDate!.year}'
+                            : AppLocalizations.of(context)!.expiryDate,
                       ),
                     ),
                   ),
@@ -1008,11 +1008,11 @@ class _AddEditProductViewState extends State<AddEditProductView> {
               // Frequenza utilizzo
               TextFormField(
                 controller: _usageFrequencyController,
-                decoration: const InputDecoration(
-                  labelText: 'Frequenza utilizzo (giorni)',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.usageFrequencyDays,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.repeat),
-                  helperText: 'Es: 7 per uso settimanale',
+                  helperText: AppLocalizations.of(context)!.usageFrequencyHint,
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -1021,8 +1021,8 @@ class _AddEditProductViewState extends State<AddEditProductView> {
               // Note
               TextFormField(
                 controller: _notesController,
-                decoration: const InputDecoration(
-                  labelText: 'Note',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.notes,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.notes),
                 ),
@@ -1032,7 +1032,7 @@ class _AddEditProductViewState extends State<AddEditProductView> {
 
               // Preferito
               SwitchListTile(
-                title: const Text('Aggiungi ai preferiti'),
+                title: Text(AppLocalizations.of(context)!.addToFavorites),
                 value: _isFavorite,
                 onChanged: (value) {
                   setState(() => _isFavorite = value);
@@ -1050,7 +1050,7 @@ class _AddEditProductViewState extends State<AddEditProductView> {
               ElevatedButton.icon(
                 onPressed: _saveProduct,
                 icon: const Icon(Icons.save),
-                label: Text(isEdit ? 'Salva Modifiche' : 'Aggiungi Prodotto'),
+                label: Text(isEdit ? 'Salva Modifiche' : AppLocalizations.of(context)!.addProduct),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
                 ),
@@ -1106,8 +1106,8 @@ class _AddEditProductViewState extends State<AddEditProductView> {
           SnackBar(
             content: Text(
               widget.product == null
-                  ? 'Prodotto aggiunto'
-                  : 'Prodotto modificato',
+                  ? AppLocalizations.of(context)!.productAdded
+                  : AppLocalizations.of(context)!.productUpdated,
             ),
           ),
         );
@@ -1115,7 +1115,7 @@ class _AddEditProductViewState extends State<AddEditProductView> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(ExceptionLocalizer.getMessage(context, e)), backgroundColor: Colors.red),
         );
       }
     }
@@ -1124,21 +1124,21 @@ class _AddEditProductViewState extends State<AddEditProductView> {
   String _getCategoryName(ProductCategory category) {
     switch (category) {
       case ProductCategory.bacteria:
-        return 'Batteri';
+        return AppLocalizations.of(context)!.categoryBacteria;
       case ProductCategory.food:
-        return 'Cibo';
+        return AppLocalizations.of(context)!.categoryFood;
       case ProductCategory.test:
-        return 'Test';
+        return AppLocalizations.of(context)!.categoryTest;
       case ProductCategory.supplement:
-        return 'Integratori';
+        return AppLocalizations.of(context)!.categorySupplement;
       case ProductCategory.waterTreatment:
-        return 'Trattamento Acqua';
+        return AppLocalizations.of(context)!.categoryWaterTreatment;
       case ProductCategory.equipment:
-        return 'Attrezzatura';
+        return AppLocalizations.of(context)!.categoryEquipment;
       case ProductCategory.medicine:
-        return 'Medicinali';
+        return AppLocalizations.of(context)!.categoryMedicine;
       case ProductCategory.other:
-        return 'Altro';
+        return AppLocalizations.of(context)!.categoryOther;
     }
   }
 }

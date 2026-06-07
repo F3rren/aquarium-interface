@@ -1142,5 +1142,22 @@
   "categoryCleaning": "Limpieza",
   "categoryDosing": "Dosificación",
   "categoryFeeding": "Alimentación",
-  "categoryOther": "Otro"
+  "categoryOther": "Otro",
+  "onlyFavorites": "Solo Favoritos",
+  "noProductsFound": "No se encontraron productos",
+  "usageFrequencyDays": "Frecuencia de uso (días)",
+  "addToFavorites": "Añadir a favoritos",
+  "total": "Total",
+  "newProduct": "Nuevo Producto",
+  "removeFavorite": "Quitar favorito",
+  "priority": "Prioridad",
+  "expiresInDays": "Caduca en {days} días",
+  "addFirstProductHint": "Añade tu primer producto para empezar a gestionar tu inventario",
+  "usageFrequencyHint": "Ej: 7 para uso semanal",
+  "tasks": "Tareas",
+  "completedOnLabel": "Completado el",
+  "tomorrow": "Mañana",
+  "yesterday": "Ayer",
+  "nextDue": "Próximo vencimiento",
+  "lastCompletion": "Última finalización"
 }
