@@ -1142,5 +1142,22 @@
   "categoryCleaning": "Cleaning",
   "categoryDosing": "Dosing",
   "categoryFeeding": "Feeding",
-  "categoryOther": "Other"
+  "categoryOther": "Other",
+  "onlyFavorites": "Favorites Only",
+  "noProductsFound": "No products found",
+  "usageFrequencyDays": "Usage frequency (days)",
+  "addToFavorites": "Add to favorites",
+  "total": "Total",
+  "newProduct": "New Product",
+  "removeFavorite": "Remove favorite",
+  "priority": "Priority",
+  "expiresInDays": "Expires in {days} days",
+  "addFirstProductHint": "Add your first product to start managing your inventory",
+  "usageFrequencyHint": "E.g. 7 for weekly use",
+  "tasks": "Tasks",
+  "completedOnLabel": "Completed on",
+  "tomorrow": "Tomorrow",
+  "yesterday": "Yesterday",
+  "nextDue": "Next due",
+  "lastCompletion": "Last completed"
 }

@@ -9,6 +9,63 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get tasks => 'Tasks';
+
+  @override
+  String get completedOnLabel => 'Completed on';
+
+  @override
+  String get tomorrow => 'Tomorrow';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get nextDue => 'Next due';
+
+  @override
+  String get lastCompletion => 'Last completed';
+
+
+  @override
+  String get addFirstProductHint => 'Add your first product to start managing your inventory';
+
+  @override
+  String get usageFrequencyHint => 'E.g. 7 for weekly use';
+
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get newProduct => 'New Product';
+
+  @override
+  String get removeFavorite => 'Remove favorite';
+
+  @override
+  String get priority => 'Priority';
+
+  @override
+  String expiresInDays(String days) {
+    return 'Expires in $days days';
+  }
+
+
+  @override
+  String get onlyFavorites => 'Favorites Only';
+
+  @override
+  String get noProductsFound => 'No products found';
+
+  @override
+  String get usageFrequencyDays => 'Usage frequency (days)';
+
+  @override
+  String get addToFavorites => 'Add to favorites';
+
+
+  @override
   String get appTitle => 'ReefLife';
 
   @override
