@@ -390,7 +390,7 @@
   "typicalRangeTemperature": "Range tipico: 24-26 °C",
   "targetSalinity": "Target Salinità",
   "setDesiredSalinity": "Imposta il valore di salinità desiderato:",
-  "typicalRangeSalinity": "Range tipico: 1020-1028",
+  "typicalRangeSalinity": "Range tipico: 33-37 ppt",
   "targetPh": "Target pH",
   "setDesiredPh": "Imposta il valore pH desiderato:",
   "typicalRangePh": "Range tipico: 8.0-8.4",
@@ -971,7 +971,7 @@
   "restoreDefaultsMessage": "Questa azione resetterà tutte le soglie personalizzate ai valori di default:",
   "temperatureDefault": "• Temperatura: 24-26°C",
   "phDefault": "• pH: 8.0-8.4",
-  "salinityDefault": "• Salinità: 1020-1028",
+  "salinityDefault": "• Salinità: 33-37 ppt",
   "andOtherParameters": "• E tutti gli altri parametri...",
   "updated": "Aggiornato {time}",
   "@updated": {

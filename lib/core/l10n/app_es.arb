@@ -304,7 +304,7 @@
   "typicalRangeTemperature": "Rango típico: 24-26 °C",
   "targetSalinity": "Salinidad Objetivo",
   "setDesiredSalinity": "Establece el valor de salinidad deseado:",
-  "typicalRangeSalinity": "Rango típico: 1020-1028",
+  "typicalRangeSalinity": "Rango típico: 33-37 ppt",
   "targetPh": "pH Objetivo",
   "setDesiredPh": "Establece el valor de pH deseado:",
   "typicalRangePh": "Rango típico: 8.0-8.4",
@@ -885,7 +885,7 @@
   "restoreDefaultsMessage": "Esta acci\u00f3n restablecer\u00e1 todos los umbrales personalizados a los valores predeterminados:",
   "temperatureDefault": "\u2022 Temperatura: 24-26\u00b0C",
   "phDefault": "\u2022 pH: 8.0-8.4",
-  "salinityDefault": "\u2022 Salinidad: 1020-1028",
+  "salinityDefault": "\u2022 Salinidad: 33-37 ppt",
   "andOtherParameters": "\u2022 Y todos los dem\u00e1s par\u00e1metros...",
   "updated": "Actualizado {time}",
   "@updated": {

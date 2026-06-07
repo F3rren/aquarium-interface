@@ -59,7 +59,7 @@ void main() {
       // Typical reef values from _getMockParameters().
       expect(result.temperature, 25.0);
       expect(result.ph, 8.20);
-      expect(result.salinity, 1.024);
+      expect(result.salinity, 35.0);
     });
 
     test('throws NoAquariumSelectedException when no aquarium is selected',

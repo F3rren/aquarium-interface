@@ -26,9 +26,8 @@ class NotificationSettings {
   /// Alert thresholds for pH. Defaults from [ParameterThresholdDefaults.ph].
   final ParameterThresholds ph;
 
-  /// Alert thresholds for salinity. **Legacy ×1000 scale** (e.g. 1024), unlike
-  /// the sensor readings which are specific gravity (~1.024) — see the
-  /// FIXME in the constructor.
+  /// Alert thresholds for salinity (PSU/ppt). Defaults from
+  /// [ParameterThresholdDefaults.salinity].
   final ParameterThresholds salinity;
 
   /// Alert thresholds for ORP (mV). Default: 300–400 mV.
@@ -76,12 +75,11 @@ class NotificationSettings {
              min: ParameterThresholdDefaults.ph.min,
              max: ParameterThresholdDefaults.ph.max,
            ),
-       // FIXME(salinity-scale): legacy ×1000 default. Sensor readings are
-       // specific gravity (~1.024), so this 1020–1028 range never matches real
-       // data and salinity alerts misfire. Switch to
-       // ParameterThresholdDefaults.salinity once the backend target-salinity
-       // scale is confirmed (the salinity gauge/targets also use ×1000).
-       salinity = salinity ?? ParameterThresholds(min: 1020.0, max: 1028.0),
+       salinity = salinity ??
+           ParameterThresholds(
+             min: ParameterThresholdDefaults.salinity.min,
+             max: ParameterThresholdDefaults.salinity.max,
+           ),
        orp = orp ??
            ParameterThresholds(
              min: ParameterThresholdDefaults.orp.min,

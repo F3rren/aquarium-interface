@@ -24,7 +24,7 @@ import 'package:acquariumfe/core/utils/exceptions.dart';
 /// **Default values** (used when no aquarium is selected or on network error):
 /// - temperature: 25.0 °C
 /// - ph: 8.2
-/// - salinity: 1024.0 (specific gravity × 1000)
+/// - salinity: 35.0 (PSU/ppt)
 /// - orp: 360.0 mV
 class TargetParametersService {
   /// Creates a [TargetParametersService] backed by [apiService].
@@ -49,9 +49,8 @@ class TargetParametersService {
   /// Default target pH.
   static const double defaultPh = 8.2;
 
-  /// Default target salinity (stored as specific gravity × 1000, e.g. 1024 for
-  /// a value of 1.024).
-  static const double defaultSalinity = 1024.0;
+  /// Default target salinity in PSU/ppt (~35 = standard seawater).
+  static const double defaultSalinity = 35.0;
 
   /// Default target ORP in mV.
   static const double defaultOrp = 360.0;

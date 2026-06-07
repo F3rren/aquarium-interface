@@ -8,8 +8,8 @@ library;
 /// [nitrate], [phosphate]) are optional because some freshwater setups do
 /// not track them.
 ///
-/// **Salinity note:** values are stored as specific gravity (e.g. `1.025`),
-/// not PSU or PPT, to match the backend schema.
+/// **Salinity note:** values are expressed in PSU/ppt (e.g. `35` = standard
+/// seawater), matching the backend schema.
 class AquariumParameters {
   /// Water temperature in °C.
   final double temperature;
@@ -17,7 +17,7 @@ class AquariumParameters {
   /// pH value (dimensionless; typical marine range 8.0–8.4).
   final double ph;
 
-  /// Salinity expressed as specific gravity (e.g. `1.025`).
+  /// Salinity expressed in PSU/ppt (e.g. `35`).
   final double salinity;
 
   /// Oxidation-Reduction Potential in millivolts.
