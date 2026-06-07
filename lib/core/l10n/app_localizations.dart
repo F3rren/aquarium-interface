@@ -4172,6 +4172,10 @@ abstract class AppLocalizations {
   /// No description provided for @lastCompletion.
   String get lastCompletion;
 
+
+  /// No description provided for @taskTitleHint.
+  String get taskTitleHint;
+
 }
 
 class _AppLocalizationsDelegate

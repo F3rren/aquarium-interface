@@ -1159,5 +1159,6 @@
   "tomorrow": "Mañana",
   "yesterday": "Ayer",
   "nextDue": "Próximo vencimiento",
-  "lastCompletion": "Última finalización"
+  "lastCompletion": "Última finalización",
+  "taskTitleHint": "ej. Limpieza del skimmer"
 }

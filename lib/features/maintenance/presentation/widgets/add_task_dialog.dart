@@ -129,7 +129,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     controller: _titleController,
                     decoration: InputDecoration(
                       labelText: l10n.taskTitle,
-                      hintText: 'es. Pulizia schiumatoio',
+                      hintText: l10n.taskTitleHint,
                       prefixIcon: const FaIcon(FontAwesomeIcons.heading),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -151,7 +151,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                     controller: _descriptionController,
                     decoration: InputDecoration(
                       labelText: l10n.taskDescription,
-                      hintText: 'Aggiungi note o dettagli...',
+                      hintText: l10n.notesHint,
                       prefixIcon: const FaIcon(FontAwesomeIcons.noteSticky),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),

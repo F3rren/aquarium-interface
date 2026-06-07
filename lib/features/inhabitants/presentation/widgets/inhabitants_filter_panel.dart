@@ -159,12 +159,12 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Barra di ricerca
-                  _buildSectionTitle('Ricerca per nome', theme),
+                  _buildSectionTitle(l10n.searchByName, theme),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Cerca per nome...',
+                      hintText: l10n.searchByName,
                       prefixIcon: Icon(
                         Icons.search,
                         color: theme.colorScheme.primary,
@@ -254,7 +254,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                   const SizedBox(height: 24),
 
                   // Filtro data inserimento
-                  _buildSectionTitle('Data inserimento in vasca', theme),
+                  _buildSectionTitle(l10n.insertionDate, theme),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -329,7 +329,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                                 Expanded(
                                   child: Text(_filter.dateValue != null
                                         ? _formatDate(_filter.dateValue!)
-                                        : 'Seleziona data',
+                                        : l10n.selectDate,
                                     style: TextStyle(
                                       color: _filter.dateFilter != null
                                           ? theme.colorScheme.onSurface
@@ -363,7 +363,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                   const SizedBox(height: 24),
 
                   // Ordinamento
-                  _buildSectionTitle('Ordinamento', theme),
+                  _buildSectionTitle(l10n.sorting, theme),
                   const SizedBox(height: 8),
                   Container(
                     decoration: BoxDecoration(
