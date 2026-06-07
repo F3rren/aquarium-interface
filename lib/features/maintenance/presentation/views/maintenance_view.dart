@@ -120,11 +120,11 @@ class _MaintenanceViewState extends State<MaintenanceView>
             tabs: [
               Tab(
                 icon: const FaIcon(FontAwesomeIcons.listCheck, size: 18),
-                text: 'Attività',
+                text: AppLocalizations.of(context)!.tasks,
               ),
               Tab(
                 icon: const FaIcon(FontAwesomeIcons.boxesStacked, size: 18),
-                text: 'Prodotti',
+                text: AppLocalizations.of(context)!.products,
               ),
             ],
             indicatorColor: theme.colorScheme.primary,
@@ -638,18 +638,18 @@ class _MaintenanceViewState extends State<MaintenanceView>
                   const SizedBox(height: 16),
                   TextField(
                     controller: titleController,
-                    decoration: const InputDecoration(labelText: 'Titolo'),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.taskTitle),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: descController,
-                    decoration: const InputDecoration(labelText: 'Descrizione'),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.description),
                     maxLines: 2,
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<MaintenanceCategory>(
                     initialValue: selectedCategory,
-                    decoration: const InputDecoration(labelText: 'Categoria'),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.category),
                     items: MaintenanceCategory.values.map((cat) {
                       return DropdownMenuItem(
                         value: cat,
@@ -690,7 +690,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     initialValue: selectedPriority,
-                    decoration: const InputDecoration(labelText: 'Priorità'),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.priority),
                     items: [
                       DropdownMenuItem(value: 'low', child: Text(l10n.low)),
                       DropdownMenuItem(
@@ -837,18 +837,18 @@ class _MaintenanceViewState extends State<MaintenanceView>
                   const SizedBox(height: 16),
                   TextField(
                     controller: titleController,
-                    decoration: const InputDecoration(labelText: 'Titolo'),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.taskTitle),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: descController,
-                    decoration: const InputDecoration(labelText: 'Descrizione'),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.description),
                     maxLines: 2,
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<MaintenanceCategory>(
                     initialValue: selectedCategory,
-                    decoration: const InputDecoration(labelText: 'Categoria'),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.category),
                     items: MaintenanceCategory.values.map((cat) {
                       return DropdownMenuItem(
                         value: cat,
@@ -889,7 +889,7 @@ class _MaintenanceViewState extends State<MaintenanceView>
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     initialValue: selectedPriority,
-                    decoration: const InputDecoration(labelText: 'Priorità '),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.priority),
                     items: [
                       DropdownMenuItem(value: 'low', child: Text(l10n.low)),
                       DropdownMenuItem(
@@ -1142,23 +1142,23 @@ class _MaintenanceViewState extends State<MaintenanceView>
             const Divider(),
             const SizedBox(height: 16),
             if (task.priority != null)
-              _buildTaskInfo('Priorità ', _getPriorityLabel(task.priority!)),
+              _buildTaskInfo(AppLocalizations.of(context)!.priority, _getPriorityLabel(task.priority!)),
             if (task.frequency != null)
-              _buildTaskInfo('Frequenza', _getFrequencyLabel(task.frequency!)),
+              _buildTaskInfo(AppLocalizations.of(context)!.frequency, _getFrequencyLabel(task.frequency!)),
             if (task.dueDate != null && !task.isCompleted)
-              _buildTaskInfo('Scadenza', _formatDateTime(task.dueDate!)),
+              _buildTaskInfo(AppLocalizations.of(context)!.dueDate, _formatDateTime(task.dueDate!)),
             if (task.isCompleted && task.completedAt != null)
               _buildTaskInfo(
-                'Completato il',
+                AppLocalizations.of(context)!.completedOnLabel,
                 _formatDateTime(task.completedAt!),
               ),
             if (!task.isCompleted && task.lastCompleted != null)
               _buildTaskInfo(
-                'Ultimo completamento',
+                AppLocalizations.of(context)!.lastCompletion,
                 _formatDate(task.lastCompleted!),
               ),
             if (!task.isCompleted)
-              _buildTaskInfo('Prossima scadenza', _formatDate(task.nextDue)),
+              _buildTaskInfo(AppLocalizations.of(context)!.nextDue, _formatDate(task.nextDue)),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -1338,11 +1338,11 @@ class _MaintenanceViewState extends State<MaintenanceView>
   String _getPriorityLabel(String priority) {
     switch (priority.toLowerCase()) {
       case 'high':
-        return 'Alta';
+        return AppLocalizations.of(context)!.high;
       case 'medium':
-        return 'Media';
+        return AppLocalizations.of(context)!.medium;
       case 'low':
-        return 'Bassa';
+        return AppLocalizations.of(context)!.low;
       default:
         return priority;
     }
@@ -1351,13 +1351,13 @@ class _MaintenanceViewState extends State<MaintenanceView>
   String _getFrequencyLabel(String frequency) {
     switch (frequency.toLowerCase()) {
       case 'daily':
-        return 'Giornaliero';
+        return AppLocalizations.of(context)!.daily;
       case 'weekly':
-        return 'Settimanale';
+        return AppLocalizations.of(context)!.weekly;
       case 'monthly':
-        return 'Mensile';
+        return AppLocalizations.of(context)!.monthly;
       case 'custom':
-        return 'Personalizzato';
+        return AppLocalizations.of(context)!.custom;
       default:
         return frequency;
     }
@@ -1368,9 +1368,9 @@ class _MaintenanceViewState extends State<MaintenanceView>
     final today = DateTime(now.year, now.month, now.day);
     final dateDay = DateTime(date.year, date.month, date.day);
 
-    if (dateDay == today) return 'Oggi';
-    if (dateDay == today.add(const Duration(days: 1))) return 'Domani';
-    if (dateDay == today.subtract(const Duration(days: 1))) return 'Ieri';
+    if (dateDay == today) return AppLocalizations.of(context)!.today;
+    if (dateDay == today.add(const Duration(days: 1))) return AppLocalizations.of(context)!.tomorrow;
+    if (dateDay == today.subtract(const Duration(days: 1))) return AppLocalizations.of(context)!.yesterday;
 
     return '${date.day}/${date.month}/${date.year}';
   }
