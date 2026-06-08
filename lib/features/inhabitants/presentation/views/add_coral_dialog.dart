@@ -2,11 +2,13 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral_species.dart';
 import 'package:acquariumfe/features/inhabitants/data/coral_database_service.dart';
+import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
@@ -24,7 +26,7 @@ import 'package:acquariumfe/core/l10n/app_localizations.dart';
 /// **Bulk add:** if [onSaveMultiple] is provided and quantity > 1, the
 /// callback is called with multiple [Coral] copies; otherwise [onSave] is
 /// called with a single coral.
-class AddCoralDialog extends StatefulWidget {
+class AddCoralDialog extends ConsumerStatefulWidget {
   final Coral? coral;
   final Function(Coral, String? speciesId) onSave;
   final Function(List<Coral>, String? speciesId)? onSaveMultiple;
@@ -37,11 +39,13 @@ class AddCoralDialog extends StatefulWidget {
   });
 
   @override
-  State<AddCoralDialog> createState() => _AddCoralDialogState();
+  ConsumerState<AddCoralDialog> createState() => _AddCoralDialogState();
 }
 
-class _AddCoralDialogState extends State<AddCoralDialog> {
-  final _coralDatabaseService = CoralDatabaseService();
+class _AddCoralDialogState extends ConsumerState<AddCoralDialog> {
+  late final CoralDatabaseService _coralDatabaseService = ref.read(
+    coralDatabaseServiceProvider,
+  );
   List<CoralSpecies> _coralDatabase = [];
   CoralSpecies? _selectedCoralSpecies;
 

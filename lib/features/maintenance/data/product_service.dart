@@ -7,12 +7,12 @@ import 'package:acquariumfe/core/network/api_service.dart';
 import 'package:acquariumfe/core/utils/app_logger.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
 
-/// Non-singleton service that performs CRUD operations on [Product] records and
-/// computes inventory statistics.
+/// Service that performs CRUD operations on [Product] records and computes
+/// inventory statistics.
 ///
-/// Unlike most other services, `ProductService` is **not** a singleton — it is
-/// instantiated normally and each instance maintains its own state. The Riverpod
-/// provider in `service_providers.dart` controls lifetime.
+/// Obtain the shared instance via Riverpod ([productServiceProvider]); the
+/// provider keeps a single app-scoped instance, so the in-memory cache is
+/// shared by every screen instead of being duplicated per `ProductService()`.
 ///
 /// **Caching:** [_cachedProducts] is populated by the most-recent unfiltered
 /// `getAllProducts()` call. Any mutation (add, update, delete, recordUsage,
@@ -26,7 +26,13 @@ import 'package:acquariumfe/core/utils/exceptions.dart';
 /// and a cache exists, otherwise it rethrows so the caller can show the error;
 /// all mutation methods propagate exceptions so callers can display feedback.
 class ProductService {
-  final _apiService = ApiService();
+  /// Creates a service backed by the shared [ApiService].
+  ///
+  /// Obtain the app-wide instance via Riverpod ([productServiceProvider])
+  /// rather than constructing directly.
+  ProductService(this._apiService);
+
+  final ApiService _apiService;
 
   /// ID of the currently active aquarium.
   int? _currentAquariumId;

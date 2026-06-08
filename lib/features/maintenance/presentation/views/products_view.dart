@@ -3,7 +3,9 @@ library;
 
 import 'package:acquariumfe/features/maintenance/domain/models/product.dart';
 import 'package:acquariumfe/features/maintenance/data/product_service.dart';
+import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
@@ -18,17 +20,17 @@ import 'package:acquariumfe/core/l10n/app_localizations.dart';
 ///
 /// A FAB opens a bottom sheet for adding a new product. Long-pressing a card
 /// opens an edit / delete action sheet.
-class ProductsView extends StatefulWidget {
+class ProductsView extends ConsumerStatefulWidget {
   final int? aquariumId;
 
   const ProductsView({super.key, this.aquariumId});
 
   @override
-  State<ProductsView> createState() => _ProductsViewState();
+  ConsumerState<ProductsView> createState() => _ProductsViewState();
 }
 
-class _ProductsViewState extends State<ProductsView> {
-  final ProductService _service = ProductService();
+class _ProductsViewState extends ConsumerState<ProductsView> {
+  late final ProductService _service = ref.read(productServiceProvider);
   List<Product> _products = [];
   ProductCategory? _filterCategory;
   bool _showFavoritesOnly = false;
@@ -777,7 +779,7 @@ class _ProductsViewState extends State<ProductsView> {
 }
 
 // Form per aggiungere/modificare prodotto
-class AddEditProductView extends StatefulWidget {
+class AddEditProductView extends ConsumerStatefulWidget {
   final int aquariumId;
   final Product? product;
   final VoidCallback onSaved;
@@ -790,12 +792,12 @@ class AddEditProductView extends StatefulWidget {
   });
 
   @override
-  State<AddEditProductView> createState() => _AddEditProductViewState();
+  ConsumerState<AddEditProductView> createState() => _AddEditProductViewState();
 }
 
-class _AddEditProductViewState extends State<AddEditProductView> {
+class _AddEditProductViewState extends ConsumerState<AddEditProductView> {
   final _formKey = GlobalKey<FormState>();
-  final _service = ProductService();
+  late final ProductService _service = ref.read(productServiceProvider);
 
   late TextEditingController _nameController;
   late TextEditingController _brandController;

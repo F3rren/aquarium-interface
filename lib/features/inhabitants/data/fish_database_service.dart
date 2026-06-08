@@ -5,7 +5,7 @@ import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/fish_species.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
 
-/// Singleton that provides read-only access to the fish species database.
+/// Service that provides read-only access to the fish species database.
 ///
 /// The full catalogue is fetched from `GET /species/fishs` on the first call
 /// and held in [_cachedFish] for the lifetime of the app. Call [clearCache] to
@@ -18,11 +18,13 @@ import 'package:acquariumfe/core/network/api_service.dart';
 /// **Error handling:** all public methods return an empty list on network or
 /// parse errors so the UI degrades gracefully.
 class FishDatabaseService {
-  static final FishDatabaseService _instance = FishDatabaseService._internal();
-  factory FishDatabaseService() => _instance;
-  FishDatabaseService._internal();
+  /// Creates a service backed by the shared [ApiService].
+  ///
+  /// Obtain the app-wide instance via Riverpod ([fishDatabaseServiceProvider])
+  /// rather than constructing directly.
+  FishDatabaseService(this._apiService);
 
-  final _apiService = ApiService();
+  final ApiService _apiService;
 
   /// In-memory cache; `null` means the catalogue has not been loaded yet.
   List<FishSpecies>? _cachedFish;
