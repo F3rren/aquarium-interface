@@ -5,7 +5,7 @@ import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral_species.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
 
-/// Singleton that provides read-only access to the coral species database.
+/// Service that provides read-only access to the coral species database.
 ///
 /// The full catalogue is fetched from `GET /species/corals` on the first call
 /// and held in [_cachedCorals] for the lifetime of the app. Call [clearCache]
@@ -19,12 +19,13 @@ import 'package:acquariumfe/core/network/api_service.dart';
 /// parse errors rather than propagating exceptions, so the UI can degrade
 /// gracefully.
 class CoralDatabaseService {
-  static final CoralDatabaseService _instance =
-      CoralDatabaseService._internal();
-  factory CoralDatabaseService() => _instance;
-  CoralDatabaseService._internal();
+  /// Creates a service backed by the shared [ApiService].
+  ///
+  /// Obtain the app-wide instance via Riverpod ([coralDatabaseServiceProvider])
+  /// rather than constructing directly.
+  CoralDatabaseService(this._apiService);
 
-  final _apiService = ApiService();
+  final ApiService _apiService;
 
   /// In-memory cache; `null` means the catalogue has not been loaded yet.
   List<CoralSpecies>? _cachedCorals;

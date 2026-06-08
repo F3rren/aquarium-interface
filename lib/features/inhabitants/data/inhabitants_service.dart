@@ -8,7 +8,7 @@ import 'package:acquariumfe/core/network/api_service.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
 import 'package:acquariumfe/core/utils/app_logger.dart';
 
-/// Singleton that performs CRUD operations on aquarium inhabitants and
+/// Service that performs CRUD operations on aquarium inhabitants and
 /// computes bio-load statistics.
 ///
 /// Both fish and corals share a single unified endpoint:
@@ -19,12 +19,13 @@ import 'package:acquariumfe/core/utils/app_logger.dart';
 /// [setCurrentAquarium] must be called whenever the selected aquarium changes;
 /// all operations silently return empty results or throw if no aquarium is set.
 class InhabitantsService {
-  static final InhabitantsService _instance = InhabitantsService._internal();
-  factory InhabitantsService() => _instance;
+  /// Creates a service backed by the shared [ApiService].
+  ///
+  /// Obtain the app-wide instance via Riverpod ([inhabitantsServiceProvider])
+  /// rather than constructing directly.
+  InhabitantsService(this._apiService);
 
-  InhabitantsService._internal();
-
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
 
   /// ID of the currently selected aquarium. `null` means no aquarium is active.
   int? _currentAquariumId;

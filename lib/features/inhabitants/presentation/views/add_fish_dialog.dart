@@ -2,11 +2,13 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/fish.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/fish_species.dart';
 import 'package:acquariumfe/features/inhabitants/data/fish_database_service.dart';
+import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 import 'package:acquariumfe/core/utils/task_localizer.dart';
 
@@ -25,7 +27,7 @@ import 'package:acquariumfe/core/utils/task_localizer.dart';
 /// species; otherwise [onSave] is called with a single fish.
 ///
 /// The generated [Fish.id] is a UUID when creating a new fish.
-class AddFishDialog extends StatefulWidget {
+class AddFishDialog extends ConsumerStatefulWidget {
   final Fish? fish;
   final Function(Fish, String? speciesId) onSave;
   final Function(List<Fish>, String? speciesId)? onSaveMultiple;
@@ -40,17 +42,19 @@ class AddFishDialog extends StatefulWidget {
   });
 
   @override
-  State<AddFishDialog> createState() => _AddFishDialogState();
+  ConsumerState<AddFishDialog> createState() => _AddFishDialogState();
 }
 
-class _AddFishDialogState extends State<AddFishDialog> {
+class _AddFishDialogState extends ConsumerState<AddFishDialog> {
   late TextEditingController _nameController;
   late TextEditingController _speciesController;
   late TextEditingController _sizeController;
   late TextEditingController _notesController;
   late TextEditingController _quantityController;
 
-  final _fishDbService = FishDatabaseService();
+  late final FishDatabaseService _fishDbService = ref.read(
+    fishDatabaseServiceProvider,
+  );
   List<FishSpecies> _availableFish = [];
   FishSpecies? _selectedFishSpecies;
   bool _isLoadingDatabase = true;

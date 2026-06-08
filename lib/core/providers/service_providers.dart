@@ -16,6 +16,10 @@ import 'package:acquariumfe/features/parameters/data/target_parameters_service.d
 import 'package:acquariumfe/features/parameters/data/manual_parameters_service.dart';
 import 'package:acquariumfe/features/settings/data/notification_settings_service.dart';
 import 'package:acquariumfe/features/maintenance/data/maintenance_task_service.dart';
+import 'package:acquariumfe/features/maintenance/data/product_service.dart';
+import 'package:acquariumfe/features/inhabitants/data/inhabitants_service.dart';
+import 'package:acquariumfe/features/inhabitants/data/fish_database_service.dart';
+import 'package:acquariumfe/features/inhabitants/data/coral_database_service.dart';
 import 'package:acquariumfe/features/settings/data/alert_manager.dart';
 
 part 'service_providers.g.dart';
@@ -98,4 +102,27 @@ final notificationSettingsServiceProvider =
 /// Provides the shared [MaintenanceTaskService] for maintenance-task CRUD.
 final maintenanceTaskServiceProvider = Provider<MaintenanceTaskService>(
   (ref) => MaintenanceTaskService(ref.read(apiServiceProvider)),
+);
+
+/// Provides the shared [ProductService] for the product inventory, so the
+/// products view and the add/edit form share one cache.
+final productServiceProvider = Provider<ProductService>(
+  (ref) => ProductService(ref.read(apiServiceProvider)),
+);
+
+/// Provides the shared [InhabitantsService] for fish/coral inhabitant CRUD.
+final inhabitantsServiceProvider = Provider<InhabitantsService>(
+  (ref) => InhabitantsService(ref.read(apiServiceProvider)),
+);
+
+/// Provides the shared [FishDatabaseService] for the read-only fish species
+/// catalogue (its in-memory cache persists for the app lifetime).
+final fishDatabaseServiceProvider = Provider<FishDatabaseService>(
+  (ref) => FishDatabaseService(ref.read(apiServiceProvider)),
+);
+
+/// Provides the shared [CoralDatabaseService] for the read-only coral species
+/// catalogue (its in-memory cache persists for the app lifetime).
+final coralDatabaseServiceProvider = Provider<CoralDatabaseService>(
+  (ref) => CoralDatabaseService(ref.read(apiServiceProvider)),
 );

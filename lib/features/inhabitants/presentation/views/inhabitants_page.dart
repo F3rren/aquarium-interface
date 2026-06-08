@@ -8,6 +8,7 @@ import 'package:acquariumfe/features/inhabitants/domain/models/fish.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/inhabitants_filter.dart';
 import 'package:acquariumfe/features/inhabitants/data/inhabitants_service.dart';
+import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/core/utils/app_logger.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/widgets/skeleton_loader_card.dart';
@@ -48,7 +49,7 @@ class InhabitantsPage extends ConsumerStatefulWidget {
 class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  final InhabitantsService _service = InhabitantsService();
+  late final InhabitantsService _service = ref.read(inhabitantsServiceProvider);
 
   List<Fish> _fishList = [];
   List<Coral> _coralsList = [];
