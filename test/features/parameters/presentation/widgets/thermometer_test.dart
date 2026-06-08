@@ -102,7 +102,7 @@ void main() {
 
     testWidgets('high temperature widget renders without error', (tester) async {
       await tester.pumpWidget(
-        wrap(const Thermometer(currentTemperature: 30.0)), // above 26 → red
+        wrap(const Thermometer(currentTemperature: 30.0)), // above 27 → red
       );
       await tester.pump();
       expect(find.byType(Thermometer), findsOneWidget);

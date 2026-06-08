@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
+import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
 import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
 import 'package:acquariumfe/core/widgets/animated_number.dart';
 import 'package:acquariumfe/core/widgets/tap_effect_card.dart';
@@ -14,10 +15,10 @@ import 'package:acquariumfe/core/l10n/app_localizations.dart';
 /// Displays the current pH value with status colour coding and an optional
 /// [TargetProgressBar].
 ///
-/// Colour logic:
-/// - < 7.8 → red (low)
-/// - 7.8–8.4 → green (optimal)
-/// - > 8.4 → red (high)
+/// Colour logic (bands from [ParameterThresholdDefaults.ph]):
+/// - below the range → red (low)
+/// - within 7.8–8.5 → green (optimal)
+/// - above the range → red (high)
 ///
 /// Tapping the card opens a dialog to update the target pH, which is
 /// persisted via [TargetParametersService.saveTarget] with key `'ph'` and
@@ -35,15 +36,17 @@ class PhMeter extends ConsumerWidget {
   });
 
   Color _getPhColor() {
-    if (currentPh < 7.8) return const Color(0xFFef4444);
-    if (currentPh >= 7.8 && currentPh <= 8.4) return const Color(0xFF34d399);
+    if (ParameterThresholdDefaults.ph.contains(currentPh)) {
+      return const Color(0xFF34d399);
+    }
     return const Color(0xFFef4444);
   }
 
   String _getStatus(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    if (currentPh < 7.8) return l10n.low;
-    if (currentPh >= 7.8 && currentPh <= 8.4) return l10n.optimal;
+    const range = ParameterThresholdDefaults.ph;
+    if (currentPh < range.min) return l10n.low;
+    if (range.contains(currentPh)) return l10n.optimal;
     return l10n.high;
   }
 

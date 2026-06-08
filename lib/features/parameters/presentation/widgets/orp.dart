@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
+import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
 import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
 import 'package:acquariumfe/core/widgets/animated_number.dart';
 import 'package:acquariumfe/core/widgets/tap_effect_card.dart';
@@ -14,10 +15,10 @@ import 'package:acquariumfe/core/l10n/app_localizations.dart';
 /// Displays the current ORP/Redox value with status colour coding and an
 /// optional [TargetProgressBar].
 ///
-/// Colour logic:
-/// - < 300 mV → red (low)
-/// - 300–400 mV → green (optimal)
-/// - > 400 mV → red (high)
+/// Colour logic (bands from [ParameterThresholdDefaults.orp]):
+/// - below the range → red (low)
+/// - within 300–400 mV → green (optimal)
+/// - above the range → red (high)
 ///
 /// Tapping the card opens a dialog to update the target ORP, which is
 /// persisted via [TargetParametersService.saveTarget] with key `'orp'` and
@@ -35,15 +36,17 @@ class OrpMeter extends ConsumerWidget {
   });
 
   Color _getOrpColor() {
-    if (currentOrp < 300) return const Color(0xFFef4444);
-    if (currentOrp >= 300 && currentOrp <= 400) return const Color(0xFF34d399);
+    if (ParameterThresholdDefaults.orp.contains(currentOrp)) {
+      return const Color(0xFF34d399);
+    }
     return const Color(0xFFef4444);
   }
 
   String _getStatus(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    if (currentOrp < 300) return l10n.low;
-    if (currentOrp >= 300 && currentOrp <= 400) return l10n.optimal;
+    const range = ParameterThresholdDefaults.orp;
+    if (currentOrp < range.min) return l10n.low;
+    if (range.contains(currentOrp)) return l10n.optimal;
     return l10n.high;
   }
 
