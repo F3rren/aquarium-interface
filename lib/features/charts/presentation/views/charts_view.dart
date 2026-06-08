@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
+import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
 import 'package:acquariumfe/features/parameters/domain/models/parameter_data_point.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
@@ -1048,55 +1049,30 @@ class _ChartsViewState extends ConsumerState<ChartsView>
     }
   }
 
-  /// Restituisce i range ideali e di warning per ogni parametro
+  /// Restituisce le bande (ideale / warning / critical) per ogni parametro.
+  ///
+  /// La banda *ideale* deriva direttamente da [ParameterThresholdDefaults]
+  /// (singola fonte di verità), così i grafici non possono divergere dagli
+  /// indicatori di allerta della dashboard. Le bande di *warning* e *critical*
+  /// estendono quella ideale di margini fissi, usati solo per la sfumatura
+  /// visiva del grafico.
   Map<String, double> _getParameterRanges(String parameter) {
-    switch (parameter) {
-      case 'Temperatura':
-        return {
-          'ideal_min': 24.0,
-          'ideal_max': 27.0,
-          'warning_min': 23.0,
-          'warning_max': 28.0,
-          'critical_min': 22.0,
-          'critical_max': 29.0,
+    final (ParameterRange range, double warningMargin, double criticalMargin) =
+        switch (parameter) {
+          'Temperatura' => (ParameterThresholdDefaults.temperature, 1.0, 2.0),
+          'pH' => (ParameterThresholdDefaults.ph, 0.2, 0.4),
+          'Salinità' => (ParameterThresholdDefaults.salinity, 1.0, 3.0),
+          'ORP' => (ParameterThresholdDefaults.orp, 50.0, 100.0),
+          _ => (const ParameterRange(0.0, 10.0), 0.0, 0.0),
         };
-      case 'pH':
-        return {
-          'ideal_min': 8.0,
-          'ideal_max': 8.3,
-          'warning_min': 7.8,
-          'warning_max': 8.4,
-          'critical_min': 7.6,
-          'critical_max': 8.6,
-        };
-      case 'Salinità':
-        return {
-          'ideal_min': 33.0,
-          'ideal_max': 37.0,
-          'warning_min': 32.0,
-          'warning_max': 38.0,
-          'critical_min': 30.0,
-          'critical_max': 40.0,
-        };
-      case 'ORP':
-        return {
-          'ideal_min': 300.0,
-          'ideal_max': 400.0,
-          'warning_min': 250.0,
-          'warning_max': 450.0,
-          'critical_min': 200.0,
-          'critical_max': 500.0,
-        };
-      default:
-        return {
-          'ideal_min': 0.0,
-          'ideal_max': 10.0,
-          'warning_min': 0.0,
-          'warning_max': 10.0,
-          'critical_min': 0.0,
-          'critical_max': 10.0,
-        };
-    }
+    return {
+      'ideal_min': range.min,
+      'ideal_max': range.max,
+      'warning_min': range.min - warningMargin,
+      'warning_max': range.max + warningMargin,
+      'critical_min': range.min - criticalMargin,
+      'critical_max': range.max + criticalMargin,
+    };
   }
 
   String _getLocalizedParameterName(BuildContext context, String parameter) {

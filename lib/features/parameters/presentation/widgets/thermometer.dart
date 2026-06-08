@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
+import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
 import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
 import 'package:acquariumfe/core/widgets/animated_number.dart';
 import 'package:acquariumfe/core/widgets/tap_effect_card.dart';
@@ -14,10 +15,10 @@ import 'package:acquariumfe/core/l10n/app_localizations.dart';
 /// Displays the current water temperature with status colour coding, a
 /// directional change indicator, and an optional [TargetProgressBar].
 ///
-/// Colour logic:
-/// - < 24 °C → blue (low)
-/// - 24–26 °C → green (optimal)
-/// - > 26 °C → red (high)
+/// Colour logic (bands from [ParameterThresholdDefaults.temperature]):
+/// - below the range → blue (low)
+/// - within 24–27 °C → green (optimal)
+/// - above the range → red (high)
 ///
 /// The [AnimatedNumberWithIndicator] shows a red up-arrow on increase and a
 /// blue down-arrow on decrease.  Tapping the card opens a dialog to update
@@ -36,15 +37,17 @@ class Thermometer extends ConsumerWidget {
   });
 
   Color _getTemperatureColor() {
-    if (currentTemperature < 24) return const Color(0xFF60a5fa);
-    if (currentTemperature >= 24 && currentTemperature <= 26) return const Color(0xFF34d399);
+    const range = ParameterThresholdDefaults.temperature;
+    if (currentTemperature < range.min) return const Color(0xFF60a5fa);
+    if (range.contains(currentTemperature)) return const Color(0xFF34d399);
     return const Color(0xFFef4444);
   }
 
   String _getStatus(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    if (currentTemperature < 24) return l10n.low;
-    if (currentTemperature >= 24 && currentTemperature <= 26) return l10n.optimal;
+    const range = ParameterThresholdDefaults.temperature;
+    if (currentTemperature < range.min) return l10n.low;
+    if (range.contains(currentTemperature)) return l10n.optimal;
     return l10n.high;
   }
 
