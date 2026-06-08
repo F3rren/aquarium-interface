@@ -1159,5 +1159,6 @@
   "tomorrow": "Tomorrow",
   "yesterday": "Yesterday",
   "nextDue": "Next due",
-  "lastCompletion": "Last completed"
+  "lastCompletion": "Last completed",
+  "taskTitleHint": "e.g. Skimmer cleaning"
 }

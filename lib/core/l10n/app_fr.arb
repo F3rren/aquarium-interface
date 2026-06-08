@@ -1046,5 +1046,6 @@
   "tomorrow": "Demain",
   "yesterday": "Hier",
   "nextDue": "Prochaine échéance",
-  "lastCompletion": "Dernier achèvement"
+  "lastCompletion": "Dernier achèvement",
+  "taskTitleHint": "ex. Nettoyage de l'écumeur"
 }

@@ -1246,5 +1246,6 @@
   "tomorrow": "Domani",
   "yesterday": "Ieri",
   "nextDue": "Prossima scadenza",
-  "lastCompletion": "Ultimo completamento"
+  "lastCompletion": "Ultimo completamento",
+  "taskTitleHint": "es. Pulizia schiumatoio"
 }

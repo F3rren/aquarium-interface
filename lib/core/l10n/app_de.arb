@@ -1159,5 +1159,6 @@
   "tomorrow": "Morgen",
   "yesterday": "Gestern",
   "nextDue": "Nächste Fälligkeit",
-  "lastCompletion": "Zuletzt abgeschlossen"
+  "lastCompletion": "Zuletzt abgeschlossen",
+  "taskTitleHint": "z.B. Abschäumer reinigen"
 }

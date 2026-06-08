@@ -9,6 +9,10 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get taskTitleHint => 'e.g. Skimmer cleaning';
+
+
+  @override
   String get tasks => 'Tasks';
 
   @override
