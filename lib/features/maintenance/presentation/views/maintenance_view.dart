@@ -3,6 +3,8 @@ library;
 
 import 'package:acquariumfe/features/maintenance/domain/models/maintenance_task.dart';
 import 'package:acquariumfe/features/maintenance/data/maintenance_task_service.dart';
+import 'package:acquariumfe/core/providers/service_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:acquariumfe/core/utils/task_localizer.dart';
 import 'package:acquariumfe/features/maintenance/presentation/views/products_view.dart';
 import 'package:flutter/material.dart';
@@ -24,18 +26,20 @@ import 'package:acquariumfe/core/l10n/app_localizations.dart';
 ///
 /// [aquariumId] is injected by the parent screen; the service is configured
 /// with [MaintenanceTaskService.setCurrentAquarium] before the first fetch.
-class MaintenanceView extends StatefulWidget {
+class MaintenanceView extends ConsumerStatefulWidget {
   final int? aquariumId;
 
   const MaintenanceView({super.key, this.aquariumId});
 
   @override
-  State<MaintenanceView> createState() => _MaintenanceViewState();
+  ConsumerState<MaintenanceView> createState() => _MaintenanceViewState();
 }
 
-class _MaintenanceViewState extends State<MaintenanceView>
+class _MaintenanceViewState extends ConsumerState<MaintenanceView>
     with SingleTickerProviderStateMixin {
-  final MaintenanceTaskService _service = MaintenanceTaskService();
+  late final MaintenanceTaskService _service = ref.read(
+    maintenanceTaskServiceProvider,
+  );
   MaintenanceCategory? _filterCategory;
   bool _showCompleted = false; // Toggle tra task in corso e completati
 
