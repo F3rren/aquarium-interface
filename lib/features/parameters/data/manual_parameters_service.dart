@@ -5,7 +5,7 @@ import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
 
-/// Singleton that persists the five parameters that are entered manually by the
+/// Service that persists the five parameters that are entered manually by the
 /// user (i.e. not measured by electronic sensors): calcium, magnesium, KH,
 /// nitrate, and phosphate.
 ///
@@ -18,12 +18,13 @@ import 'package:acquariumfe/core/utils/exceptions.dart';
 /// falls back to [_getDefaultValues] (typical marine reef reference values) so
 /// the UI always has something to display.
 class ManualParametersService {
-  static final ManualParametersService _instance =
-      ManualParametersService._internal();
-  factory ManualParametersService() => _instance;
-  ManualParametersService._internal();
+  /// Creates a service backed by the shared [ApiService].
+  ///
+  /// Obtain the app-wide instance via Riverpod
+  /// ([manualParametersServiceProvider]) rather than constructing directly.
+  ManualParametersService(this._apiService);
 
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
 
   /// ID of the currently selected aquarium.
   int? _currentAquariumId;

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/features/parameters/data/manual_parameters_service.dart';
+import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/features/parameters/presentation/providers/parameters_provider.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
@@ -29,7 +30,9 @@ class ManualParametersWidget extends ConsumerStatefulWidget {
 
 class _ManualParametersWidgetState
     extends ConsumerState<ManualParametersWidget> {
-  final ManualParametersService _manualService = ManualParametersService();
+  late final ManualParametersService _manualService = ref.read(
+    manualParametersServiceProvider,
+  );
 
   double calcium = 420.0;
   double magnesium = 1300.0;

@@ -6,7 +6,7 @@ import 'package:acquariumfe/features/settings/domain/models/notification_setting
 import 'package:acquariumfe/core/network/api_service.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
 
-/// Singleton that reads and writes [NotificationSettings] for a specific
+/// Service that reads and writes [NotificationSettings] for a specific
 /// aquarium via the REST endpoint
 /// `…/aquariums/{id}/settings/notifications`.
 ///
@@ -18,12 +18,13 @@ import 'package:acquariumfe/core/utils/exceptions.dart';
 /// Contrast with [NotificationPreferencesService], which stores settings
 /// locally on the device via [SharedPreferences] without a network call.
 class NotificationSettingsService {
-  static final NotificationSettingsService _instance =
-      NotificationSettingsService._internal();
-  factory NotificationSettingsService() => _instance;
-  NotificationSettingsService._internal();
+  /// Creates a service backed by the shared [ApiService].
+  ///
+  /// Obtain the app-wide instance via Riverpod
+  /// ([notificationSettingsServiceProvider]) rather than constructing directly.
+  NotificationSettingsService(this._apiService);
 
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
 
   /// ID of the currently active aquarium.
   int? _currentAquariumId;

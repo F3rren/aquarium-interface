@@ -13,7 +13,6 @@ import 'package:acquariumfe/features/aquarium/domain/models/aquarium.dart';
 import 'package:acquariumfe/features/parameters/domain/models/aquarium_parameters.dart';
 import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
-import 'package:acquariumfe/features/maintenance/data/maintenance_task_service.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
 
 part 'aquarium_providers.g.dart';
@@ -165,7 +164,7 @@ class Aquariums extends _$Aquariums {
       final created = await aquariumService.createAquarium(aquarium);
 
       if (created.id != null) {
-        final taskService = MaintenanceTaskService();
+        final taskService = ref.read(maintenanceTaskServiceProvider);
         taskService.setCurrentAquarium(created.id!);
         try {
           await taskService.initializeDefaultTasks(type: aquarium.type);

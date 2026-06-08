@@ -13,6 +13,9 @@ import 'package:acquariumfe/features/aquarium/data/aquarium_service.dart';
 import 'package:acquariumfe/features/charts/data/chart_data_service.dart';
 import 'package:acquariumfe/features/parameters/data/parameter_service.dart';
 import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
+import 'package:acquariumfe/features/parameters/data/manual_parameters_service.dart';
+import 'package:acquariumfe/features/settings/data/notification_settings_service.dart';
+import 'package:acquariumfe/features/maintenance/data/maintenance_task_service.dart';
 import 'package:acquariumfe/features/settings/data/alert_manager.dart';
 
 part 'service_providers.g.dart';
@@ -49,6 +52,9 @@ ParameterService parameterService(Ref ref) {
   return ParameterService(
     ref.read(apiServiceProvider),
     ref.read(targetParametersServiceProvider),
+    manualService: ref.read(manualParametersServiceProvider),
+    notificationService: ref.read(notificationSettingsServiceProvider),
+    maintenanceService: ref.read(maintenanceTaskServiceProvider),
   );
 }
 
@@ -66,3 +72,30 @@ ChartDataService chartDataService(Ref ref) {
 AlertManager alertManager(Ref ref) {
   return AlertManager();
 }
+
+// ── Hand-written providers ───────────────────────────────────────────────────
+//
+// These data-layer services are exposed as plain (non-codegen) `Provider`s so
+// `service_providers.g.dart` does not need to be regenerated to add them. A
+// plain `Provider` is never auto-disposed, so — like the `keepAlive: true`
+// providers above — each lives for the app's lifetime. Every one injects the
+// shared [apiServiceProvider], so the whole app shares a single [ApiService]
+// (one HTTP client + one in-memory token cache) instead of one per service.
+
+/// Provides the shared [ManualParametersService] for the five manually-entered
+/// water parameters (calcium, magnesium, KH, nitrate, phosphate).
+final manualParametersServiceProvider = Provider<ManualParametersService>(
+  (ref) => ManualParametersService(ref.read(apiServiceProvider)),
+);
+
+/// Provides the shared [NotificationSettingsService] for the backend-synced
+/// notification settings.
+final notificationSettingsServiceProvider =
+    Provider<NotificationSettingsService>(
+      (ref) => NotificationSettingsService(ref.read(apiServiceProvider)),
+    );
+
+/// Provides the shared [MaintenanceTaskService] for maintenance-task CRUD.
+final maintenanceTaskServiceProvider = Provider<MaintenanceTaskService>(
+  (ref) => MaintenanceTaskService(ref.read(apiServiceProvider)),
+);

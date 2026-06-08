@@ -49,9 +49,9 @@ class ParameterService {
   ///
   /// [apiService] and [targetService] are the Riverpod-managed dependencies.
   /// The remaining collaborators ([alertManager], [manualService],
-  /// [notificationService], [maintenanceService]) default to their shared
-  /// singletons in production but can be injected in tests to isolate this
-  /// service from global state.
+  /// [notificationService], [maintenanceService]) default to fresh instances
+  /// backed by the same [apiService], but the Riverpod provider injects the
+  /// app-wide shared instances; tests can inject mocks to isolate this service.
   ///
   /// Obtain the shared instance via Riverpod ([parameterServiceProvider])
   /// rather than constructing directly.
@@ -63,11 +63,11 @@ class ParameterService {
     NotificationSettingsService? notificationService,
     MaintenanceTaskService? maintenanceService,
   })  : _alertManager = alertManager ?? AlertManager(),
-        _manualService = manualService ?? ManualParametersService(),
+        _manualService = manualService ?? ManualParametersService(_apiService),
         _notificationService =
-            notificationService ?? NotificationSettingsService(),
+            notificationService ?? NotificationSettingsService(_apiService),
         _maintenanceService =
-            maintenanceService ?? MaintenanceTaskService();
+            maintenanceService ?? MaintenanceTaskService(_apiService);
 
   final ApiService _apiService;
   final TargetParametersService _targetService;

@@ -6,7 +6,7 @@ import 'package:acquariumfe/features/maintenance/domain/models/maintenance_task.
 import 'package:acquariumfe/core/network/api_service.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
 
-/// Singleton that performs CRUD operations on [MaintenanceTask] records and
+/// Service that performs CRUD operations on [MaintenanceTask] records and
 /// provides convenience accessors for task subsets (pending, overdue, etc.).
 ///
 /// [setCurrentAquarium] must be called when the active aquarium changes. All
@@ -16,12 +16,13 @@ import 'package:acquariumfe/core/utils/exceptions.dart';
 /// **Response normalisation:** the backend may return `{"data": [...]}` or a
 /// bare JSON array; both shapes are handled consistently.
 class MaintenanceTaskService {
-  static final MaintenanceTaskService _instance =
-      MaintenanceTaskService._internal();
-  factory MaintenanceTaskService() => _instance;
-  MaintenanceTaskService._internal();
+  /// Creates a service backed by the shared [ApiService].
+  ///
+  /// Obtain the app-wide instance via Riverpod
+  /// ([maintenanceTaskServiceProvider]) rather than constructing directly.
+  MaintenanceTaskService(this._apiService);
 
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
 
   /// ID of the currently selected aquarium.
   int? _currentAquariumId;
