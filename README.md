@@ -71,14 +71,14 @@ A cross-platform Flutter app for smart aquarium management. Track water paramete
 | Charts | `fl_chart` |
 | Icons | Font Awesome Flutter |
 | Backend | Java (Spring Boot) on AWS |
-| API contracts | OpenAPI-generated DTOs |
+| API contracts | Hand-written `fromJson` / `toJson` on each domain model |
 
 ### Key patterns
 
 | Pattern | Where |
 |---|---|
 | **Feature-first** | `lib/core/` + `lib/features/<name>/{data,domain,presentation}` |
-| **Dependency injection** | Core services (HTTP, aquariums, parameters, charts) wired via Riverpod `keepAlive` providers + constructor injection. A few legacy services are still self-managed singletons and are being migrated |
+| **Dependency injection** | All data services wired via Riverpod `keepAlive` providers + constructor injection, sharing a single `ApiService` (one HTTP client + token cache) |
 | **Result\<T\>** | `core/utils/result.dart` — `Ok`/`Err` sealed class, `guardResult()` helper |
 | **ApiEndpoints** | `core/constants/api_endpoints.dart` — single source of truth for all URLs |
 | **Retry policy** | `core/utils/retry_policy.dart` — exponential back-off, configurable per call |
@@ -250,7 +250,7 @@ Follow the existing pattern: place the test file at the same path as its source 
 
 ## Code generation
 
-Riverpod providers and OpenAPI DTOs use code generation. Re-run after modifying any `@riverpod` annotation or the OpenAPI spec:
+Riverpod providers use code generation (`*.g.dart`). Re-run after modifying any `@riverpod` annotation:
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
