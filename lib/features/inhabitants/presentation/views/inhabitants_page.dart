@@ -62,9 +62,6 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     super.initState();
     // Inizia con 1 tab, verrà aggiornato dopo aver caricato i dati
     _tabController = TabController(length: 1, vsync: this);
-    if (widget.aquariumId != null) {
-      _service.setCurrentAquarium(widget.aquariumId!);
-    }
     _loadData();
   }
 
@@ -120,8 +117,11 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     }
 
     try {
-      _fishList = await _service.getFish();
-      _coralsList = await _service.getCorals();
+      final aquariumId = widget.aquariumId;
+      if (aquariumId != null) {
+        _fishList = await _service.getFish(aquariumId);
+        _coralsList = await _service.getCorals(aquariumId);
+      }
     } catch (e) {
       AppLogger.w('Failed to load inhabitants', error: e);
       if (mounted) {
@@ -137,9 +137,11 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
   }
 
   Future<void> _reloadDataSilently() async {
+    final aquariumId = widget.aquariumId;
+    if (aquariumId == null) return;
     try {
-      final newFish = await _service.getFish();
-      final newCorals = await _service.getCorals();
+      final newFish = await _service.getFish(aquariumId);
+      final newCorals = await _service.getCorals(aquariumId);
       if (!mounted) return;
       setState(() {
         _fishList = newFish;
@@ -328,15 +330,19 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       builder: (context) => AddFishDialog(
         aquariumWaterType: _aquariumWaterType,
         onSave: (fish, speciesId) async {
+          final aquariumId = widget.aquariumId;
+          if (aquariumId == null) return;
           // Salva sul server
-          await _service.addFish(fish, speciesId);
+          await _service.addFish(aquariumId, fish, speciesId);
 
           // Ricarica i dati dall'API senza loading
           await _reloadDataSilently();
         },
         onSaveMultiple: (fishList, speciesId) async {
+          final aquariumId = widget.aquariumId;
+          if (aquariumId == null) return;
           for (final fish in fishList) {
-            await _service.addFish(fish, speciesId);
+            await _service.addFish(aquariumId, fish, speciesId);
           }
           _loadData();
         },
@@ -351,7 +357,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
         fish: fish,
         aquariumWaterType: _aquariumWaterType,
         onSave: (updatedFish, speciesId) async {
-          await _service.updateFish(updatedFish);
+          final aquariumId = widget.aquariumId;
+          if (aquariumId == null) return;
+          await _service.updateFish(aquariumId, updatedFish);
           _loadData();
         },
       ),
@@ -363,15 +371,19 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       context: context,
       builder: (context) => AddCoralDialog(
         onSave: (coral, speciesId) async {
+          final aquariumId = widget.aquariumId;
+          if (aquariumId == null) return;
           // Salva sul server
-          await _service.addCoral(coral, speciesId);
+          await _service.addCoral(aquariumId, coral, speciesId);
 
           // Ricarica i dati dall'API senza loading
           await _reloadDataSilently();
         },
         onSaveMultiple: (coralList, speciesId) async {
+          final aquariumId = widget.aquariumId;
+          if (aquariumId == null) return;
           for (final coral in coralList) {
-            await _service.addCoral(coral, speciesId);
+            await _service.addCoral(aquariumId, coral, speciesId);
           }
           _loadData();
         },
@@ -385,7 +397,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       builder: (context) => AddCoralDialog(
         coral: coral,
         onSave: (updatedCoral, speciesId) async {
-          await _service.updateCoral(updatedCoral);
+          final aquariumId = widget.aquariumId;
+          if (aquariumId == null) return;
+          await _service.updateCoral(aquariumId, updatedCoral);
           _loadData();
         },
       ),
@@ -445,7 +459,10 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       await Future.delayed(const Duration(milliseconds: 100));
 
       // Elimina dal server
-      await _service.deleteFish(fish.id);
+      final aquariumId = widget.aquariumId;
+      if (aquariumId != null) {
+        await _service.deleteFish(aquariumId, fish.id);
+      }
 
       // Ricarica silenziosamente per sincronizzare
       _reloadDataSilently();
@@ -491,7 +508,10 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       await Future.delayed(const Duration(milliseconds: 100));
 
       // Elimina dal server
-      await _service.deleteCoral(coral.id);
+      final aquariumId = widget.aquariumId;
+      if (aquariumId != null) {
+        await _service.deleteCoral(aquariumId, coral.id);
+      }
 
       // Ricarica silenziosamente per sincronizzare
       _reloadDataSilently();
