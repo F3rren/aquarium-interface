@@ -1,4 +1,4 @@
-﻿/// Service for managing aquarium maintenance tasks via the backend API.
+/// Service for managing aquarium maintenance tasks via the backend API.
 library;
 
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
@@ -9,9 +9,9 @@ import 'package:acquariumfe/core/utils/exceptions.dart';
 /// Service that performs CRUD operations on [MaintenanceTask] records and
 /// provides convenience accessors for task subsets (pending, overdue, etc.).
 ///
-/// [setCurrentAquarium] must be called when the active aquarium changes. All
-/// task operations target the endpoint
-/// `…/aquariums/{currentAquariumId}/tasks`.
+/// Every operation takes the target [aquariumId] explicitly and addresses the
+/// endpoint `…/aquariums/{aquariumId}/tasks`; the service holds no mutable
+/// "current aquarium" state.
 ///
 /// **Response normalisation:** the backend may return `{"data": [...]}` or a
 /// bare JSON array; both shapes are handled consistently.
@@ -24,26 +24,16 @@ class MaintenanceTaskService {
 
   final ApiService _apiService;
 
-  /// ID of the currently selected aquarium.
-  int? _currentAquariumId;
-
-  /// Sets the aquarium context for all subsequent task operations.
-  void setCurrentAquarium(int id) {
-    _currentAquariumId = id;
-  }
-
-  /// Returns all tasks for the current aquarium, optionally filtered by
+  /// Returns all tasks for aquarium [aquariumId], optionally filtered by
   /// [status] (`'pending'` or `'completed'`).
   ///
-  /// Throws if no aquarium has been set. Propagates API exceptions so the
-  /// caller can display an error.
-  Future<List<MaintenanceTask>> getAllTasks({String? status}) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  /// Propagates API exceptions so the caller can display an error.
+  Future<List<MaintenanceTask>> getAllTasks(
+    int aquariumId, {
+    String? status,
+  }) async {
     try {
-      final base = ApiEndpoints.tasks(_currentAquariumId!);
+      final base = ApiEndpoints.tasks(aquariumId);
       final queryParam = status != null ? '?status=$status' : '';
       final response = await _apiService.get('$base$queryParam');
 
@@ -65,31 +55,30 @@ class MaintenanceTaskService {
   }
 
   /// Returns tasks in the `'pending'` status.
-  Future<List<MaintenanceTask>> getPendingTasks() async {
-    return getAllTasks(status: 'pending');
+  Future<List<MaintenanceTask>> getPendingTasks(int aquariumId) async {
+    return getAllTasks(aquariumId, status: 'pending');
   }
 
   /// Returns tasks in the `'completed'` status.
-  Future<List<MaintenanceTask>> getCompletedTasks() async {
-    return getAllTasks(status: 'completed');
+  Future<List<MaintenanceTask>> getCompletedTasks(int aquariumId) async {
+    return getAllTasks(aquariumId, status: 'completed');
   }
 
   /// Returns pending tasks that are either due today or already overdue.
-  Future<List<MaintenanceTask>> getUpcomingTasks() async {
-    final tasks = await getPendingTasks();
+  Future<List<MaintenanceTask>> getUpcomingTasks(int aquariumId) async {
+    final tasks = await getPendingTasks(aquariumId);
     return tasks.where((task) => task.isDueToday || task.isOverdue).toList();
   }
 
-  /// Creates a new task in the current aquarium and returns the persisted
+  /// Creates a new task in aquarium [aquariumId] and returns the persisted
   /// entity (with its backend-assigned [MaintenanceTask.id]).
-  Future<MaintenanceTask> createTask(MaintenanceTask task) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  Future<MaintenanceTask> createTask(
+    int aquariumId,
+    MaintenanceTask task,
+  ) async {
     try {
       final response = await _apiService.post(
-        ApiEndpoints.tasks(_currentAquariumId!),
+        ApiEndpoints.tasks(aquariumId),
         task.toJson(),
       );
 
@@ -111,16 +100,13 @@ class MaintenanceTaskService {
   /// Replaces the task identified by [taskId] with [task] and returns the
   /// updated entity.
   Future<MaintenanceTask> updateTask(
+    int aquariumId,
     String taskId,
     MaintenanceTask task,
   ) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
     try {
       final response = await _apiService.put(
-        ApiEndpoints.task(_currentAquariumId!, taskId),
+        ApiEndpoints.task(aquariumId, taskId),
         task.toJson(),
       );
 
@@ -140,13 +126,9 @@ class MaintenanceTaskService {
   }
 
   /// Permanently deletes the task identified by [taskId].
-  Future<void> deleteTask(String taskId) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  Future<void> deleteTask(int aquariumId, String taskId) async {
     try {
-      await _apiService.delete(ApiEndpoints.task(_currentAquariumId!, taskId));
+      await _apiService.delete(ApiEndpoints.task(aquariumId, taskId));
     } catch (e) {
       rethrow;
     }
@@ -154,14 +136,10 @@ class MaintenanceTaskService {
 
   /// Marks the task [taskId] as completed by calling the backend
   /// `POST …/tasks/{id}/complete` endpoint and returns the updated entity.
-  Future<MaintenanceTask> completeTask(String taskId) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  Future<MaintenanceTask> completeTask(int aquariumId, String taskId) async {
     try {
       final response = await _apiService.post(
-        ApiEndpoints.completeTask(_currentAquariumId!, taskId),
+        ApiEndpoints.completeTask(aquariumId, taskId),
         {},
       );
 
@@ -181,63 +159,73 @@ class MaintenanceTaskService {
   }
 
   /// Enables or disables the task [taskId] without modifying any other field.
-  Future<MaintenanceTask> toggleTaskEnabled(String taskId, bool enabled) async {
-    final tasks = await getAllTasks();
+  Future<MaintenanceTask> toggleTaskEnabled(
+    int aquariumId,
+    String taskId,
+    bool enabled,
+  ) async {
+    final tasks = await getAllTasks(aquariumId);
     final task = tasks.firstWhere((t) => t.id == taskId);
-    return updateTask(taskId, task.copyWith(enabled: enabled));
+    return updateTask(aquariumId, taskId, task.copyWith(enabled: enabled));
   }
 
   /// Updates the recurrence interval of task [taskId] to [frequencyDays] days.
   Future<MaintenanceTask> updateFrequency(
+    int aquariumId,
     String taskId,
     int frequencyDays,
   ) async {
-    final tasks = await getAllTasks();
+    final tasks = await getAllTasks(aquariumId);
     final task = tasks.firstWhere((t) => t.id == taskId);
-    return updateTask(taskId, task.copyWith(frequencyDays: frequencyDays));
+    return updateTask(
+      aquariumId,
+      taskId,
+      task.copyWith(frequencyDays: frequencyDays),
+    );
   }
 
   /// Updates the reminder time of task [taskId] to the specified [hour] and
   /// [minute] (24-hour clock).
   Future<MaintenanceTask> updateReminder(
+    int aquariumId,
     String taskId,
     int hour,
     int minute,
   ) async {
-    final tasks = await getAllTasks();
+    final tasks = await getAllTasks(aquariumId);
     final task = tasks.firstWhere((t) => t.id == taskId);
     return updateTask(
+      aquariumId,
       taskId,
       task.copyWith(reminderHour: hour, reminderMinute: minute),
     );
   }
 
-  /// Creates the default set of maintenance tasks for the current aquarium.
+  /// Creates the default set of maintenance tasks for aquarium [aquariumId].
   ///
   /// [type] must be `'saltwater'` (default) or `'freshwater'`. Saltwater tanks
   /// get 10 tasks; freshwater tanks get 6 (the saltwater-specific tasks are
   /// omitted). Duplicate-creation errors from the backend are silently ignored
   /// so this method is safe to call on an already-initialised aquarium.
-  Future<void> initializeDefaultTasks({String type = 'saltwater'}) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  Future<void> initializeDefaultTasks(
+    int aquariumId, {
+    String type = 'saltwater',
+  }) async {
     final defaultTasks = MaintenanceTask.getDefaultTasks(
-      _currentAquariumId.toString(),
+      aquariumId.toString(),
       type: type,
     );
 
     for (final task in defaultTasks) {
       try {
-        await createTask(task);
+        await createTask(aquariumId, task);
       } catch (e) {
         // Silently skip if the task already exists.
       }
     }
   }
 
-  /// Returns task counts grouped by status.
+  /// Returns task counts grouped by status for aquarium [aquariumId].
   ///
   /// The returned map contains:
   /// - `'total'` — all tasks
@@ -245,8 +233,8 @@ class MaintenanceTaskService {
   /// - `'overdue'` — enabled tasks that are past their due date
   /// - `'dueToday'` — enabled tasks due today
   /// - `'disabled'` — tasks with [MaintenanceTask.enabled] == `false`
-  Future<Map<String, int>> getTaskStatistics() async {
-    final allTasks = await getAllTasks();
+  Future<Map<String, int>> getTaskStatistics(int aquariumId) async {
+    final allTasks = await getAllTasks(aquariumId);
 
     return {
       'total': allTasks.length,

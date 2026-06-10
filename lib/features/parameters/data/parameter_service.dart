@@ -9,7 +9,6 @@ import 'package:acquariumfe/core/network/api_service.dart';
 import 'package:acquariumfe/features/settings/data/alert_manager.dart';
 import 'package:acquariumfe/features/parameters/data/manual_parameters_service.dart';
 import 'package:acquariumfe/features/settings/data/notification_settings_service.dart';
-import 'package:acquariumfe/features/maintenance/data/maintenance_task_service.dart';
 import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
 import 'package:acquariumfe/features/settings/data/app_locale_service.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
@@ -42,16 +41,15 @@ import 'package:acquariumfe/core/utils/app_logger.dart';
 /// Call [setCurrentAquarium] before any fetch. Changing the aquarium
 /// automatically propagates the ID to all dependent services
 /// ([ManualParametersService], [NotificationSettingsService],
-/// [MaintenanceTaskService], [TargetParametersService]) and invalidates the
-/// cache.
+/// [TargetParametersService]) and invalidates the cache.
 class ParameterService {
   /// Creates a [ParameterService].
   ///
   /// [apiService] and [targetService] are the Riverpod-managed dependencies.
   /// The remaining collaborators ([alertManager], [manualService],
-  /// [notificationService], [maintenanceService]) default to fresh instances
-  /// backed by the same [apiService], but the Riverpod provider injects the
-  /// app-wide shared instances; tests can inject mocks to isolate this service.
+  /// [notificationService]) default to fresh instances backed by the same
+  /// [apiService], but the Riverpod provider injects the app-wide shared
+  /// instances; tests can inject mocks to isolate this service.
   ///
   /// Obtain the shared instance via Riverpod ([parameterServiceProvider])
   /// rather than constructing directly.
@@ -61,20 +59,16 @@ class ParameterService {
     AlertManager? alertManager,
     ManualParametersService? manualService,
     NotificationSettingsService? notificationService,
-    MaintenanceTaskService? maintenanceService,
   })  : _alertManager = alertManager ?? AlertManager(),
         _manualService = manualService ?? ManualParametersService(_apiService),
         _notificationService =
-            notificationService ?? NotificationSettingsService(_apiService),
-        _maintenanceService =
-            maintenanceService ?? MaintenanceTaskService(_apiService);
+            notificationService ?? NotificationSettingsService(_apiService);
 
   final ApiService _apiService;
   final TargetParametersService _targetService;
   final AlertManager _alertManager;
   final ManualParametersService _manualService;
   final NotificationSettingsService _notificationService;
-  final MaintenanceTaskService _maintenanceService;
 
   /// ID of the currently selected aquarium.
   int? _currentid;
@@ -138,7 +132,6 @@ class ParameterService {
 
       _manualService.setCurrentAquarium(id);
       _notificationService.setCurrentAquarium(id);
-      _maintenanceService.setCurrentAquarium(id);
       _targetService.setCurrentAquarium(id);
     }
   }

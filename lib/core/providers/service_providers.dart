@@ -58,7 +58,6 @@ ParameterService parameterService(Ref ref) {
     ref.read(targetParametersServiceProvider),
     manualService: ref.read(manualParametersServiceProvider),
     notificationService: ref.read(notificationSettingsServiceProvider),
-    maintenanceService: ref.read(maintenanceTaskServiceProvider),
   );
 }
 
