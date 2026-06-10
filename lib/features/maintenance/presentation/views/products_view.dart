@@ -40,7 +40,6 @@ class _ProductsViewState extends ConsumerState<ProductsView> {
   void initState() {
     super.initState();
     if (widget.aquariumId != null) {
-      _service.setCurrentAquarium(widget.aquariumId!);
       _loadProducts();
     }
   }
@@ -815,7 +814,6 @@ class _AddEditProductViewState extends ConsumerState<AddEditProductView> {
   @override
   void initState() {
     super.initState();
-    _service.setCurrentAquarium(widget.aquariumId);
 
     final product = widget.product;
     _nameController = TextEditingController(text: product?.name);

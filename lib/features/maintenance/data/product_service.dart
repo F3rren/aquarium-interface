@@ -5,7 +5,6 @@ import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/maintenance/domain/models/product.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
 import 'package:acquariumfe/core/utils/app_logger.dart';
-import 'package:acquariumfe/core/utils/exceptions.dart';
 
 /// Service that performs CRUD operations on [Product] records and computes
 /// inventory statistics.
@@ -34,17 +33,8 @@ class ProductService {
 
   final ApiService _apiService;
 
-  /// ID of the currently active aquarium.
-  int? _currentAquariumId;
-
   /// Cache of the last unfiltered product list; `null` after any mutation.
   List<Product>? _cachedProducts;
-
-  /// Sets the active aquarium and invalidates the product cache.
-  void setCurrentAquarium(int aquariumId) {
-    _currentAquariumId = aquariumId;
-    _cachedProducts = null;
-  }
 
   /// Returns all products, optionally filtered by one or more criteria.
   ///
@@ -60,8 +50,6 @@ class ProductService {
   ///
   /// When called without filters, updates [_cachedProducts]. On network error,
   /// returns the cached list (or an empty list if no cache exists).
-  ///
-  /// Throws when no aquarium has been set.
   Future<List<Product>> getAllProducts({
     ProductCategory? category,
     String? brand,
@@ -72,10 +60,6 @@ class ProductService {
     bool? lowStock,
     bool? shouldUseAgain,
   }) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
     Map<String, dynamic> queryParams = {};
     if (category != null) {
       queryParams['category'] = category.name.toUpperCase();
@@ -158,10 +142,6 @@ class ProductService {
   ///
   /// Returns `null` on error or when the backend response cannot be parsed.
   Future<Product?> getProductById(String id) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
     try {
       final response = await _apiService.get(ApiEndpoints.product(id));
 
@@ -179,10 +159,6 @@ class ProductService {
 
   /// Creates a new product via `POST /products` and invalidates the cache.
   Future<void> addProduct(Product product) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
     try {
       await _apiService.post(ApiEndpoints.products, product.toJson());
       _cachedProducts = null;
@@ -195,10 +171,6 @@ class ProductService {
   /// Updates an existing product via `PUT /products/{id}` and invalidates the
   /// cache.
   Future<void> updateProduct(Product product) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
     try {
       await _apiService.put(ApiEndpoints.product(product.id), product.toJson());
       _cachedProducts = null;
@@ -211,10 +183,6 @@ class ProductService {
   /// Permanently deletes the product with [id] via `DELETE /products/{id}` and
   /// invalidates the cache.
   Future<void> deleteProduct(String id) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
     try {
       await _apiService.delete(ApiEndpoints.product(id));
       _cachedProducts = null;
@@ -231,10 +199,6 @@ class ProductService {
   ///
   /// Invalidates the cache on success.
   Future<void> recordUsage(String productId, {double? quantityUsed}) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
     try {
       await _apiService.patch(ApiEndpoints.markProductUsed(productId), {});
 
@@ -254,10 +218,6 @@ class ProductService {
   /// Toggles the [Product.isFavorite] flag via
   /// `PATCH /products/{id}/toggle-favorite` and invalidates the cache.
   Future<void> toggleFavorite(String productId) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
     try {
       await _apiService.patch(ApiEndpoints.toggleProductFavorite(productId), {});
       _cachedProducts = null;
@@ -272,10 +232,6 @@ class ProductService {
   ///
   /// Invalidates the cache on success.
   Future<void> updateQuantity(String productId, double change) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
     try {
       await _apiService.patch(ApiEndpoints.productQuantity(productId), {
         'change': change,
