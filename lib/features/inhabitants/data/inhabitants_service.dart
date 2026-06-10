@@ -1,4 +1,4 @@
-﻿/// Service for managing the fish and coral inhabitants of an aquarium.
+/// Service for managing the fish and coral inhabitants of an aquarium.
 library;
 
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
@@ -16,8 +16,8 @@ import 'package:acquariumfe/core/utils/app_logger.dart';
 /// tagged with a `"type"` field (`"fish"` or `"coral"`). Each method filters
 /// the response by type before mapping to the domain model.
 ///
-/// [setCurrentAquarium] must be called whenever the selected aquarium changes;
-/// all operations silently return empty results or throw if no aquarium is set.
+/// The target aquarium is passed explicitly to every operation as
+/// [aquariumId]; the service holds no mutable "current aquarium" state.
 class InhabitantsService {
   /// Creates a service backed by the shared [ApiService].
   ///
@@ -27,32 +27,17 @@ class InhabitantsService {
 
   final ApiService _apiService;
 
-  /// ID of the currently selected aquarium. `null` means no aquarium is active.
-  int? _currentAquariumId;
-
-  /// Updates the currently active aquarium.
-  ///
-  /// All subsequent CRUD calls will target [aquariumId].
-  void setCurrentAquarium(int aquariumId) {
-    _currentAquariumId = aquariumId;
-  }
-
   // ── Fish ──────────────────────────────────────────────────────────────────
 
-  /// Returns all fish inhabitants of the current aquarium.
+  /// Returns all fish inhabitants of aquarium [aquariumId].
   ///
   /// Fetches the unified `/inhabitants` endpoint and filters for
-  /// `type == 'fish'`. Fish size is sourced from `details.size`, falling back
-  /// to `details.maxSize` or `10.0` if absent. Returns an empty list when no
-  /// aquarium is selected or on any network error.
-  Future<List<Fish>> getFish() async {
-    if (_currentAquariumId == null) {
-      return [];
-    }
-
+  /// `type == 'fish'`. Returns an empty list when the response carries no
+  /// `data`; rethrows on any network error.
+  Future<List<Fish>> getFish(int aquariumId) async {
     try {
       final response = await _apiService.get(
-        ApiEndpoints.inhabitants(_currentAquariumId!),
+        ApiEndpoints.inhabitants(aquariumId),
       );
 
       if (response['data'] == null) return [];
@@ -72,16 +57,13 @@ class InhabitantsService {
     }
   }
 
-  /// Adds [fish] to the current aquarium using the species identified by
+  /// Adds [fish] to aquarium [aquariumId] using the species identified by
   /// [speciesId].
   ///
   /// [speciesId] is required — throws if `null`. The body posted to
   /// `POST /aquariums/{id}/inhabitants` uses `inhabitantType: 'fish'` and
   /// `quantity: 1`.
-  Future<void> addFish(Fish fish, String? speciesId) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
+  Future<void> addFish(int aquariumId, Fish fish, String? speciesId) async {
     if (speciesId == null) {
       throw ValidationException('Species ID is required');
     }
@@ -93,51 +75,38 @@ class InhabitantsService {
       'notes': fish.notes ?? '',
     };
 
-    await _apiService.post(ApiEndpoints.inhabitants(_currentAquariumId!), body);
+    await _apiService.post(ApiEndpoints.inhabitants(aquariumId), body);
   }
 
   /// Updates [fish] (size and notes) via
   /// `PUT /aquariums/{id}/inhabitants/{fishId}`.
-  Future<void> updateFish(Fish fish) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  Future<void> updateFish(int aquariumId, Fish fish) async {
     final body = {'quantity': fish.size.toInt(), 'notes': fish.notes ?? ''};
 
     await _apiService.put(
-      ApiEndpoints.inhabitant(_currentAquariumId!, int.parse(fish.id)),
+      ApiEndpoints.inhabitant(aquariumId, int.parse(fish.id)),
       body,
     );
   }
 
-  /// Permanently removes the fish with the given [id] from the current aquarium.
-  Future<void> deleteFish(String id) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  /// Permanently removes the fish [id] from aquarium [aquariumId].
+  Future<void> deleteFish(int aquariumId, String id) async {
     await _apiService.delete(
-      ApiEndpoints.inhabitant(_currentAquariumId!, int.parse(id)),
+      ApiEndpoints.inhabitant(aquariumId, int.parse(id)),
     );
   }
 
   // ── Corals ────────────────────────────────────────────────────────────────
 
-  /// Returns all coral inhabitants of the current aquarium.
+  /// Returns all coral inhabitants of aquarium [aquariumId].
   ///
   /// Fetches the unified `/inhabitants` endpoint and filters for
-  /// `type == 'coral'`. Coral size is sourced from `details.size`, falling
-  /// back to `details.maxSize` or `5.0` if absent. Returns an empty list when
-  /// no aquarium is selected or on any network error.
-  Future<List<Coral>> getCorals() async {
-    if (_currentAquariumId == null) {
-      return [];
-    }
-
+  /// `type == 'coral'`. Returns an empty list when the response carries no
+  /// `data`; rethrows on any network error.
+  Future<List<Coral>> getCorals(int aquariumId) async {
     try {
       final response = await _apiService.get(
-        ApiEndpoints.inhabitants(_currentAquariumId!),
+        ApiEndpoints.inhabitants(aquariumId),
       );
 
       if (response['data'] == null) return [];
@@ -155,15 +124,12 @@ class InhabitantsService {
     }
   }
 
-  /// Adds [coral] to the current aquarium using the species identified by
+  /// Adds [coral] to aquarium [aquariumId] using the species identified by
   /// [speciesId].
   ///
   /// [speciesId] is required — throws if `null`. The body posted uses
   /// `inhabitantType: 'coral'` and `quantity: 1`.
-  Future<void> addCoral(Coral coral, String? speciesId) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
+  Future<void> addCoral(int aquariumId, Coral coral, String? speciesId) async {
     if (speciesId == null) {
       throw ValidationException('Species ID is required');
     }
@@ -175,39 +141,30 @@ class InhabitantsService {
       'notes': coral.notes ?? '',
     };
 
-    await _apiService.post(ApiEndpoints.inhabitants(_currentAquariumId!), body);
+    await _apiService.post(ApiEndpoints.inhabitants(aquariumId), body);
   }
 
   /// Updates [coral] (size and notes) via
   /// `PUT /aquariums/{id}/inhabitants/{coralId}`.
-  Future<void> updateCoral(Coral coral) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  Future<void> updateCoral(int aquariumId, Coral coral) async {
     final body = {'quantity': coral.size.toInt(), 'notes': coral.notes ?? ''};
 
     await _apiService.put(
-      ApiEndpoints.inhabitant(_currentAquariumId!, int.parse(coral.id)),
+      ApiEndpoints.inhabitant(aquariumId, int.parse(coral.id)),
       body,
     );
   }
 
-  /// Permanently removes the coral with the given [id] from the current
-  /// aquarium.
-  Future<void> deleteCoral(String id) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  /// Permanently removes the coral [id] from aquarium [aquariumId].
+  Future<void> deleteCoral(int aquariumId, String id) async {
     await _apiService.delete(
-      ApiEndpoints.inhabitant(_currentAquariumId!, int.parse(id)),
+      ApiEndpoints.inhabitant(aquariumId, int.parse(id)),
     );
   }
 
   // ── Statistics ────────────────────────────────────────────────────────────
 
-  /// Computes population statistics for the current aquarium.
+  /// Computes population statistics for aquarium [aquariumId].
   ///
   /// Returns a map with:
   /// - `'totalFish'` — number of fish
@@ -215,14 +172,14 @@ class InhabitantsService {
   /// - `'avgFishSize'` — average fish size in cm (0.0 if no fish)
   /// - `'totalBioLoad'` — sum of all fish sizes plus (coral count × 2.0),
   ///   representing the relative biological load on the filtration system
-  Future<Map<String, dynamic>> getStatistics() async {
+  Future<Map<String, dynamic>> getStatistics(int aquariumId) async {
     // Statistics degrade gracefully: a fetch failure reports zeros rather than
     // propagating, so a stats panel never breaks the surrounding screen.
     List<Fish> fish;
     List<Coral> corals;
     try {
-      fish = await getFish();
-      corals = await getCorals();
+      fish = await getFish(aquariumId);
+      corals = await getCorals(aquariumId);
     } catch (e) {
       AppLogger.w('getStatistics: inhabitant fetch failed; reporting zeros',
           error: e);
