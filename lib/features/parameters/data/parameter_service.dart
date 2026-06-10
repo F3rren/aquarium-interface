@@ -9,7 +9,6 @@ import 'package:acquariumfe/core/network/api_service.dart';
 import 'package:acquariumfe/features/settings/data/alert_manager.dart';
 import 'package:acquariumfe/features/parameters/data/manual_parameters_service.dart';
 import 'package:acquariumfe/features/settings/data/notification_settings_service.dart';
-import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
 import 'package:acquariumfe/features/settings/data/app_locale_service.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
 import 'package:acquariumfe/core/utils/retry_policy.dart';
@@ -39,23 +38,22 @@ import 'package:acquariumfe/core/utils/app_logger.dart';
 /// hides a dead backend behind plausible-looking "all good" data.
 ///
 /// Call [setCurrentAquarium] before any fetch. Changing the aquarium
-/// automatically propagates the ID to all dependent services
-/// ([ManualParametersService], [NotificationSettingsService],
-/// [TargetParametersService]) and invalidates the cache.
+/// automatically propagates the ID to its dependent services
+/// ([ManualParametersService], [NotificationSettingsService]) and invalidates
+/// the cache.
 class ParameterService {
   /// Creates a [ParameterService].
   ///
-  /// [apiService] and [targetService] are the Riverpod-managed dependencies.
-  /// The remaining collaborators ([alertManager], [manualService],
-  /// [notificationService]) default to fresh instances backed by the same
-  /// [apiService], but the Riverpod provider injects the app-wide shared
-  /// instances; tests can inject mocks to isolate this service.
+  /// [apiService] is the Riverpod-managed dependency. The remaining
+  /// collaborators ([alertManager], [manualService], [notificationService])
+  /// default to fresh instances backed by the same [apiService], but the
+  /// Riverpod provider injects the app-wide shared instances; tests can inject
+  /// mocks to isolate this service.
   ///
   /// Obtain the shared instance via Riverpod ([parameterServiceProvider])
   /// rather than constructing directly.
   ParameterService(
-    this._apiService,
-    this._targetService, {
+    this._apiService, {
     AlertManager? alertManager,
     ManualParametersService? manualService,
     NotificationSettingsService? notificationService,
@@ -65,7 +63,6 @@ class ParameterService {
             notificationService ?? NotificationSettingsService(_apiService);
 
   final ApiService _apiService;
-  final TargetParametersService _targetService;
   final AlertManager _alertManager;
   final ManualParametersService _manualService;
   final NotificationSettingsService _notificationService;
@@ -132,7 +129,6 @@ class ParameterService {
 
       _manualService.setCurrentAquarium(id);
       _notificationService.setCurrentAquarium(id);
-      _targetService.setCurrentAquarium(id);
     }
   }
 

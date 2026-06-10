@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
+import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
 import 'package:acquariumfe/core/widgets/animated_number.dart';
 import 'package:acquariumfe/core/widgets/tap_effect_card.dart';
@@ -256,7 +257,11 @@ class SalinityMeter extends ConsumerWidget {
     );
 
     if (result != null) {
-      await ref.read(targetParametersServiceProvider).saveTarget('salinity', result);
+      final aquariumId = ref.read(currentAquariumProvider);
+      if (aquariumId == null) return;
+      await ref
+          .read(targetParametersServiceProvider)
+          .saveTarget(aquariumId, 'salinity', result);
       onTargetChanged?.call();
     }
   }
