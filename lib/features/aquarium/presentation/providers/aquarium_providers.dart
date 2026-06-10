@@ -165,9 +165,11 @@ class Aquariums extends _$Aquariums {
 
       if (created.id != null) {
         final taskService = ref.read(maintenanceTaskServiceProvider);
-        taskService.setCurrentAquarium(created.id!);
         try {
-          await taskService.initializeDefaultTasks(type: aquarium.type);
+          await taskService.initializeDefaultTasks(
+            created.id!,
+            type: aquarium.type,
+          );
         } catch (_) {
           // Do not block aquarium creation when task initialisation fails.
         }

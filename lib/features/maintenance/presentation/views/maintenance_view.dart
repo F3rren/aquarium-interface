@@ -24,8 +24,8 @@ import 'package:acquariumfe/core/l10n/app_localizations.dart';
 ///
 /// **Tab 1 — Products:** delegates to [ProductsView] for the product inventory.
 ///
-/// [aquariumId] is injected by the parent screen; the service is configured
-/// with [MaintenanceTaskService.setCurrentAquarium] before the first fetch.
+/// [aquariumId] is injected by the parent screen and passed to every
+/// [MaintenanceTaskService] call.
 class MaintenanceView extends ConsumerStatefulWidget {
   final int? aquariumId;
 
@@ -54,7 +54,6 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
     _tabController = TabController(length: 2, vsync: this);
 
     if (widget.aquariumId != null) {
-      _service.setCurrentAquarium(widget.aquariumId!);
       _loadTasks();
     }
   }
@@ -67,8 +66,13 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
 
   Future<void> _loadTasks() async {
     setState(() => _isLoading = true);
+    final aquariumId = widget.aquariumId;
+    if (aquariumId == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
     try {
-      final tasks = await _service.getAllTasks();
+      final tasks = await _service.getAllTasks(aquariumId);
       if (mounted) {
         setState(() {
           _tasks = tasks;
@@ -787,8 +791,10 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
         isCustom: true,
       );
 
+      final aquariumId = widget.aquariumId;
+      if (aquariumId == null) return;
       try {
-        await _service.createTask(newTask);
+        await _service.createTask(aquariumId, newTask);
         await _loadTasks();
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
@@ -983,8 +989,10 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
         notes: notesController.text.isEmpty ? null : notesController.text,
       );
 
+      final aquariumId = widget.aquariumId;
+      if (aquariumId == null) return;
       try {
-        await _service.updateTask(task.id, updatedTask);
+        await _service.updateTask(aquariumId, task.id, updatedTask);
         await _loadTasks();
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
@@ -1033,8 +1041,10 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
 
     if (confirm != true) return;
 
+    final aquariumId = widget.aquariumId;
+    if (aquariumId == null) return;
     try {
-      await _service.completeTask(task.id);
+      await _service.completeTask(aquariumId, task.id);
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         await _loadTasks();
@@ -1243,8 +1253,10 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
     );
 
     if (confirm == true) {
+      final aquariumId = widget.aquariumId;
+      if (aquariumId == null) return;
       try {
-        await _service.deleteTask(task.id);
+        await _service.deleteTask(aquariumId, task.id);
         await _loadTasks();
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
