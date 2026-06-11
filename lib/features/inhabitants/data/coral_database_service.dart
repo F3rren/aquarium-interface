@@ -7,9 +7,9 @@ import 'package:acquariumfe/core/network/api_service.dart';
 
 /// Service that provides read-only access to the coral species database.
 ///
-/// The full catalogue is fetched from `GET /species/corals` on the first call
-/// and held in [_cachedCorals] for the lifetime of the app. Call [clearCache]
-/// to force a re-fetch on the next request.
+/// The full catalogue is fetched from `GET /species/corals` and cached in
+/// [_cachedCorals] for [cacheTtl]; the next call after the cache expires
+/// refetches it. Call [clearCache] to force an immediate re-fetch.
 ///
 /// **Freshwater aquariums:** corals are exclusively marine organisms. Any call
 /// to [getCoralsByWaterType] with a freshwater value returns an empty list
@@ -22,13 +22,26 @@ class CoralDatabaseService {
   /// Creates a service backed by the shared [ApiService].
   ///
   /// Obtain the app-wide instance via Riverpod ([coralDatabaseServiceProvider])
-  /// rather than constructing directly.
-  CoralDatabaseService(this._apiService);
+  /// rather than constructing directly. [clock] is injectable so tests can
+  /// drive the cache-expiry logic deterministically.
+  CoralDatabaseService(this._apiService, {DateTime Function()? clock})
+      : _now = clock ?? DateTime.now;
 
   final ApiService _apiService;
+  final DateTime Function() _now;
+
+  /// How long a fetched catalogue is reused before the next call refetches it.
+  ///
+  /// Species are near-static reference data, so a generous TTL avoids redundant
+  /// fetches within a session while still picking up backend changes eventually
+  /// rather than caching for the entire app lifetime.
+  static const Duration cacheTtl = Duration(hours: 1);
 
   /// In-memory cache; `null` means the catalogue has not been loaded yet.
   List<CoralSpecies>? _cachedCorals;
+
+  /// Timestamp of the most-recent successful fetch; drives [cacheTtl].
+  DateTime? _cachedAt;
 
   /// Returns all coral species from the backend catalogue.
   ///
@@ -36,8 +49,12 @@ class CoralDatabaseService {
   /// fail to parse are silently skipped to avoid a single malformed record
   /// preventing the entire list from loading.
   Future<List<CoralSpecies>> getAllCorals() async {
-    if (_cachedCorals != null) {
-      return _cachedCorals!;
+    final cached = _cachedCorals;
+    final cachedAt = _cachedAt;
+    if (cached != null &&
+        cachedAt != null &&
+        _now().difference(cachedAt) < cacheTtl) {
+      return cached;
     }
 
     try {
@@ -70,6 +87,7 @@ class CoralDatabaseService {
           // Skip malformed entries silently.
         }
       }
+      _cachedAt = _now();
 
       return _cachedCorals!;
     } catch (e) {
@@ -183,5 +201,6 @@ class CoralDatabaseService {
   /// re-fetch from the backend.
   void clearCache() {
     _cachedCorals = null;
+    _cachedAt = null;
   }
 }
