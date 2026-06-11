@@ -52,7 +52,6 @@ class OrpMeter extends ConsumerWidget {
   }
 
   @override
-  @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
