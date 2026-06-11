@@ -114,7 +114,7 @@ Future<Map<String, double>> targetParameters(Ref ref) async {
   final targetService = ref.watch(targetParametersServiceProvider);
 
   try {
-    return await targetService.loadAllTargets();
+    return await targetService.loadAllTargets(currentAquariumId);
   } catch (e) {
     // Target ranges are an optional overlay; degrade gracefully to "no targets"
     // but log so the failure is never silent.

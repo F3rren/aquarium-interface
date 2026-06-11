@@ -55,7 +55,6 @@ TargetParametersService targetParametersService(
 ParameterService parameterService(Ref ref) {
   return ParameterService(
     ref.read(apiServiceProvider),
-    ref.read(targetParametersServiceProvider),
     manualService: ref.read(manualParametersServiceProvider),
     notificationService: ref.read(notificationSettingsServiceProvider),
   );

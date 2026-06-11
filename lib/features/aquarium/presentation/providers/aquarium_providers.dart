@@ -92,7 +92,7 @@ class Aquariums extends _$Aquariums {
   /// so the UI degrades gracefully rather than failing entirely.
   ///
   /// After all aquariums are loaded the first aquarium is set as the active one
-  /// in both [ParameterService] and [TargetParametersService].
+  /// in [ParameterService].
   Future<List<AquariumWithParams>> _loadAquariums() async {
     final aquariumService = ref.read(aquariumsServiceProvider);
     final parameterService = ref.read(parameterServiceProvider);
@@ -137,7 +137,6 @@ class Aquariums extends _$Aquariums {
         aquariumsWithParams.first.aquarium.id != null) {
       final firstId = aquariumsWithParams.first.aquarium.id!;
       parameterService.setCurrentAquarium(firstId);
-      ref.read(targetParametersServiceProvider).setCurrentAquarium(firstId);
     }
 
     return aquariumsWithParams;
@@ -256,7 +255,6 @@ class CurrentAquarium extends _$CurrentAquarium {
     state = id;
 
     ref.read(parameterServiceProvider).setCurrentAquarium(id);
-    ref.read(targetParametersServiceProvider).setCurrentAquarium(id);
   }
 }
 

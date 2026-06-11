@@ -1,12 +1,11 @@
-﻿/// Service for managing user-defined target values for water parameters.
+/// Service for managing user-defined target values for water parameters.
 library;
 
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
-import 'package:acquariumfe/core/utils/exceptions.dart';
 
 /// Persists and retrieves the four target parameter values
-/// (temperature, pH, salinity, ORP) for the current aquarium.
+/// (temperature, pH, salinity, ORP) for a given aquarium.
 ///
 /// Target values represent the ideal set-points the user is aiming for, as
 /// opposed to the acceptable min/max ranges stored in [NotificationSettings].
@@ -17,11 +16,11 @@ import 'package:acquariumfe/core/utils/exceptions.dart';
 /// current values, patches the one being changed, and writes the full object
 /// back (full-replace strategy).
 ///
-/// **Caching:** [_cachedTargets] is populated on the first [loadAllTargets]
-/// call. The cache is cleared when the active aquarium changes. Call
-/// [loadAllTargets] again to refresh.
+/// **Caching:** loaded targets are cached per aquarium in [_cache]; the target
+/// aquarium is passed explicitly to every call, so the service holds no mutable
+/// "current aquarium" state.
 ///
-/// **Default values** (used when no aquarium is selected or on network error):
+/// **Default values** (used on a missing `"data"` map or any network error):
 /// - temperature: 25.0 °C
 /// - ph: 8.2
 /// - salinity: 35.0 (PSU/ppt)
@@ -35,11 +34,8 @@ class TargetParametersService {
 
   final ApiService _apiService;
 
-  /// ID of the currently active aquarium.
-  int? _currentAquariumId;
-
-  /// In-memory cache; `null` means targets have not been loaded yet.
-  Map<String, double>? _cachedTargets;
+  /// Per-aquarium in-memory cache of loaded targets.
+  final Map<int, Map<String, double>> _cache = {};
 
   // ── Defaults ─────────────────────────────────────────────────────────────
 
@@ -55,12 +51,6 @@ class TargetParametersService {
   /// Default target ORP in mV.
   static const double defaultOrp = 360.0;
 
-  /// Sets the active aquarium and clears the target cache.
-  void setCurrentAquarium(int id) {
-    _currentAquariumId = id;
-    _cachedTargets = null;
-  }
-
   Map<String, double> _getDefaults() {
     return {
       'temperature': defaultTemperature,
@@ -70,38 +60,32 @@ class TargetParametersService {
     };
   }
 
-  /// Loads all target values from the backend.
+  /// Loads all target values for aquarium [aquariumId] from the backend.
   ///
-  /// Returns [_getDefaults] when:
-  /// - no aquarium is selected
-  /// - the backend response does not contain a `"data"` map
-  /// - any network or parse error occurs
-  ///
-  /// Serves from [_cachedTargets] on subsequent calls until the cache is
-  /// invalidated.
-  Future<Map<String, double>> loadAllTargets() async {
-    if (_currentAquariumId == null) {
-      return _getDefaults();
-    }
-
-    if (_cachedTargets != null) {
-      return _cachedTargets!;
+  /// Returns [_getDefaults] when the backend response does not contain a
+  /// `"data"` map or any network/parse error occurs. Serves from the
+  /// per-aquarium cache on subsequent calls.
+  Future<Map<String, double>> loadAllTargets(int aquariumId) async {
+    final cached = _cache[aquariumId];
+    if (cached != null) {
+      return cached;
     }
 
     try {
       final response = await _apiService.get(
-        ApiEndpoints.targetSettings(_currentAquariumId!),
+        ApiEndpoints.targetSettings(aquariumId),
       );
 
       if (response is Map<String, dynamic> && response.containsKey('data')) {
         final data = response['data'] as Map<String, dynamic>;
-        _cachedTargets = {
+        final Map<String, double> targets = {
           'temperature': (data['temperature'] ?? defaultTemperature).toDouble(),
           'ph': (data['ph'] ?? defaultPh).toDouble(),
           'salinity': (data['salinity'] ?? defaultSalinity).toDouble(),
           'orp': (data['orp'] ?? defaultOrp).toDouble(),
         };
-        return _cachedTargets!;
+        _cache[aquariumId] = targets;
+        return targets;
       }
 
       return _getDefaults();
@@ -110,69 +94,61 @@ class TargetParametersService {
     }
   }
 
-  /// Updates a single [parameter] to [value] and persists all four targets.
+  /// Updates a single [parameter] to [value] for aquarium [aquariumId] and
+  /// persists all four targets.
   ///
   /// The full-replace strategy is used: all existing targets are loaded,
   /// [parameter] is updated in-memory, and the complete map is POSTed back.
   /// [parameter] must be a lowercase key: `'temperature'`, `'ph'`,
   /// `'salinity'`, or `'orp'`.
-  ///
-  /// Throws if no aquarium has been selected.
-  Future<void> saveTarget(String parameter, double value) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
-    final allTargets = await loadAllTargets();
+  Future<void> saveTarget(
+    int aquariumId,
+    String parameter,
+    double value,
+  ) async {
+    final allTargets = await loadAllTargets(aquariumId);
     allTargets[parameter.toLowerCase()] = value;
 
     await _apiService.post(
-      ApiEndpoints.targetSettings(_currentAquariumId!),
+      ApiEndpoints.targetSettings(aquariumId),
       allTargets,
     );
 
-    _cachedTargets = allTargets;
+    _cache[aquariumId] = allTargets;
   }
 
   /// Returns the target temperature, falling back to [defaultTemperature].
-  Future<double> getTargetTemperature() async {
-    final targets = await loadAllTargets();
+  Future<double> getTargetTemperature(int aquariumId) async {
+    final targets = await loadAllTargets(aquariumId);
     return targets['temperature'] ?? defaultTemperature;
   }
 
   /// Returns the target pH, falling back to [defaultPh].
-  Future<double> getTargetPh() async {
-    final targets = await loadAllTargets();
+  Future<double> getTargetPh(int aquariumId) async {
+    final targets = await loadAllTargets(aquariumId);
     return targets['ph'] ?? defaultPh;
   }
 
-  /// Returns the target salinity (as specific gravity × 1000), falling back to
-  /// [defaultSalinity].
-  Future<double> getTargetSalinity() async {
-    final targets = await loadAllTargets();
+  /// Returns the target salinity in PSU/ppt, falling back to [defaultSalinity].
+  Future<double> getTargetSalinity(int aquariumId) async {
+    final targets = await loadAllTargets(aquariumId);
     return targets['salinity'] ?? defaultSalinity;
   }
 
   /// Returns the target ORP in mV, falling back to [defaultOrp].
-  Future<double> getTargetOrp() async {
-    final targets = await loadAllTargets();
+  Future<double> getTargetOrp(int aquariumId) async {
+    final targets = await loadAllTargets(aquariumId);
     return targets['orp'] ?? defaultOrp;
   }
 
-  /// Resets all targets to [_getDefaults] by posting the default map to the
-  /// backend and updating the local cache.
-  ///
-  /// Throws if no aquarium has been selected.
-  Future<void> resetToDefaults() async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  /// Resets all targets for aquarium [aquariumId] to [_getDefaults] by posting
+  /// the default map to the backend and updating the cache.
+  Future<void> resetToDefaults(int aquariumId) async {
     await _apiService.post(
-      ApiEndpoints.targetSettings(_currentAquariumId!),
+      ApiEndpoints.targetSettings(aquariumId),
       _getDefaults(),
     );
 
-    _cachedTargets = _getDefaults();
+    _cache[aquariumId] = _getDefaults();
   }
 }

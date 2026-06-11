@@ -136,9 +136,6 @@ class _AquariumViewState extends ConsumerState<AquariumView>
             ref.read(parameterServiceProvider).setCurrentAquarium(
               aquariumsWithParams.first.aquarium.id!,
             );
-            ref.read(targetParametersServiceProvider).setCurrentAquarium(
-              aquariumsWithParams.first.aquarium.id!,
-            );
 
             // Avvia animazioni se non già partite
             if (_controller.status == AnimationStatus.dismissed) {
@@ -235,7 +232,6 @@ class _AquariumViewState extends ConsumerState<AquariumView>
         // Imposta questa vasca come vasca corrente per i parametri
         if (aquarium.id != null) {
           ref.read(parameterServiceProvider).setCurrentAquarium(aquarium.id!);
-          ref.read(targetParametersServiceProvider).setCurrentAquarium(aquarium.id!);
         }
 
         Navigator.push(

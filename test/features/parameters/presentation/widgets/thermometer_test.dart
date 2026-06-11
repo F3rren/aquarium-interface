@@ -58,9 +58,9 @@ void main() {
 
     testWidgets('calls onTargetChanged after saving new target', (tester) async {
       bool callbackFired = false;
-      when(() => targetService.saveTarget(any(), any()))
+      when(() => targetService.saveTarget(any(), any(), any()))
           .thenAnswer((_) async {});
-      when(() => targetService.loadAllTargets())
+      when(() => targetService.loadAllTargets(any()))
           .thenAnswer((_) async => {'temperature': 25.0});
 
       await tester.pumpWidget(

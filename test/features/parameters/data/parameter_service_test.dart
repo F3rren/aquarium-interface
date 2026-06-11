@@ -11,7 +11,6 @@ import '../../../helpers/fixtures.dart';
 
 void main() {
   late MockApiService api;
-  late MockTargetParametersService target;
   late ParameterService sut;
 
   setUpAll(() {
@@ -22,8 +21,7 @@ void main() {
 
   setUp(() {
     api = MockApiService();
-    target = MockTargetParametersService();
-    sut = ParameterService(api, target);
+    sut = ParameterService(api);
   });
 
   group('getCurrentParameters — no silent mock fallback', () {
@@ -78,7 +76,7 @@ void main() {
       when(() => manual.loadManualParameters())
           .thenAnswer((_) async => {'calcium': 999.0});
 
-      final service = ParameterService(api, target, manualService: manual);
+      final service = ParameterService(api, manualService: manual);
       service.setAutoCheckAlerts(false); // isolate the merge from alerting
 
       when(() => api.get(any(), retry: any(named: 'retry')))
