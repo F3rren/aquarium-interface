@@ -5,8 +5,7 @@ library;
 import 'package:acquariumfe/features/parameters/data/parameter_service.dart';
 import 'package:acquariumfe/features/parameters/domain/models/parameter_data_point.dart';
 
-/// Singleton that acts as a thin adapter between the charts view and
-/// [ParameterService].
+/// Thin adapter between the charts view and [ParameterService].
 ///
 /// Responsibilities:
 /// - Translates Italian parameter display names (as shown in the UI) to the

@@ -1,7 +1,6 @@
-﻿/// Core service for fetching, caching, and streaming aquarium water parameters.
+﻿/// Core service for fetching aquarium water parameters and firing alerts.
 library;
 
-import 'dart:async';
 import 'package:acquariumfe/features/parameters/domain/models/aquarium_parameters.dart';
 import 'package:acquariumfe/features/parameters/domain/models/aquarium_parameter.dart';
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
@@ -23,9 +22,6 @@ import 'package:acquariumfe/core/utils/app_logger.dart';
 /// - Merges the sensor parameters (temperature, pH, salinity, ORP) with the
 ///   manually-entered parameters (calcium, magnesium, KH, nitrate, phosphate)
 ///   from [ManualParametersService].
-/// - Caches the merged result in [_cachedParameters]; [getCachedParameters]
-///   honours a configurable [maxAge] (default 5 minutes).
-/// - Broadcasts merged parameter updates through [parametersStream].
 /// - Delegates alert evaluation to [AlertManager] via
 ///   [_checkAllParametersForAlerts] (can be disabled with
 ///   [setAutoCheckAlerts]).
@@ -63,21 +59,6 @@ class ParameterService {
   final ManualParametersService _manualService;
   final NotificationSettingsService _notificationService;
 
-  /// Most-recently fetched and merged parameter set.
-  AquariumParameters? _cachedParameters;
-
-  /// Timestamp of the last successful fetch; used by [getCachedParameters].
-  DateTime? _lastFetch;
-
-  /// Broadcast stream that emits every time a fresh parameter set is received.
-  final _parametersController =
-      StreamController<AquariumParameters>.broadcast();
-
-  /// Stream of merged [AquariumParameters]; subscribe to receive real-time
-  /// updates whenever the service fetches new data.
-  Stream<AquariumParameters> get parametersStream =>
-      _parametersController.stream;
-
   /// Controls whether [_checkAllParametersForAlerts] is called after each
   /// successful fetch. Enabled by default.
   bool _autoCheckAlerts = true;
@@ -88,13 +69,6 @@ class ParameterService {
   /// Enables or disables automatic alert evaluation after each fetch.
   void setAutoCheckAlerts(bool enabled) {
     _autoCheckAlerts = enabled;
-  }
-
-  /// Clears the parameter cache, forcing the next [getCurrentParameters] call
-  /// to fetch fresh data from the backend.
-  void invalidateCache() {
-    _cachedParameters = null;
-    _lastFetch = null;
   }
 
   /// Fetches and returns the current water parameters for aquarium [id].
@@ -161,10 +135,6 @@ class ParameterService {
         timestamp: parameters.timestamp,
       );
 
-      _cachedParameters = completeParameters;
-      _lastFetch = DateTime.now();
-      _parametersController.add(completeParameters);
-
       if (_autoCheckAlerts) {
         await _checkAllParametersForAlerts(completeParameters, id);
       }
@@ -185,24 +155,6 @@ class ParameterService {
         originalError: e,
       );
     }
-  }
-
-  /// Returns the cached parameter set if it is younger than [maxAge].
-  ///
-  /// Returns `null` when the cache is empty or has expired.
-  AquariumParameters? getCachedParameters({
-    Duration maxAge = const Duration(minutes: 5),
-  }) {
-    if (_cachedParameters == null || _lastFetch == null) {
-      return null;
-    }
-
-    final age = DateTime.now().difference(_lastFetch!);
-    if (age > maxAge) {
-      return null;
-    }
-
-    return _cachedParameters;
   }
 
   /// Returns `{timestamp, value}` pairs for a single [parameterName] over the
@@ -274,15 +226,6 @@ class ParameterService {
       AppLogger.e('Errore imprevisto in getParameterHistoryForChart', error: e);
       return [];
     }
-  }
-
-  /// Pushes a new [parameters] snapshot to the backend at `POST /parameters`
-  /// and updates the cache and stream.
-  Future<void> updateParameters(AquariumParameters parameters) async {
-    await _apiService.post(ApiEndpoints.submitParameters, parameters.toJson());
-
-    _cachedParameters = parameters;
-    _parametersController.add(parameters);
   }
 
   /// Returns hardcoded typical marine reef parameter values used as a mock
@@ -426,12 +369,5 @@ class ParameterService {
         ),
       );
     }
-  }
-
-  /// Closes the parameters [StreamController].
-  ///
-  /// Must be called when the service is no longer needed to avoid memory leaks.
-  void dispose() {
-    _parametersController.close();
   }
 }

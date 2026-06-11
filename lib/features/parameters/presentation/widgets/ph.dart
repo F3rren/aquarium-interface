@@ -52,7 +52,6 @@ class PhMeter extends ConsumerWidget {
   }
 
   @override
-  @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final color = _getPhColor();
