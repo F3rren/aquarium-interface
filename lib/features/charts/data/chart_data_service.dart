@@ -36,17 +36,12 @@ class ChartDataService {
   /// Returns an empty list if the network request fails or if [ParameterService]
   /// returns no data for the requested range.
   Future<List<ParameterDataPoint>> loadHistoricalData({
+    required int aquariumId,
     required String parameter,
     required int hours,
   }) async {
     try {
       final paramName = _mapParameterName(parameter);
-
-      // Target the currently selected aquarium, not a hard-coded ID.
-      final aquariumId = _parameterService.currentAquariumId;
-      if (aquariumId == null) {
-        return [];
-      }
 
       final historyData = await _parameterService.getParameterHistoryForChart(
         aquariumId: aquariumId,

@@ -20,7 +20,6 @@ void main() {
 
     // Common stubs for side-effect calls inside the provider
     when(() => parameterService.setAutoCheckAlerts(any())).thenReturn(null);
-    when(() => parameterService.setCurrentAquarium(any())).thenReturn(null);
   });
 
   ProviderContainer container() => makeContainer(overrides: [
@@ -43,7 +42,7 @@ void main() {
       when(() => aquariumService.getAquariums())
           .thenAnswer((_) async => [aquariumMarine]);
       when(() => parameterService.getCurrentParameters(
-                id: aquariumMarine.id,
+                id: aquariumMarine.id!,
                 useMock: false,
               ))
           .thenThrow(NetworkException('skip params'));
@@ -60,7 +59,7 @@ void main() {
       when(() => aquariumService.getAquariums())
           .thenAnswer((_) async => [aquariumMarine]);
       when(() => parameterService.getCurrentParameters(
-                id: aquariumMarine.id,
+                id: aquariumMarine.id!,
                 useMock: false,
               ))
           .thenThrow(NetworkException('offline'));
@@ -86,21 +85,6 @@ void main() {
       expect(c.read(aquariumsProvider), isA<AsyncError>());
     });
 
-    test('sets first aquarium as current after load', () async {
-      when(() => aquariumService.getAquariums())
-          .thenAnswer((_) async => [aquariumMarine]);
-      when(() => parameterService.getCurrentParameters(
-                id: aquariumMarine.id,
-                useMock: false,
-              ))
-          .thenThrow(NetworkException('skip'));
-
-      final c = container();
-      await c.read(aquariumsProvider.future);
-
-      verify(() => parameterService.setCurrentAquarium(aquariumMarine.id!))
-          .called(1);
-    });
   });
 
   // ── aquariumCountProvider ───────────────────────────────────────────────────

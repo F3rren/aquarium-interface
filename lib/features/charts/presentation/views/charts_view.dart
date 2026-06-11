@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
+import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
 import 'package:acquariumfe/features/parameters/domain/models/parameter_data_point.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
@@ -72,6 +73,18 @@ class _ChartsViewState extends ConsumerState<ChartsView>
   }
 
   Future<void> _loadChartData() async {
+    final aquariumId = ref.read(currentAquariumProvider);
+    if (aquariumId == null) {
+      if (mounted) {
+        setState(() {
+          _chartData = [];
+          _stats = ref.read(chartDataServiceProvider).calculateStats([]);
+          _isLoading = false;
+        });
+      }
+      return;
+    }
+
     // Non mostrare loading se è solo un cambio di filtro
     final wasEmpty = _chartData.isEmpty;
     if (wasEmpty) {
@@ -79,6 +92,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
     }
 
     final data = await ref.read(chartDataServiceProvider).loadHistoricalData(
+      aquariumId: aquariumId,
       parameter: _selectedParameter,
       hours: _selectedHours,
     );

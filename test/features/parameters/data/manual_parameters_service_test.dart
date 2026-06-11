@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:acquariumfe/features/parameters/data/manual_parameters_service.dart';
-import 'package:acquariumfe/core/utils/exceptions.dart';
 import '../../../helpers/mocks.dart';
 
 void main() {
@@ -18,26 +17,8 @@ void main() {
     sut = ManualParametersService(api);
   });
 
-  // The "no aquarium selected" fallbacks below are the exact behaviour the
-  // upcoming setCurrentAquarium removal (#5) must preserve, so they are pinned
-  // here first.
-
   group('loadManualParameters', () {
-    test('returns service defaults when no aquarium selected (no API call)',
-        () async {
-      final result = await sut.loadManualParameters();
-
-      expect(result['calcium'], 420.0);
-      expect(result['magnesium'], 1280.0);
-      expect(result['kh'], 9.0);
-      expect(result['nitrate'], 5.0);
-      expect(result['phosphate'], 0.03);
-      verifyNever(() => api.get(any()));
-    });
-
-    test('parses the data-wrapped response when an aquarium is selected',
-        () async {
-      sut.setCurrentAquarium(1);
+    test('parses the data-wrapped response', () async {
       when(() => api.get('/aquariums/1/parameters/manual')).thenAnswer(
         (_) async => {
           'data': {
@@ -50,48 +31,38 @@ void main() {
         },
       );
 
-      final result = await sut.loadManualParameters();
+      final result = await sut.loadManualParameters(1);
 
       expect(result['calcium'], 999.0);
       expect(result['kh'], 7.0);
     });
 
     test('falls back to defaults on network error', () async {
-      sut.setCurrentAquarium(1);
       when(() => api.get('/aquariums/1/parameters/manual'))
           .thenThrow(Exception('down'));
 
-      final result = await sut.loadManualParameters();
+      final result = await sut.loadManualParameters(1);
 
       expect(result['calcium'], 420.0);
     });
 
     test('falls back to defaults on a non-map response', () async {
-      sut.setCurrentAquarium(1);
       when(() => api.get('/aquariums/1/parameters/manual'))
           .thenAnswer((_) async => 'bad');
 
-      final result = await sut.loadManualParameters();
+      final result = await sut.loadManualParameters(1);
 
       expect(result['phosphate'], 0.03);
     });
   });
 
   group('saveManualParameters', () {
-    test('throws NoAquariumSelectedException when no aquarium selected', () {
-      expect(
-        sut.saveManualParameters(calcium: 400.0),
-        throwsA(isA<NoAquariumSelectedException>()),
-      );
-    });
-
     test('posts only the non-null values plus a measuredAt timestamp',
         () async {
-      sut.setCurrentAquarium(1);
       when(() => api.post('/aquariums/1/parameters/manual', any()))
           .thenAnswer((_) async => {'ok': true});
 
-      await sut.saveManualParameters(calcium: 410.0, kh: 8.0);
+      await sut.saveManualParameters(1, calcium: 410.0, kh: 8.0);
 
       final body = verify(
         () => api.post('/aquariums/1/parameters/manual', captureAny()),
@@ -105,13 +76,7 @@ void main() {
   });
 
   group('getLastUpdate', () {
-    test('returns null when no aquarium selected (no API call)', () async {
-      expect(await sut.getLastUpdate(), isNull);
-      verifyNever(() => api.get(any()));
-    });
-
     test('parses measuredAt from the data envelope', () async {
-      sut.setCurrentAquarium(1);
       when(() => api.get('/aquariums/1/parameters/manual')).thenAnswer(
         (_) async => {
           'data': {'measuredAt': '2024-06-01T12:00:00.000'},
@@ -119,25 +84,18 @@ void main() {
       );
 
       expect(
-        await sut.getLastUpdate(),
+        await sut.getLastUpdate(1),
         equals(DateTime.parse('2024-06-01T12:00:00.000')),
       );
     });
   });
 
   group('resetToDefaults', () {
-    test('no-ops (no throw, no API call) when no aquarium selected', () async {
-      await sut.resetToDefaults();
-      verifyNever(() => api.delete(any()));
-    });
-
-    test('deletes the manual parameters when an aquarium is selected',
-        () async {
-      sut.setCurrentAquarium(1);
+    test('deletes the manual parameters for the aquarium', () async {
       when(() => api.delete('/aquariums/1/parameters/manual'))
           .thenAnswer((_) async => {'ok': true});
 
-      await sut.resetToDefaults();
+      await sut.resetToDefaults(1);
 
       verify(() => api.delete('/aquariums/1/parameters/manual')).called(1);
     });
