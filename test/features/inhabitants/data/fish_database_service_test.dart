@@ -61,6 +61,32 @@ void main() {
 
       verify(() => api.get('/species/fishs')).called(2);
     });
+
+    test('refetches after the cache TTL expires', () async {
+      var now = DateTime(2024, 1, 1, 12, 0);
+      final ttlSut = FishDatabaseService(api, clock: () => now);
+      when(() => api.get('/species/fishs'))
+          .thenAnswer((_) async => {'data': []});
+
+      await ttlSut.getAllFish(); // first fetch
+      now = now.add(FishDatabaseService.cacheTtl + const Duration(minutes: 1));
+      await ttlSut.getAllFish(); // cache expired → refetch
+
+      verify(() => api.get('/species/fishs')).called(2);
+    });
+
+    test('serves from cache while still within the TTL', () async {
+      var now = DateTime(2024, 1, 1, 12, 0);
+      final ttlSut = FishDatabaseService(api, clock: () => now);
+      when(() => api.get('/species/fishs'))
+          .thenAnswer((_) async => {'data': []});
+
+      await ttlSut.getAllFish();
+      now = now.add(const Duration(minutes: 30)); // within the 1h TTL
+      await ttlSut.getAllFish();
+
+      verify(() => api.get('/species/fishs')).called(1);
+    });
   });
 
   group('lookups over an empty catalogue', () {

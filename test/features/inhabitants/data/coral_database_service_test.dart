@@ -50,6 +50,32 @@ void main() {
 
       verify(() => api.get('/species/corals')).called(1);
     });
+
+    test('refetches after the cache TTL expires', () async {
+      var now = DateTime(2024, 1, 1, 12, 0);
+      final ttlSut = CoralDatabaseService(api, clock: () => now);
+      when(() => api.get('/species/corals'))
+          .thenAnswer((_) async => {'data': []});
+
+      await ttlSut.getAllCorals(); // first fetch
+      now = now.add(CoralDatabaseService.cacheTtl + const Duration(minutes: 1));
+      await ttlSut.getAllCorals(); // cache expired → refetch
+
+      verify(() => api.get('/species/corals')).called(2);
+    });
+
+    test('serves from cache while still within the TTL', () async {
+      var now = DateTime(2024, 1, 1, 12, 0);
+      final ttlSut = CoralDatabaseService(api, clock: () => now);
+      when(() => api.get('/species/corals'))
+          .thenAnswer((_) async => {'data': []});
+
+      await ttlSut.getAllCorals();
+      now = now.add(const Duration(minutes: 30)); // within the 1h TTL
+      await ttlSut.getAllCorals();
+
+      verify(() => api.get('/species/corals')).called(1);
+    });
   });
 
   group('getCoralsByWaterType', () {

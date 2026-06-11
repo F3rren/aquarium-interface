@@ -7,9 +7,9 @@ import 'package:acquariumfe/core/network/api_service.dart';
 
 /// Service that provides read-only access to the fish species database.
 ///
-/// The full catalogue is fetched from `GET /species/fishs` on the first call
-/// and held in [_cachedFish] for the lifetime of the app. Call [clearCache] to
-/// force a re-fetch on the next request.
+/// The full catalogue is fetched from `GET /species/fishs` and cached in
+/// [_cachedFish] for [cacheTtl]; the next call after the cache expires refetches
+/// it. Call [clearCache] to force an immediate re-fetch.
 ///
 /// **Water-type filtering:** [getFishByWaterType] normalises Italian and English
 /// water-type strings before comparing so that both `'Marino'` and `'saltwater'`
@@ -21,21 +21,38 @@ class FishDatabaseService {
   /// Creates a service backed by the shared [ApiService].
   ///
   /// Obtain the app-wide instance via Riverpod ([fishDatabaseServiceProvider])
-  /// rather than constructing directly.
-  FishDatabaseService(this._apiService);
+  /// rather than constructing directly. [clock] is injectable so tests can
+  /// drive the cache-expiry logic deterministically.
+  FishDatabaseService(this._apiService, {DateTime Function()? clock})
+      : _now = clock ?? DateTime.now;
 
   final ApiService _apiService;
+  final DateTime Function() _now;
+
+  /// How long a fetched catalogue is reused before the next call refetches it.
+  ///
+  /// Species are near-static reference data, so a generous TTL avoids redundant
+  /// fetches within a session while still picking up backend changes eventually
+  /// rather than caching for the entire app lifetime.
+  static const Duration cacheTtl = Duration(hours: 1);
 
   /// In-memory cache; `null` means the catalogue has not been loaded yet.
   List<FishSpecies>? _cachedFish;
+
+  /// Timestamp of the most-recent successful fetch; drives [cacheTtl].
+  DateTime? _cachedAt;
 
   /// Returns all fish species from the backend catalogue.
   ///
   /// Results are cached after the first successful fetch. Accepts both a
   /// direct JSON array and wrapper objects keyed by `"data"` or `"fishs"`.
   Future<List<FishSpecies>> getAllFish() async {
-    if (_cachedFish != null) {
-      return _cachedFish!;
+    final cached = _cachedFish;
+    final cachedAt = _cachedAt;
+    if (cached != null &&
+        cachedAt != null &&
+        _now().difference(cachedAt) < cacheTtl) {
+      return cached;
     }
 
     try {
@@ -61,6 +78,7 @@ class FishDatabaseService {
       _cachedFish = fishList
           .map((json) => FishSpecies.fromJson(Map<String, dynamic>.from(json as Map)))
           .toList();
+      _cachedAt = _now();
 
       return _cachedFish!;
     } catch (e) {
@@ -191,5 +209,6 @@ class FishDatabaseService {
   /// re-fetch from the backend.
   void clearCache() {
     _cachedFish = null;
+    _cachedAt = null;
   }
 }
