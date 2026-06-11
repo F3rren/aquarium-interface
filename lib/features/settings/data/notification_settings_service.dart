@@ -1,19 +1,18 @@
-﻿/// Service that persists notification settings to the backend API.
+/// Service that persists notification settings to the backend API.
 library;
 
 import 'package:acquariumfe/core/constants/api_endpoints.dart';
 import 'package:acquariumfe/features/settings/domain/models/notification_settings.dart';
 import 'package:acquariumfe/core/network/api_service.dart';
-import 'package:acquariumfe/core/utils/exceptions.dart';
 
 /// Service that reads and writes [NotificationSettings] for a specific
 /// aquarium via the REST endpoint
 /// `…/aquariums/{id}/settings/notifications`.
 ///
-/// Settings are backed by an in-memory cache ([_cachedSettings]) to avoid
-/// redundant network requests. The cache is invalidated whenever the active
-/// aquarium changes ([setCurrentAquarium]) or when the settings are reset
-/// ([resetToDefaults]).
+/// The target aquarium is passed explicitly to every operation as
+/// [aquariumId]; the service holds no mutable "current aquarium" state. Loaded
+/// settings are cached per aquarium in [_cache] to avoid redundant network
+/// requests.
 ///
 /// Contrast with [NotificationPreferencesService], which stores settings
 /// locally on the device via [SharedPreferences] without a network call.
@@ -26,59 +25,39 @@ class NotificationSettingsService {
 
   final ApiService _apiService;
 
-  /// ID of the currently active aquarium.
-  int? _currentAquariumId;
+  /// Per-aquarium in-memory cache of loaded settings.
+  final Map<int, NotificationSettings> _cache = {};
 
-  /// In-memory cache of the loaded settings; cleared on aquarium change.
-  NotificationSettings? _cachedSettings;
-
-  /// Sets the aquarium context and clears the settings cache so the next
-  /// [loadSettings] call fetches fresh data from the backend.
-  void setCurrentAquarium(int id) {
-    _currentAquariumId = id;
-    _cachedSettings = null;
-  }
-
-  /// Persists [settings] to the backend and updates the in-memory cache.
+  /// Persists [settings] for aquarium [aquariumId] and updates the cache.
   ///
-  /// Throws if no aquarium has been selected. Propagates API exceptions so the
-  /// caller can surface an error to the user.
-  Future<void> saveSettings(NotificationSettings settings) async {
-    if (_currentAquariumId == null) {
-      throw NoAquariumSelectedException();
-    }
-
+  /// Propagates API exceptions so the caller can surface an error to the user.
+  Future<void> saveSettings(int aquariumId, NotificationSettings settings) async {
     try {
       await _apiService.post(
-        ApiEndpoints.notificationSettings(_currentAquariumId!),
+        ApiEndpoints.notificationSettings(aquariumId),
         settings.toJson(),
       );
 
-      _cachedSettings = settings;
+      _cache[aquariumId] = settings;
     } catch (e) {
       rethrow;
     }
   }
 
-  /// Returns the [NotificationSettings] for the current aquarium.
+  /// Returns the [NotificationSettings] for aquarium [aquariumId].
   ///
-  /// Serves from [_cachedSettings] on subsequent calls to avoid network round
-  /// trips. Returns a default [NotificationSettings] when:
-  /// - no aquarium is selected
-  /// - the backend returns an unexpected response shape
-  /// - any network or parse error occurs
-  Future<NotificationSettings> loadSettings() async {
-    if (_currentAquariumId == null) {
-      return NotificationSettings();
-    }
-
-    if (_cachedSettings != null) {
-      return _cachedSettings!;
+  /// Serves from the per-aquarium cache on subsequent calls. Returns a default
+  /// [NotificationSettings] when the backend returns an unexpected response
+  /// shape or any network/parse error occurs.
+  Future<NotificationSettings> loadSettings(int aquariumId) async {
+    final cached = _cache[aquariumId];
+    if (cached != null) {
+      return cached;
     }
 
     try {
       final response = await _apiService.get(
-        ApiEndpoints.notificationSettings(_currentAquariumId!),
+        ApiEndpoints.notificationSettings(aquariumId),
       );
 
       final Map<String, dynamic> data;
@@ -97,25 +76,27 @@ class NotificationSettingsService {
         return NotificationSettings();
       }
 
-      _cachedSettings = NotificationSettings.fromJson(data);
-      return _cachedSettings!;
+      final settings = NotificationSettings.fromJson(data);
+      _cache[aquariumId] = settings;
+      return settings;
     } catch (e) {
       return NotificationSettings();
     }
   }
 
-  /// Patches a single parameter threshold without modifying the rest of the
-  /// settings.
+  /// Patches a single parameter threshold for aquarium [aquariumId] without
+  /// modifying the rest of the settings.
   ///
   /// [parameterName] must be a backend camelCase key:
   /// `'temperature'`, `'ph'`, `'salinity'`, `'orp'`, `'calcium'`,
   /// `'magnesium'`, `'kh'`, `'nitrate'`, `'phosphate'`.
   /// Unrecognised keys are silently ignored (early return).
-  Future<void> updateParameterThreshold({
+  Future<void> updateParameterThreshold(
+    int aquariumId, {
     required String parameterName,
     required ParameterThresholds threshold,
   }) async {
-    final current = await loadSettings();
+    final current = await loadSettings(aquariumId);
 
     NotificationSettings updated;
     switch (parameterName) {
@@ -150,47 +131,50 @@ class NotificationSettingsService {
         return;
     }
 
-    await saveSettings(updated);
+    await saveSettings(aquariumId, updated);
   }
 
-  /// Enables or disables the master parameter-alert switch and saves the result.
-  Future<void> setAlertsEnabled(bool enabled) async {
-    final current = await loadSettings();
-    await saveSettings(current.copyWith(enabledAlerts: enabled));
+  /// Enables or disables the master parameter-alert switch and saves.
+  Future<void> setAlertsEnabled(int aquariumId, bool enabled) async {
+    final current = await loadSettings(aquariumId);
+    await saveSettings(aquariumId, current.copyWith(enabledAlerts: enabled));
   }
 
   /// Enables or disables the master maintenance-reminder switch and saves.
-  Future<void> setMaintenanceEnabled(bool enabled) async {
-    final current = await loadSettings();
-    await saveSettings(current.copyWith(enabledMaintenance: enabled));
+  Future<void> setMaintenanceEnabled(int aquariumId, bool enabled) async {
+    final current = await loadSettings(aquariumId);
+    await saveSettings(
+      aquariumId,
+      current.copyWith(enabledMaintenance: enabled),
+    );
   }
 
   /// Enables or disables the daily-summary notification switch and saves.
-  Future<void> setDailyEnabled(bool enabled) async {
-    final current = await loadSettings();
-    await saveSettings(current.copyWith(enabledDaily: enabled));
+  Future<void> setDailyEnabled(int aquariumId, bool enabled) async {
+    final current = await loadSettings(aquariumId);
+    await saveSettings(aquariumId, current.copyWith(enabledDaily: enabled));
   }
 
   /// Replaces all maintenance-reminder schedules with [reminders] and saves.
   Future<void> updateMaintenanceReminders(
+    int aquariumId,
     MaintenanceReminders reminders,
   ) async {
-    final current = await loadSettings();
-    await saveSettings(current.copyWith(maintenanceReminders: reminders));
+    final current = await loadSettings(aquariumId);
+    await saveSettings(
+      aquariumId,
+      current.copyWith(maintenanceReminders: reminders),
+    );
   }
 
-  /// Deletes the stored settings on the backend and clears the local cache.
-  ///
-  /// The next [loadSettings] call will return server-side defaults. Silently
-  /// returns if no aquarium has been selected.
-  Future<void> resetToDefaults() async {
-    if (_currentAquariumId == null) return;
-
+  /// Deletes the stored settings for aquarium [aquariumId] and drops its cache
+  /// entry. The next [loadSettings] call will return server-side defaults.
+  Future<void> resetToDefaults(int aquariumId) async {
     try {
       await _apiService.delete(
-        ApiEndpoints.notificationSettings(_currentAquariumId!),
+        ApiEndpoints.notificationSettings(aquariumId),
       );
-      _cachedSettings = null;
+      _cache.remove(aquariumId);
     } catch (e) {
       rethrow;
     }
@@ -198,6 +182,6 @@ class NotificationSettingsService {
 
   /// Manually invalidates the in-memory cache without making a network call.
   void clearCache() {
-    _cachedSettings = null;
+    _cache.clear();
   }
 }

@@ -14,7 +14,6 @@ import 'package:acquariumfe/core/l10n/app_localizations.dart';
 import 'package:acquariumfe/core/widgets/skeleton_loader.dart';
 import 'package:acquariumfe/core/widgets/empty_state.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
-import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/core/widgets/responsive_builder.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
 
@@ -130,14 +129,9 @@ class _AquariumViewState extends ConsumerState<AquariumView>
           ],
         ),
         data: (aquariumsWithParams) {
-          // Imposta prima vasca come corrente
+          // Avvia animazioni se non già partite
           if (aquariumsWithParams.isNotEmpty &&
               aquariumsWithParams.first.aquarium.id != null) {
-            ref.read(parameterServiceProvider).setCurrentAquarium(
-              aquariumsWithParams.first.aquarium.id!,
-            );
-
-            // Avvia animazioni se non già partite
             if (_controller.status == AnimationStatus.dismissed) {
               _controller.forward();
             }
@@ -229,11 +223,6 @@ class _AquariumViewState extends ConsumerState<AquariumView>
 
     return BounceButton(
       onTap: () {
-        // Imposta questa vasca come vasca corrente per i parametri
-        if (aquarium.id != null) {
-          ref.read(parameterServiceProvider).setCurrentAquarium(aquarium.id!);
-        }
-
         Navigator.push(
           context,
           CustomPageRoute(

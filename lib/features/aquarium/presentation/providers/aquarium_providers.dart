@@ -90,9 +90,6 @@ class Aquariums extends _$Aquariums {
   /// If parameter loading fails for an individual aquarium, that aquarium is
   /// still included in the result with [AquariumWithParams.parameters] == `null`
   /// so the UI degrades gracefully rather than failing entirely.
-  ///
-  /// After all aquariums are loaded the first aquarium is set as the active one
-  /// in [ParameterService].
   Future<List<AquariumWithParams>> _loadAquariums() async {
     final aquariumService = ref.read(aquariumsServiceProvider);
     final parameterService = ref.read(parameterServiceProvider);
@@ -109,11 +106,14 @@ class Aquariums extends _$Aquariums {
         // notifications; polling after load re-enables them.
         parameterService.setAutoCheckAlerts(false);
 
-        params = await parameterService.getCurrentParameters(
-          id: aquarium.id,
-          useMock: false,
-        );
-        lastUpdate = DateTime.now();
+        final aquariumId = aquarium.id;
+        if (aquariumId != null) {
+          params = await parameterService.getCurrentParameters(
+            id: aquariumId,
+            useMock: false,
+          );
+          lastUpdate = DateTime.now();
+        }
       } on AppException {
         // Silently ignore per-aquarium parameter errors.
       } catch (e) {
@@ -131,13 +131,6 @@ class Aquariums extends _$Aquariums {
 
     // Re-enable alert checking now that the initial load is complete.
     parameterService.setAutoCheckAlerts(true);
-
-    // Set the first aquarium as the active one across services.
-    if (aquariumsWithParams.isNotEmpty &&
-        aquariumsWithParams.first.aquarium.id != null) {
-      final firstId = aquariumsWithParams.first.aquarium.id!;
-      parameterService.setCurrentAquarium(firstId);
-    }
 
     return aquariumsWithParams;
   }
@@ -235,8 +228,8 @@ class Aquariums extends _$Aquariums {
 /// Provider that tracks the ID of the aquarium currently selected in the UI.
 ///
 /// The initial value is derived from the first entry in [aquariumsProvider].
-/// Use [setAquarium] to change the selection; this also synchronises the
-/// underlying [ParameterService] and [TargetParametersService] singletons.
+/// Use [setAquarium] to change the selection; every service reads this provider
+/// and targets the selected aquarium explicitly.
 @riverpod
 class CurrentAquarium extends _$CurrentAquarium {
   @override
@@ -249,12 +242,9 @@ class CurrentAquarium extends _$CurrentAquarium {
     );
   }
 
-  /// Selects the aquarium with [id] and propagates the change to
-  /// [ParameterService] and [TargetParametersService].
+  /// Selects the aquarium with [id].
   void setAquarium(int id) {
     state = id;
-
-    ref.read(parameterServiceProvider).setCurrentAquarium(id);
   }
 }
 

@@ -26,8 +26,6 @@ import 'package:acquariumfe/core/utils/app_logger.dart';
 /// - Caches the merged result in [_cachedParameters]; [getCachedParameters]
 ///   honours a configurable [maxAge] (default 5 minutes).
 /// - Broadcasts merged parameter updates through [parametersStream].
-/// - Optionally auto-refreshes on a configurable [Timer] interval via
-///   [startAutoRefresh] / [stopAutoRefresh].
 /// - Delegates alert evaluation to [AlertManager] via
 ///   [_checkAllParametersForAlerts] (can be disabled with
 ///   [setAutoCheckAlerts]).
@@ -37,10 +35,8 @@ import 'package:acquariumfe/core/utils/app_logger.dart';
 /// reef values instead of throwing — never enable it in production, as it
 /// hides a dead backend behind plausible-looking "all good" data.
 ///
-/// Call [setCurrentAquarium] before any fetch. Changing the aquarium
-/// automatically propagates the ID to its dependent services
-/// ([ManualParametersService], [NotificationSettingsService]) and invalidates
-/// the cache.
+/// Every fetch targets the aquarium passed to [getCurrentParameters]; the
+/// service holds no mutable "current aquarium" state.
 class ParameterService {
   /// Creates a [ParameterService].
   ///
@@ -67,28 +63,11 @@ class ParameterService {
   final ManualParametersService _manualService;
   final NotificationSettingsService _notificationService;
 
-  /// ID of the currently selected aquarium.
-  int? _currentid;
-
-  /// ID of the currently selected aquarium, or `null` if none has been set.
-  ///
-  /// Exposed so adapters (e.g. [ChartDataService]) can target the active
-  /// aquarium instead of hard-coding an ID.
-  int? get currentAquariumId => _currentid;
-
   /// Most-recently fetched and merged parameter set.
   AquariumParameters? _cachedParameters;
 
   /// Timestamp of the last successful fetch; used by [getCachedParameters].
   DateTime? _lastFetch;
-
-  /// Periodic auto-refresh timer; `null` when auto-refresh is stopped.
-  Timer? _refreshTimer;
-  bool _isAutoRefreshEnabled = false;
-
-  /// Guards against overlapping auto-refresh ticks: while a fetch is still in
-  /// flight, the next timer tick is skipped instead of piling requests up.
-  bool _refreshInFlight = false;
 
   /// Broadcast stream that emits every time a fresh parameter set is received.
   final _parametersController =
@@ -118,22 +97,7 @@ class ParameterService {
     _lastFetch = null;
   }
 
-  /// Sets the active aquarium and propagates the ID to all dependent services.
-  ///
-  /// Invalidates the parameter cache when [id] differs from the current value.
-  void setCurrentAquarium(int id) {
-    if (_currentid != id) {
-      _currentid = id;
-      _cachedParameters = null;
-      _lastFetch = null;
-
-      _manualService.setCurrentAquarium(id);
-      _notificationService.setCurrentAquarium(id);
-    }
-  }
-
-  /// Fetches and returns the current water parameters for the active aquarium
-  /// (or [id] if supplied).
+  /// Fetches and returns the current water parameters for aquarium [id].
   ///
   /// The sensor parameters are fetched from
   /// `GET /aquariums/{id}/parameters` using [RetryPolicies.critical] (3 retries
@@ -145,25 +109,13 @@ class ParameterService {
   /// Pass [useMock] `true` (dev/demo only) to return a hardcoded fallback with
   /// typical reef values instead of throwing — do not use it in production, as
   /// it masks a failing backend with plausible "all good" readings.
-  ///
-  /// Throws [NoAquariumSelectedException] when no aquarium is active and [id]
-  /// is also `null`.
   Future<AquariumParameters> getCurrentParameters({
-    int? id,
+    required int id,
     bool useMock = false,
   }) async {
-    final targetid = id ?? _currentid;
-
-    if (targetid == null) {
-      throw NoAquariumSelectedException(
-        details:
-            'Usa setCurrentAquarium() per selezionare una vasca prima di recuperare i parametri',
-      );
-    }
-
     try {
       final response = await _apiService.get(
-        ApiEndpoints.parameters(targetid),
+        ApiEndpoints.parameters(id),
         retry: RetryPolicies.critical,
       );
 
@@ -195,7 +147,7 @@ class ParameterService {
       final parameters = AquariumParameters.fromJson(parametersData);
 
       // Merge manual parameters on top of sensor values.
-      final manualParams = await _manualService.loadManualParameters();
+      final manualParams = await _manualService.loadManualParameters(id);
       final completeParameters = AquariumParameters(
         temperature: parameters.temperature,
         ph: parameters.ph,
@@ -214,7 +166,7 @@ class ParameterService {
       _parametersController.add(completeParameters);
 
       if (_autoCheckAlerts) {
-        await _checkAllParametersForAlerts(completeParameters);
+        await _checkAllParametersForAlerts(completeParameters, id);
       }
 
       return completeParameters;
@@ -333,52 +285,6 @@ class ParameterService {
     _parametersController.add(parameters);
   }
 
-  /// Starts the periodic auto-refresh timer.
-  ///
-  /// The first fetch is immediate; subsequent fetches occur every [interval]
-  /// (default 10 seconds). Calling this while auto-refresh is already running
-  /// is a no-op.
-  void startAutoRefresh({Duration interval = const Duration(seconds: 10)}) {
-    if (_isAutoRefreshEnabled) return;
-
-    _isAutoRefreshEnabled = true;
-
-    unawaited(_autoRefreshTick());
-
-    _refreshTimer = Timer.periodic(
-      interval,
-      (_) => unawaited(_autoRefreshTick()),
-    );
-  }
-
-  /// Performs a single auto-refresh fetch. Errors are logged and swallowed so a
-  /// transient backend failure neither crashes the app with an unhandled async
-  /// error nor pushes stale/fake data onto [parametersStream] — the last known
-  /// values simply remain until the next successful tick.
-  Future<void> _autoRefreshTick() async {
-    // Skip if the previous tick's fetch has not finished yet (avoid a stampede
-    // of overlapping requests when a fetch takes longer than the interval).
-    if (_refreshInFlight) return;
-    _refreshInFlight = true;
-    try {
-      await getCurrentParameters();
-    } catch (e) {
-      AppLogger.w('Auto-refresh failed; keeping last known values', error: e);
-    } finally {
-      _refreshInFlight = false;
-    }
-  }
-
-  /// Stops and cancels the auto-refresh timer.
-  void stopAutoRefresh() {
-    _refreshTimer?.cancel();
-    _refreshTimer = null;
-    _isAutoRefreshEnabled = false;
-  }
-
-  /// `true` when the auto-refresh timer is active.
-  bool get isAutoRefreshEnabled => _isAutoRefreshEnabled;
-
   /// Returns hardcoded typical marine reef parameter values used as a mock
   /// fallback when the network is unavailable.
   AquariumParameters _getMockParameters() {
@@ -405,8 +311,11 @@ class ParameterService {
   ///
   /// Alert titles and messages are retrieved from [AppLocaleService] so that
   /// notifications are displayed in the user's selected language.
-  Future<void> _checkAllParametersForAlerts(AquariumParameters params) async {
-    final settings = await _notificationService.loadSettings();
+  Future<void> _checkAllParametersForAlerts(
+    AquariumParameters params,
+    int aquariumId,
+  ) async {
+    final settings = await _notificationService.loadSettings(aquariumId);
     final localeService = AppLocaleService();
 
     await _alertManager.checkParameter(
@@ -519,11 +428,10 @@ class ParameterService {
     }
   }
 
-  /// Stops the auto-refresh timer and closes the parameters [StreamController].
+  /// Closes the parameters [StreamController].
   ///
   /// Must be called when the service is no longer needed to avoid memory leaks.
   void dispose() {
-    stopAutoRefresh();
     _parametersController.close();
   }
 }

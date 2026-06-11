@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/features/parameters/data/manual_parameters_service.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
+import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/features/parameters/presentation/providers/parameters_provider.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
@@ -48,8 +49,10 @@ class _ManualParametersWidgetState
   }
 
   Future<void> _loadParameters() async {
-    final params = await _manualService.loadManualParameters();
-    final update = await _manualService.getLastUpdate();
+    final aquariumId = ref.read(currentAquariumProvider);
+    if (aquariumId == null) return;
+    final params = await _manualService.loadManualParameters(aquariumId);
+    final update = await _manualService.getLastUpdate(aquariumId);
 
     setState(() {
       calcium = params['calcium'] ?? 420.0;
@@ -63,7 +66,9 @@ class _ManualParametersWidgetState
 
   Future<void> _saveParameter(String key, double value) async {
     if (key.isNotEmpty) {
-      await _manualService.updateParameter(key, value);
+      final aquariumId = ref.read(currentAquariumProvider);
+      if (aquariumId == null) return;
+      await _manualService.updateParameter(aquariumId, key, value);
       await _loadParameters(); // Ricarica per aggiornare lastUpdate
 
       // IMPORTANTE: Invalida cache e provider per aggiornare in tempo reale
