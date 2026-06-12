@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 
 part 'theme_provider.g.dart';
 
@@ -58,6 +59,8 @@ ThemeData darkTheme(Ref ref) {
     useMaterial3: true,
     brightness: Brightness.dark,
     scaffoldBackgroundColor: const Color(0xFF0a0e27),
+
+    extensions: const <ThemeExtension<dynamic>>[AppSemanticColors.dark],
 
     colorScheme: const ColorScheme.dark(
       primary: Color(0xFF3b82f6),
@@ -148,6 +151,8 @@ ThemeData lightTheme(Ref ref) {
     useMaterial3: true,
     brightness: Brightness.light,
     scaffoldBackgroundColor: const Color(0xFFf0f9ff),
+
+    extensions: const <ThemeExtension<dynamic>>[AppSemanticColors.light],
 
     colorScheme: const ColorScheme.light(
       primary: Color(0xFF0284c7),

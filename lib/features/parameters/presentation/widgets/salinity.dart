@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
 import 'package:acquariumfe/core/widgets/animated_number.dart';
 import 'package:acquariumfe/core/widgets/tap_effect_card.dart';
@@ -36,13 +37,13 @@ class SalinityMeter extends ConsumerWidget {
     this.onTargetChanged,
   });
 
-  Color _getSalinityColor() {
-    if (targetSalinity == null) return const Color(0xFF34d399);
+  Color _getSalinityColor(AppSemanticColors c) {
+    if (targetSalinity == null) return c.statusOptimal;
 
     final diff = (currentSalinity - targetSalinity!).abs();
-    if (diff <= 1) return const Color(0xFF34d399); // Vicino al target (±1 ppt)
-    if (diff <= 2) return const Color(0xFFfbbf24); // Poco distante (±2 ppt)
-    return const Color(0xFFef4444); // Molto distante
+    if (diff <= 1) return c.statusOptimal; // Vicino al target (±1 ppt)
+    if (diff <= 2) return c.statusWarning; // Poco distante (±2 ppt)
+    return c.statusError; // Molto distante
   }
 
   String _getStatus(BuildContext context) {
@@ -59,7 +60,7 @@ class SalinityMeter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final color = _getSalinityColor();
+    final color = _getSalinityColor(context.semantic);
     final status = _getStatus(context);
 
     return TapEffectCard(
@@ -166,6 +167,7 @@ class SalinityMeter extends ConsumerWidget {
   void _showEditTargetDialog(BuildContext context, WidgetRef ref) async {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final accent = context.semantic.salinityAccent;
     final controller = TextEditingController(
       text:
           targetSalinity?.toStringAsFixed(0) ??
@@ -179,7 +181,7 @@ class SalinityMeter extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            const FaIcon(FontAwesomeIcons.water, color: Color(0xFF60a5fa)),
+            FaIcon(FontAwesomeIcons.water, color: accent),
             const SizedBox(width: 12),
             Text(l10n.targetSalinity,
               style: TextStyle(color: theme.colorScheme.onSurface),
@@ -244,7 +246,7 @@ class SalinityMeter extends ConsumerWidget {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF60a5fa),
+              backgroundColor: accent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
