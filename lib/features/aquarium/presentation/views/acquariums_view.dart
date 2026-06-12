@@ -6,10 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/widgets/animated_value.dart';
 import 'package:acquariumfe/core/routing/custom_page_route.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/utils/task_localizer.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/utils/exceptions.dart';
 import 'package:acquariumfe/features/aquarium/presentation/views/aquarium_details.dart';
+import 'package:acquariumfe/features/aquarium/presentation/views/add_aquarium.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 import 'package:acquariumfe/core/widgets/skeleton_loader.dart';
 import 'package:acquariumfe/core/widgets/empty_state.dart';
@@ -138,7 +140,15 @@ class _AquariumViewState extends ConsumerState<AquariumView>
           }
 
           if (aquariumsWithParams.isEmpty) {
-            return const NoAquariumsEmptyState();
+            return NoAquariumsEmptyState(
+              onAddAquarium: () => Navigator.push(
+                context,
+                CustomPageRoute(
+                  page: const AddAquarium(),
+                  transitionType: PageTransitionType.slideFromBottom,
+                ),
+              ),
+            );
           }
 
           return ResponsiveBuilder(
@@ -211,6 +221,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
   ) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     final isDark = theme.brightness == Brightness.dark;
     final aquarium = aquariumData.aquarium;
     final params = aquariumData.parameters;
@@ -243,12 +254,12 @@ class _AquariumViewState extends ConsumerState<AquariumView>
           ),
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
-            color: const Color(0xFF34d399).withValues(alpha: 0.3),
+            color: c.statusOptimal.withValues(alpha: 0.3),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF34d399).withValues(alpha: 0.2),
+              color: c.statusOptimal.withValues(alpha: 0.2),
               blurRadius: 24,
               offset: const Offset(0, 8),
             ),
@@ -379,7 +390,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                     l10n.temperatureShort,
                     hasData ? temp.toStringAsFixed(1) : '--',
                     '°C',
-                    const Color(0xFFef4444),
+                    c.temperatureAccent,
                     hasData,
                   ),
                 ),
@@ -391,7 +402,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                     'pH',
                     hasData ? ph.toStringAsFixed(1) : '--',
                     '',
-                    const Color(0xFF60a5fa),
+                    c.phAccent,
                     hasData,
                   ),
                 ),
@@ -403,7 +414,7 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                     l10n.salinityShort,
                     hasData ? salinity.toStringAsFixed(0) : '--',
                     l10n.pptUnit,
-                    const Color(0xFF2dd4bf),
+                    c.salinityAccent,
                     hasData,
                   ),
                 ),

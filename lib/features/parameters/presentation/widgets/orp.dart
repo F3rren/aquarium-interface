@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
 import 'package:acquariumfe/core/widgets/animated_number.dart';
 import 'package:acquariumfe/core/widgets/tap_effect_card.dart';
@@ -36,11 +37,11 @@ class OrpMeter extends ConsumerWidget {
     this.onTargetChanged,
   });
 
-  Color _getOrpColor() {
+  Color _getOrpColor(AppSemanticColors c) {
     if (ParameterThresholdDefaults.orp.contains(currentOrp)) {
-      return const Color(0xFF34d399);
+      return c.statusOptimal;
     }
-    return const Color(0xFFef4444);
+    return c.statusError;
   }
 
   String _getStatus(BuildContext context) {
@@ -55,7 +56,7 @@ class OrpMeter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final color = _getOrpColor();
+    final color = _getOrpColor(context.semantic);
     final status = _getStatus(context);
 
     return TapEffectCard(
@@ -163,6 +164,7 @@ class OrpMeter extends ConsumerWidget {
   void _showEditTargetDialog(BuildContext context, WidgetRef ref) async {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final accent = context.semantic.orpAccent;
     final controller = TextEditingController(
       text:
           targetOrp?.toStringAsFixed(0) ??
@@ -176,7 +178,7 @@ class OrpMeter extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            const FaIcon(FontAwesomeIcons.flask, color: Color(0xFF60a5fa)),
+            FaIcon(FontAwesomeIcons.flask, color: accent),
             const SizedBox(width: 12),
             Text(l10n.targetOrp,
               style: TextStyle(color: theme.colorScheme.onSurface),
@@ -243,7 +245,7 @@ class OrpMeter extends ConsumerWidget {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF60a5fa),
+              backgroundColor: accent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
