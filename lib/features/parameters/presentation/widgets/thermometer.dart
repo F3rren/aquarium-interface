@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
 import 'package:acquariumfe/core/widgets/animated_number.dart';
 import 'package:acquariumfe/core/widgets/tap_effect_card.dart';
@@ -37,11 +38,11 @@ class Thermometer extends ConsumerWidget {
     this.onTargetChanged,
   });
 
-  Color _getTemperatureColor() {
+  Color _getTemperatureColor(AppSemanticColors c) {
     const range = ParameterThresholdDefaults.temperature;
-    if (currentTemperature < range.min) return const Color(0xFF60a5fa);
-    if (range.contains(currentTemperature)) return const Color(0xFF34d399);
-    return const Color(0xFFef4444);
+    if (currentTemperature < range.min) return c.statusLow;
+    if (range.contains(currentTemperature)) return c.statusOptimal;
+    return c.statusError;
   }
 
   String _getStatus(BuildContext context) {
@@ -56,7 +57,8 @@ class Thermometer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    final color = _getTemperatureColor();
+    final c = context.semantic;
+    final color = _getTemperatureColor(c);
     final status = _getStatus(context);
 
     return TapEffectCard(
@@ -142,8 +144,8 @@ class Thermometer extends ConsumerWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
-                    increaseColor: const Color(0xFFef4444),
-                    decreaseColor: const Color(0xFF60a5fa),
+                    increaseColor: c.trendUp,
+                    decreaseColor: c.trendDown,
                   ),
                 ),
               ],
@@ -170,6 +172,7 @@ class Thermometer extends ConsumerWidget {
   void _showEditTargetDialog(BuildContext context, WidgetRef ref) async {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final accent = context.semantic.temperatureAccent;
     final controller = TextEditingController(
       text:
           targetTemperature?.toStringAsFixed(1) ??
@@ -183,9 +186,9 @@ class Thermometer extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            const FaIcon(
+            FaIcon(
               FontAwesomeIcons.temperatureHalf,
-              color: Color(0xFFef4444),
+              color: accent,
             ),
             const SizedBox(width: 12),
             Text(l10n.targetTemperature,
@@ -255,7 +258,7 @@ class Thermometer extends ConsumerWidget {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFef4444),
+              backgroundColor: accent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

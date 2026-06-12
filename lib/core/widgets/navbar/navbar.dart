@@ -2,6 +2,7 @@
 library;
 
 import 'package:acquariumfe/core/routing/custom_page_route.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/features/aquarium/presentation/views/add_aquarium.dart';
 import 'package:acquariumfe/features/aquarium/presentation/views/edit_aquarium.dart';
 import 'package:acquariumfe/features/aquarium/presentation/views/delete_aquarium.dart';
@@ -52,6 +53,7 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
 
     return AppBar(
       // title: Text(//   'Aquarium App',
@@ -126,12 +128,12 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF34d399).withValues(alpha: 0.2),
+                        color: c.statusOptimal.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const FaIcon(
+                      child: FaIcon(
                         FontAwesomeIcons.circlePlus,
-                        color: Color(0xFF34d399),
+                        color: c.statusOptimal,
                         size: 20,
                       ),
                     ),
@@ -152,12 +154,12 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
+                        color: c.statusLow.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const FaIcon(
+                      child: FaIcon(
                         FontAwesomeIcons.pen,
-                        color: Color(0xFF60a5fa),
+                        color: c.statusLow,
                         size: 20,
                       ),
                     ),
@@ -178,12 +180,12 @@ class _NavbarState extends State<Navbar> with SingleTickerProviderStateMixin {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFef4444).withValues(alpha: 0.2),
+                        color: c.statusError.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const FaIcon(
+                      child: FaIcon(
                         FontAwesomeIcons.trash,
-                        color: Color(0xFFef4444),
+                        color: c.statusError,
                         size: 20,
                       ),
                     ),
