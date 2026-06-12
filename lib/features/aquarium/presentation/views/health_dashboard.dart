@@ -11,7 +11,38 @@ import 'package:acquariumfe/features/settings/domain/models/notification_setting
 import 'package:acquariumfe/features/parameters/presentation/providers/parameters_provider.dart';
 import 'package:acquariumfe/core/widgets/responsive_builder.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
+
+/// A single parameter reading paired with its healthy [ParameterThresholds].
+///
+/// Used by the deficiency list to show which parameters are out of range, in
+/// which direction (too high / too low), and what the healthy band is.
+class _ParamReading {
+  const _ParamReading(
+    this.label,
+    this.value,
+    this.threshold,
+    this.icon,
+    this.unit,
+    this.decimals,
+  );
+
+  final String label;
+  final double value;
+  final ParameterThresholds threshold;
+  final IconData icon;
+  final String unit;
+  final int decimals;
+
+  bool get isLow => threshold.enabled && value < threshold.min;
+  bool get isHigh => threshold.enabled && value > threshold.max;
+  bool get isOut => isLow || isHigh;
+
+  String get valueText => '${value.toStringAsFixed(decimals)}$unit';
+  String get minText => threshold.min.toStringAsFixed(decimals);
+  String get maxText => threshold.max.toStringAsFixed(decimals);
+}
 
 /// Dashboard screen that displays the current health status of the active
 /// aquarium with real-time parameter cards and a recent alert log.
@@ -141,11 +172,33 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
             : healthScore >= 60
             ? l10n.warning
             : l10n.critical;
+        final c = context.semantic;
         final statusColor = healthScore >= 80
-            ? const Color(0xFF34d399)
+            ? c.statusOptimal
             : healthScore >= 60
-            ? const Color(0xFFfbbf24)
-            : const Color(0xFFef4444);
+            ? c.statusWarning
+            : c.statusError;
+
+        final readings = <_ParamReading>[
+          _ParamReading(l10n.temperature, currentTemperature,
+              settings.temperature, FontAwesomeIcons.temperatureHalf, ' °C', 1),
+          _ParamReading(
+              l10n.ph, currentPh, settings.ph, FontAwesomeIcons.flask, '', 2),
+          _ParamReading(l10n.salinity, currentSalinity, settings.salinity,
+              FontAwesomeIcons.water, ' PPT', 0),
+          _ParamReading(l10n.orp, currentOrp, settings.orp,
+              FontAwesomeIcons.bolt, ' mV', 0),
+          _ParamReading(l10n.calcium, calcium, settings.calcium,
+              FontAwesomeIcons.flask, ' mg/L', 0),
+          _ParamReading(l10n.magnesium, magnesium, settings.magnesium,
+              FontAwesomeIcons.flask, ' mg/L', 0),
+          _ParamReading(
+              l10n.kh, kh, settings.kh, FontAwesomeIcons.flask, ' dKH', 1),
+          _ParamReading(l10n.nitratesNO3, nitrate, settings.nitrate,
+              FontAwesomeIcons.flask, ' mg/L', 1),
+          _ParamReading(l10n.phosphatesPO4, phosphate, settings.phosphate,
+              FontAwesomeIcons.flask, ' mg/L', 2),
+        ];
 
         return ResponsiveBuilder(
           builder: (context, info) {
@@ -215,6 +268,11 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                   ),
                   const SizedBox(height: 16),
 
+                  // Carenze: ogni parametro fuori range (tutti e 9), con
+                  // direzione (alto/basso), valore e range ottimale.
+                  _buildDeficiencies(readings, c),
+                  const SizedBox(height: 16),
+
                   // Parametri principali - Grid responsive
                   GridView.count(
                     crossAxisCount: info.value(
@@ -236,28 +294,28 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                         l10n.temperature,
                         '$currentTemperature °C',
                         FontAwesomeIcons.temperatureHalf,
-                        const Color(0xFFef4444),
+                        c.temperatureAccent,
                         settings.temperature.isOutOfRange(currentTemperature),
                       ),
                       _buildParamCard(
                         l10n.ph,
                         currentPh.toString(),
                         FontAwesomeIcons.flask,
-                        const Color(0xFF60a5fa),
+                        c.phAccent,
                         settings.ph.isOutOfRange(currentPh),
                       ),
                       _buildParamCard(
                         l10n.salinity,
                         '${currentSalinity.toInt()} PPT',
                         FontAwesomeIcons.water,
-                        const Color(0xFF2dd4bf),
+                        c.salinityAccent,
                         settings.salinity.isOutOfRange(currentSalinity),
                       ),
                       _buildParamCard(
                         l10n.orp,
                         '${currentOrp.toInt()} mV',
                         FontAwesomeIcons.bolt,
-                        const Color(0xFFfbbf24),
+                        c.statusWarning,
                         settings.orp.isOutOfRange(currentOrp),
                       ),
                     ],
@@ -352,13 +410,185 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
     );
   }
 
+  /// Highlights every out-of-range parameter as a scannable card (direction,
+  /// current value, healthy range), or a single positive card when all 9
+  /// parameters are within range.
+  Widget _buildDeficiencies(List<_ParamReading> readings, AppSemanticColors c) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final issues = readings.where((r) => r.isOut).toList();
+
+    if (issues.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              c.statusOptimal.withValues(alpha: 0.18),
+              theme.colorScheme.surface,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: c.statusOptimal.withValues(alpha: 0.4)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: c.statusOptimal.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: FaIcon(
+                FontAwesomeIcons.circleCheck,
+                color: c.statusOptimal,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.allOk,
+                    style: TextStyle(
+                      color: c.statusOptimal,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(l10n.allOkDescription,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: c.statusError.withValues(alpha: 0.35)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              FaIcon(
+                FontAwesomeIcons.triangleExclamation,
+                color: c.statusError,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(l10n.parametersNeedAttention(issues.length),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...issues.map((r) {
+            final dir = r.isHigh ? c.statusError : c.statusLow;
+            final dirIcon = r.isHigh
+                ? Icons.arrow_upward_rounded
+                : Icons.arrow_downward_rounded;
+            final dirLabel = r.isHigh ? l10n.high : l10n.low;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: dir.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: FaIcon(r.icon, color: dir, size: 16),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(r.label,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${l10n.optimal} '
+                          '${l10n.minMaxRange(r.minText, r.maxText, r.unit)}',
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurfaceVariant,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(r.valueText,
+                        style: TextStyle(
+                          color: dir,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(dirIcon, color: dir, size: 12),
+                          const SizedBox(width: 4),
+                          Text(dirLabel,
+                            style: TextStyle(
+                              color: dir,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
   Widget _buildHealthScore(int score, int okParams, int totalParams) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     final color = score >= 80
-        ? const Color(0xFF34d399)
+        ? c.statusOptimal
         : score >= 60
-        ? const Color(0xFFfbbf24)
+        ? c.statusWarning
         : theme.colorScheme.error;
     final label = score >= 80
         ? l10n.excellent
@@ -445,6 +675,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
 
   Widget _buildQuickStats(int okParams, int criticalParams, int alerts) {
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     return Row(
       children: [
         Expanded(
@@ -452,7 +683,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
             l10n.parametersOk,
             '$okParams',
             FontAwesomeIcons.circleCheck,
-            const Color(0xFF34d399),
+            c.statusOptimal,
           ),
         ),
         const SizedBox(width: 12),
@@ -461,7 +692,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
             l10n.critical,
             '$criticalParams',
             FontAwesomeIcons.triangleExclamation,
-            const Color(0xFFef4444),
+            c.statusError,
           ),
         ),
         const SizedBox(width: 12),
@@ -470,7 +701,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
             l10n.alerts,
             '$alerts',
             FontAwesomeIcons.bell,
-            const Color(0xFFfbbf24),
+            c.statusWarning,
           ),
         ),
       ],
@@ -480,6 +711,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
   Widget _buildCriticalAlerts(List alerts) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     
     return Container(
       padding: const EdgeInsets.all(20),
@@ -487,7 +719,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFef4444).withValues(alpha: 0.3),
+          color: c.statusError.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -495,9 +727,9 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         children: [
           Row(
             children: [
-              const FaIcon(
+              FaIcon(
                 FontAwesomeIcons.triangleExclamation,
-                color: Color(0xFFef4444),
+                color: c.statusError,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -520,8 +752,8 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                   Container(
                     width: 8,
                     height: 8,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFef4444),
+                    decoration: BoxDecoration(
+                      color: c.statusError,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -558,6 +790,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
   Widget _buildMaintenanceReminders() {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     final reminders = [
       {
         'title': l10n.waterChange,
@@ -590,9 +823,9 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
         children: [
           Row(
             children: [
-              const FaIcon(
+              FaIcon(
                 FontAwesomeIcons.calendar,
-                color: Color(0xFF60a5fa),
+                color: c.statusLow,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -614,12 +847,12 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
+                      color: c.statusLow.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       reminder['icon'] as IconData,
-                      color: const Color(0xFF60a5fa),
+                      color: c.statusLow,
                       size: 16,
                     ),
                   ),
@@ -638,12 +871,12 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
+                      color: c.statusLow.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text('${reminder['days']} ${l10n.days}',
-                      style: const TextStyle(
-                        color: Color(0xFF60a5fa),
+                      style: TextStyle(
+                        color: c.statusLow,
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
@@ -701,6 +934,7 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
   Widget _buildRecommendations(int healthScore, int parametersInRange) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     final recommendations = <Map<String, dynamic>>[];
 
     if (healthScore < 80) {
@@ -762,16 +996,16 @@ class _HealthDashboardState extends ConsumerState<HealthDashboard> {
                     decoration: BoxDecoration(
                       color:
                           (rec['urgent'] as bool
-                                  ? const Color(0xFFfbbf24)
-                                  : const Color(0xFF60a5fa))
+                                  ? c.statusWarning
+                                  : c.statusLow)
                               .withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       rec['icon'] as IconData,
                       color: rec['urgent'] as bool
-                          ? const Color(0xFFfbbf24)
-                          : const Color(0xFF60a5fa),
+                          ? c.statusWarning
+                          : c.statusLow,
                       size: 18,
                     ),
                   ),
