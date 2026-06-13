@@ -8,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/core/utils/task_localizer.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// Displays a scrollable list of the user's aquariums; tapping one opens a
@@ -83,12 +84,13 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
         setState(() => _isLoading = false);
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
+          final c = context.semantic;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
                 l10n.errorLoading(ExceptionLocalizer.getMessage(context, error)),
               ),
-              backgroundColor: const Color(0xFFef4444),
+              backgroundColor: c.statusError,
             ),
           );
         }
@@ -104,12 +106,13 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
 
   void _deleteAquarium(Aquarium aquarium) async {
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
 
     if (aquarium.id == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.cannotDeleteMissingId),
-          backgroundColor: const Color(0xFFef4444),
+          backgroundColor: c.statusError,
         ),
       );
       return;
@@ -266,7 +269,7 @@ class _DeleteAquariumState extends ConsumerState<DeleteAquarium>
                   Expanded(child: Text(ExceptionLocalizer.getMessage(context, e))),
                 ],
               ),
-              backgroundColor: const Color(0xFFef4444),
+              backgroundColor: c.statusError,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),

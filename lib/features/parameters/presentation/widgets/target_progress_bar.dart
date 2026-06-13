@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// An animated horizontal progress bar showing how close [currentValue] is to
@@ -106,15 +107,15 @@ class _TargetProgressBarState extends State<TargetProgressBar>
   }
 
   // Determina il colore in base alla distanza dal target
-  Color _getProgressColor() {
+  Color _getProgressColor(AppSemanticColors c) {
     final distance = _getDistanceFromTarget();
 
     if (distance <= 5) {
-      return const Color(0xFF34d399); // Verde - molto vicino
+      return c.statusOptimal; // Verde - molto vicino
     } else if (distance <= 15) {
-      return const Color(0xFFfbbf24); // Giallo - medio
+      return c.statusWarning; // Giallo - medio
     } else {
-      return const Color(0xFFef4444); // Rosso - lontano
+      return c.statusError; // Rosso - lontano
     }
   }
 
@@ -136,7 +137,7 @@ class _TargetProgressBarState extends State<TargetProgressBar>
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final isDark = theme.brightness == Brightness.dark;
-    final color = _getProgressColor();
+    final color = _getProgressColor(context.semantic);
     final targetNormalized = _normalizeValue(widget.targetValue);
     final status = _getStatusText(context);
 
@@ -316,21 +317,21 @@ class _CircularTargetProgressState extends State<CircularTargetProgress>
     return ((widget.currentValue - widget.minValue) / range).clamp(0.0, 1.0);
   }
 
-  Color _getColor() {
+  Color _getColor(AppSemanticColors c) {
     final distance =
         ((widget.currentValue - widget.targetValue).abs() /
         (widget.maxValue - widget.minValue) *
         100);
 
-    if (distance <= 5) return const Color(0xFF34d399);
-    if (distance <= 15) return const Color(0xFFfbbf24);
-    return const Color(0xFFef4444);
+    if (distance <= 5) return c.statusOptimal;
+    if (distance <= 15) return c.statusWarning;
+    return c.statusError;
   }
 
   @override
   Widget build(BuildContext context) {
     final progress = _getProgress();
-    final color = _getColor();
+    final color = _getColor(context.semantic);
 
     return SizedBox(
       width: widget.size,

@@ -12,6 +12,7 @@ import 'package:acquariumfe/features/parameters/presentation/widgets/manual_para
 import 'package:acquariumfe/features/parameters/presentation/providers/parameters_provider.dart';
 import 'package:acquariumfe/core/widgets/responsive_builder.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
@@ -37,6 +38,7 @@ class ParametersView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     final parametersAsync = ref.watch(currentParametersProvider);
     final targetsAsync = ref.watch(targetParametersProvider);
 
@@ -50,7 +52,7 @@ class ParametersView extends ConsumerWidget {
             SnackBar(
               content: Text(l10n.parametersUpdated),
               duration: Duration(seconds: 2),
-              backgroundColor: Color(0xFF34d399),
+              backgroundColor: c.statusOptimal,
             ),
           );
         }

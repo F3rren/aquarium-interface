@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// A full-screen form that lets the user create a new aquarium.
@@ -123,7 +124,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                   ),
                 ],
               ),
-              backgroundColor: const Color(0xFF34d399),
+              backgroundColor: context.semantic.statusOptimal,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -150,7 +151,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                   Expanded(child: Text(error.userMessage)),
                 ],
               ),
-              backgroundColor: const Color(0xFFef4444),
+              backgroundColor: context.semantic.statusError,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -176,7 +177,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                   Expanded(child: Text('${l10n.error}: ${e.toString()}')),
                 ],
               ),
-              backgroundColor: const Color(0xFFef4444),
+              backgroundColor: context.semantic.statusError,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -432,7 +433,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Color(0xFFef4444)),
+        borderSide: BorderSide(color: context.semantic.statusError),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     );

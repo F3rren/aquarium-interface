@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/inhabitants_filter.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
@@ -218,7 +219,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                           );
                         },
                         theme: theme,
-                        color: const Color(0xFF34d399),
+                        color: context.semantic.statusOptimal,
                       ),
                       _buildFilterChip(
                         label: l10n.difficultyIntermediate,
@@ -232,7 +233,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                           );
                         },
                         theme: theme,
-                        color: const Color(0xFFf59e0b),
+                        color: context.semantic.statusWarning,
                       ),
                       _buildFilterChip(
                         label: l10n.difficultyHard,
@@ -246,7 +247,7 @@ class _InhabitantsFilterPanelState extends State<InhabitantsFilterPanel> {
                           );
                         },
                         theme: theme,
-                        color: const Color(0xFFef4444),
+                        color: context.semantic.statusError,
                       ),
                     ],
                   ),

@@ -8,6 +8,7 @@ import 'package:acquariumfe/features/aquarium/domain/models/aquarium.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/core/utils/task_localizer.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// A two-phase screen for editing an aquarium's name, type, and volume.
@@ -154,6 +155,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
 
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
+          final c = context.semantic;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
@@ -168,7 +170,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
                   ),
                 ],
               ),
-              backgroundColor: const Color(0xFF60a5fa),
+              backgroundColor: c.statusLow,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -608,6 +610,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
 
   InputDecoration _buildInputDecoration(String hint, IconData icon) {
     final theme = Theme.of(context);
+    final c = context.semantic;
 
     return InputDecoration(
       hintText: hint,
@@ -633,7 +636,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Color(0xFFef4444)),
+        borderSide: BorderSide(color: c.statusError),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     );
