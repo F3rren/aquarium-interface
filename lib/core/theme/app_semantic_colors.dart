@@ -5,16 +5,18 @@ import 'package:flutter/material.dart';
 
 /// A [ThemeExtension] that centralises the app's semantic colours.
 ///
-/// Two families live here:
+/// Three families live here:
 /// - **Status palette** — conveys parameter health: [statusOptimal] (in range),
 ///   [statusWarning] (drifting), [statusError] (out of range / high), and
 ///   [statusLow] (below range, shown as informational rather than alarming).
 /// - **Parameter accents** — the per-parameter brand colours used on gauges,
 ///   cards, and dialogs ([temperatureAccent], [phAccent], [salinityAccent],
 ///   [orpAccent]) plus the [trendUp] / [trendDown] indicators.
+/// - **Decorative accents** — [accentViolet], [accentPink], [accentNeutral]
+///   used for non-status categories (corals, fish, muted chips, …).
 ///
 /// Before this extension these colours were duplicated as inline `Color(0xFF…)`
-/// literals in dozens of widgets, which made the palette impossible to keep
+/// literals across dozens of widgets, which made the palette impossible to keep
 /// consistent. Read them through [BuildContextSemanticColors.semantic]:
 ///
 /// ```dart
@@ -22,8 +24,11 @@ import 'package:flutter/material.dart';
 /// color: c.statusOptimal,
 /// ```
 ///
-/// [light] and [dark] currently share the same values, so the migration is
-/// purely structural — tuning a colour now means editing this one file.
+/// [dark] and [light] carry **different, calibrated values**: the dark palette
+/// uses the lighter Tailwind 400 shades that glow on the deep-navy background,
+/// while the light palette steps one shade deeper (500/600) so the same colours
+/// keep enough contrast on near-white surfaces. Tune the whole app's palette
+/// from this one file.
 @immutable
 class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   const AppSemanticColors({
@@ -37,6 +42,9 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     required this.orpAccent,
     required this.trendUp,
     required this.trendDown,
+    required this.accentViolet,
+    required this.accentPink,
+    required this.accentNeutral,
   });
 
   /// Parameter within its healthy range (green).
@@ -69,7 +77,16 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   /// Indicator shown when a reading decreased since the previous value.
   final Color trendDown;
 
-  /// Palette for the dark (default) ocean theme.
+  /// Decorative accent (violet) — corals and other non-status categories.
+  final Color accentViolet;
+
+  /// Decorative accent (pink) — secondary category highlight.
+  final Color accentPink;
+
+  /// Muted neutral accent for disabled / informational chips.
+  final Color accentNeutral;
+
+  /// Palette for the dark (default) ocean theme — Tailwind 400-ish shades.
   static const AppSemanticColors dark = AppSemanticColors(
     statusOptimal: Color(0xFF34d399),
     statusWarning: Color(0xFFfbbf24),
@@ -81,10 +98,27 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     orpAccent: Color(0xFF60a5fa),
     trendUp: Color(0xFFef4444),
     trendDown: Color(0xFF60a5fa),
+    accentViolet: Color(0xFF8b5cf6),
+    accentPink: Color(0xFFec4899),
+    accentNeutral: Color(0xFF6b7280),
   );
 
-  /// Palette for the light theme. Mirrors [dark] for now (see class docs).
-  static const AppSemanticColors light = dark;
+  /// Palette for the light theme — one shade deeper for contrast on white.
+  static const AppSemanticColors light = AppSemanticColors(
+    statusOptimal: Color(0xFF10b981),
+    statusWarning: Color(0xFFf59e0b),
+    statusError: Color(0xFFdc2626),
+    statusLow: Color(0xFF3b82f6),
+    temperatureAccent: Color(0xFFdc2626),
+    phAccent: Color(0xFF3b82f6),
+    salinityAccent: Color(0xFF14b8a6),
+    orpAccent: Color(0xFF3b82f6),
+    trendUp: Color(0xFFdc2626),
+    trendDown: Color(0xFF3b82f6),
+    accentViolet: Color(0xFF7c3aed),
+    accentPink: Color(0xFFdb2777),
+    accentNeutral: Color(0xFF64748b),
+  );
 
   @override
   AppSemanticColors copyWith({
@@ -98,6 +132,9 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     Color? orpAccent,
     Color? trendUp,
     Color? trendDown,
+    Color? accentViolet,
+    Color? accentPink,
+    Color? accentNeutral,
   }) {
     return AppSemanticColors(
       statusOptimal: statusOptimal ?? this.statusOptimal,
@@ -110,6 +147,9 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       orpAccent: orpAccent ?? this.orpAccent,
       trendUp: trendUp ?? this.trendUp,
       trendDown: trendDown ?? this.trendDown,
+      accentViolet: accentViolet ?? this.accentViolet,
+      accentPink: accentPink ?? this.accentPink,
+      accentNeutral: accentNeutral ?? this.accentNeutral,
     );
   }
 
@@ -131,6 +171,9 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       orpAccent: Color.lerp(orpAccent, other.orpAccent, t)!,
       trendUp: Color.lerp(trendUp, other.trendUp, t)!,
       trendDown: Color.lerp(trendDown, other.trendDown, t)!,
+      accentViolet: Color.lerp(accentViolet, other.accentViolet, t)!,
+      accentPink: Color.lerp(accentPink, other.accentPink, t)!,
+      accentNeutral: Color.lerp(accentNeutral, other.accentNeutral, t)!,
     );
   }
 }

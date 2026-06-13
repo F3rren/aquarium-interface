@@ -3,6 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// A centred empty-state illustration with title, message, and optional CTA.
@@ -195,7 +196,7 @@ class NoFishEmptyState extends StatelessWidget {
       message: l10n.noFishDescription,
       actionLabel: l10n.addFish,
       onAction: onAddFish,
-      iconColor: const Color(0xFF10b981),
+      iconColor: context.semantic.statusOptimal,
     );
   }
 }
@@ -215,7 +216,7 @@ class NoCoralsEmptyState extends StatelessWidget {
       message: l10n.noCoralDescription,
       actionLabel: l10n.addCoral,
       onAction: onAddCoral,
-      iconColor: const Color(0xFFf59e0b),
+      iconColor: context.semantic.statusWarning,
     );
   }
 }
@@ -231,7 +232,7 @@ class NoHistoryEmptyState extends StatelessWidget {
       icon: FontAwesomeIcons.chartLine,
       title: l10n.noHistory,
       message: l10n.noHistoryDescription,
-      iconColor: const Color(0xFF8b5cf6),
+      iconColor: context.semantic.accentViolet,
     );
   }
 }
@@ -251,7 +252,7 @@ class NoMaintenanceTasksEmptyState extends StatelessWidget {
       message: l10n.noTasksDescription,
       actionLabel: l10n.createTask,
       onAction: onAddTask,
-      iconColor: const Color(0xFFec4899),
+      iconColor: context.semantic.accentPink,
     );
   }
 }
@@ -267,7 +268,7 @@ class NoAlertsEmptyState extends StatelessWidget {
       icon: FontAwesomeIcons.bellSlash,
       title: l10n.allOk,
       message: l10n.allOkDescription,
-      iconColor: const Color(0xFF10b981),
+      iconColor: context.semantic.statusOptimal,
     );
   }
 }
@@ -285,7 +286,7 @@ class NoSearchResultsEmptyState extends StatelessWidget {
       icon: FontAwesomeIcons.magnifyingGlass,
       title: l10n.noResults,
       message: l10n.noResultsDescription(searchQuery),
-      iconColor: const Color(0xFF6b7280),
+      iconColor: context.semantic.accentNeutral,
     );
   }
 }
@@ -306,7 +307,7 @@ class ErrorEmptyState extends StatelessWidget {
       message: message ?? l10n.errorDescription,
       actionLabel: onRetry != null ? l10n.retry : null,
       onAction: onRetry,
-      iconColor: const Color(0xFFef4444),
+      iconColor: context.semantic.statusError,
     );
   }
 }
@@ -326,7 +327,7 @@ class OfflineEmptyState extends StatelessWidget {
       message: l10n.offlineDescription,
       actionLabel: onRetry != null ? l10n.retry : null,
       onAction: onRetry,
-      iconColor: const Color(0xFF6b7280),
+      iconColor: context.semantic.accentNeutral,
     );
   }
 }

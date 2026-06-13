@@ -10,6 +10,7 @@ import 'package:acquariumfe/features/inhabitants/domain/models/fish_species.dart
 import 'package:acquariumfe/features/inhabitants/data/fish_database_service.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/utils/task_localizer.dart';
 
 /// Modal dialog for adding a new fish or editing an existing one.
@@ -167,14 +168,14 @@ class _AddFishDialogState extends ConsumerState<AddFishDialog> {
     }
   }
 
-  Color _getDifficultyColor(String difficulty) {
+  Color _getDifficultyColor(String difficulty, AppSemanticColors c) {
     switch (difficulty.toLowerCase()) {
       case 'facile':
-        return const Color(0xFF34d399);
+        return c.statusOptimal;
       case 'medio':
-        return const Color(0xFFfbbf24);
+        return c.statusWarning;
       case 'difficile':
-        return const Color(0xFFef4444);
+        return c.statusError;
       default:
         return const Color.fromARGB(255, 0, 0, 0);
     }
@@ -435,6 +436,7 @@ class _AddFishDialogState extends ConsumerState<AddFishDialog> {
                                   decoration: BoxDecoration(
                                     color: _getDifficultyColor(
                                       species.difficulty,
+                                      context.semantic,
                                     ),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
