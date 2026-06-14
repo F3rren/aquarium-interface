@@ -1,0 +1,268 @@
+﻿/// pH sensor display card widget.
+library;
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/core/providers/service_providers.dart';
+import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
+import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
+import 'package:acquariumfe/features/parameters/data/target_parameters_service.dart';
+import 'package:acquariumfe/core/widgets/animated_number.dart';
+import 'package:acquariumfe/core/widgets/tap_effect_card.dart';
+import 'package:acquariumfe/features/parameters/presentation/widgets/target_progress_bar.dart';
+import 'package:acquariumfe/core/l10n/app_localizations.dart';
+
+/// Displays the current pH value with status colour coding and an optional
+/// [TargetProgressBar].
+///
+/// Colour logic (bands from [ParameterThresholdDefaults.ph]):
+/// - below the range → red (low)
+/// - within 7.8–8.5 → green (optimal)
+/// - above the range → red (high)
+///
+/// Tapping the card opens a dialog to update the target pH, which is
+/// persisted via [TargetParametersService.saveTarget] with key `'ph'` and
+/// triggers [onTargetChanged] so the parent can refresh.
+class PhMeter extends ConsumerWidget {
+  final double currentPh;
+  final double? targetPh;
+  final VoidCallback? onTargetChanged;
+
+  const PhMeter({
+    super.key,
+    this.currentPh = 8.2,
+    this.targetPh,
+    this.onTargetChanged,
+  });
+
+  Color _getPhColor(AppSemanticColors c) {
+    if (ParameterThresholdDefaults.ph.contains(currentPh)) {
+      return c.statusOptimal;
+    }
+    return c.statusError;
+  }
+
+  String _getStatus(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    const range = ParameterThresholdDefaults.ph;
+    if (currentPh < range.min) return l10n.low;
+    if (range.contains(currentPh)) return l10n.optimal;
+    return l10n.high;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final color = _getPhColor(context.semantic);
+    final status = _getStatus(context);
+
+    return TapEffectCard(
+      onTap: () => _showEditTargetDialog(context, ref),
+      rippleColor: color,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: FaIcon(
+                    FontAwesomeIcons.droplet,
+                    color: color,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text('pH',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          FaIcon(
+                            FontAwesomeIcons.pen,
+                            size: 14,
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(status,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: color.withValues(alpha: 0.4)),
+                  ),
+                  child: AnimatedNumberWithIndicator(
+                    value: currentPh,
+                    decimals: 2,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (targetPh != null) ...[
+              const SizedBox(height: 16),
+              TargetProgressBar(
+                currentValue: currentPh,
+                targetValue: targetPh!,
+                minValue: 7.5,
+                maxValue: 8.5,
+                unit: '',
+              ),
+            ] else ...[
+              const SizedBox(height: 12),
+            ],
+            //_buildProgressBar(color, theme),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditTargetDialog(BuildContext context, WidgetRef ref) async {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final accent = context.semantic.phAccent;
+    final controller = TextEditingController(
+      text:
+          targetPh?.toStringAsFixed(2) ??
+          TargetParametersService.defaultPh.toStringAsFixed(2),
+    );
+
+    final result = await showDialog<double>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: theme.colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            FaIcon(FontAwesomeIcons.droplet, color: accent),
+            const SizedBox(width: 12),
+            Text(l10n.targetPh,
+              style: TextStyle(color: theme.colorScheme.onSurface),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.setDesiredPh,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              autofocus: true,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+                fontSize: 18,
+              ),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: theme.colorScheme.surfaceContainerHighest,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                hintText: '8.2',
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(l10n.typicalRangePh,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel,
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final value = double.tryParse(controller.text);
+              if (value != null) {
+                Navigator.pop(context, value);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: accent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(l10n.save, style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null) {
+      final aquariumId = ref.read(currentAquariumProvider);
+      if (aquariumId == null) return;
+      await ref
+          .read(targetParametersServiceProvider)
+          .saveTarget(aquariumId, 'ph', result);
+      onTargetChanged?.call();
+    }
+  }
+}

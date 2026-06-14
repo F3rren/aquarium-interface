@@ -1,0 +1,1446 @@
+﻿/// Notification settings and alert-history page.
+library;
+
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/features/settings/domain/models/notification_settings.dart';
+import 'package:acquariumfe/features/settings/data/alert_manager.dart';
+import 'package:acquariumfe/features/settings/data/notification_preferences_service.dart';
+import 'package:acquariumfe/core/l10n/app_localizations.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
+
+/// Three-tab page for managing notifications.
+///
+/// **Tab 0 — Alerts:** toggle switches for alert notifications per parameter,
+/// plus per-parameter min/max threshold editors. Changes are persisted via
+/// [NotificationPreferencesService].
+///
+/// **Tab 1 — Reminders:** toggle switches and frequency sliders for the four
+/// built-in maintenance reminders (water change, filter cleaning, parameter
+/// testing, light maintenance).
+///
+/// **Tab 2 — History:** scrollable log of past alerts from
+/// [AlertManager.getAlertHistory], grouped by severity badge.
+///
+/// Settings are loaded from [NotificationPreferencesService] at startup and
+/// passed to [AlertManager.updateSettings] so that real-time alert evaluation
+/// reflects the current preferences.
+class NotificationsPage extends StatefulWidget {
+  const NotificationsPage({super.key});
+
+  @override
+  State<NotificationsPage> createState() => _NotificationsPageState();
+}
+
+class _NotificationsPageState extends State<NotificationsPage>
+    with TickerProviderStateMixin {
+  late TabController _tabController;
+  final AlertManager _alertManager = AlertManager();
+  final NotificationPreferencesService _prefsService =
+      NotificationPreferencesService();
+  NotificationSettings _settings = NotificationSettings();
+
+  late Animation<double> _fadeAnimation;
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
+
+    _animationController.forward();
+    _loadSettings();
+  }
+
+  /// Carica le impostazioni salvate all'avvio
+  Future<void> _loadSettings() async {
+    final settings = await _prefsService.loadSettings();
+    setState(() {
+      _settings = settings;
+    });
+    _alertManager.updateSettings(_settings);
+  }
+
+  /// Salva le impostazioni correnti
+  Future<void> _saveSettings() async {
+    await _prefsService.saveSettings(_settings);
+
+    if (mounted) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              const SizedBox(width: 12),
+              Text(l10n.settingsSaved),
+            ],
+          ),
+          backgroundColor: context.semantic.statusOptimal,
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text(
+          l10n.notifications,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: 0,
+        centerTitle: true,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: theme.colorScheme.primary,
+          labelColor: theme.colorScheme.primary,
+          unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+          tabs: [
+            Tab(text: l10n.settingsTab),
+            Tab(text: l10n.thresholdsTab),
+            Tab(text: l10n.historyTab),
+          ],
+        ),
+      ),
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            _buildSettingsTab(bottomPadding),
+            _buildThresholdsTab(bottomPadding),
+            _buildHistoryTab(bottomPadding),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // TAB 1: IMPOSTAZIONI GENERALI
+  Widget _buildSettingsTab(double bottomPadding) {
+    final theme = Theme.of(context);
+    final c = context.semantic;
+    final l10n = AppLocalizations.of(context)!;
+
+    return ListView(
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: 20 + bottomPadding,
+      ),
+      children: [
+        // Alert Parametri
+        _buildSwitchCard(
+          title: l10n.alertParameters,
+          subtitle: l10n.alertParametersSubtitle,
+          icon: FontAwesomeIcons.triangleExclamation,
+          color: c.statusError,
+          value: _settings.enabledAlerts,
+          onChanged: (value) {
+            setState(() {
+              _settings = _settings.copyWith(enabledAlerts: value);
+              _alertManager.updateSettings(_settings);
+            });
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Promemoria Manutenzione
+        _buildSwitchCard(
+          title: l10n.maintenanceReminders,
+          subtitle: l10n.maintenanceRemindersSubtitle,
+          icon: FontAwesomeIcons.wrench,
+          color: c.statusOptimal,
+          value: _settings.enabledMaintenance,
+          onChanged: (value) {
+            setState(() {
+              _settings = _settings.copyWith(enabledMaintenance: value);
+              _alertManager.updateSettings(_settings);
+            });
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Riepilogo Giornaliero
+        _buildSwitchCard(
+          title: l10n.dailySummary,
+          subtitle: l10n.dailySummarySubtitle,
+          icon: FontAwesomeIcons.calendarDay,
+          color: c.statusLow,
+          value: _settings.enabledDaily,
+          onChanged: (value) {
+            setState(() {
+              _settings = _settings.copyWith(enabledDaily: value);
+            });
+          },
+        ),
+
+        const SizedBox(height: 32),
+        _buildSectionTitle(l10n.maintenanceFrequency),
+        const SizedBox(height: 12),
+
+        // Cambio Acqua
+        _buildMaintenanceCard(
+          title: l10n.waterChange,
+          icon: FontAwesomeIcons.droplet,
+          color: c.statusLow,
+          schedule: _settings.maintenanceReminders.waterChange,
+          onToggle: (enabled) {
+            setState(() {
+              _settings = _settings.copyWith(
+                maintenanceReminders: _settings.maintenanceReminders.copyWith(
+                  waterChange: _settings.maintenanceReminders.waterChange
+                      .copyWith(enabled: enabled),
+                ),
+              );
+            });
+          },
+          onFrequencyChanged: (days) {
+            setState(() {
+              _settings = _settings.copyWith(
+                maintenanceReminders: _settings.maintenanceReminders.copyWith(
+                  waterChange: _settings.maintenanceReminders.waterChange
+                      .copyWith(frequencyDays: days),
+                ),
+              );
+            });
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Pulizia Filtro
+        _buildMaintenanceCard(
+          title: l10n.filterCleaning,
+          icon: FontAwesomeIcons.filter,
+          color: c.statusOptimal,
+          schedule: _settings.maintenanceReminders.filterCleaning,
+          onToggle: (enabled) {
+            setState(() {
+              _settings = _settings.copyWith(
+                maintenanceReminders: _settings.maintenanceReminders.copyWith(
+                  filterCleaning: _settings.maintenanceReminders.filterCleaning
+                      .copyWith(enabled: enabled),
+                ),
+              );
+            });
+          },
+          onFrequencyChanged: (days) {
+            setState(() {
+              _settings = _settings.copyWith(
+                maintenanceReminders: _settings.maintenanceReminders.copyWith(
+                  filterCleaning: _settings.maintenanceReminders.filterCleaning
+                      .copyWith(frequencyDays: days),
+                ),
+              );
+            });
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Test Parametri
+        _buildMaintenanceCard(
+          title: l10n.parameterTesting,
+          icon: FontAwesomeIcons.flask,
+          color: c.accentViolet,
+          schedule: _settings.maintenanceReminders.parameterTesting,
+          onToggle: (enabled) {
+            setState(() {
+              _settings = _settings.copyWith(
+                maintenanceReminders: _settings.maintenanceReminders.copyWith(
+                  parameterTesting: _settings
+                      .maintenanceReminders
+                      .parameterTesting
+                      .copyWith(enabled: enabled),
+                ),
+              );
+            });
+          },
+          onFrequencyChanged: (days) {
+            setState(() {
+              _settings = _settings.copyWith(
+                maintenanceReminders: _settings.maintenanceReminders.copyWith(
+                  parameterTesting: _settings
+                      .maintenanceReminders
+                      .parameterTesting
+                      .copyWith(frequencyDays: days),
+                ),
+              );
+            });
+          },
+        ),
+
+        const SizedBox(height: 32),
+        // Pulsante Salva
+        SizedBox(
+          height: 50,
+          child: ElevatedButton(
+            onPressed: () async {
+              await _alertManager.scheduleMaintenanceReminders();
+              await _saveSettings(); // Salva persistenza
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const FaIcon(FontAwesomeIcons.floppyDisk),
+                const SizedBox(width: 8),
+                Text(
+                  l10n.saveSettings,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // TAB 2: SOGLIE PARAMETRI
+  Widget _buildThresholdsTab(double bottomPadding) {
+    final c = context.semantic;
+    final l10n = AppLocalizations.of(context)!;
+
+    return ListView(
+      padding: EdgeInsets.only(
+        left: 20,
+        right: 20,
+        top: 20,
+        bottom: 20 + bottomPadding,
+      ),
+      children: [
+        _buildThresholdCard(
+          l10n.temperatureParam,
+          '°C',
+          _settings.temperature,
+          FontAwesomeIcons.temperatureHalf,
+          c.statusError,
+        ),
+        const SizedBox(height: 12),
+        _buildThresholdCard(
+          l10n.phParam,
+          '',
+          _settings.ph,
+          FontAwesomeIcons.flask,
+          c.statusLow,
+        ),
+        const SizedBox(height: 12),
+        _buildThresholdCard(
+          l10n.salinityParam,
+          '',
+          _settings.salinity,
+          FontAwesomeIcons.water,
+          c.salinityAccent,
+        ),
+        const SizedBox(height: 12),
+        _buildThresholdCard(
+          l10n.orpParam,
+          ' mV',
+          _settings.orp,
+          FontAwesomeIcons.bolt,
+          c.statusWarning,
+        ),
+        const SizedBox(height: 12),
+        _buildThresholdCard(
+          l10n.calciumParam,
+          ' mg/L',
+          _settings.calcium,
+          FontAwesomeIcons.cubesStacked,
+          c.accentViolet,
+        ),
+        const SizedBox(height: 12),
+        _buildThresholdCard(
+          l10n.magnesiumParam,
+          ' mg/L',
+          _settings.magnesium,
+          FontAwesomeIcons.atom,
+          c.accentPink,
+        ),
+        const SizedBox(height: 12),
+        _buildThresholdCard(
+          l10n.khParam,
+          ' dKH',
+          _settings.kh,
+          FontAwesomeIcons.chartLine,
+          c.statusOptimal,
+        ),
+        const SizedBox(height: 12),
+        _buildThresholdCard(
+          l10n.nitrateParam,
+          ' mg/L',
+          _settings.nitrate,
+          FontAwesomeIcons.seedling,
+          c.statusOptimal,
+        ),
+        const SizedBox(height: 12),
+        _buildThresholdCard(
+          l10n.phosphateParam,
+          ' mg/L',
+          _settings.phosphate,
+          FontAwesomeIcons.droplet,
+          c.accentViolet,
+        ),
+
+        const SizedBox(height: 32),
+        // Pulsante Ripristina Predefiniti
+        SizedBox(
+          height: 50,
+          child: OutlinedButton.icon(
+            onPressed: () => _showResetDialog(),
+            icon: const FaIcon(FontAwesomeIcons.arrowRotateRight),
+            label: Text(
+              l10n.restoreDefaults,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: c.statusWarning,
+              side: BorderSide(color: c.statusWarning, width: 2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // TAB 3: STORICO ALERT
+  Widget _buildHistoryTab(double bottomPadding) {
+    final history = _alertManager.getAlertHistory(limit: 50);
+    final l10n = AppLocalizations.of(context)!;
+
+    return history.isEmpty
+        ? _buildEmptyState()
+        : ListView(
+            padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 20,
+              bottom: 20 + bottomPadding,
+            ),
+            children: [
+              _buildHeader(
+                icon: FontAwesomeIcons.clockRotateLeft,
+                title: l10n.alertHistoryCount,
+                subtitle: l10n.alertHistorySubtitle('${history.length}'),
+              ),
+              const SizedBox(height: 20),
+              ...history.map((alert) => _buildAlertCard(alert)),
+            ],
+          );
+  }
+
+  Widget _buildEmptyState() {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: FaIcon(
+              FontAwesomeIcons.bellSlash,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              size: 64,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            l10n.noAlerts,
+            style: TextStyle(
+              color: theme.colorScheme.onSurface,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            l10n.alertsWillAppearHere,
+            style: TextStyle(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: theme.colorScheme.primary, size: 32),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    final theme = Theme.of(context);
+
+    return Text(
+      title,
+      style: TextStyle(
+        color: theme.colorScheme.onSurface,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _buildSwitchCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(value: value, onChanged: onChanged, activeThumbColor: color),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMaintenanceCard({
+    required String title,
+    required IconData icon,
+    required Color color,
+    required ReminderSchedule schedule,
+    required ValueChanged<bool> onToggle,
+    required ValueChanged<int> onFrequencyChanged,
+  }) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              Switch(
+                value: schedule.enabled,
+                onChanged: onToggle,
+                activeThumbColor: color,
+              ),
+            ],
+          ),
+          if (schedule.enabled) ...[
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Text(
+                  l10n.every,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Slider(
+                    value: schedule.frequencyDays.toDouble(),
+                    min: 1,
+                    max: 90,
+                    divisions: 89,
+                    activeColor: color,
+                    label: '${schedule.frequencyDays} ${l10n.daysLabel}',
+                    onChanged: (value) => onFrequencyChanged(value.toInt()),
+                  ),
+                ),
+                Text(
+                  l10n.frequencyDays('${schedule.frequencyDays}'),
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThresholdCard(
+    String name,
+    String unit,
+    ParameterThresholds thresholds,
+    IconData icon,
+    Color color,
+  ) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return GestureDetector(
+      onTap: () => _showEditThresholdDialog(name, unit, thresholds, color),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: color, size: 24),
+                const SizedBox(width: 12),
+                Text(
+                  name,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                FaIcon(
+                  FontAwesomeIcons.pen,
+                  color: theme.colorScheme.onSurfaceVariant,
+                  size: 18,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  l10n.minMaxRange(
+                    '${thresholds.min}',
+                    '${thresholds.max}',
+                    unit,
+                  ),
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.min,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 11,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.minValueUnit('${thresholds.min}', unit),
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        l10n.max,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 11,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.maxValueUnit('${thresholds.max}', unit),
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Switch(
+                  value: thresholds.enabled,
+                  onChanged: (value) {
+                    setState(() {
+                      _updateThresholdEnabled(name, value);
+                    });
+                  },
+                  activeThumbColor: color,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  thresholds.enabled
+                      ? l10n.notificationsActiveLabel
+                      : l10n.notificationsDisabled,
+                  style: TextStyle(
+                    color: thresholds.enabled
+                        ? color
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAlertCard(AlertLog alert) {
+    final theme = Theme.of(context);
+    final c = context.semantic;
+    final l10n = AppLocalizations.of(context)!;
+
+    Color severityColor;
+    IconData severityIcon;
+
+    switch (alert.severity) {
+      case AlertSeverity.critical:
+        severityColor = c.statusError;
+        severityIcon = FontAwesomeIcons.circleExclamation;
+        break;
+      case AlertSeverity.high:
+        severityColor = c.statusWarning;
+        severityIcon = FontAwesomeIcons.triangleExclamation;
+        break;
+      case AlertSeverity.medium:
+        severityColor = c.statusLow;
+        severityIcon = FontAwesomeIcons.circleInfo;
+        break;
+      case AlertSeverity.low:
+        severityColor = c.statusOptimal;
+        severityIcon = FontAwesomeIcons.circleCheck;
+        break;
+    }
+
+    // Determina se è un alert "TROPPO BASSO" o "TROPPO ALTO"
+    Widget? directionIndicator;
+    if (alert.message.contains('TROPPO BASSO')) {
+      directionIndicator = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: c.statusLow.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: c.statusLow, width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FaIcon(
+              FontAwesomeIcons.arrowDown,
+              color: c.statusLow,
+              size: 12,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              l10n.lowLabel,
+              style: TextStyle(
+                color: c.statusLow,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (alert.message.contains('TROPPO ALTO')) {
+      directionIndicator = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: c.statusError.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: c.statusError, width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FaIcon(
+              FontAwesomeIcons.arrowUp,
+              color: c.statusError,
+              size: 12,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              l10n.highLabel,
+              style: TextStyle(
+                color: c.statusError,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: severityColor.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: severityColor.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(severityIcon, color: severityColor, size: 20),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        alert.title,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    if (directionIndicator != null) ...[
+                      const SizedBox(width: 8),
+                      directionIndicator,
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  alert.message,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  _formatTimestamp(alert.timestamp),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatTimestamp(DateTime timestamp) {
+    final l10n = AppLocalizations.of(context)!;
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inMinutes < 1) return l10n.nowLabel;
+    if (difference.inMinutes < 60) return l10n.minutesAgo('${difference.inMinutes}');
+    if (difference.inHours < 24) return l10n.hoursAgo('${difference.inHours}');
+    if (difference.inDays < 7) return l10n.daysAgo('${difference.inDays}');
+
+    return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
+  }
+
+  // Dialog per modificare le soglie
+  void _showEditThresholdDialog(
+    String name,
+    String unit,
+    ParameterThresholds currentThresholds,
+    Color color,
+  ) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final minController = TextEditingController(
+      text: currentThresholds.min.toString(),
+    );
+    final maxController = TextEditingController(
+      text: currentThresholds.max.toString(),
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: theme.colorScheme.surface,
+        title: Row(
+          children: [
+            FaIcon(FontAwesomeIcons.sliders, color: color, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                l10n.editThresholds(name),
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface,
+                  fontSize: 17,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: minController,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              style: TextStyle(color: theme.colorScheme.onSurface),
+              decoration: InputDecoration(
+                labelText: l10n.minimumValue,
+                labelStyle: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                suffixText: unit,
+                suffixStyle: TextStyle(color: color),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: color),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: maxController,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              style: TextStyle(color: theme.colorScheme.onSurface),
+              decoration: InputDecoration(
+                labelText: l10n.maximumValue,
+                labelStyle: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                suffixText: unit,
+                suffixStyle: TextStyle(color: color),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: color),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: color.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  FaIcon(FontAwesomeIcons.circleInfo, color: color, size: 16),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      l10n.notificationWhenOutOfRange,
+                      style: TextStyle(color: color, fontSize: 11),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              l10n.cancel,
+              style: const TextStyle(color: Colors.white60),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final newMin = double.tryParse(minController.text);
+              final newMax = double.tryParse(maxController.text);
+
+              if (newMin == null || newMax == null) {
+                return;
+              }
+
+              if (newMin >= newMax) {
+                return;
+              }
+
+              setState(() {
+                _updateThresholds(name, newMin, newMax);
+              });
+
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: color,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Aggiorna le soglie nel modello settings
+  void _updateThresholds(String parameterName, double min, double max) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (parameterName == l10n.temperatureParam) {
+      _settings = _settings.copyWith(
+        temperature: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.temperature.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phParam) {
+      _settings = _settings.copyWith(
+        ph: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.ph.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.salinityParam) {
+      _settings = _settings.copyWith(
+        salinity: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.salinity.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.orpParam) {
+      _settings = _settings.copyWith(
+        orp: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.orp.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.calciumParam) {
+      _settings = _settings.copyWith(
+        calcium: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.calcium.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.magnesiumParam) {
+      _settings = _settings.copyWith(
+        magnesium: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.magnesium.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.khParam) {
+      _settings = _settings.copyWith(
+        kh: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.kh.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.nitrateParam) {
+      _settings = _settings.copyWith(
+        nitrate: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.nitrate.enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phosphateParam) {
+      _settings = _settings.copyWith(
+        phosphate: ParameterThresholds(
+          min: min,
+          max: max,
+          enabled: _settings.phosphate.enabled,
+        ),
+      );
+    }
+    _alertManager.updateSettings(_settings);
+  }
+
+  // Abilita/disabilita notifiche per un parametro
+  void _updateThresholdEnabled(String parameterName, bool enabled) {
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (parameterName == l10n.temperatureParam) {
+      _settings = _settings.copyWith(
+        temperature: ParameterThresholds(
+          min: _settings.temperature.min,
+          max: _settings.temperature.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phParam) {
+      _settings = _settings.copyWith(
+        ph: ParameterThresholds(
+          min: _settings.ph.min,
+          max: _settings.ph.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.salinityParam) {
+      _settings = _settings.copyWith(
+        salinity: ParameterThresholds(
+          min: _settings.salinity.min,
+          max: _settings.salinity.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.orpParam) {
+      _settings = _settings.copyWith(
+        orp: ParameterThresholds(
+          min: _settings.orp.min,
+          max: _settings.orp.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.calciumParam) {
+      _settings = _settings.copyWith(
+        calcium: ParameterThresholds(
+          min: _settings.calcium.min,
+          max: _settings.calcium.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.magnesiumParam) {
+      _settings = _settings.copyWith(
+        magnesium: ParameterThresholds(
+          min: _settings.magnesium.min,
+          max: _settings.magnesium.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.khParam) {
+      _settings = _settings.copyWith(
+        kh: ParameterThresholds(
+          min: _settings.kh.min,
+          max: _settings.kh.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.nitrateParam) {
+      _settings = _settings.copyWith(
+        nitrate: ParameterThresholds(
+          min: _settings.nitrate.min,
+          max: _settings.nitrate.max,
+          enabled: enabled,
+        ),
+      );
+    } else if (parameterName == l10n.phosphateParam) {
+      _settings = _settings.copyWith(
+        phosphate: ParameterThresholds(
+          min: _settings.phosphate.min,
+          max: _settings.phosphate.max,
+          enabled: enabled,
+        ),
+      );
+    }
+    _alertManager.updateSettings(_settings);
+  }
+
+  /// Mostra dialog di conferma per ripristino valori predefiniti
+  void _showResetDialog() {
+    final theme = Theme.of(context);
+    final c = context.semantic;
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: theme.colorScheme.surface,
+        title: Row(
+          children: [
+            FaIcon(
+              FontAwesomeIcons.triangleExclamation,
+              color: c.statusWarning,
+              size: 28,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              l10n.restoreDefaultsConfirm,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+                fontSize: 17,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.restoreDefaultsMessage,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.temperatureDefault,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              l10n.phDefault,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              l10n.salinityDefault,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              l10n.andOtherParameters,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.changesWillBeSavedImmediately,
+              style: TextStyle(
+                color: c.statusWarning,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              setState(() {
+                _settings = NotificationSettings(); // Reset a default
+              });
+              _alertManager.updateSettings(_settings);
+              await _prefsService.resetToDefaults();
+
+              if (!context.mounted) return;
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: c.statusWarning,
+              foregroundColor: Colors.black,
+            ),
+            child: Text(l10n.resetButton),
+          ),
+        ],
+      ),
+    );
+  }
+}

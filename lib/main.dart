@@ -1,40 +1,106 @@
-import 'package:acquariumfe/routes/app_routes.dart';
-import 'package:acquariumfe/views/home/acquariums_view.dart';
-import 'package:acquariumfe/views/shared/navbar/navbar.dart';
-import 'package:acquariumfe/services/notification_service.dart';
-import 'package:acquariumfe/services/alert_manager.dart';
-import 'package:acquariumfe/services/app_locale_service.dart';
-import 'package:acquariumfe/models/notification_settings.dart';
-import 'package:acquariumfe/providers/theme_provider.dart';
-import 'package:acquariumfe/providers/locale_provider.dart';
+﻿/// Entry point and root widget tree for the ReefLife application.
+///
+/// Initialises essential services (push notifications, alert manager) before
+/// handing control to Flutter's widget tree.  The Riverpod [ProviderScope] is
+/// placed at the very top so that every descendant widget can read and watch
+/// providers without additional setup.
+library;
+
+import 'dart:async';
+
+import 'package:acquariumfe/core/utils/app_logger.dart';
+import 'package:acquariumfe/core/routing/app_routes.dart';
+import 'package:acquariumfe/features/aquarium/presentation/views/acquariums_view.dart';
+import 'package:acquariumfe/core/widgets/navbar/navbar.dart';
+import 'package:acquariumfe/features/settings/data/notification_service.dart';
+import 'package:acquariumfe/features/settings/data/alert_manager.dart';
+import 'package:acquariumfe/features/settings/data/app_locale_service.dart';
+import 'package:acquariumfe/features/settings/domain/models/notification_settings.dart';
+import 'package:acquariumfe/features/settings/presentation/providers/theme_provider.dart';
+import 'package:acquariumfe/features/settings/presentation/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:acquariumfe/l10n/app_localizations.dart';
+import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+/// Shared initialisation logic called by every flavor entry point.
+///
+/// [flavor] is one of `'dev'`, `'staging'`, or `'prod'`. It controls the
+/// debug banner visibility and the app title suffix shown in non-production
+/// builds.
+Future<void> bootstrap(String flavor) async {
+  // Run the whole app inside a guarded zone so uncaught async errors are
+  // logged instead of vanishing (or, during startup, leaving a blank screen).
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-  // Inizializza il servizio notifiche
-  await NotificationService().initialize();
+      // Forward Flutter framework (build/layout/paint) errors to the logger.
+      FlutterError.onError = (details) {
+        AppLogger.e(
+          'Flutter framework error',
+          error: details.exception,
+          stackTrace: details.stack,
+        );
+        FlutterError.presentError(details);
+      };
 
-  // Inizializza l'alert manager con impostazioni di default
-  AlertManager().initialize(
-    NotificationSettings(
-      enabledAlerts: true,
-      enabledMaintenance: true,
-      enabledDaily: false,
-    ),
-  );
+      // Best-effort startup init: a failure here (e.g. a denied notification
+      // permission) must not stop the app from rendering.
+      try {
+        await NotificationService().initialize();
+        AlertManager().initialize(
+          NotificationSettings(
+            enabledAlerts: true,
+            enabledMaintenance: true,
+            enabledDaily: false,
+          ),
+        );
+      } catch (e, st) {
+        AppLogger.e(
+          'Service initialisation failed; continuing',
+          error: e,
+          stackTrace: st,
+        );
+      }
 
-  runApp(
-    // ProviderScope è il root di Riverpod
-    const ProviderScope(child: MyApp()),
+      runApp(ProviderScope(child: MyApp(flavor: flavor)));
+    },
+    (error, stack) {
+      AppLogger.e('Uncaught zone error', error: error, stackTrace: stack);
+    },
   );
 }
 
+/// Default entry point — uses the dev flavor.
+///
+/// Use flavor-specific entry points for targeted builds:
+/// - `lib/main_dev.dart`     → `flutter run --flavor dev`
+/// - `lib/main_staging.dart` → `flutter run --flavor staging`
+/// - `lib/main_prod.dart`    → `flutter build appbundle --flavor prod`
+void main() => bootstrap('dev');
+
+/// Root widget of the ReefLife application.
+///
+/// This [ConsumerWidget] observes two top-level Riverpod providers:
+/// - [appThemeModeProvider] — switches between light and dark [ThemeMode].
+/// - [localeProvider] — drives the active [Locale] for the whole app.
+///
+/// It configures [MaterialApp] with:
+/// - Dynamically themed [ThemeData] supplied by [lightThemeProvider] and
+///   [darkThemeProvider].
+/// - Full i18n support for Italian, English, Spanish, German, and French via
+///   the generated [AppLocalizations] delegate.
+/// - Named-route navigation handled by [AppRouter.generateRoute].
+///
+/// Whenever the locale changes, [AppLocaleService] is updated so that
+/// non-widget code (e.g. notification text builders) can access the current
+/// locale without a [BuildContext].
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.flavor});
+
+  /// Current build flavor: `'dev'`, `'staging'`, or `'prod'`.
+  final String flavor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,8 +113,8 @@ class MyApp extends ConsumerWidget {
     }
 
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'ReefLife',
+      debugShowCheckedModeBanner: flavor != 'prod',
+      title: flavor == 'prod' ? 'ReefLife' : 'ReefLife (${flavor.toUpperCase()})',
       theme: ref.watch(lightThemeProvider),
       darkTheme: ref.watch(darkThemeProvider),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
@@ -75,7 +141,19 @@ class MyApp extends ConsumerWidget {
   }
 }
 
+/// The first screen shown after the app launches.
+///
+/// Wraps its content in a [Container] with an adaptive linear gradient so that
+/// the background transitions smoothly between the dark navy palette (dark
+/// mode) and the sky-blue/white palette (light mode).  The [Scaffold] sits on
+/// top of this gradient with a transparent background so the gradient shows
+/// through.
+///
+/// Structure:
+/// - AppBar — [Navbar] (contains branding, search, and settings actions).
+/// - Body — [AquariumView] (the main list/grid of the user's aquariums).
 class HomePage extends StatelessWidget {
+  /// Creates the home page.
   const HomePage({super.key});
 
   @override

@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+# Cancel superseded runs on the same ref to save CI minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          # Pin to the project's toolchain (pubspec.lock records
+          # flutter >=3.38.4 / dart >=3.10.3) for reproducible CI. Do NOT use
+          # an unpinned `channel: stable`: Flutter 3.44+ made `IconData` a
+          # final class, which breaks font_awesome_flutter 10.12.0 (it extends
+          # IconData) at test-compile time. Bump font_awesome before raising
+          # this pin past 3.43.
+          flutter-version: 3.38.4
+          channel: stable
+          cache: true
+
+      - name: Print toolchain versions
+        run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Static analysis
+        # Fail on ANY analyzer finding — errors, warnings, and infos. The
+        # info-level backlog (deprecated_member_use: withOpacity / Radio /
+        # FormField / Ref, and use_build_context_synchronously) has been burned
+        # down to zero, so `flutter analyze` (infos fatal by default) now blocks
+        # any regression.
+        run: flutter analyze
+
+      - name: Unit & widget tests
+        run: flutter test --reporter expanded

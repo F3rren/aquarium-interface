@@ -1,0 +1,372 @@
+﻿/// Aquarium details screen that hosts the main per-aquarium navigation.
+///
+/// This file defines [AquariumDetails], a [StatefulWidget] that acts as the
+/// shell for all aquarium-specific sub-sections: Dashboard, Parameters, Charts,
+/// Maintenance, and Profile. It renders a custom bottom navigation bar and
+/// applies a fade-in animation when the screen first loads.
+library;
+
+import 'package:acquariumfe/features/aquarium/presentation/views/health_dashboard.dart';
+import 'package:acquariumfe/features/parameters/presentation/views/parameters_view.dart';
+import 'package:acquariumfe/features/charts/presentation/views/charts_view.dart';
+import 'package:acquariumfe/features/settings/presentation/views/notifications_page.dart';
+import 'package:acquariumfe/features/settings/presentation/views/profile_page.dart';
+import 'package:acquariumfe/features/maintenance/presentation/views/maintenance_view.dart';
+import 'package:acquariumfe/core/routing/custom_page_route.dart';
+import 'package:acquariumfe/core/widgets/skeleton_loader.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/core/l10n/app_localizations.dart';
+
+/// Screen that provides the per-aquarium navigation shell.
+///
+/// Hosts five tabs: Dashboard ([HealthDashboard]), Parameters
+/// ([ParametersView]), Charts ([ChartsView]), Maintenance ([MaintenanceView])
+/// and Profile ([ProfilePage]). While the initial data loads a skeleton
+/// placeholder is shown; afterwards the active tab is revealed with a fade
+/// animation. A header bar provides back-navigation and quick access to
+/// [NotificationsPage].
+class AquariumDetails extends StatefulWidget {
+  /// The unique identifier of the aquarium to display.
+  ///
+  /// Passed down to [MaintenanceView] and [ProfilePage] so each sub-view
+  /// scopes its data to the correct aquarium.
+  final int? aquariumId;
+
+  /// Creates an [AquariumDetails] screen for the given [aquariumId].
+  const AquariumDetails({super.key, this.aquariumId});
+
+  @override
+  State<StatefulWidget> createState() => _AquariumDetailsState();
+}
+
+class _AquariumDetailsState extends State<AquariumDetails>
+    with SingleTickerProviderStateMixin {
+  /// Index of the currently selected bottom navigation tab (0–4).
+  int _selectedBottomIndex = 0;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late final PageController _pageController;
+
+  /// Whether the initial loading delay is still in progress.
+  bool _isLoading = true;
+
+  /// Pages corresponding to each of the five navigation tabs.
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pages = [
+      const HealthDashboard(),
+      const ParametersView(),
+      const ChartsView(),
+      MaintenanceView(aquariumId: widget.aquariumId),
+      ProfilePage(aquariumId: widget.aquariumId),
+    ];
+
+    _pageController = PageController();
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (mounted) {
+      setState(() => _isLoading = false);
+      _animationController.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onTabTapped(int index) {
+    if (index == _selectedBottomIndex) return;
+
+    setState(() => _selectedBottomIndex = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+  /// Builds the complete screen with header, page body, and bottom nav bar.
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: SafeArea(
+        bottom: false, // Gestiamo manualmente il padding bottom
+        child: Column(
+          children: [
+            // Header senza Hero
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isDark
+                      ? [
+                          theme.colorScheme.surfaceContainerHighest,
+                          theme.colorScheme.surface,
+                          theme.colorScheme.surface.withValues(alpha: 0.8),
+                        ]
+                      : [
+                          const Color(0xFFffffff),
+                          const Color(0xFFf8fafc),
+                          const Color(0xFFe0f2fe),
+                        ],
+                  stops: const [0.0, 0.5, 1.0],
+                ),
+                border: Border(
+                  bottom: BorderSide(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: FaIcon(
+                      FontAwesomeIcons.arrowLeft,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(AppLocalizations.of(context)!.myAquarium,
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: FaIcon(
+                      FontAwesomeIcons.bell,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        CustomPageRoute(
+                          page: const NotificationsPage(),
+                          transitionType: PageTransitionType.slideFromRight,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: _isLoading
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            const SkeletonLoader(
+                              width: double.infinity,
+                              height: 100,
+                            ),
+                            const SizedBox(height: 16),
+                            const SkeletonLoader(
+                              width: double.infinity,
+                              height: 100,
+                            ),
+                            const SizedBox(height: 16),
+                            const SkeletonLoader(
+                              width: double.infinity,
+                              height: 100,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: (index) {
+                          if (index != _selectedBottomIndex) {
+                            setState(() => _selectedBottomIndex = index);
+                          }
+                        },
+                        children: [
+                          for (final page in _pages)
+                            _KeepAlivePage(child: page),
+                        ],
+                      ),
+                    ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 8,
+            right: 8,
+            top: 10,
+            bottom: bottomPadding > 0 ? bottomPadding : 10,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(
+                FontAwesomeIcons.chartPie,
+                AppLocalizations.of(context)!.dashboard,
+                0,
+              ),
+              _buildNavItem(
+                FontAwesomeIcons.flask,
+                AppLocalizations.of(context)!.parameters,
+                1,
+              ),
+              _buildNavItem(
+                FontAwesomeIcons.chartLine,
+                AppLocalizations.of(context)!.charts,
+                2,
+              ),
+              _buildNavItem(
+                FontAwesomeIcons.wrench,
+                AppLocalizations.of(context)!.maintenance,
+                3,
+              ),
+              _buildNavItem(
+                FontAwesomeIcons.user,
+                AppLocalizations.of(context)!.profile,
+                4,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Builds a single animated navigation item for the bottom bar.
+  ///
+  /// [icon] is the FontAwesome icon to display.
+  /// [label] is the localized text shown below the icon.
+  /// [index] is the tab index this item represents.
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    final isSelected = _selectedBottomIndex == index;
+    final theme = Theme.of(context);
+
+    return GestureDetector(
+      onTap: () => _onTabTapped(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? theme.colorScheme.primary.withValues(alpha: 0.2)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedScale(
+              duration: const Duration(milliseconds: 200),
+              scale: isSelected ? 1.1 : 1.0,
+              child: Icon(
+                icon,
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurfaceVariant,
+                size: 22,
+              ),
+            ),
+            const SizedBox(height: 3),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: TextStyle(
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurfaceVariant,
+                fontSize: 9,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
+              child: Text(label),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Wraps a [PageView] tab so it is kept alive when off-screen, preserving its
+/// state (scroll position, timers, loaded data) the way the previous
+/// [IndexedStack] did — without it, swiping away and back would rebuild the
+/// page from scratch.
+class _KeepAlivePage extends StatefulWidget {
+  const _KeepAlivePage({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_KeepAlivePage> createState() => _KeepAlivePageState();
+}
+
+class _KeepAlivePageState extends State<_KeepAlivePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
+  }
+}
