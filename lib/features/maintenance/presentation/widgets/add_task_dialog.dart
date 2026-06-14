@@ -4,6 +4,7 @@ library;
 import 'package:acquariumfe/features/maintenance/domain/models/maintenance_task.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// A modal dialog that lets the user define a new custom [MaintenanceTask].
@@ -88,8 +89,11 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF8b5cf6), Color(0xFFec4899)],
+                          gradient: LinearGradient(
+                            colors: [
+                              context.semantic.accentViolet,
+                              context.semantic.accentPink,
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -228,15 +232,15 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(
-                                0xFF8b5cf6,
-                              ).withValues(alpha: 0.1),
+                              color: context.semantic.accentViolet.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text('$_frequencyDays ${_frequencyDays == 1 ? l10n.day : l10n.days}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF8b5cf6),
+                                color: context.semantic.accentViolet,
                               ),
                             ),
                           ),
@@ -322,7 +326,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                         child: ElevatedButton(
                           onPressed: _saveTask,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF8b5cf6),
+                            backgroundColor: context.semantic.accentViolet,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
@@ -363,11 +367,11 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
       onSelected: (selected) {
         setState(() => _frequencyDays = days);
       },
-      selectedColor: const Color(0xFF8b5cf6).withValues(alpha: 0.2),
-      checkmarkColor: const Color(0xFF8b5cf6),
+      selectedColor: context.semantic.accentViolet.withValues(alpha: 0.2),
+      checkmarkColor: context.semantic.accentViolet,
       labelStyle: TextStyle(
         fontSize: 12,
-        color: isSelected ? const Color(0xFF8b5cf6) : null,
+        color: isSelected ? context.semantic.accentViolet : null,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
     );

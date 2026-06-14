@@ -13,6 +13,7 @@ import 'package:acquariumfe/core/routing/custom_page_route.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 import 'package:acquariumfe/core/utils/task_localizer.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 
 /// Settings and tools hub displayed in the Profile tab.
 ///
@@ -53,7 +54,7 @@ class ProfilePage extends ConsumerWidget {
             title: l10n.calculators,
             subtitle: l10n.calculatorsSubtitle,
             icon: FontAwesomeIcons.calculator,
-            color: const Color(0xFF60a5fa),
+            color: context.semantic.statusLow,
             onTap: () {
               Navigator.push(
                 context,
@@ -72,7 +73,7 @@ class ProfilePage extends ConsumerWidget {
             title: l10n.myInhabitants,
             subtitle: l10n.myInhabitantsSubtitle,
             icon: FontAwesomeIcons.fish,
-            color: const Color(0xFFf472b6),
+            color: context.semantic.accentPink,
             onTap: () {
               Navigator.push(
                 context,
@@ -95,7 +96,7 @@ class ProfilePage extends ConsumerWidget {
             title: l10n.aquariumInfo,
             subtitle: l10n.aquariumInfoSubtitle,
             icon: FontAwesomeIcons.circleInfo,
-            color: const Color(0xFF34d399),
+            color: context.semantic.statusOptimal,
             onTap: () {
               _showAquariumInfoDialog(context, ref);
             },
@@ -118,7 +119,7 @@ class ProfilePage extends ConsumerWidget {
             title: l10n.appInfo,
             subtitle: l10n.appInfoSubtitle,
             icon: FontAwesomeIcons.gear,
-            color: const Color(0xFFa855f7),
+            color: context.semantic.accentViolet,
             onTap: () {
               _showAboutDialog(context);
             },
@@ -147,12 +148,12 @@ class ProfilePage extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFfbbf24).withValues(alpha: 0.2),
+              color: context.semantic.statusWarning.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               isDarkMode ? FontAwesomeIcons.moon : FontAwesomeIcons.sun,
-              color: const Color(0xFFfbbf24),
+              color: context.semantic.statusWarning,
               size: 24,
             ),
           ),
@@ -516,14 +517,14 @@ class ProfilePage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF34d399).withValues(alpha: 0.2),
+                    color: context.semantic.statusOptimal.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: FaIcon(
                     aquarium.type == 'saltwater'
                         ? FontAwesomeIcons.droplet
                         : FontAwesomeIcons.water,
-                    color: const Color(0xFF34d399),
+                    color: context.semantic.statusOptimal,
                     size: 24,
                   ),
                 ),

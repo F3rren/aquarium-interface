@@ -11,6 +11,7 @@ import 'package:acquariumfe/features/inhabitants/data/coral_database_service.dar
 import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 
 /// Modal dialog for adding a new coral or editing an existing one.
 ///
@@ -252,6 +253,7 @@ class _AddCoralDialogState extends ConsumerState<AddCoralDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final c = context.semantic;
     final l10n = AppLocalizations.of(context)!;
     final heroTag = widget.coral != null
         ? 'coral_${widget.coral!.id}'
@@ -277,12 +279,12 @@ class _AddCoralDialogState extends ConsumerState<AddCoralDialog> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF34d399).withValues(alpha: 0.2),
+                          color: c.statusOptimal.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const FaIcon(
+                        child: FaIcon(
                           FontAwesomeIcons.seedling,
-                          color: Color(0xFF34d399),
+                          color: c.statusOptimal,
                           size: 28,
                         ),
                       ),
@@ -403,7 +405,7 @@ class _AddCoralDialogState extends ConsumerState<AddCoralDialog> {
                   ElevatedButton(
                     onPressed: _save,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF34d399),
+                      backgroundColor: c.statusOptimal,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
@@ -457,7 +459,7 @@ class _AddCoralDialogState extends ConsumerState<AddCoralDialog> {
             hintStyle: TextStyle(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
-            prefixIcon: Icon(icon, color: const Color(0xFF34d399)),
+            prefixIcon: Icon(icon, color: context.semantic.statusOptimal),
             filled: true,
             fillColor: theme.colorScheme.surfaceContainerHighest,
             border: OutlineInputBorder(
@@ -472,7 +474,7 @@ class _AddCoralDialogState extends ConsumerState<AddCoralDialog> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF34d399)),
+              borderSide: BorderSide(color: context.semantic.statusOptimal),
             ),
           ),
         ),
@@ -508,7 +510,7 @@ class _AddCoralDialogState extends ConsumerState<AddCoralDialog> {
             initialValue: value,
             dropdownColor: const Color(0xFF3a3a3a),
             decoration: InputDecoration(
-              prefixIcon: Icon(icon, color: const Color(0xFF34d399)),
+              prefixIcon: Icon(icon, color: context.semantic.statusOptimal),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -528,13 +530,14 @@ class _AddCoralDialogState extends ConsumerState<AddCoralDialog> {
 
   Widget _buildCoralDatabaseDropdown(ThemeData theme) {
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFF34d399).withValues(alpha: 0.3),
+          color: c.statusOptimal.withValues(alpha: 0.3),
         ),
       ),
       child: DropdownButtonHideUnderline(
@@ -544,7 +547,7 @@ class _AddCoralDialogState extends ConsumerState<AddCoralDialog> {
             children: [
               FaIcon(
                 FontAwesomeIcons.magnifyingGlass,
-                color: const Color(0xFF34d399),
+                color: c.statusOptimal,
                 size: 20,
               ),
               const SizedBox(width: 12),
@@ -557,18 +560,18 @@ class _AddCoralDialogState extends ConsumerState<AddCoralDialog> {
           dropdownColor: theme.colorScheme.surface,
           icon: FaIcon(
             FontAwesomeIcons.caretDown,
-            color: const Color(0xFF34d399),
+            color: c.statusOptimal,
           ),
           items: _coralDatabase.map((coral) {
             // Funzione helper per ottenere il colore della difficoltà
             Color getDifficultyColor(String difficulty) {
               switch (difficulty.toLowerCase()) {
                 case 'facile':
-                  return const Color(0xFF34d399);
+                  return c.statusOptimal;
                 case 'medio':
-                  return const Color(0xFFfbbf24);
+                  return c.statusWarning;
                 case 'difficile':
-                  return const Color(0xFFef4444);
+                  return c.statusError;
                 default:
                   return const Color.fromARGB(255, 0, 0, 0);
               }

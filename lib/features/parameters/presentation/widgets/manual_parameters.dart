@@ -8,6 +8,7 @@ import 'package:acquariumfe/features/parameters/data/manual_parameters_service.d
 import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
 import 'package:acquariumfe/features/parameters/presentation/providers/parameters_provider.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// Displays and allows editing of the five manually-measured reef parameters:
@@ -82,6 +83,7 @@ class _ManualParametersWidgetState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -99,12 +101,12 @@ class _ManualParametersWidgetState
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
+                  color: c.statusLow.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const FaIcon(
+                child: FaIcon(
                   FontAwesomeIcons.flask,
-                  color: Color(0xFF60a5fa),
+                  color: c.statusLow,
                   size: 24,
                 ),
               ),
@@ -189,8 +191,9 @@ class _ManualParametersWidgetState
     Function(double) onChanged,
   ) {
     final theme = Theme.of(context);
+    final c = context.semantic;
     final isInRange = value >= min && value <= max;
-    final color = isInRange ? const Color(0xFF34d399) : const Color(0xFFef4444);
+    final color = isInRange ? c.statusOptimal : c.statusError;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -274,6 +277,7 @@ class _ManualParametersWidgetState
   ) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     final controller = TextEditingController(text: currentValue.toString());
     showDialog(
       context: context,
@@ -295,8 +299,8 @@ class _ManualParametersWidgetState
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
               ),
             ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xFF60a5fa)),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: c.statusLow),
             ),
           ),
         ),
@@ -316,7 +320,7 @@ class _ManualParametersWidgetState
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF60a5fa),
+              backgroundColor: c.statusLow,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
