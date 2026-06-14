@@ -474,6 +474,7 @@ class _AddFishDialogState extends ConsumerState<AddFishDialog> {
                 label: l10n.fishNameLabel,
                 hint: l10n.fishNameHint,
                 icon: FontAwesomeIcons.tag,
+                autofocus: true,
               ),
               const SizedBox(height: 16),
 
@@ -567,6 +568,7 @@ class _AddFishDialogState extends ConsumerState<AddFishDialog> {
     required IconData icon,
     TextInputType? keyboardType,
     int maxLines = 1,
+    bool autofocus = false,
   }) {
     final theme = Theme.of(context);
 
@@ -585,6 +587,13 @@ class _AddFishDialogState extends ConsumerState<AddFishDialog> {
           controller: controller,
           keyboardType: keyboardType,
           maxLines: maxLines,
+          autofocus: autofocus,
+          textInputAction: maxLines > 1
+              ? TextInputAction.newline
+              : TextInputAction.next,
+          onSubmitted: maxLines > 1
+              ? null
+              : (_) => FocusScope.of(context).nextFocus(),
           style: TextStyle(color: theme.colorScheme.onSurface),
           decoration: InputDecoration(
             hintText: hint,

@@ -414,6 +414,7 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
       padding: const EdgeInsets.all(20),
       child: Form(
         key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -469,6 +470,9 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
             TextFormField(
               controller: _nameController,
               style: TextStyle(color: theme.colorScheme.onSurface),
+              autofocus: true,
+              textInputAction: TextInputAction.next,
+              textCapitalization: TextCapitalization.words,
               decoration: _buildInputDecoration(
                 l10n.aquariumNameHint,
                 FontAwesomeIcons.textHeight,
@@ -512,7 +516,11 @@ class _EditAquariumState extends ConsumerState<EditAquarium>
             TextFormField(
               controller: _volumeController,
               style: TextStyle(color: theme.colorScheme.onSurface),
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) => _saveChanges(),
               decoration: _buildInputDecoration(
                 l10n.volumeHint,
                 FontAwesomeIcons.ruler,

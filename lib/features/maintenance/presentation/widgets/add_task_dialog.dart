@@ -79,6 +79,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
             padding: const EdgeInsets.all(24),
             child: Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,6 +132,8 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                   // Titolo
                   TextFormField(
                     controller: _titleController,
+                    autofocus: true,
+                    textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: l10n.taskTitle,
                       hintText: l10n.taskTitleHint,

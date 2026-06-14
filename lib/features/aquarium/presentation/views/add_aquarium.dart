@@ -214,6 +214,7 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
             padding: const EdgeInsets.all(20),
             child: Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -273,6 +274,9 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                   TextFormField(
                     controller: _nameController,
                     style: TextStyle(color: theme.colorScheme.onSurface),
+                    autofocus: true,
+                    textInputAction: TextInputAction.next,
+                    textCapitalization: TextCapitalization.words,
                     decoration: _buildInputDecoration(
                       l10n.aquariumNameHint,
                       FontAwesomeIcons.textHeight,
@@ -329,7 +333,13 @@ class _AddAquariumState extends ConsumerState<AddAquarium>
                   TextFormField(
                     controller: _volumeController,
                     style: TextStyle(color: theme.colorScheme.onSurface),
-                    keyboardType: TextInputType.number,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) {
+                      if (!_isLoading) _saveAquarium();
+                    },
                     decoration: _buildInputDecoration(
                       l10n.volumeHint,
                       FontAwesomeIcons.ruler,
