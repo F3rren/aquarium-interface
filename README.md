@@ -28,7 +28,9 @@ A cross-platform Flutter app for smart aquarium management. Track water paramete
 - **Notifications** — Local alerts when critical parameter thresholds are exceeded. User-configurable alert ranges per aquarium.
 - **Multilingual** — Fully localized UI in 5 languages: Italian, English, German, Spanish, French. Default tasks are translated automatically based on device locale.
 - **Theme** — Light and dark mode, user-selectable and persisted across sessions.
-
+- **Design system** — All colours come from a single source of truth (`AppSemanticColors`, a Material `ThemeExtension`): a status palette (optimal / attention / out-of-range / low) plus per-parameter accents, calibrated separately for light and dark.
+- **Health dashboard** — Tank health at a glance with an explicit "to fix" list: every out-of-range parameter is shown with its direction (too high / too low), current value, and healthy range.
+- **Comfortable data entry** — Creation forms with live validation, autofocus and a Next → Done keyboard flow; swipeable, animated navigation between the aquarium detail tabs.
 ---
 
 ## Current Status
@@ -54,7 +56,7 @@ A cross-platform Flutter app for smart aquarium management. Track water paramete
 - [x] Default maintenance tasks differentiated by tank type
 - [x] Light/dark theme
 - [x] Multi-flavor builds (dev / staging / prod)
-
+- [x] Design system: semantic colour tokens calibrated for light/dark, deficiency-focused dashboard, comfortable forms, swipe-based tab navigation
 ---
 
 ## Architecture
