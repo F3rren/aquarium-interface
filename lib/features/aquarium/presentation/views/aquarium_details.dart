@@ -46,6 +46,7 @@ class _AquariumDetailsState extends State<AquariumDetails>
   int _selectedBottomIndex = 0;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  late final PageController _pageController;
 
   /// Whether the initial loading delay is still in progress.
   bool _isLoading = true;
@@ -64,6 +65,8 @@ class _AquariumDetailsState extends State<AquariumDetails>
       MaintenanceView(aquariumId: widget.aquariumId),
       ProfilePage(aquariumId: widget.aquariumId),
     ];
+
+    _pageController = PageController();
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -87,18 +90,19 @@ class _AquariumDetailsState extends State<AquariumDetails>
   @override
   void dispose() {
     _animationController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
   void _onTabTapped(int index) {
     if (index == _selectedBottomIndex) return;
 
-    _animationController.reverse().then((_) {
-      setState(() {
-        _selectedBottomIndex = index;
-      });
-      _animationController.forward();
-    });
+    setState(() => _selectedBottomIndex = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOutCubic,
+    );
   }
 
   /// Builds the complete screen with header, page body, and bottom nav bar.
@@ -218,9 +222,17 @@ class _AquariumDetailsState extends State<AquariumDetails>
                     )
                   : FadeTransition(
                       opacity: _fadeAnimation,
-                      child: IndexedStack(
-                        index: _selectedBottomIndex,
-                        children: _pages,
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: (index) {
+                          if (index != _selectedBottomIndex) {
+                            setState(() => _selectedBottomIndex = index);
+                          }
+                        },
+                        children: [
+                          for (final page in _pages)
+                            _KeepAlivePage(child: page),
+                        ],
                       ),
                     ),
             ),
@@ -331,5 +343,30 @@ class _AquariumDetailsState extends State<AquariumDetails>
         ),
       ),
     );
+  }
+}
+
+/// Wraps a [PageView] tab so it is kept alive when off-screen, preserving its
+/// state (scroll position, timers, loaded data) the way the previous
+/// [IndexedStack] did — without it, swiping away and back would rebuild the
+/// page from scratch.
+class _KeepAlivePage extends StatefulWidget {
+  const _KeepAlivePage({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_KeepAlivePage> createState() => _KeepAlivePageState();
+}
+
+class _KeepAlivePageState extends State<_KeepAlivePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
   }
 }
