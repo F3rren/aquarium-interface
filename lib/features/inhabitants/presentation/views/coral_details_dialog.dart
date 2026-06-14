@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/coral.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 
 /// A read-only details dialog for a [Coral] inhabitant.
 ///
@@ -20,6 +21,7 @@ class CoralDetailsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final c = context.semantic;
     final l10n = AppLocalizations.of(context)!;
 
     Color typeColor;
@@ -112,10 +114,10 @@ class CoralDetailsDialog extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF34d399).withValues(alpha: 0.1),
+                        color: c.statusOptimal.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFF34d399).withValues(alpha: 0.3),
+                          color: c.statusOptimal.withValues(alpha: 0.3),
                           width: 1.5,
                         ),
                       ),
@@ -124,14 +126,12 @@ class CoralDetailsDialog extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: const Color(
-                                0xFF34d399,
-                              ).withValues(alpha: 0.2),
+                              color: c.statusOptimal.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const FaIcon(
+                            child: FaIcon(
                               FontAwesomeIcons.dna,
-                              color: Color(0xFF34d399),
+                              color: c.statusOptimal,
                               size: 18,
                             ),
                           ),
@@ -149,8 +149,8 @@ class CoralDetailsDialog extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(coral.species,
-                                  style: const TextStyle(
-                                    color: Color(0xFF34d399),
+                                  style: TextStyle(
+                                    color: c.statusOptimal,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     fontStyle: FontStyle.italic,
@@ -180,14 +180,12 @@ class CoralDetailsDialog extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(
-                                  0xFF60a5fa,
-                                ).withValues(alpha: 0.2),
+                                color: c.statusLow.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const FaIcon(
+                              child: FaIcon(
                                 FontAwesomeIcons.circleInfo,
-                                color: Color(0xFF60a5fa),
+                                color: c.statusLow,
                                 size: 16,
                               ),
                             ),
@@ -276,7 +274,7 @@ class CoralDetailsDialog extends StatelessWidget {
                                 icon: FontAwesomeIcons.graduationCap,
                                 label: 'Difficoltà',
                                 value: _translateDifficulty(coral.difficulty!),
-                                color: _getDifficultyColor(coral.difficulty!),
+                                color: _getDifficultyColor(coral.difficulty!, c),
                               ),
                             if (coral.difficulty != null &&
                                 coral.lightRequirement != null)
@@ -289,7 +287,7 @@ class CoralDetailsDialog extends StatelessWidget {
                                 value: _translateRequirement(
                                   coral.lightRequirement!,
                                 ),
-                                color: const Color(0xFFfbbf24),
+                                color: c.statusWarning,
                               ),
                             if (coral.lightRequirement != null &&
                                 coral.flowRequirement != null)
@@ -302,7 +300,7 @@ class CoralDetailsDialog extends StatelessWidget {
                                 value: _translateRequirement(
                                   coral.flowRequirement!,
                                 ),
-                                color: const Color(0xFF60a5fa),
+                                color: c.statusLow,
                               ),
                             if (coral.flowRequirement != null &&
                                 coral.feeding != null)
@@ -313,7 +311,7 @@ class CoralDetailsDialog extends StatelessWidget {
                                 icon: FontAwesomeIcons.utensils,
                                 label: 'Alimentazione',
                                 value: coral.feeding!,
-                                color: const Color(0xFFec4899),
+                                color: c.accentPink,
                               ),
                             if (coral.feeding != null && coral.maxSize != null)
                               const SizedBox(height: 8),
@@ -323,7 +321,7 @@ class CoralDetailsDialog extends StatelessWidget {
                                 icon: FontAwesomeIcons.arrowsUpDownLeftRight,
                                 label: 'Dimensione massima',
                                 value: '${coral.maxSize} cm',
-                                color: const Color(0xFF8b5cf6),
+                                color: c.accentViolet,
                               ),
                             if (coral.maxSize != null &&
                                 coral.aggressive != null)
@@ -339,8 +337,8 @@ class CoralDetailsDialog extends StatelessWidget {
                                     ? 'Aggressivo'
                                     : 'Pacifico',
                                 color: coral.aggressive == true
-                                    ? const Color(0xFFef4444)
-                                    : const Color(0xFF34d399),
+                                    ? c.statusError
+                                    : c.statusOptimal,
                               ),
                             if (coral.aggressive != null &&
                                 coral.minTankSize != null)
@@ -363,7 +361,7 @@ class CoralDetailsDialog extends StatelessWidget {
                     _buildDetailCard(
                       theme: theme,
                       icon: FontAwesomeIcons.calendar,
-                      iconColor: const Color(0xFF8b5cf6),
+                      iconColor: c.accentViolet,
                       title: 'Aggiunto il',
                       content: _formatDate(coral.addedDate),
 
@@ -376,7 +374,7 @@ class CoralDetailsDialog extends StatelessWidget {
                       _buildDetailCard(
                         theme: theme,
                         icon: FontAwesomeIcons.noteSticky,
-                        iconColor: const Color(0xFFec4899),
+                        iconColor: c.accentPink,
                         title: 'Note',
                         content: coral.notes!,
                         fontSize: 12,
@@ -545,19 +543,19 @@ class CoralDetailsDialog extends StatelessWidget {
     }
   }
 
-  Color _getDifficultyColor(String difficulty) {
+  Color _getDifficultyColor(String difficulty, AppSemanticColors c) {
     switch (difficulty.toLowerCase()) {
       case 'facile':
       case 'beginner':
-        return const Color(0xFF34d399);
+        return c.statusOptimal;
       case 'medio':
       case 'intermediate':
-        return const Color(0xFFfbbf24);
+        return c.statusWarning;
       case 'difficile':
       case 'expert':
-        return const Color(0xFFef4444);
+        return c.statusError;
       default:
-        return const Color(0xFF60a5fa);
+        return c.statusLow;
     }
   }
 

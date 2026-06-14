@@ -12,6 +12,7 @@ import 'package:acquariumfe/core/constants/parameter_thresholds.dart';
 import 'package:acquariumfe/features/parameters/domain/models/parameter_data_point.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 
 /// Renders a line chart for a selected water parameter over a configurable
 /// time window.
@@ -152,7 +153,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
             children: [
               Icon(
                 FontAwesomeIcons.chartLine,
-                color: _getParameterColor(_selectedParameter),
+                color: _getParameterColor(_selectedParameter, context.semantic),
                 size: 24,
               ),
               const SizedBox(width: 12),
@@ -224,7 +225,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
                   child: _buildStatChip(
                     AppLocalizations.of(context)!.chartStatNow,
                     _stats['current']?.toStringAsFixed(1) ?? '-',
-                    _getParameterColor(_selectedParameter),
+                    _getParameterColor(_selectedParameter, context.semantic),
                   ),
                 ),
               ],
@@ -300,7 +301,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
         children: [
           _buildLegendItem(
             icon: FontAwesomeIcons.circleCheck,
-            color: const Color(0xFF10b981),
+            color: context.semantic.statusOptimal,
             label: AppLocalizations.of(context)!.chartLegendIdeal,
             value:
                 '${ranges['ideal_min']!.toStringAsFixed(1)} - ${ranges['ideal_max']!.toStringAsFixed(1)}',
@@ -308,7 +309,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
           ),
           _buildLegendItem(
             icon: FontAwesomeIcons.triangleExclamation,
-            color: const Color(0xFFfbbf24),
+            color: context.semantic.statusWarning,
             label: AppLocalizations.of(context)!.chartLegendWarning,
             value:
                 '${ranges['warning_min']!.toStringAsFixed(1)} - ${ranges['warning_max']!.toStringAsFixed(1)}',
@@ -375,7 +376,10 @@ class _ChartsViewState extends ConsumerState<ChartsView>
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _getParameterColor(_selectedParameter).withValues(alpha: 0.2),
+          color: _getParameterColor(
+            _selectedParameter,
+            context.semantic,
+          ).withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -385,7 +389,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
             children: [
               Icon(
                 FontAwesomeIcons.chartLine,
-                color: _getParameterColor(_selectedParameter),
+                color: _getParameterColor(_selectedParameter, context.semantic),
                 size: 18,
               ),
               const SizedBox(width: 8),
@@ -499,11 +503,12 @@ class _ChartsViewState extends ConsumerState<ChartsView>
   }
 
   Map<String, dynamic> _calculateTrend() {
+    final c = context.semantic;
     if (_chartData.length < 2) {
       return {
         'icon': FontAwesomeIcons.arrowRight,
         'text': AppLocalizations.of(context)!.chartTrendStable,
-        'color': const Color(0xFF6b7280),
+        'color': c.accentNeutral,
       };
     }
 
@@ -529,13 +534,13 @@ class _ChartsViewState extends ConsumerState<ChartsView>
       return {
         'icon': FontAwesomeIcons.arrowRight,
         'text': AppLocalizations.of(context)!.chartTrendStable,
-        'color': const Color(0xFF10b981),
+        'color': c.statusOptimal,
       };
     } else if (diff > 0) {
       return {
         'icon': FontAwesomeIcons.arrowTrendUp,
         'text': AppLocalizations.of(context)!.chartTrendRising,
-        'color': const Color(0xFFef4444),
+        'color': c.statusError,
       };
     } else {
       return {
@@ -547,7 +552,8 @@ class _ChartsViewState extends ConsumerState<ChartsView>
   }
 
   Map<String, dynamic> _calculateStability() {
-    if (_chartData.isEmpty) return {'text': '-', 'color': const Color(0xFF6b7280)};
+    final c = context.semantic;
+    if (_chartData.isEmpty) return {'text': '-', 'color': c.accentNeutral};
 
     final values = _chartData.map((e) => e.value).toList();
     final avg = values.reduce((a, b) => a + b) / values.length;
@@ -564,22 +570,22 @@ class _ChartsViewState extends ConsumerState<ChartsView>
     if (relativeStdDev < 2) {
       return {
         'text': AppLocalizations.of(context)!.chartStabilityExcellent,
-        'color': const Color(0xFF10b981),
+        'color': c.statusOptimal,
       };
     } else if (relativeStdDev < 5) {
       return {
         'text': AppLocalizations.of(context)!.chartStabilityGood,
-        'color': const Color(0xFF22c55e),
+        'color': c.statusOptimal,
       };
     } else if (relativeStdDev < 10) {
       return {
         'text': AppLocalizations.of(context)!.chartStabilityMedium,
-        'color': const Color(0xFFfbbf24),
+        'color': c.statusWarning,
       };
     } else {
       return {
         'text': AppLocalizations.of(context)!.chartStabilityLow,
-        'color': const Color(0xFFef4444),
+        'color': c.statusError,
       };
     }
   }
@@ -588,6 +594,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
     Map<String, dynamic> trend,
     Map<String, dynamic> stability,
   ) {
+    final c = context.semantic;
     final ranges = _getParameterRanges(_selectedParameter);
     final current = _stats['current'] ?? 0.0;
 
@@ -598,7 +605,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
         'text': AppLocalizations.of(context)!.chartAdviceOutOfRange(
           _getLocalizedParameterName(context, _selectedParameter),
         ),
-        'color': const Color(0xFFef4444),
+        'color': c.statusError,
       };
     }
 
@@ -607,7 +614,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
       return {
         'icon': FontAwesomeIcons.circleInfo,
         'text': AppLocalizations.of(context)!.chartAdviceNotIdeal,
-        'color': const Color(0xFFfbbf24),
+        'color': c.statusWarning,
       };
     }
 
@@ -617,7 +624,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
       return {
         'icon': FontAwesomeIcons.lightbulb,
         'text': AppLocalizations.of(context)!.chartAdviceUnstable,
-        'color': const Color(0xFFfbbf24),
+        'color': c.statusWarning,
       };
     }
 
@@ -636,32 +643,33 @@ class _ChartsViewState extends ConsumerState<ChartsView>
     return {
       'icon': FontAwesomeIcons.circleCheck,
       'text': AppLocalizations.of(context)!.chartAdviceOptimal,
-      'color': const Color(0xFF10b981),
+      'color': c.statusOptimal,
     };
   }
 
   Widget _buildParameterSegmentedButton() {
     final theme = Theme.of(context);
+    final c = context.semantic;
     final parameters = [
       {
         'name': 'Temperatura',
         'icon': FontAwesomeIcons.temperatureHalf,
-        'color': const Color(0xFFef4444),
+        'color': c.statusError,
       },
       {
         'name': 'pH',
         'icon': FontAwesomeIcons.flask,
-        'color': const Color(0xFF60a5fa),
+        'color': c.statusLow,
       },
       {
         'name': 'Salinità',
         'icon': FontAwesomeIcons.water,
-        'color': const Color(0xFF2dd4bf),
+        'color': c.salinityAccent,
       },
       {
         'name': 'ORP',
         'icon': FontAwesomeIcons.bolt,
-        'color': const Color(0xFFfbbf24),
+        'color': c.statusWarning,
       },
     ];
 
@@ -903,6 +911,8 @@ class _ChartsViewState extends ConsumerState<ChartsView>
       );
     }
 
+    final c = context.semantic;
+
     final spots = data.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.value);
     }).toList();
@@ -926,14 +936,14 @@ class _ChartsViewState extends ConsumerState<ChartsView>
           // Zona ideale (verde)
           HorizontalLine(
             y: ranges['ideal_min']!,
-            color: const Color(0xFF10b981).withValues(alpha: 0.3),
+            color: c.statusOptimal.withValues(alpha: 0.3),
             strokeWidth: 0,
             label: HorizontalLineLabel(
               show: true,
               alignment: Alignment.topRight,
               padding: const EdgeInsets.only(right: 4, bottom: 2),
               style: TextStyle(
-                color: const Color(0xFF10b981),
+                color: c.statusOptimal,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
@@ -944,14 +954,14 @@ class _ChartsViewState extends ConsumerState<ChartsView>
           // Linea warning superiore
           HorizontalLine(
             y: ranges['warning_max']!,
-            color: const Color(0xFFfbbf24).withValues(alpha: 0.6),
+            color: c.statusWarning.withValues(alpha: 0.6),
             strokeWidth: 1,
             dashArray: [5, 5],
           ),
           // Linea warning inferiore
           HorizontalLine(
             y: ranges['warning_min']!,
-            color: const Color(0xFFfbbf24).withValues(alpha: 0.6),
+            color: c.statusWarning.withValues(alpha: 0.6),
             strokeWidth: 1,
             dashArray: [5, 5],
           ),
@@ -1024,7 +1034,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
           dotData: const FlDotData(show: false),
           belowBarData: BarAreaData(
             show: true,
-            color: const Color(0xFF10b981).withValues(alpha: 0.08),
+            color: c.statusOptimal.withValues(alpha: 0.08),
             cutOffY: ranges['ideal_max']!,
             applyCutOffY: true,
           ),
@@ -1033,7 +1043,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
         LineChartBarData(
           spots: spots,
           isCurved: true,
-          color: _getParameterColor(_selectedParameter),
+          color: _getParameterColor(_selectedParameter, context.semantic),
           barWidth: 3,
           isStrokeCapRound: true,
           dotData: const FlDotData(show: false),
@@ -1041,6 +1051,7 @@ class _ChartsViewState extends ConsumerState<ChartsView>
             show: true,
             color: _getParameterColor(
               _selectedParameter,
+              context.semantic,
             ).withValues(alpha: 0.1),
           ),
         ),
@@ -1048,18 +1059,18 @@ class _ChartsViewState extends ConsumerState<ChartsView>
     );
   }
 
-  Color _getParameterColor(String parameter) {
+  Color _getParameterColor(String parameter, AppSemanticColors c) {
     switch (parameter) {
       case 'Temperatura':
-        return const Color(0xFFef4444);
+        return c.statusError;
       case 'pH':
-        return const Color(0xFF60a5fa);
+        return c.statusLow;
       case 'Salinità':
-        return const Color(0xFF2dd4bf);
+        return c.salinityAccent;
       case 'ORP':
-        return const Color(0xFFfbbf24);
+        return c.statusWarning;
       default:
-        return const Color(0xFF60a5fa);
+        return c.statusLow;
     }
   }
 

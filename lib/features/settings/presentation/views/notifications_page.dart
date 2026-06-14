@@ -7,6 +7,7 @@ import 'package:acquariumfe/features/settings/domain/models/notification_setting
 import 'package:acquariumfe/features/settings/data/alert_manager.dart';
 import 'package:acquariumfe/features/settings/data/notification_preferences_service.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 
 /// Three-tab page for managing notifications.
 ///
@@ -84,7 +85,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               Text(l10n.settingsSaved),
             ],
           ),
-          backgroundColor: const Color(0xFF34d399),
+          backgroundColor: context.semantic.statusOptimal,
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -146,6 +147,7 @@ class _NotificationsPageState extends State<NotificationsPage>
   // TAB 1: IMPOSTAZIONI GENERALI
   Widget _buildSettingsTab(double bottomPadding) {
     final theme = Theme.of(context);
+    final c = context.semantic;
     final l10n = AppLocalizations.of(context)!;
 
     return ListView(
@@ -161,7 +163,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           title: l10n.alertParameters,
           subtitle: l10n.alertParametersSubtitle,
           icon: FontAwesomeIcons.triangleExclamation,
-          color: const Color(0xFFef4444),
+          color: c.statusError,
           value: _settings.enabledAlerts,
           onChanged: (value) {
             setState(() {
@@ -177,7 +179,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           title: l10n.maintenanceReminders,
           subtitle: l10n.maintenanceRemindersSubtitle,
           icon: FontAwesomeIcons.wrench,
-          color: const Color(0xFF34d399),
+          color: c.statusOptimal,
           value: _settings.enabledMaintenance,
           onChanged: (value) {
             setState(() {
@@ -193,7 +195,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           title: l10n.dailySummary,
           subtitle: l10n.dailySummarySubtitle,
           icon: FontAwesomeIcons.calendarDay,
-          color: const Color(0xFF60a5fa),
+          color: c.statusLow,
           value: _settings.enabledDaily,
           onChanged: (value) {
             setState(() {
@@ -210,7 +212,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         _buildMaintenanceCard(
           title: l10n.waterChange,
           icon: FontAwesomeIcons.droplet,
-          color: const Color(0xFF60a5fa),
+          color: c.statusLow,
           schedule: _settings.maintenanceReminders.waterChange,
           onToggle: (enabled) {
             setState(() {
@@ -239,7 +241,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         _buildMaintenanceCard(
           title: l10n.filterCleaning,
           icon: FontAwesomeIcons.filter,
-          color: const Color(0xFF34d399),
+          color: c.statusOptimal,
           schedule: _settings.maintenanceReminders.filterCleaning,
           onToggle: (enabled) {
             setState(() {
@@ -268,7 +270,7 @@ class _NotificationsPageState extends State<NotificationsPage>
         _buildMaintenanceCard(
           title: l10n.parameterTesting,
           icon: FontAwesomeIcons.flask,
-          color: const Color(0xFFa855f7),
+          color: c.accentViolet,
           schedule: _settings.maintenanceReminders.parameterTesting,
           onToggle: (enabled) {
             setState(() {
@@ -334,6 +336,7 @@ class _NotificationsPageState extends State<NotificationsPage>
 
   // TAB 2: SOGLIE PARAMETRI
   Widget _buildThresholdsTab(double bottomPadding) {
+    final c = context.semantic;
     final l10n = AppLocalizations.of(context)!;
 
     return ListView(
@@ -349,7 +352,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           '°C',
           _settings.temperature,
           FontAwesomeIcons.temperatureHalf,
-          const Color(0xFFef4444),
+          c.statusError,
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
@@ -357,7 +360,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           '',
           _settings.ph,
           FontAwesomeIcons.flask,
-          const Color(0xFF60a5fa),
+          c.statusLow,
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
@@ -365,7 +368,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           '',
           _settings.salinity,
           FontAwesomeIcons.water,
-          const Color(0xFF2dd4bf),
+          c.salinityAccent,
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
@@ -373,7 +376,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           ' mV',
           _settings.orp,
           FontAwesomeIcons.bolt,
-          const Color(0xFFfbbf24),
+          c.statusWarning,
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
@@ -381,7 +384,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           ' mg/L',
           _settings.calcium,
           FontAwesomeIcons.cubesStacked,
-          const Color(0xFFa855f7),
+          c.accentViolet,
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
@@ -389,7 +392,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           ' mg/L',
           _settings.magnesium,
           FontAwesomeIcons.atom,
-          const Color(0xFFec4899),
+          c.accentPink,
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
@@ -397,7 +400,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           ' dKH',
           _settings.kh,
           FontAwesomeIcons.chartLine,
-          const Color(0xFF34d399),
+          c.statusOptimal,
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
@@ -405,7 +408,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           ' mg/L',
           _settings.nitrate,
           FontAwesomeIcons.seedling,
-          const Color(0xFF10b981),
+          c.statusOptimal,
         ),
         const SizedBox(height: 12),
         _buildThresholdCard(
@@ -413,7 +416,7 @@ class _NotificationsPageState extends State<NotificationsPage>
           ' mg/L',
           _settings.phosphate,
           FontAwesomeIcons.droplet,
-          const Color(0xFF8b5cf6),
+          c.accentViolet,
         ),
 
         const SizedBox(height: 32),
@@ -428,8 +431,8 @@ class _NotificationsPageState extends State<NotificationsPage>
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFFfbbf24),
-              side: const BorderSide(color: Color(0xFFfbbf24), width: 2),
+              foregroundColor: c.statusWarning,
+              side: BorderSide(color: c.statusWarning, width: 2),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -863,6 +866,7 @@ class _NotificationsPageState extends State<NotificationsPage>
 
   Widget _buildAlertCard(AlertLog alert) {
     final theme = Theme.of(context);
+    final c = context.semantic;
     final l10n = AppLocalizations.of(context)!;
 
     Color severityColor;
@@ -870,19 +874,19 @@ class _NotificationsPageState extends State<NotificationsPage>
 
     switch (alert.severity) {
       case AlertSeverity.critical:
-        severityColor = const Color(0xFFef4444);
+        severityColor = c.statusError;
         severityIcon = FontAwesomeIcons.circleExclamation;
         break;
       case AlertSeverity.high:
-        severityColor = const Color(0xFFfbbf24);
+        severityColor = c.statusWarning;
         severityIcon = FontAwesomeIcons.triangleExclamation;
         break;
       case AlertSeverity.medium:
-        severityColor = const Color(0xFF60a5fa);
+        severityColor = c.statusLow;
         severityIcon = FontAwesomeIcons.circleInfo;
         break;
       case AlertSeverity.low:
-        severityColor = const Color(0xFF34d399);
+        severityColor = c.statusOptimal;
         severityIcon = FontAwesomeIcons.circleCheck;
         break;
     }
@@ -893,23 +897,23 @@ class _NotificationsPageState extends State<NotificationsPage>
       directionIndicator = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: const Color(0xFF60a5fa).withValues(alpha: 0.2),
+          color: c.statusLow.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFF60a5fa), width: 1),
+          border: Border.all(color: c.statusLow, width: 1),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const FaIcon(
+            FaIcon(
               FontAwesomeIcons.arrowDown,
-              color: Color(0xFF60a5fa),
+              color: c.statusLow,
               size: 12,
             ),
             const SizedBox(width: 4),
             Text(
               l10n.lowLabel,
-              style: const TextStyle(
-                color: Color(0xFF60a5fa),
+              style: TextStyle(
+                color: c.statusLow,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
@@ -921,23 +925,23 @@ class _NotificationsPageState extends State<NotificationsPage>
       directionIndicator = Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: const Color(0xFFef4444).withValues(alpha: 0.2),
+          color: c.statusError.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFFef4444), width: 1),
+          border: Border.all(color: c.statusError, width: 1),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const FaIcon(
+            FaIcon(
               FontAwesomeIcons.arrowUp,
-              color: Color(0xFFef4444),
+              color: c.statusError,
               size: 12,
             ),
             const SizedBox(width: 4),
             Text(
               l10n.highLabel,
-              style: const TextStyle(
-                color: Color(0xFFef4444),
+              style: TextStyle(
+                color: c.statusError,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
@@ -1335,6 +1339,7 @@ class _NotificationsPageState extends State<NotificationsPage>
   /// Mostra dialog di conferma per ripristino valori predefiniti
   void _showResetDialog() {
     final theme = Theme.of(context);
+    final c = context.semantic;
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -1342,9 +1347,9 @@ class _NotificationsPageState extends State<NotificationsPage>
         backgroundColor: theme.colorScheme.surface,
         title: Row(
           children: [
-            const FaIcon(
+            FaIcon(
               FontAwesomeIcons.triangleExclamation,
-              color: Color(0xFFfbbf24),
+              color: c.statusWarning,
               size: 28,
             ),
             const SizedBox(width: 12),
@@ -1402,7 +1407,7 @@ class _NotificationsPageState extends State<NotificationsPage>
             Text(
               l10n.changesWillBeSavedImmediately,
               style: TextStyle(
-                color: Color(0xFFfbbf24),
+                color: c.statusWarning,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -1429,7 +1434,7 @@ class _NotificationsPageState extends State<NotificationsPage>
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFfbbf24),
+              backgroundColor: c.statusWarning,
               foregroundColor: Colors.black,
             ),
             child: Text(l10n.resetButton),

@@ -19,6 +19,7 @@ import 'add_fish_dialog.dart';
 import 'add_coral_dialog.dart';
 import 'coral_details_dialog.dart';
 import 'fish_details_dialog.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
 
 /// Two-tab page (Fish / Corals) for managing the inhabitants of [aquariumId].
@@ -166,7 +167,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
               Text(l10n.inhabitantsUpdated),
             ],
           ),
-          backgroundColor: const Color(0xFF34d399),
+          backgroundColor: context.semantic.statusOptimal,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 1),
           shape: RoundedRectangleBorder(
@@ -818,7 +819,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                           children: [
                             FaIcon(
                               FontAwesomeIcons.pen,
-                              color: const Color(0xFF60a5fa),
+                              color: context.semantic.statusLow,
                               size: 16,
                             ),
                             const SizedBox(width: 12),
@@ -1078,7 +1079,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                           children: [
                             FaIcon(
                               FontAwesomeIcons.pen,
-                              color: const Color(0xFF60a5fa),
+                              color: context.semantic.statusLow,
                               size: 16,
                             ),
                             const SizedBox(width: 12),
@@ -1130,7 +1131,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
           bottom: bottomPadding + 16,
           child: FloatingActionButton.extended(
             onPressed: _showAddFishDialog,
-            backgroundColor: const Color(0xFF60a5fa),
+            backgroundColor: context.semantic.statusLow,
             foregroundColor: Colors.white,
             icon: const FaIcon(FontAwesomeIcons.plus),
             label: Text(l10n.addFish),
@@ -1151,7 +1152,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
           bottom: bottomPadding + 16,
           child: FloatingActionButton.extended(
             onPressed: _showAddCoralDialog,
-            backgroundColor: const Color(0xFF34d399),
+            backgroundColor: context.semantic.statusOptimal,
             foregroundColor: Colors.white,
             icon: const FaIcon(FontAwesomeIcons.plus),
             label: Text(l10n.addCoral),

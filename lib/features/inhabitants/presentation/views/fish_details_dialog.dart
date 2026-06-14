@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/features/inhabitants/domain/models/fish.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 
 /// A read-only details dialog for a [Fish] inhabitant.
 ///
@@ -20,6 +21,7 @@ class FishDetailsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final c = context.semantic;
     final l10n = AppLocalizations.of(context)!;
 
     return Dialog(
@@ -107,7 +109,7 @@ class FishDetailsDialog extends StatelessWidget {
                       _buildDetailCard(
                         theme: theme,
                         icon: FontAwesomeIcons.dna,
-                        iconColor: const Color(0xFF10b981),
+                        iconColor: c.statusOptimal,
                         title: 'Famiglia',
                         content: fish.family!,
                         fontSize: 13,
@@ -244,7 +246,7 @@ class FishDetailsDialog extends StatelessWidget {
                                 icon: FontAwesomeIcons.graduationCap,
                                 label: 'Difficoltà',
                                 value: _translateDifficulty(fish.difficulty!),
-                                color: _getDifficultyColor(fish.difficulty!),
+                                color: _getDifficultyColor(fish.difficulty!, c),
                               ),
                             if (fish.difficulty != null &&
                                 fish.temperament != null)
@@ -255,7 +257,7 @@ class FishDetailsDialog extends StatelessWidget {
                                 icon: FontAwesomeIcons.heart,
                                 label: 'Temperamento',
                                 value: fish.temperament!,
-                                color: const Color(0xFFec4899),
+                                color: c.accentPink,
                               ),
                             if (fish.temperament != null && fish.diet != null)
                               const SizedBox(height: 8),
@@ -265,7 +267,7 @@ class FishDetailsDialog extends StatelessWidget {
                                 icon: FontAwesomeIcons.utensils,
                                 label: 'Dieta',
                                 value: fish.diet!,
-                                color: const Color(0xFF10b981),
+                                color: c.statusOptimal,
                               ),
                             if (fish.diet != null && fish.reefSafe != null)
                               const SizedBox(height: 8),
@@ -278,8 +280,8 @@ class FishDetailsDialog extends StatelessWidget {
                                 label: 'Sicuro per reef',
                                 value: fish.reefSafe == true ? 'Sì' : 'No',
                                 color: fish.reefSafe == true
-                                    ? const Color(0xFF34d399)
-                                    : const Color(0xFFef4444),
+                                    ? c.statusOptimal
+                                    : c.statusError,
                               ),
                             if (fish.reefSafe != null && fish.maxSize != null)
                               const SizedBox(height: 8),
@@ -289,7 +291,7 @@ class FishDetailsDialog extends StatelessWidget {
                                 icon: FontAwesomeIcons.arrowsUpDownLeftRight,
                                 label: 'Dimensione massima',
                                 value: '${fish.maxSize} cm',
-                                color: const Color(0xFF8b5cf6),
+                                color: c.accentViolet,
                               ),
                             if (fish.maxSize != null &&
                                 fish.minTankSize != null)
@@ -312,7 +314,7 @@ class FishDetailsDialog extends StatelessWidget {
                     _buildDetailCard(
                       theme: theme,
                       icon: FontAwesomeIcons.ruler,
-                      iconColor: const Color(0xFF8b5cf6),
+                      iconColor: c.accentViolet,
                       title: 'Dimensione attuale',
                       content: '${fish.size.toStringAsFixed(1)} cm',
                       fontSize: 13,
@@ -335,7 +337,7 @@ class FishDetailsDialog extends StatelessWidget {
                       _buildDetailCard(
                         theme: theme,
                         icon: FontAwesomeIcons.noteSticky,
-                        iconColor: const Color(0xFFec4899),
+                        iconColor: c.accentPink,
                         title: 'Note',
                         content: fish.notes!,
                         fontSize: 12,
@@ -486,19 +488,19 @@ class FishDetailsDialog extends StatelessWidget {
     }
   }
 
-  Color _getDifficultyColor(String difficulty) {
+  Color _getDifficultyColor(String difficulty, AppSemanticColors c) {
     switch (difficulty.toLowerCase()) {
       case 'facile':
       case 'beginner':
-        return const Color(0xFF34d399);
+        return c.statusOptimal;
       case 'medio':
       case 'intermediate':
-        return const Color(0xFFfbbf24);
+        return c.statusWarning;
       case 'difficile':
       case 'expert':
-        return const Color(0xFFef4444);
+        return c.statusError;
       default:
-        return const Color(0xFF60a5fa);
+        return c.statusLow;
     }
   }
 }

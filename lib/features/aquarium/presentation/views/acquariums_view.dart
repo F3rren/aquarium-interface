@@ -288,26 +288,20 @@ class _AquariumViewState extends ConsumerState<AquariumView>
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  const Color(
-                                    0xFF60a5fa,
-                                  ).withValues(alpha: 0.2),
-                                  const Color(
-                                    0xFF2dd4bf,
-                                  ).withValues(alpha: 0.2),
+                                  c.statusLow.withValues(alpha: 0.2),
+                                  c.salinityAccent.withValues(alpha: 0.2),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: const Color(
-                                  0xFF60a5fa,
-                                ).withValues(alpha: 0.3),
+                                color: c.statusLow.withValues(alpha: 0.3),
                               ),
                             ),
                             child: Icon(
                               aquarium.type == 'saltwater'
                                   ? FontAwesomeIcons.droplet
                                   : FontAwesomeIcons.water,
-                              color: const Color(0xFF60a5fa),
+                              color: c.statusLow,
                               size: 20,
                             ),
                           ),

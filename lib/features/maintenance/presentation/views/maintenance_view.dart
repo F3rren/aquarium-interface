@@ -12,6 +12,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:acquariumfe/core/utils/responsive_breakpoints.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
 import 'package:acquariumfe/core/l10n/app_localizations.dart';
+import 'package:acquariumfe/core/theme/app_semantic_colors.dart';
 
 /// Two-tab screen for the active aquarium's maintenance tasks and product
 /// inventory.
@@ -181,7 +182,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
                   onPressed: _showAddTaskDialog,
                   icon: const FaIcon(FontAwesomeIcons.plus),
                   label: Text(AppLocalizations.of(context)!.addTask),
-                  backgroundColor: const Color(0xFF8b5cf6),
+                  backgroundColor: context.semantic.accentViolet,
                 ),
               ),
             ],
@@ -214,7 +215,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   color: !_showCompleted
-                      ? const Color(0xFF8b5cf6)
+                      ? context.semantic.accentViolet
                       : Colors.transparent,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
@@ -259,7 +260,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   color: _showCompleted
-                      ? const Color(0xFF10b981)
+                      ? context.semantic.statusOptimal
                       : Colors.transparent,
                   borderRadius: const BorderRadius.only(
                     topRight: Radius.circular(12),
@@ -307,7 +308,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
             l10n.overdue,
             _overdueTasks.length.toString(),
             FontAwesomeIcons.triangleExclamation,
-            const Color(0xFFef4444),
+            context.semantic.statusError,
             theme,
           ),
         ),
@@ -317,7 +318,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
             l10n.today,
             _dueTodayTasks.length.toString(),
             FontAwesomeIcons.calendarDay,
-            const Color(0xFFf59e0b),
+            context.semantic.statusWarning,
             theme,
           ),
         ),
@@ -408,7 +409,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
         });
       },
       backgroundColor: theme.colorScheme.surfaceContainerHighest,
-      selectedColor: const Color(0xFF8b5cf6),
+      selectedColor: context.semantic.accentViolet,
       labelStyle: TextStyle(
         color: isSelected ? Colors.white : theme.textTheme.bodyMedium?.color,
       ),
@@ -457,6 +458,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
 
   Widget _buildTaskCard(MaintenanceTask task, ThemeData theme) {
     final l10n = AppLocalizations.of(context)!;
+    final c = context.semantic;
     final daysUntil = task.daysUntilDue;
     final isOverdue = task.isOverdue;
     final isDueToday = task.isDueToday;
@@ -465,16 +467,16 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
     String statusText;
 
     if (isOverdue) {
-      statusColor = const Color(0xFFef4444);
+      statusColor = c.statusError;
       statusText = l10n.overdueDays(-daysUntil);
     } else if (isDueToday) {
-      statusColor = const Color(0xFFf59e0b);
+      statusColor = c.statusWarning;
       statusText = l10n.dueToday;
     } else if (daysUntil <= 7) {
       statusColor = const Color(0xFF3b82f6);
       statusText = l10n.inDays(daysUntil);
     } else {
-      statusColor = const Color(0xFF10b981);
+      statusColor = c.statusOptimal;
       statusText = l10n.inDays(daysUntil);
     }
 
@@ -528,7 +530,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
                   if (!_showCompleted)
                     IconButton(
                       icon: const FaIcon(FontAwesomeIcons.check, size: 20),
-                      color: const Color(0xFF10b981),
+                      color: context.semantic.statusOptimal,
                       onPressed: () => _completeTask(task),
                     ),
                 ],
@@ -618,7 +620,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.aquariumIdNotAvailable),
-          backgroundColor: const Color(0xFFef4444),
+          backgroundColor: context.semantic.statusError,
         ),
       );
       return;
@@ -1031,7 +1033,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF10b981),
+              backgroundColor: context.semantic.statusOptimal,
             ),
             child: Text(l10n.complete),
           ),
@@ -1052,7 +1054,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.taskCompletedSuccess(localizedTaskTitle(task, l10n))),
-            backgroundColor: const Color(0xFF10b981),
+            backgroundColor: context.semantic.statusOptimal,
           ),
         );
       }
@@ -1194,7 +1196,7 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
                       icon: const FaIcon(FontAwesomeIcons.check, size: 16),
                       label: Text(l10n.complete),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF10b981),
+                        backgroundColor: context.semantic.statusOptimal,
                       ),
                     ),
                   ),
@@ -1324,30 +1326,30 @@ class _MaintenanceViewState extends ConsumerState<MaintenanceView>
       case MaintenanceCategory.water:
         return const Color(0xFF3b82f6);
       case MaintenanceCategory.equipment:
-        return const Color(0xFF8b5cf6);
+        return context.semantic.accentViolet;
       case MaintenanceCategory.testing:
-        return const Color(0xFFf59e0b);
+        return context.semantic.statusWarning;
       case MaintenanceCategory.cleaning:
-        return const Color(0xFF10b981);
+        return context.semantic.statusOptimal;
       case MaintenanceCategory.dosing:
         return const Color(0xFF06b6d4);
       case MaintenanceCategory.feeding:
-        return const Color(0xFFec4899);
+        return context.semantic.accentPink;
       case MaintenanceCategory.other:
-        return const Color(0xFF6b7280);
+        return context.semantic.accentNeutral;
     }
   }
 
   Color _getPriorityColor(String priority) {
     switch (priority.toLowerCase()) {
       case 'high':
-        return const Color(0xFFef4444);
+        return context.semantic.statusError;
       case 'medium':
-        return const Color(0xFFf59e0b);
+        return context.semantic.statusWarning;
       case 'low':
-        return const Color(0xFF10b981);
+        return context.semantic.statusOptimal;
       default:
-        return const Color(0xFF6b7280);
+        return context.semantic.accentNeutral;
     }
   }
 
