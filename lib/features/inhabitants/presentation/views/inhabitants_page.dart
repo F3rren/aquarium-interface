@@ -1,4 +1,4 @@
-﻿/// Tabbed page listing the fish and corals inhabiting an aquarium.
+/// Tabbed page listing the fish and corals inhabiting an aquarium.
 library;
 
 import 'package:flutter/material.dart';
@@ -11,10 +11,11 @@ import 'package:acquariumfe/features/inhabitants/data/inhabitants_service.dart';
 import 'package:acquariumfe/core/providers/service_providers.dart';
 import 'package:acquariumfe/core/utils/app_logger.dart';
 import 'package:acquariumfe/core/utils/exception_localizer.dart';
-import 'package:acquariumfe/core/widgets/skeleton_loader_card.dart';
 import 'package:acquariumfe/core/widgets/animated_number.dart';
 import 'package:acquariumfe/features/inhabitants/presentation/widgets/inhabitants_filter_panel.dart';
 import 'package:acquariumfe/features/aquarium/presentation/providers/aquarium_providers.dart';
+import 'package:acquariumfe/features/inhabitants/presentation/views/fish_tab.dart';
+import 'package:acquariumfe/features/inhabitants/presentation/views/corals_tab.dart';
 import 'add_fish_dialog.dart';
 import 'add_coral_dialog.dart';
 import 'coral_details_dialog.dart';
@@ -61,7 +62,6 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
   @override
   void initState() {
     super.initState();
-    // Inizia con 1 tab, verrà aggiornato dopo aver caricato i dati
     _tabController = TabController(length: 1, vsync: this);
     _loadData();
   }
@@ -75,11 +75,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
 
-    // Recupera il waterType dell'acquario se disponibile
     String? previousWaterType = _aquariumWaterType;
     if (widget.aquariumId != null) {
       try {
-        // Usa il provider invece del servizio diretto
         final aquariumsAsync = ref.read(aquariumsProvider);
         await aquariumsAsync.when(
           data: (aquariumsWithParams) {
@@ -89,26 +87,22 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
             _aquariumWaterType = aquarium.type;
           },
           loading: () {
-            _aquariumWaterType = 'Marino'; // Default durante caricamento
+            _aquariumWaterType = 'Marino';
           },
           error: (_, __) {
-            _aquariumWaterType = 'Marino'; // Default in caso di errore
+            _aquariumWaterType = 'Marino';
           },
         );
       } catch (e) {
-        // Se fallisce, continua senza waterType (default marino)
         _aquariumWaterType = 'Marino';
       }
     } else {
-      // Se non c'è aquariumId, default marino
       _aquariumWaterType = 'Marino';
     }
 
-    // Ricrea TabController se il tipo d'acqua è cambiato o è la prima volta
     if (_aquariumWaterType != previousWaterType || previousWaterType == null) {
       final currentIndex = _tabController.index;
       _tabController.dispose();
-      // Solo 1 tab (pesci) per acquari dolci, 2 tab (pesci + coralli) per marini/reef
       final isDolce = _aquariumWaterType?.toLowerCase() == 'dolce';
       _tabController = TabController(
         length: isDolce ? 1 : 2,
@@ -178,126 +172,6 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     }
   }
 
-  List<Fish> _getFilteredAndSortedFish() {
-    List<Fish> filtered = _fishList;
-
-    // Filtra per nome
-    if (_filter.searchText.isNotEmpty) {
-      filtered = filtered.where((fish) {
-        final searchLower = _filter.searchText.toLowerCase();
-        return fish.name.toLowerCase().contains(searchLower) ||
-            fish.species.toLowerCase().contains(searchLower);
-      }).toList();
-    }
-
-    // Filtra per difficoltà
-    if (_filter.difficultyFilter != null) {
-      filtered = filtered.where((fish) {
-        return fish.difficulty == _filter.difficultyFilter;
-      }).toList();
-    }
-
-    // Filtra per data
-    if (_filter.dateFilter != null && _filter.dateValue != null) {
-      filtered = filtered.where((fish) {
-        if (_filter.dateFilter == DateFilterType.before) {
-          return fish.addedDate.isBefore(_filter.dateValue!);
-        } else {
-          return fish.addedDate.isAfter(_filter.dateValue!);
-        }
-      }).toList();
-    }
-
-    // Ordina
-    filtered.sort((a, b) {
-      int comparison = 0;
-      switch (_filter.sortBy) {
-        case SortType.name:
-          comparison = a.name.compareTo(b.name);
-          break;
-        case SortType.dateAdded:
-          comparison = a.addedDate.compareTo(b.addedDate);
-          break;
-        case SortType.size:
-          comparison = a.size.compareTo(b.size);
-          break;
-        case SortType.difficulty:
-          final difficultyOrder = {
-            'Facile': 1,
-            'Intermedio': 2,
-            'Difficile': 3,
-          };
-          final aVal = difficultyOrder[a.difficulty] ?? 0;
-          final bVal = difficultyOrder[b.difficulty] ?? 0;
-          comparison = aVal.compareTo(bVal);
-          break;
-      }
-      return _filter.sortAscending ? comparison : -comparison;
-    });
-
-    return filtered;
-  }
-
-  List<Coral> _getFilteredAndSortedCorals() {
-    List<Coral> filtered = _coralsList;
-
-    // Filtra per nome
-    if (_filter.searchText.isNotEmpty) {
-      filtered = filtered.where((coral) {
-        final searchLower = _filter.searchText.toLowerCase();
-        return coral.name.toLowerCase().contains(searchLower) ||
-            coral.species.toLowerCase().contains(searchLower);
-      }).toList();
-    }
-
-    // Filtra per difficoltà
-    if (_filter.difficultyFilter != null) {
-      filtered = filtered.where((coral) {
-        return coral.difficulty == _filter.difficultyFilter;
-      }).toList();
-    }
-
-    // Filtra per data
-    if (_filter.dateFilter != null && _filter.dateValue != null) {
-      filtered = filtered.where((coral) {
-        if (_filter.dateFilter == DateFilterType.before) {
-          return coral.addedDate.isBefore(_filter.dateValue!);
-        } else {
-          return coral.addedDate.isAfter(_filter.dateValue!);
-        }
-      }).toList();
-    }
-
-    // Ordina
-    filtered.sort((a, b) {
-      int comparison = 0;
-      switch (_filter.sortBy) {
-        case SortType.name:
-          comparison = a.name.compareTo(b.name);
-          break;
-        case SortType.dateAdded:
-          comparison = a.addedDate.compareTo(b.addedDate);
-          break;
-        case SortType.size:
-          comparison = a.size.compareTo(b.size);
-          break;
-        case SortType.difficulty:
-          final difficultyOrder = {
-            'Facile': 1,
-            'Intermedio': 2,
-            'Difficile': 3,
-          };
-          final aVal = difficultyOrder[a.difficulty] ?? 0;
-          final bVal = difficultyOrder[b.difficulty] ?? 0;
-          comparison = aVal.compareTo(bVal);
-          break;
-      }
-      return _filter.sortAscending ? comparison : -comparison;
-    });
-
-    return filtered;
-  }
-
   void _showFilterPanel() {
     showModalBottomSheet(
       context: context,
@@ -313,11 +187,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
           maxChildSize: 0.95,
           builder: (context, scrollController) => InhabitantsFilterPanel(
             currentFilter: _filter,
-            onFilterChanged: (newFilter) {
-              setState(() {
-                _filter = newFilter;
-              });
-            },
+            onFilterChanged: (newFilter) => setState(() => _filter = newFilter),
             onClose: () => Navigator.pop(context),
           ),
         ),
@@ -333,10 +203,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
         onSave: (fish, speciesId) async {
           final aquariumId = widget.aquariumId;
           if (aquariumId == null) return;
-          // Salva sul server
           await _service.addFish(aquariumId, fish, speciesId);
-
-          // Ricarica i dati dall'API senza loading
           await _reloadDataSilently();
         },
         onSaveMultiple: (fishList, speciesId) async {
@@ -374,10 +241,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
         onSave: (coral, speciesId) async {
           final aquariumId = widget.aquariumId;
           if (aquariumId == null) return;
-          // Salva sul server
           await _service.addCoral(aquariumId, coral, speciesId);
-
-          // Ricarica i dati dall'API senza loading
           await _reloadDataSilently();
         },
         onSaveMultiple: (coralList, speciesId) async {
@@ -407,20 +271,6 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     );
   }
 
-  void _showCoralDetailsDialog(Coral coral) {
-    showDialog(
-      context: context,
-      builder: (context) => CoralDetailsDialog(coral: coral),
-    );
-  }
-
-  void _showFishDetailsDialog(Fish fish) {
-    showDialog(
-      context: context,
-      builder: (context) => FishDetailsDialog(fish: fish),
-    );
-  }
-
   Future<void> _deleteFish(Fish fish) async {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
@@ -429,11 +279,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
         title: Text(l10n.confirmDeletion,
-          style: TextStyle(color: theme.colorScheme.onSurface),
-        ),
+          style: TextStyle(color: theme.colorScheme.onSurface)),
         content: Text(l10n.confirmDeleteFish(fish.name),
-          style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
-        ),
+          style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -451,21 +299,12 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     );
 
     if (confirm == true) {
-      // Rimuovi localmente per attivare le animazioni
-      setState(() {
-        _fishList.removeWhere((f) => f.id == fish.id);
-      });
-
-      // Attendi un attimo per le animazioni
+      setState(() => _fishList.removeWhere((f) => f.id == fish.id));
       await Future.delayed(const Duration(milliseconds: 100));
-
-      // Elimina dal server
       final aquariumId = widget.aquariumId;
       if (aquariumId != null) {
         await _service.deleteFish(aquariumId, fish.id);
       }
-
-      // Ricarica silenziosamente per sincronizzare
       _reloadDataSilently();
     }
   }
@@ -478,11 +317,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       builder: (context) => AlertDialog(
         backgroundColor: theme.colorScheme.surface,
         title: Text(l10n.confirmDeletion,
-          style: TextStyle(color: theme.colorScheme.onSurface),
-        ),
+          style: TextStyle(color: theme.colorScheme.onSurface)),
         content: Text(l10n.confirmDeleteCoral(coral.name),
-          style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
-        ),
+          style: TextStyle(color: theme.colorScheme.onSurfaceVariant)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -500,21 +337,12 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     );
 
     if (confirm == true) {
-      // Rimuovi localmente per attivare le animazioni
-      setState(() {
-        _coralsList.removeWhere((c) => c.id == coral.id);
-      });
-
-      // Attendi un attimo per le animazioni
+      setState(() => _coralsList.removeWhere((c) => c.id == coral.id));
       await Future.delayed(const Duration(milliseconds: 100));
-
-      // Elimina dal server
       final aquariumId = widget.aquariumId;
       if (aquariumId != null) {
         await _service.deleteCoral(aquariumId, coral.id);
       }
-
-      // Ricarica silenziosamente per sincronizzare
       _reloadDataSilently();
     }
   }
@@ -525,8 +353,6 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
     final l10n = AppLocalizations.of(context)!;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
-    // Determina il numero di tab in base al tipo d'acqua
-    // Marino e Reef hanno 2 tab (pesci + coralli), Dolce ha solo 1 tab (pesci)
     final isDolce = (_aquariumWaterType ?? 'Marino').toLowerCase() == 'dolce';
     final tabCount = isDolce ? 1 : 2;
 
@@ -534,8 +360,7 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(l10n.myInhabitants,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-        ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: 0,
@@ -558,11 +383,9 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                       color: theme.colorScheme.error,
                       shape: BoxShape.circle,
                     ),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
-                    ),
-                    child: Text('${_filter.activeFilterCount}',
+                    constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                    child: Text(
+                      '${_filter.activeFilterCount}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
@@ -582,31 +405,16 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                 labelColor: theme.colorScheme.primary,
                 unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
                 tabs: isDolce
-                    ? [
-                        Tab(
-                          text: l10n.fish,
-                          icon: FaIcon(FontAwesomeIcons.fish),
-                        ),
-                      ]
+                    ? [Tab(text: l10n.fish, icon: const FaIcon(FontAwesomeIcons.fish))]
                     : [
-                        Tab(
-                          text: l10n.fish,
-                          icon: FaIcon(FontAwesomeIcons.fish),
-                        ),
-                        Tab(
-                          text: l10n.corals,
-                          icon: FaIcon(FontAwesomeIcons.seedling),
-                        ),
+                        Tab(text: l10n.fish, icon: const FaIcon(FontAwesomeIcons.fish)),
+                        Tab(text: l10n.corals, icon: const FaIcon(FontAwesomeIcons.seedling)),
                       ],
               )
             : null,
       ),
       body: _isLoading || _tabController.length != tabCount
-          ? Center(
-              child: CircularProgressIndicator(
-                color: theme.colorScheme.primary,
-              ),
-            )
+          ? Center(child: CircularProgressIndicator(color: theme.colorScheme.primary))
           : RefreshIndicator(
               onRefresh: _refreshData,
               color: theme.colorScheme.primary,
@@ -622,10 +430,54 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
                     child: TabBarView(
                       controller: _tabController,
                       children: isDolce
-                          ? [_buildFishTabWithFAB(bottomPadding)]
+                          ? [
+                              FishTab(
+                                fishList: _fishList,
+                                isLoading: _isLoading,
+                                filter: _filter,
+                                bottomPadding: bottomPadding,
+                                onAdd: _showAddFishDialog,
+                                onEdit: _showEditFishDialog,
+                                onDelete: _deleteFish,
+                                onTap: (fish) => showDialog(
+                                  context: context,
+                                  builder: (_) => FishDetailsDialog(fish: fish),
+                                ),
+                                onClearFilters: () =>
+                                    setState(() => _filter = _filter.clearAll()),
+                              ),
+                            ]
                           : [
-                              _buildFishTabWithFAB(bottomPadding),
-                              _buildCoralsTabWithFAB(bottomPadding),
+                              FishTab(
+                                fishList: _fishList,
+                                isLoading: _isLoading,
+                                filter: _filter,
+                                bottomPadding: bottomPadding,
+                                onAdd: _showAddFishDialog,
+                                onEdit: _showEditFishDialog,
+                                onDelete: _deleteFish,
+                                onTap: (fish) => showDialog(
+                                  context: context,
+                                  builder: (_) => FishDetailsDialog(fish: fish),
+                                ),
+                                onClearFilters: () =>
+                                    setState(() => _filter = _filter.clearAll()),
+                              ),
+                              CoralsTab(
+                                coralsList: _coralsList,
+                                isLoading: _isLoading,
+                                filter: _filter,
+                                bottomPadding: bottomPadding,
+                                onAdd: _showAddCoralDialog,
+                                onEdit: _showEditCoralDialog,
+                                onDelete: _deleteCoral,
+                                onTap: (coral) => showDialog(
+                                  context: context,
+                                  builder: (_) => CoralDetailsDialog(coral: coral),
+                                ),
+                                onClearFilters: () =>
+                                    setState(() => _filter = _filter.clearAll()),
+                              ),
                             ],
                     ),
                   ),
@@ -634,536 +486,8 @@ class _InhabitantsPageState extends ConsumerState<InhabitantsPage>
             ),
     );
   }
-
-  Widget _buildFishTab(double bottomPadding) {
-    final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
-
-    if (_isLoading) {
-      return ListView(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: 16 + bottomPadding,
-        ),
-        children: List.generate(5, (index) => const ListItemSkeleton()),
-      );
-    }
-
-    if (_fishList.isEmpty) {
-      return Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(
-            top: 8,
-            bottom: bottomPadding + 80,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FaIcon(
-                FontAwesomeIcons.fish,
-                size: 48,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.noFishAdded,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                l10n.tapToAddFirstFish,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    final filteredFish = _getFilteredAndSortedFish();
-
-    if (filteredFish.isEmpty) {
-      return Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FaIcon(
-                FontAwesomeIcons.magnifyingGlass,
-                size: 64,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.noResultsFound,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(l10n.tryModifyingFilters,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _filter = _filter.clearAll();
-                  });
-                },
-                icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
-                label: Text(l10n.clearFilters),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return ListView.builder(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 16,
-        bottom: 16 + bottomPadding,
-      ),
-      itemCount: filteredFish.length,
-      itemBuilder: (context, index) {
-        final fish = filteredFish[index];
-        final theme = Theme.of(context);
-
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          color: theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: InkWell(
-            onTap: () => _showFishDetailsDialog(fish),
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Hero(
-                    tag: 'fish_${fish.id}',
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.fish,
-                          color: theme.colorScheme.primary,
-                          size: 32,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(fish.name,
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurface,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(fish.species,
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurfaceVariant,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  PopupMenuButton<String>(
-                    icon: FaIcon(
-                      FontAwesomeIcons.ellipsisVertical,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                    onSelected: (value) {
-                      if (value == 'edit') {
-                        _showEditFishDialog(fish);
-                      } else if (value == 'delete') {
-                        _deleteFish(fish);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'edit',
-                        child: Row(
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.pen,
-                              color: context.semantic.statusLow,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(l10n.edit,
-                              style: TextStyle(
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            const FaIcon(
-                              FontAwesomeIcons.trash,
-                              color: Colors.red,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(l10n.delete,
-                              style: TextStyle(
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildCoralsTab(double bottomPadding) {
-    final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
-
-    if (_isLoading) {
-      return ListView(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: 16 + bottomPadding,
-        ),
-        children: List.generate(5, (index) => const ListItemSkeleton()),
-      );
-    }
-
-    if (_coralsList.isEmpty) {
-      return Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(
-            top: 8,
-            bottom: bottomPadding + 80,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FaIcon(
-                FontAwesomeIcons.seedling,
-                size: 48,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.noCoralAdded,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                l10n.tapToAddFirstCoral,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    final filteredCorals = _getFilteredAndSortedCorals();
-
-    if (filteredCorals.isEmpty) {
-      return Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FaIcon(
-                FontAwesomeIcons.magnifyingGlass,
-                size: 64,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-              ),
-              const SizedBox(height: 16),
-              Text(l10n.noResultsFound,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(l10n.tryModifyingFilters,
-                style: TextStyle(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _filter = _filter.clearAll();
-                  });
-                },
-                icon: const FaIcon(FontAwesomeIcons.xmark, size: 16),
-                label: Text(l10n.clearFilters),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return ListView.builder(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 16,
-        bottom: 16 + bottomPadding,
-      ),
-      itemCount: filteredCorals.length,
-      itemBuilder: (context, index) {
-        final coral = filteredCorals[index];
-        final theme = Theme.of(context);
-
-        Color typeColor;
-        switch (coral.type) {
-          case 'SPS':
-            typeColor = Colors.pink;
-            break;
-          case 'LPS':
-            typeColor = theme.colorScheme.primary;
-            break;
-          default:
-            typeColor = theme.colorScheme.secondary;
-        }
-
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          color: theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: InkWell(
-            onTap: () => _showCoralDetailsDialog(coral),
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Hero(
-                    tag: 'coral_${coral.id}',
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: typeColor.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Center(
-                        child: FaIcon(
-                          FontAwesomeIcons.seedling,
-                          color: typeColor,
-                          size: 32,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(coral.name,
-                                style: TextStyle(
-                                  color: theme.colorScheme.onSurface,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: typeColor.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(coral.type,
-                                style: TextStyle(
-                                  color: typeColor,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(coral.species,
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurfaceVariant,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  PopupMenuButton<String>(
-                    icon: FaIcon(
-                      FontAwesomeIcons.ellipsisVertical,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                    onSelected: (value) {
-                      if (value == 'edit') {
-                        _showEditCoralDialog(coral);
-                      } else if (value == 'delete') {
-                        _deleteCoral(coral);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'edit',
-                        child: Row(
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.pen,
-                              color: context.semantic.statusLow,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(l10n.edit,
-                              style: TextStyle(
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            const FaIcon(
-                              FontAwesomeIcons.trash,
-                              color: Colors.red,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 12),
-                            Text(l10n.delete,
-                              style: TextStyle(
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  // Wrapper per tab pesci con FAB posizionato
-  Widget _buildFishTabWithFAB(double bottomPadding) {
-    final l10n = AppLocalizations.of(context)!;
-    return Stack(
-      children: [
-        _buildFishTab(bottomPadding),
-        Positioned(
-          right: 16,
-          bottom: bottomPadding + 16,
-          child: FloatingActionButton.extended(
-            onPressed: _showAddFishDialog,
-            backgroundColor: context.semantic.statusLow,
-            foregroundColor: Colors.white,
-            icon: const FaIcon(FontAwesomeIcons.plus),
-            label: Text(l10n.addFish),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Wrapper per tab coralli con FAB posizionato
-  Widget _buildCoralsTabWithFAB(double bottomPadding) {
-    final l10n = AppLocalizations.of(context)!;
-    return Stack(
-      children: [
-        _buildCoralsTab(bottomPadding),
-        Positioned(
-          right: 16,
-          bottom: bottomPadding + 16,
-          child: FloatingActionButton.extended(
-            onPressed: _showAddCoralDialog,
-            backgroundColor: context.semantic.statusOptimal,
-            foregroundColor: Colors.white,
-            icon: const FaIcon(FontAwesomeIcons.plus),
-            label: Text(l10n.addCoral),
-          ),
-        ),
-      ],
-    );
-  }
 }
 
-// Widget separato per le statistiche per permettere le animazioni
 class _InhabitantsStatsCard extends StatefulWidget {
   final List<Fish> fishList;
   final List<Coral> coralsList;
@@ -1184,7 +508,6 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    // Calcolo statistiche
     final totalFish = widget.fishList.length;
     final totalCorals = widget.coralsList.length;
     final avgFishSize = widget.fishList.isEmpty
@@ -1220,14 +543,11 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
         children: [
           Row(
             children: [
-              const FaIcon(
-                FontAwesomeIcons.chartLine,
-                color: Colors.white,
-                size: 24,
-              ),
+              const FaIcon(FontAwesomeIcons.chartLine, color: Colors.white, size: 24),
               const SizedBox(width: 12),
-              Text(l10n.inhabitantsSummary,
-                style: TextStyle(
+              Text(
+                l10n.inhabitantsSummary,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -1245,11 +565,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
                   value: totalFish.toDouble(),
                 ),
               ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
+              Container(width: 1, height: 40, color: Colors.white.withValues(alpha: 0.3)),
               Expanded(
                 child: _buildStatItem(
                   icon: FontAwesomeIcons.seedling,
@@ -1257,18 +573,14 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
                   value: totalCorals.toDouble(),
                 ),
               ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
+              Container(width: 1, height: 40, color: Colors.white.withValues(alpha: 0.3)),
               Expanded(
                 child: _buildStatItem(
                   icon: FontAwesomeIcons.ruler,
                   label: l10n.averageSize,
                   value: avgFishSize,
                   suffix: avgFishSize > 0 ? ' cm' : '',
-                  showZero: false,
+                  decimals: 1,
                 ),
               ),
             ],
@@ -1284,14 +596,11 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
               children: [
                 Row(
                   children: [
-                    const FaIcon(
-                      FontAwesomeIcons.scaleBalanced,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                    const FaIcon(FontAwesomeIcons.scaleBalanced, color: Colors.white, size: 20),
                     const SizedBox(width: 8),
-                    Text(l10n.totalBioLoad,
-                      style: TextStyle(
+                    Text(
+                      l10n.totalBioLoad,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -1303,7 +612,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
                   key: const ValueKey('bioload'),
                   value: totalBioLoad,
                   decimals: 1,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -1313,7 +622,8 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(l10n.bioLoadFormula,
+          Text(
+            l10n.bioLoadFormula,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.7),
               fontSize: 12,
@@ -1321,12 +631,8 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
           ),
           if (totalBioLoad > 0) ...[
             const SizedBox(height: 12),
-            Text(_getBioLoadRecommendation(
-                totalBioLoad,
-                totalFish,
-                totalCorals,
-                l10n,
-              ),
+            Text(
+              _getBioLoadRecommendation(totalBioLoad, l10n),
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.9),
                 fontSize: 13,
@@ -1345,7 +651,7 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
     required String label,
     required double value,
     String suffix = '',
-    bool showZero = true,
+    int decimals = 0,
   }) {
     return Column(
       children: [
@@ -1354,36 +660,25 @@ class _InhabitantsStatsCardState extends State<_InhabitantsStatsCard> {
         AnimatedNumber(
           key: ValueKey('stat_$label'),
           value: value,
-          decimals: label == 'Dim. media' ? 1 : 0,
+          decimals: decimals,
           suffix: suffix,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        Text(label,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.8),
-            fontSize: 12,
-          ),
+        Text(
+          label,
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12),
         ),
       ],
     );
   }
 
-  String _getBioLoadRecommendation(
-    double bioLoad,
-    int fish,
-    int corals,
-    AppLocalizations l10n,
-  ) {
-    if (bioLoad < 20) {
-      return l10n.bioLoadOptimal;
-    } else if (bioLoad < 35) {
-      return l10n.bioLoadModerate;
-    } else {
-      return l10n.bioLoadHigh;
-    }
+  String _getBioLoadRecommendation(double bioLoad, AppLocalizations l10n) {
+    if (bioLoad < 20) return l10n.bioLoadOptimal;
+    if (bioLoad < 35) return l10n.bioLoadModerate;
+    return l10n.bioLoadHigh;
   }
 }
