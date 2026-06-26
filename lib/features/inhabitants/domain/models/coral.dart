@@ -1,6 +1,8 @@
 /// Domain model representing a coral specimen kept in a user's aquarium.
 library;
 
+import 'package:acquariumfe/features/inhabitants/domain/models/filterable.dart';
+
 /// A coral specimen added by the user to one of their aquariums.
 ///
 /// Fields are split into two groups:
@@ -9,23 +11,27 @@ library;
 /// - **Species-detail fields** — denormalised from [CoralSpecies] at insertion
 ///   time so the record remains self-contained even if the species catalogue
 ///   changes later.
-class Coral {
+class Coral with Filterable {
   /// Client-generated UUID uniquely identifying this specimen.
   final String id;
 
   /// User-chosen display name for this coral (e.g. `"Elegance"`).
+  @override
   final String name;
 
   /// Scientific or common species name (e.g. `"Catalaphyllia jardinei"`).
+  @override
   final String species;
 
   /// Coral classification: `'SPS'`, `'LPS'`, or `'Molle'` (soft).
   final String type;
 
   /// Current size of the specimen in centimetres.
+  @override
   final double size;
 
   /// Date the coral was added to the aquarium.
+  @override
   final DateTime addedDate;
 
   /// Preferred placement zone in the tank: `'Alto'`, `'Medio'`, or `'Basso'`.
@@ -40,6 +46,7 @@ class Coral {
   // ── Species-detail fields (denormalised from CoralSpecies) ──────────────
 
   /// Care difficulty: `'beginner'`, `'intermediate'`, or `'expert'`.
+  @override
   final String? difficulty;
 
   /// Required light intensity: `'low'`, `'medium'`, or `'high'`.

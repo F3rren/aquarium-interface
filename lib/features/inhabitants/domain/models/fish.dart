@@ -1,6 +1,8 @@
 /// Domain model representing a fish specimen kept in a user's aquarium.
 library;
 
+import 'package:acquariumfe/features/inhabitants/domain/models/filterable.dart';
+
 /// A fish specimen added by the user to one of their aquariums.
 ///
 /// Like [Coral], fields are split into two groups:
@@ -8,20 +10,24 @@ library;
 ///   [addedDate].
 /// - **Species-detail fields** — denormalised from [FishSpecies] at insertion
 ///   time so the record stays self-contained if the catalogue changes.
-class Fish {
+class Fish with Filterable {
   /// Client-generated UUID uniquely identifying this specimen.
   final String id;
 
   /// User-chosen display name (e.g. `"Nemo"`).
+  @override
   final String name;
 
   /// Scientific or common species name (e.g. `"Amphiprioninae"`).
+  @override
   final String species;
 
   /// Current size of the fish in centimetres.
+  @override
   final double size;
 
   /// Date the fish was added to the aquarium.
+  @override
   final DateTime addedDate;
 
   /// Optional free-text notes from the user.
@@ -42,6 +48,7 @@ class Fish {
   final double? maxSize;
 
   /// Care difficulty: `'beginner'`, `'intermediate'`, or `'expert'`.
+  @override
   final String? difficulty;
 
   /// Behaviour toward tank mates: `'peaceful'`, `'semi-aggressive'`,
